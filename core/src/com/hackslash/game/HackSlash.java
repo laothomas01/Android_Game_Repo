@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class HackSlash extends ApplicationAdapter {
-//    SpriteBatch batch;
-//    Texture img;
 
     ShapeRenderer shape;
     Enemy enemy;
