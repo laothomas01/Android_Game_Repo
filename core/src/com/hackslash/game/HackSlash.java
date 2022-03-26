@@ -1,31 +1,36 @@
 package com.hackslash.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class HackSlash extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-	}
+//    SpriteBatch batch;
+//    Texture img;
 
-	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
-	}
+    ShapeRenderer shape;
+    Enemy enemy;
+
+    @Override
+    public void create() {
+        shape = new ShapeRenderer();
+        enemy = new Enemy(150, 200, 70, 20, 10);
+    }
+
+    @Override
+    //renders the application 60 frames per second.
+
+    public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        enemy.update();
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        enemy.draw(shape);
+        shape.end();
+    }
+
+
 }
