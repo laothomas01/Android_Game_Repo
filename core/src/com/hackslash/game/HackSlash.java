@@ -8,25 +8,50 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class HackSlash extends ApplicationAdapter {
 
     ShapeRenderer shape;
-    Enemy enemy;
+    ArrayList<Enemy> enemies = new ArrayList<>();
+    Random r = new Random();
 
+
+    /**
+     * main game loop
+     * <p>
+     * we should take all the current code and place it into a function
+     */
     @Override
     public void create() {
         shape = new ShapeRenderer();
-        enemy = new Enemy(150, 200, 70, 20, 10);
+        for (int i = 0; i < 1; i++) {
+            enemies.add(new Enemy(r.nextInt(Gdx.graphics.getWidth()),
+                    r.nextInt(Gdx.graphics.getHeight()),
+                    50, r.nextInt(15), r.nextInt(15)));
+        }
     }
 
-    @Override
-    //renders the application 60 frames per second.
 
+    @Override
+
+
+    /**
+    * renders the game at 60 frames per second
+    */
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        enemy.update();
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        enemy.draw(shape);
+        for (Enemy enemy : enemies) {
+            /**
+             * update the enemy's actions
+             */
+            enemy.update();
+
+            enemy.draw(shape);
+        }
+
         shape.end();
     }
 
