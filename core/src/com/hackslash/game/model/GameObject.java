@@ -1,0 +1,37 @@
+package com.hackslash.game.model;
+
+import com.badlogic.gdx.math.Vector2;
+
+public class GameObject {
+    /**
+     * MOVEMENT
+     * x: x coordinate
+     * y: y coordinate
+     * dx: x traveling direction
+     * dy: y traveling direction
+     *
+     * Enemy Shape: circles
+     * Player Shape: square
+     */
+
+    float x;
+    float y;
+
+    float dx;
+    float dy;
+
+    float speed;
+    float size;
+//    float vertices[];
+//    float shape_x[];
+//    float shape_y[];
+
+    float radians;
+
+
+
+
+
+
+
+}
