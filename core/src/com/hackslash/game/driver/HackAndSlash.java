@@ -21,6 +21,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
     ShapeRenderer sr;
     Player player;
+    Enemy enemy;
 
 
     /**
@@ -30,6 +31,7 @@ public class HackAndSlash extends ApplicationAdapter {
     public void create() {
         sr = new ShapeRenderer();
         player = new Player();
+        enemy = new Enemy();
     }
 
 
@@ -37,8 +39,11 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
+        ScreenUtils.clear(0, 0, 0, 0);
         player.update(Gdx.graphics.getDeltaTime());
         player.draw(sr);
+        enemy.draw(sr);
+        enemy.update(Gdx.graphics.getDeltaTime(), player);
     }
 
 
