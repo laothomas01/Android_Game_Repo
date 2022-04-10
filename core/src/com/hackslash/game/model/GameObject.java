@@ -21,13 +21,11 @@ public class GameObject {
     float dy;
 
     float speed;
-
     float size;
-//    float vertices[];
-//    float shape_x[];
-//    float shape_y[];
+    float damage;
+    float health;
 
-    float radians;
+    Vector2 position;
 
 
 }

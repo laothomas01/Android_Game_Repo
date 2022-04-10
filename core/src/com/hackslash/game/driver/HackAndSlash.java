@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 
@@ -22,7 +23,8 @@ public class HackAndSlash extends ApplicationAdapter {
     ShapeRenderer sr;
     Player player;
     Enemy enemy;
-
+    Camera cam;
+    float deltaTime;
 
     /**
      * Method called once when the application is created.
@@ -32,6 +34,8 @@ public class HackAndSlash extends ApplicationAdapter {
         sr = new ShapeRenderer();
         player = new Player();
         enemy = new Enemy();
+        cam = new Camera();
+
     }
 
 
@@ -39,11 +43,13 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
+        deltaTime = Gdx.graphics.getDeltaTime();
         ScreenUtils.clear(0, 0, 0, 0);
-        player.update(Gdx.graphics.getDeltaTime());
+        player.update(deltaTime);
         player.draw(sr);
         enemy.draw(sr);
-        enemy.update(Gdx.graphics.getDeltaTime(), player);
+        enemy.update(deltaTime, player);
+        cam.update(player, deltaTime);
     }
 
 

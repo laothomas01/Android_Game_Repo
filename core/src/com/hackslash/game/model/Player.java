@@ -43,16 +43,13 @@ public class Player extends GameObject {
          */
         player_position = new Vector2(x, y);
 
-
+        speed = 10;
         maxSpeed = 300;
 
 
     }
 
     public void update(float dt) {
-
-
-        //set shape
 
 
     }
@@ -111,12 +108,20 @@ public class Player extends GameObject {
         return player_position.x;
     }
 
+    public float getPlayerSpeed() {
+        return speed;
+    }
+
     public float getYPosition() {
         return player_position.y;
     }
-    public Vector2 getPlayerPosition()
-    {
+
+    public Vector2 getPlayerPosition() {
         return player_position;
+    }
+
+    public void handleInputs(float dt) {
+        
     }
 
 }
