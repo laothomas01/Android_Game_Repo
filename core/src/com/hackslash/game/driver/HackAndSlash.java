@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 
@@ -31,6 +32,9 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
+    Enemy enemy;
+    Camera cam;
+    float deltaTime;
 
     /**
      * Method called once when the application is created.
@@ -58,6 +62,8 @@ public class HackAndSlash extends ApplicationAdapter {
         stage = new Stage();
         stage.addActor(touchpad);
         Gdx.input.setInputProcessor(stage);
+        enemy = new Enemy();
+        cam = new Camera();
 
     }
 
@@ -70,8 +76,14 @@ public class HackAndSlash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         player.setX(player.getX() + touchpad.getKnobPercentX()*player.maxSpeed);
         player.setY(player.getY() + touchpad.getKnobPercentY()*player.maxSpeed);
-        player.update(Gdx.graphics.getDeltaTime());
+
+        deltaTime = Gdx.graphics.getDeltaTime();
+        ScreenUtils.clear(0, 0, 0, 0);
+        player.update(deltaTime);
         player.draw(sr);
+        enemy.draw(sr);
+        enemy.update(deltaTime, player);
+        cam.update(player, deltaTime);
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
