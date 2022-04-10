@@ -6,10 +6,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
@@ -18,10 +23,14 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class HackAndSlash extends ApplicationAdapter {
-
+    private Stage stage;
     ShapeRenderer sr;
     Player player;
-
+    private Touchpad touchpad;
+    private Touchpad.TouchpadStyle touchpadStyle;
+    private Skin skin;
+    private Drawable touchBackground;
+    private Drawable touchKnob;
 
     /**
      * Method called once when the application is created.
@@ -30,6 +39,26 @@ public class HackAndSlash extends ApplicationAdapter {
     public void create() {
         sr = new ShapeRenderer();
         player = new Player();
+
+        skin = new Skin();
+        skin.add("touchBackground", new Texture("touchBackground.png"));
+        skin.add("touchKnob", new Texture("touchKnob.png"));
+
+        touchBackground = skin.getDrawable("touchBackground");
+        touchKnob = skin.getDrawable("touchKnob");
+
+        touchpadStyle = new Touchpad.TouchpadStyle();
+        touchpadStyle.background = touchBackground;
+        touchpadStyle.knob = touchKnob;
+        //Create TouchPad with the style
+        touchpad = new Touchpad(10, touchpadStyle);
+        touchpad.setBounds(15, 15, 200, 200);
+
+        //Create a Stage and add TouchPad
+        stage = new Stage();
+        stage.addActor(touchpad);
+        Gdx.input.setInputProcessor(stage);
+
     }
 
 
@@ -37,8 +66,15 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        player.setX(player.getX() + touchpad.getKnobPercentX()*player.maxSpeed);
+        player.setY(player.getY() + touchpad.getKnobPercentY()*player.maxSpeed);
         player.update(Gdx.graphics.getDeltaTime());
         player.draw(sr);
+
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
 
 

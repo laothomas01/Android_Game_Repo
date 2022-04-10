@@ -18,7 +18,7 @@ import com.hackslash.game.driver.HackAndSlash;
 
 public class Player extends GameObject {
 
-    float maxSpeed;
+    public float maxSpeed;
 
 
     Vector2 center;
@@ -36,19 +36,35 @@ public class Player extends GameObject {
         y = Gdx.graphics.getHeight() / 2;
 
 
-        maxSpeed = 300;
+        maxSpeed = 100;
 
 
     }
 
     public void update(float dt) {
 
-
         //set shape
         setShape();
 
 
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float dt) {
+        x = dt;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float dt) {
+        y = dt;
+    }
+
 
 
     public void draw(ShapeRenderer sr) {
