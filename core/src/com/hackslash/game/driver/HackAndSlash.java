@@ -5,7 +5,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -32,7 +31,7 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-    Enemy enemy;
+    //Enemy enemy;
     Camera cam;
     float deltaTime;
 
@@ -62,7 +61,7 @@ public class HackAndSlash extends ApplicationAdapter {
         stage = new Stage();
         stage.addActor(touchpad);
         Gdx.input.setInputProcessor(stage);
-        enemy = new Enemy();
+        //enemy = new Enemy();
         cam = new Camera();
 
     }
@@ -74,15 +73,15 @@ public class HackAndSlash extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        player.setX(player.getX() + touchpad.getKnobPercentX()*player.maxSpeed);
-        player.setY(player.getY() + touchpad.getKnobPercentY()*player.maxSpeed);
+        player.setXPosition(player.getXPosition() + touchpad.getKnobPercentX()*player.getPlayerSpeed());
+        player.setYPosition(player.getYPosition() + touchpad.getKnobPercentY()*player.getPlayerSpeed());
 
         deltaTime = Gdx.graphics.getDeltaTime();
         ScreenUtils.clear(0, 0, 0, 0);
         player.update(deltaTime);
         player.draw(sr);
-        enemy.draw(sr);
-        enemy.update(deltaTime, player);
+        //enemy.draw(sr);
+        //enemy.update(deltaTime, player);
         cam.update(player, deltaTime);
 
         stage.act(Gdx.graphics.getDeltaTime());

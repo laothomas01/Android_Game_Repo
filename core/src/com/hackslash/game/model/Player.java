@@ -54,26 +54,8 @@ public class Player extends GameObject {
 
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float dt) {
-        x = dt;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float dt) {
-        y = dt;
-    }
-
-
 
     public void draw(ShapeRenderer sr) {
-
         sr.setColor(1, 1, 1, 1);
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.rect(player_position.x, player_position.y, 20, 20);
@@ -124,6 +106,15 @@ public class Player extends GameObject {
     public float getXPosition() {
         return player_position.x;
     }
+
+    public void setXPosition(float dt) {
+        player_position.x = dt;
+    }
+
+    public void setYPosition(float dt) {
+        player_position.y = dt;
+    }
+
 
     public float getPlayerSpeed() {
         return speed;
