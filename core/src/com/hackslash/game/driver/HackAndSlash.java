@@ -31,10 +31,13 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-    //Enemy enemy;
+    Enemy enemy;
     Camera cam;
     float deltaTime;
 
+
+    float xMove;
+    float yMove;
     /**
      * Method called once when the application is created.
      */
@@ -60,8 +63,9 @@ public class HackAndSlash extends ApplicationAdapter {
         //Create a Stage and add TouchPad
         stage = new Stage();
         stage.addActor(touchpad);
+
         Gdx.input.setInputProcessor(stage);
-        //enemy = new Enemy();
+        enemy = new Enemy();
         cam = new Camera();
 
     }
@@ -73,15 +77,21 @@ public class HackAndSlash extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        player.setXPosition(player.getXPosition() + touchpad.getKnobPercentX()*player.getPlayerSpeed());
-        player.setYPosition(player.getYPosition() + touchpad.getKnobPercentY()*player.getPlayerSpeed());
+
 
         deltaTime = Gdx.graphics.getDeltaTime();
-        ScreenUtils.clear(0, 0, 0, 0);
-        player.update(deltaTime);
+
+
         player.draw(sr);
-        //enemy.draw(sr);
-        //enemy.update(deltaTime, player);
+        /**
+         * Update Player Movement
+         */
+        xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed();
+        yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed();
+        player.setXPosition(xMove);
+        player.setYPosition(yMove);
+        enemy.draw(sr);
+        enemy.update(deltaTime, player);
         cam.update(player, deltaTime);
 
         stage.act(Gdx.graphics.getDeltaTime());

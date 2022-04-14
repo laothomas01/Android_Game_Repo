@@ -107,12 +107,12 @@ public class Player extends GameObject {
         return player_position.x;
     }
 
-    public void setXPosition(float dt) {
-        player_position.x = dt;
+    public void setXPosition(float dx) {
+        player_position.x = dx;
     }
 
-    public void setYPosition(float dt) {
-        player_position.y = dt;
+    public void setYPosition(float dy) {
+        player_position.y = dy;
     }
 
 
@@ -128,8 +128,5 @@ public class Player extends GameObject {
         return player_position;
     }
 
-    public void handleInputs(float dt) {
-        
-    }
 
 }

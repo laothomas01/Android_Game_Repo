@@ -46,16 +46,19 @@ public class Enemy extends GameObject {
         /**
          * two different ways to have the enemy or any object follow another object in the most basic form
          */
-        // Vector2 playerPos = new Vector2(player.getPlayerPosition());
-        //        enemy_position = enemy_position.add(MathUtils.cosDeg(angle) * speed * dt, MathUtils.sinDeg(angle) * speed * dt);
-        //        enemy_direction = playerPos.sub(enemy_position);
-        //        enemy_direction.nor();
-        //        enemy_position = enemy_position.add(enemy_direction.x * speed * dt, enemy_direction.y * speed * dt);
-
         Vector2 playerPos = new Vector2(player.getPlayerPosition());
-        float angle = MathUtils.atan2(playerPos.y - position.y, playerPos.x - position.x) * MathUtils.radiansToDegrees;
-        getEnemyPosition().x += MathUtils.cos(angle) * speed * dt;
-        getEnemyPosition().y += MathUtils.sin(angle) * speed * dt;
+        Vector2 direction = new Vector2();
+        direction.x = (playerPos.x + 40) - (getEnemyPosition().x + 40);
+        direction.y = (playerPos.y + 40) - (getEnemyPosition().y + 40);
+        direction.nor();
+        getEnemyPosition().x += direction.x * 3;
+        getEnemyPosition().y += direction.y * 3;
+
+//        Vector2 playerPos = player.getPlayerPosition();
+//
+//        float angle = MathUtils.atan2(playerPos.y - position.y, playerPos.x - position.x) * MathUtils.radiansToDegrees;
+//        getEnemyPosition().x += MathUtils.cos(angle) * speed * dt;
+//        getEnemyPosition().y += MathUtils.sin(angle) * speed * dt;
 
     }
 
