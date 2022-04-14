@@ -19,7 +19,6 @@ public class Enemy extends GameObject {
         x = Gdx.graphics.getWidth() / 4;
         y = Gdx.graphics.getHeight() / 4;
         position = new Vector2(x, y);
-        enemy_direction = new Vector2();
         radius = 20;
         size = radius;
         speed = 100;
@@ -46,13 +45,14 @@ public class Enemy extends GameObject {
         /**
          * two different ways to have the enemy or any object follow another object in the most basic form
          */
-        Vector2 playerPos = new Vector2(player.getPlayerPosition());
-        Vector2 direction = new Vector2();
-        direction.x = (playerPos.x + 40) - (getEnemyPosition().x + 40);
-        direction.y = (playerPos.y + 40) - (getEnemyPosition().y + 40);
-        direction.nor();
-        getEnemyPosition().x += direction.x * 3;
-        getEnemyPosition().y += direction.y * 3;
+//        Vector2 playerPos = new Vector2(player.getPlayerPosition());
+        Vector2 playerPos = player.getPlayerPosition();
+        Vector2 enemy_direction = new Vector2();
+        enemy_direction.x = (playerPos.x + 40) - (getEnemyPosition().x + 40);
+        enemy_direction.y = (playerPos.y + 40) - (getEnemyPosition().y + 40);
+        enemy_direction.nor();
+        getEnemyPosition().x += enemy_direction.x * speed * dt;
+        getEnemyPosition().y += enemy_direction.y * speed * dt;
 
 //        Vector2 playerPos = player.getPlayerPosition();
 //
@@ -74,5 +74,7 @@ public class Enemy extends GameObject {
         return position;
     }
 
-
+    public void setEnemySize(float size) {
+        this.size = size;
+    }
 }

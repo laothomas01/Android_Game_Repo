@@ -19,37 +19,36 @@ import com.hackslash.game.driver.HackAndSlash;
 
 public class Player extends GameObject {
 
-    public float maxSpeed;
 
 
     Vector2 player_position;
-    Vector2 center;
-    FloatArray vertices;
 
-    /**
-     * Filling in the polygon
-     */
-    Texture texture;
-    PolygonSprite polySprite;
-    PolygonSpriteBatch polyBatch;
+
+
+
+    //    Vector2 center;
+//    FloatArray vertices;
+//
+//    /**
+//     * Filling in the polygon
+//     */
+//    Texture texture;
+//    PolygonSprite polySprite;
+//    PolygonSpriteBatch polyBatch;
 
     public Player() {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
         size = 25;
-        //will update this over time for movement.
         /**
          * useful for vector functions
          */
         player_position = new Vector2(x, y);
 
-        speed = 10;
-        maxSpeed = 300;
-
-
-    }
-
-    public void update(float dt) {
+        /**
+         * with delta time, we move at speed * Number of units per second even if the frame rate drops.
+         */
+        speed = 200;
 
 
     }
@@ -69,42 +68,59 @@ public class Player extends GameObject {
 //        sr.end();
     }
 
-    void setShape() {
-
-
-//        center = new Vector2(player_position.x, player_position.y);
-//        vertices = new FloatArray(new float[]{center.x, center.y + size, center.x + size, center.y, center.x, center.y - size, center.x - size, center.y});
+//    void setShape() {
 //
+//
+////        center = new Vector2(player_position.x, player_position.y);
+////        vertices = new FloatArray(new float[]{center.x, center.y + size, center.x + size, center.y, center.x, center.y - size, center.x - size, center.y});
+////
+////
+////        /**
+////         * ----------------------------------------------------------------------------
+////         */
+////
+////        /**
+////         * all this code just to fill in a polygon. F..M...L... :( !
+////         */
+////        polyBatch = new PolygonSpriteBatch();
+////        Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+////        pix.setColor(1, 1, 1, 1);
+////        pix.fill();
+////        texture = new Texture(pix);
+////        TextureRegion textureRegion = new TextureRegion(texture);
+////        EarClippingTriangulator triangulator = new EarClippingTriangulator();
+////        ShortArray triangleIndices = triangulator.computeTriangles(vertices);
+////        PolygonRegion polyReg = new PolygonRegion(textureRegion, vertices.toArray(), triangleIndices.toArray());
+////        polySprite = new PolygonSprite(polyReg);
+////        polyBatch.begin();
+////        polySprite.draw(polyBatch);
+////        polyBatch.end();
+////
 //
 //        /**
 //         * ----------------------------------------------------------------------------
 //         */
-//
-//        /**
-//         * all this code just to fill in a polygon. F..M...L... :( !
-//         */
-//        polyBatch = new PolygonSpriteBatch();
-//        Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-//        pix.setColor(1, 1, 1, 1);
-//        pix.fill();
-//        texture = new Texture(pix);
-//        TextureRegion textureRegion = new TextureRegion(texture);
-//        EarClippingTriangulator triangulator = new EarClippingTriangulator();
-//        ShortArray triangleIndices = triangulator.computeTriangles(vertices);
-//        PolygonRegion polyReg = new PolygonRegion(textureRegion, vertices.toArray(), triangleIndices.toArray());
-//        polySprite = new PolygonSprite(polyReg);
-//        polyBatch.begin();
-//        polySprite.draw(polyBatch);
-//        polyBatch.end();
-//
-
-        /**
-         * ----------------------------------------------------------------------------
-         */
-    }
+//    }
 
     public float getXPosition() {
         return player_position.x;
+    }
+
+    public float getYPosition() {
+        return player_position.y;
+    }
+
+    public float getPlayerSpeed() {
+        return speed;
+    }
+
+
+    public Vector2 getPlayerPosition() {
+        return player_position;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     public void setXPosition(float dx) {
@@ -113,19 +129,6 @@ public class Player extends GameObject {
 
     public void setYPosition(float dy) {
         player_position.y = dy;
-    }
-
-
-    public float getPlayerSpeed() {
-        return speed;
-    }
-
-    public float getYPosition() {
-        return player_position.y;
-    }
-
-    public Vector2 getPlayerPosition() {
-        return player_position;
     }
 
 

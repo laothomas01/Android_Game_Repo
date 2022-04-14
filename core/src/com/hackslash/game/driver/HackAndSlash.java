@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,28 +24,46 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class HackAndSlash extends ApplicationAdapter {
-    private Stage stage;
+
     ShapeRenderer sr;
     Player player;
+    Enemy enemy;
+    float xMove;
+    float yMove;
+
+    /**
+     * -------TOUCH PAD------
+     */
+    private Stage stage;
     private Touchpad touchpad;
     private Touchpad.TouchpadStyle touchpadStyle;
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-    Enemy enemy;
-    Camera cam;
+    /**
+     * -------------------------
+     */
+
+    /**
+     * Orthographic camera
+     */
+    OrthographicCamera cam;
+
+
     float deltaTime;
 
+    SpriteBatch batch;
 
-
-    float xMove;
-    float yMove;
 
     /**
      * Method called once when the application is created.
+     * <p>
+     * like a Start() function in Unity
      */
 
     public void create() {
+//        batch = new SpriteBatch();
+
         sr = new ShapeRenderer();
         player = new Player();
 
@@ -68,7 +87,10 @@ public class HackAndSlash extends ApplicationAdapter {
 
         Gdx.input.setInputProcessor(stage);
         enemy = new Enemy();
-        cam = new Camera();
+
+        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
+
 
     }
 
@@ -80,25 +102,36 @@ public class HackAndSlash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
+        /**
+         * make game's frame rate independent
+         */
         deltaTime = Gdx.graphics.getDeltaTime();
-
-
-        player.draw(sr);
         /**
          * Update Player Movement
          */
-        xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed();
-        yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed();
-
+        xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
+        yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
         player.setXPosition(xMove);
         player.setYPosition(yMove);
-        enemy.draw(sr);
-        enemy.update(deltaTime, player);
-        cam.update(player, deltaTime);
+        /**
+         * draw objects
+         */
+        player.draw(sr);
 
-        stage.act(Gdx.graphics.getDeltaTime());
+
+//        enemy.draw(sr);
+        enemy.update(deltaTime, player);
+
+
+        stage.act(deltaTime);
         stage.draw();
+
+        cam.position.set(player.getXPosition(), player.getYPosition(), 0);
+        sr.setProjectionMatrix(cam.combined);
+
+        cam.update();
+
+
     }
 
 
