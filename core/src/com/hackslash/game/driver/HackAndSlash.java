@@ -36,8 +36,10 @@ public class HackAndSlash extends ApplicationAdapter {
     float deltaTime;
 
 
+
     float xMove;
     float yMove;
+
     /**
      * Method called once when the application is created.
      */
@@ -88,6 +90,7 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed();
         yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed();
+
         player.setXPosition(xMove);
         player.setYPosition(yMove);
         enemy.draw(sr);
