@@ -6,14 +6,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.badlogic.gdx.graphics.Color;
+import com.hackslash.game.model.PlayerHealthBar;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,32 +28,72 @@ public class HackAndSlash extends ApplicationAdapter {
 
     ShapeRenderer sr;
     Player player;
-    
-    private OrthographicCamera cam;
-    private Vector3 pos;
+    Enemy enemy;
+    float xMove;
+    float yMove;
 
-	private ShapeRenderer healthBar;
-	private Color cl;
-	private float barWidth = 500f;
+    // Player's Health Bar
+    private PlayerHealthBar playerHB;
+    private int playerHBSize;
 
-	private float playerHealth = 5f;
+    /**
+     * -------TOUCH PAD------
+     */
+    private Stage stage;
+    private Touchpad touchpad;
+    private Touchpad.TouchpadStyle touchpadStyle;
+    private Skin skin;
+    private Drawable touchBackground;
+    private Drawable touchKnob;
+
+    /**
+     * Orthographic camera
+     */
+    OrthographicCamera cam;
+
+    float deltaTime;
+
+    SpriteBatch batch;
 
 
     /**
      * Method called once when the application is created.
+     * <p>
+     * like a Start() function in Unity
      */
 
     public void create() {
+
         sr = new ShapeRenderer();
         player = new Player();
-        
-        
-		healthBar = new ShapeRenderer();
-		cam = new OrthographicCamera();
-		cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        playerHB = new PlayerHealthBar(player);
+        playerHBSize = 500;
+
+        skin = new Skin();
+        skin.add("touchBackground", new Texture("touchBackground.png"));
+        skin.add("touchKnob", new Texture("touchKnob.png"));
+
+        touchBackground = skin.getDrawable("touchBackground");
+        touchKnob = skin.getDrawable("touchKnob");
+
+        touchpadStyle = new Touchpad.TouchpadStyle();
+        touchpadStyle.background = touchBackground;
+        touchpadStyle.knob = touchKnob;
+        //Create TouchPad with the style
+        touchpad = new Touchpad(10, touchpadStyle);
+        touchpad.setBounds(15, 15, 200, 200);
+
+        //Create a Stage and add TouchPad
+        stage = new Stage();
+        stage.addActor(touchpad);
+
+        Gdx.input.setInputProcessor(stage);
+        enemy = new Enemy();
+
+        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 
 
-		pos = new Vector3((Gdx.graphics.getWidth()/2f),(Gdx.graphics.getHeight()/2f), 0);
     }
 
 
@@ -55,38 +101,41 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
-        cam.update();
-        
-        player.update(Gdx.graphics.getDeltaTime());
+        Gdx.gl.glClearColor(1f, 192/255f, 203/255f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        /**
+         * make game's frame rate independent
+         */
+        deltaTime = Gdx.graphics.getDeltaTime();
+
+        /**
+         * draw objects
+         */
         player.draw(sr);
-        
-        if(Gdx.input.isTouched())
-		{
-			playerHealth -= 1f;
-			barWidth -= 100f;
-			cam.unproject(pos);
-		}
 
-		Gdx.gl.glClearColor(1,1,1,1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        playerHB.draw(sr, playerHBSize);
 
-		if(playerHealth >= 4)
-		{
-			cl = Color.GREEN;
-		}
-		else if(playerHealth >= 2)
-		{
-			cl = Color.YELLOW;
-		}
-		else
-		{
-			cl = Color.RED;
-		}
+        /**
+         * Update Player Movement
+         */
+        xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
+        yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
+        player.setXPosition(xMove);
+        player.setYPosition(yMove);
 
-		healthBar.begin(ShapeRenderer.ShapeType.Filled);
-		healthBar.setColor(cl);
-		healthBar.rect(0, 0, barWidth,50);
-		healthBar.end();
+        enemy.draw(sr);
+        enemy.update(deltaTime, player);
+
+        stage.act(deltaTime);
+        stage.draw();
+
+        cam.position.set(player.getXPosition(), player.getYPosition(), 0);
+        sr.setProjectionMatrix(cam.combined);
+
+        cam.update();
+
+
     }
 
 
@@ -115,10 +164,7 @@ public class HackAndSlash extends ApplicationAdapter {
      */
     public void dispose() {
         sr.dispose();
-		healthBar.dispose();
     }
-
-
 
 
 }
