@@ -68,6 +68,7 @@ public class HackAndSlash extends ApplicationAdapter {
         player = new Player();
         playerHB = new PlayerHealthBar(player);
         playerHBSize = 500;
+        batch = new SpriteBatch();
 
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
@@ -84,7 +85,7 @@ public class HackAndSlash extends ApplicationAdapter {
         touchpad.setBounds(15, 15, 200, 200);
 
         //Create a Stage and add TouchPad
-        stage = new Stage();
+        stage = new Stage(new ScreenViewport());
         stage.addActor(touchpad);
 
         Gdx.input.setInputProcessor(stage);
@@ -114,6 +115,7 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         player.draw(sr);
 
+        sr.setProjectionMatrix(batch.getProjectionMatrix());
         playerHB.draw(sr, playerHBSize);
 
         /**
@@ -144,6 +146,7 @@ public class HackAndSlash extends ApplicationAdapter {
      * The parameters are the new width and height the screen has been resized to in pixels.
      */
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     /**
@@ -164,6 +167,7 @@ public class HackAndSlash extends ApplicationAdapter {
      */
     public void dispose() {
         sr.dispose();
+        stage.dispose();
     }
 
 
