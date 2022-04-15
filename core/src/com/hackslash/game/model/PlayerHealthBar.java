@@ -16,7 +16,7 @@ public class PlayerHealthBar {
     public void draw(ShapeRenderer sr, int size) {
         sr.setColor(cl);
         sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.rect(0, 0, size, 50);
+        sr.rect(250, 100, size, 50);
         sr.end();
     }
 
