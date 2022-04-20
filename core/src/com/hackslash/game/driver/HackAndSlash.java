@@ -29,6 +29,7 @@ public class HackAndSlash extends ApplicationAdapter {
     ShapeRenderer sr;
     Player player;
     Enemy enemy;
+
     float xMove;
     float yMove;
 
@@ -56,6 +57,10 @@ public class HackAndSlash extends ApplicationAdapter {
     SpriteBatch batch;
 
 
+    Camera cam;
+    float deltaTime;
+
+
     /**
      * Method called once when the application is created.
      * <p>
@@ -66,6 +71,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
         sr = new ShapeRenderer();
         player = new Player();
+
         playerHB = new PlayerHealthBar(player);
         playerHBSize = 500;
         batch = new SpriteBatch();
@@ -95,6 +101,10 @@ public class HackAndSlash extends ApplicationAdapter {
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 
 
+        enemy = new Enemy();
+        cam = new Camera();
+
+
     }
 
 
@@ -102,6 +112,7 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
+
         Gdx.gl.glClearColor(1f, 192/255f, 203/255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -137,6 +148,15 @@ public class HackAndSlash extends ApplicationAdapter {
 
         cam.update();
 
+
+
+        deltaTime = Gdx.graphics.getDeltaTime();
+        ScreenUtils.clear(0, 0, 0, 0);
+        player.update(deltaTime);
+        player.draw(sr);
+        enemy.draw(sr);
+        enemy.update(deltaTime, player);
+        cam.update(player, deltaTime);
 
     }
 

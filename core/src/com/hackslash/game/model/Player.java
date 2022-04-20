@@ -18,17 +18,34 @@ import com.badlogic.gdx.utils.ShortArray;
 import com.hackslash.game.driver.HackAndSlash;
 
 public class Player extends GameObject {
-    Vector2 player_position;
+
     int playerHealth;
+
+
+    float maxSpeed;
+
+
+    Vector2 player_position;
+    Vector2 center;
+    FloatArray vertices;
+
+    /**
+     * Filling in the polygon
+     */
+    Texture texture;
+    PolygonSprite polySprite;
+    PolygonSpriteBatch polyBatch;
 
     public Player() {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
         size = 25;
+
         /**
          * useful for vector functions
          */
         player_position = new Vector2(x, y);
+
 
         /**
          * with delta time, we move at speed * Number of units per second even if the frame rate drops.
@@ -37,6 +54,14 @@ public class Player extends GameObject {
 
         playerHealth = 100;
 
+        maxSpeed = 300;
+
+
+    }
+
+    public void update(float dt) {
+
+
     }
 
     public void draw(ShapeRenderer sr) {
@@ -44,11 +69,19 @@ public class Player extends GameObject {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.rect(player_position.x, player_position.y, 20, 20);
         sr.end();
+//        sr.begin(ShapeRenderer.ShapeType.Line);
+//        sr.setColor(0, 1, 0, 1);
+//        setShape();
+//        sr.polygon(vertices.toArray());
+//
+//
+//        sr.end();
     }
 
     public float getXPosition() {
         return player_position.x;
     }
+
 
     public float getYPosition() {
         return player_position.y;
@@ -76,6 +109,11 @@ public class Player extends GameObject {
 
     public int getPlayerHealth(){
         return playerHealth;
+
+
+    public void handleInputs(float dt) {
+        
+
     }
 
 

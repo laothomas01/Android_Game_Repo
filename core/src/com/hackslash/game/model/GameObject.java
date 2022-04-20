@@ -9,7 +9,7 @@ public class GameObject {
      * y: y coordinate
      * dx: x traveling direction
      * dy: y traveling direction
-     *
+     * <p>
      * Enemy Shape: circles
      * Player Shape: square
      */
@@ -22,16 +22,10 @@ public class GameObject {
 
     float speed;
     float size;
-//    float vertices[];
-//    float shape_x[];
-//    float shape_y[];
+    float damage;
+    float health;
 
-    float radians;
-
-
-
-
-
+    Vector2 position;
 
 
 }
