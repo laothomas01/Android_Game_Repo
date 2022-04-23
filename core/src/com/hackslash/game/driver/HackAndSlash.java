@@ -16,6 +16,7 @@ import com.hackslash.game.model.Spawner;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class HackAndSlash extends ApplicationAdapter {
 
@@ -43,13 +44,14 @@ public class HackAndSlash extends ApplicationAdapter {
      * Initialize spawner
      */
     float deltaTime;
-
+    Random rand = new Random();
 
     /**
      * Method called once when the application is created.
      * like a Start() function in Unity
      */
     float time_aux = 0;
+
 
     ArrayList<Enemy> e;
     Spawner spawn;
@@ -85,7 +87,7 @@ public class HackAndSlash extends ApplicationAdapter {
 //        spawn = new Spawner();
 
 //        e = spawn.init_enemy_spawner();
-        e = new ArrayList<>();
+        e = new ArrayList<Enemy>();
 
 //
     }
@@ -119,15 +121,22 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         sr.setProjectionMatrix(cam.combined);
         player.draw(sr);
-        for (int i = 0; i < 5; i++) {
-            e.add(new Enemy());
+
+        if (time_aux >= 5) {
+            for (int i = 0; i < 1; i++) {
+                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
+            }
+
+
+            time_aux = 0;
+        } else {
+            time_aux += deltaTime;
         }
         for (Enemy enemies : e) {
             enemies.draw(sr);
             enemies.update(deltaTime, player);
         }
-//        e.draw(sr);
-//        e.update(deltaTime, player);
+
         stage.act(deltaTime);
         stage.draw();
         /**
@@ -137,8 +146,6 @@ public class HackAndSlash extends ApplicationAdapter {
         cam.position.x = player.getXPosition();
         cam.position.y = player.getYPosition();
         cam.update();
-
-
     }
 
 
