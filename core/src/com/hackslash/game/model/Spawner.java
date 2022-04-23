@@ -8,10 +8,6 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class Spawner extends GameObject {
-    Random rand = new Random();
-    float width = Gdx.graphics.getWidth();
-    float height = Gdx.graphics.getHeight();
-    float NUMBER_OF_ENEMIES = 5;
     float wait_time = 5;
     float time_aux = 0;
 
@@ -19,10 +15,18 @@ public class Spawner extends GameObject {
 
     }
 
+    public Spawner(int posX, int posY) {
+        x = posX;
+        y = posY;
+    }
+
     public void spawnEnemies(ArrayList<Enemy> e, float deltaTime, Player player, ShapeRenderer sr) {
-        if (time_aux >= 5) {
+        /**
+         * Every 5 seconds, the
+         */
+        if (time_aux >= wait_time) {
             for (int i = 0; i < 1; i++) {
-                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
+                e.add(new Enemy(get_X_Spawn_Position(), get_Y_Spawn_Position(), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
             }
 
 
@@ -35,28 +39,14 @@ public class Spawner extends GameObject {
             enemies.update(deltaTime, player);
         }
     }
-//
-//    ArrayList<Enemy> enemies;
-//
-//    public ArrayList<Enemy> init_enemy_spawner() {
-//        enemies = new ArrayList<>();
-////        for (int i = 0; i < 10; i++) {
-//        Enemy e = new Enemy(rand.nextInt((int) width), rand.nextInt((int) height), rand.nextInt(100), 1, 20, 1);
-//        enemies.add(e);
-////        }
-//        return enemies;
-//    }
-//
-////    public void spawn_enemies(ArrayList<Enemy> e, ShapeRenderer sr) {
-////        for (Enemy enemy : e) {
-////            enemy.draw();
-////        }
-////        Iterator<Enemy> iter = enemies.iterator();
-////        while (iter.hasNext()) {
-////            Enemy e = iter.next();
-////
-////        }
-//    }
-//
+
+    public float get_X_Spawn_Position() {
+        return x;
+    }
+
+    public float get_Y_Spawn_Position() {
+        return y;
+    }
+
 
 }

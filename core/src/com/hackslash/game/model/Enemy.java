@@ -58,8 +58,8 @@ public class Enemy extends GameObject {
          */
         Vector2 playerPos = player.getPlayerPosition();
         Vector2 enemy_direction = new Vector2();
-        enemy_direction.x = (playerPos.x + 40) - (getEnemyPosition().x + 40);
-        enemy_direction.y = (playerPos.y + 40) - (getEnemyPosition().y + 40);
+        enemy_direction.x = (playerPos.x + 20) - (getEnemyPosition().x + 20);
+        enemy_direction.y = (playerPos.y + 20) - (getEnemyPosition().y + 20);
         enemy_direction.nor();
         getEnemyPosition().x += enemy_direction.x * speed * dt;
         getEnemyPosition().y += enemy_direction.y * speed * dt;

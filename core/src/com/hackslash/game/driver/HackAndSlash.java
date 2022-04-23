@@ -22,7 +22,6 @@ public class HackAndSlash extends ApplicationAdapter {
 
     ShapeRenderer sr;
     Player player;
-    //    Enemy e;
     OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
@@ -40,21 +39,27 @@ public class HackAndSlash extends ApplicationAdapter {
      * -------------------------
      */
 
-    /**
-     * Initialize spawner
-     */
     float deltaTime;
-    Random rand = new Random();
 
     /**
-     * Method called once when the application is created.
-     * like a Start() function in Unity
+     * Initialize Spawners
      */
-    float time_aux = 0;
-
-
-    ArrayList<Enemy> e;
-    Spawner spawn;
+    ArrayList<Enemy> e1;
+    ArrayList<Enemy> e2;
+    ArrayList<Enemy> e3;
+    ArrayList<Enemy> e4;
+    ArrayList<Enemy> e5;
+    ArrayList<Enemy> e6;
+    ArrayList<Enemy> e7;
+    ArrayList<Enemy> e8;
+    Spawner quadrant1;
+    Spawner quadrant2;
+    Spawner quadrant3;
+    Spawner quadrant4;
+    Spawner Y_Intercept_Positive;
+    Spawner Y_Intercept_Negative;
+    Spawner X_Intercept_Positive;
+    Spawner X_Intercept_Negative;
 
     public void create() {
 
@@ -83,13 +88,25 @@ public class HackAndSlash extends ApplicationAdapter {
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
-//        e = new Enemy();
-        spawn = new Spawner();
 
-//        e = spawn.init_enemy_spawner();
-        e = new ArrayList<Enemy>();
+        e1 = new ArrayList<Enemy>();
+        e2 = new ArrayList<Enemy>();
+        e3 = new ArrayList<Enemy>();
+        e4 = new ArrayList<Enemy>();
+        e5 = new ArrayList<Enemy>();
+        e6 = new ArrayList<Enemy>();
+        e7 = new ArrayList<Enemy>();
+        e8 = new ArrayList<Enemy>();
+        quadrant1 = new Spawner(2000, 2000);
+        quadrant2 = new Spawner(-2000, 2000);
+        quadrant3 = new Spawner(-2000, -2000);
+        quadrant4 = new Spawner(2000, -2000);
 
-//
+        Y_Intercept_Positive = new Spawner(0, 2000);
+        Y_Intercept_Negative = new Spawner(0, -2000);
+        X_Intercept_Positive = new Spawner(2000, 0);
+        X_Intercept_Negative = new Spawner(-2000, 0);
+
     }
 
 
@@ -116,33 +133,27 @@ public class HackAndSlash extends ApplicationAdapter {
         player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
-        /**
-         * draw objects
-         */
         sr.setProjectionMatrix(cam.combined);
         player.draw(sr);
-        spawn.spawnEnemies(e, deltaTime, player, sr);
-//        if (time_aux >= 5) {
-//            for (int i = 0; i < 1; i++) {
-//                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
-//            }
-//
-//
-//            time_aux = 0;
-//        } else {
-//            time_aux += deltaTime;
-//        }
-//        for (Enemy enemies : e) {
-//            enemies.draw(sr);
-//            enemies.update(deltaTime, player);
-//        }
 
         stage.act(deltaTime);
         stage.draw();
         /**
-         * set cam positions
+         * Spawn Positions
          */
+        quadrant1.spawnEnemies(e1, deltaTime, player, sr);
+        quadrant2.spawnEnemies(e2, deltaTime, player, sr);
+        quadrant3.spawnEnemies(e3, deltaTime, player, sr);
+        quadrant4.spawnEnemies(e4, deltaTime, player, sr);
 
+        Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, sr);
+        Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, sr);
+        X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, sr);
+        X_Intercept_Negative.spawnEnemies(e8, deltaTime, player, sr);
+
+/**
+ * Set cam Position
+ */
         cam.position.x = player.getXPosition();
         cam.position.y = player.getYPosition();
         cam.update();
