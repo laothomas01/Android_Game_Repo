@@ -1,40 +1,15 @@
 package com.hackslash.game.model;
 
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
-import com.badlogic.gdx.graphics.g2d.PolygonSprite;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.EarClippingTriangulator;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.ShortArray;
-import com.hackslash.game.driver.HackAndSlash;
 
 public class Player extends GameObject {
 
 
-
     Vector2 player_position;
 
-
-
-
-    //    Vector2 center;
-//    FloatArray vertices;
-//
-//    /**
-//     * Filling in the polygon
-//     */
-//    Texture texture;
-//    PolygonSprite polySprite;
-//    PolygonSpriteBatch polyBatch;
 
     public Player() {
         x = Gdx.graphics.getWidth() / 2;
@@ -48,9 +23,16 @@ public class Player extends GameObject {
         /**
          * with delta time, we move at speed * Number of units per second even if the frame rate drops.
          */
-        speed = 200;
+        speed = 300f;
 
 
+    }
+
+    public Player(float posX, float posY, int player_size, float player_speed) {
+        x = posX;
+        y = posY;
+        size = player_size;
+        speed = player_speed;
     }
 
 
@@ -59,48 +41,8 @@ public class Player extends GameObject {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.rect(player_position.x, player_position.y, 20, 20);
         sr.end();
-//        sr.begin(ShapeRenderer.ShapeType.Line);
-//        sr.setColor(0, 1, 0, 1);
-//        setShape();
-//        sr.polygon(vertices.toArray());
-//
-//
-//        sr.end();
     }
 
-//    void setShape() {
-//
-//
-////        center = new Vector2(player_position.x, player_position.y);
-////        vertices = new FloatArray(new float[]{center.x, center.y + size, center.x + size, center.y, center.x, center.y - size, center.x - size, center.y});
-////
-////
-////        /**
-////         * ----------------------------------------------------------------------------
-////         */
-////
-////        /**
-////         * all this code just to fill in a polygon. F..M...L... :( !
-////         */
-////        polyBatch = new PolygonSpriteBatch();
-////        Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-////        pix.setColor(1, 1, 1, 1);
-////        pix.fill();
-////        texture = new Texture(pix);
-////        TextureRegion textureRegion = new TextureRegion(texture);
-////        EarClippingTriangulator triangulator = new EarClippingTriangulator();
-////        ShortArray triangleIndices = triangulator.computeTriangles(vertices);
-////        PolygonRegion polyReg = new PolygonRegion(textureRegion, vertices.toArray(), triangleIndices.toArray());
-////        polySprite = new PolygonSprite(polyReg);
-////        polyBatch.begin();
-////        polySprite.draw(polyBatch);
-////        polyBatch.end();
-////
-//
-//        /**
-//         * ----------------------------------------------------------------------------
-//         */
-//    }
 
     public float getXPosition() {
         return player_position.x;
