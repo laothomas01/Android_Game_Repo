@@ -18,6 +18,23 @@ public class Spawner extends GameObject {
     public Spawner() {
 
     }
+
+    public void spawnEnemies(ArrayList<Enemy> e, float deltaTime, Player player, ShapeRenderer sr) {
+        if (time_aux >= 5) {
+            for (int i = 0; i < 1; i++) {
+                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
+            }
+
+
+            time_aux = 0;
+        } else {
+            time_aux += deltaTime;
+        }
+        for (Enemy enemies : e) {
+            enemies.draw(sr);
+            enemies.update(deltaTime, player);
+        }
+    }
 //
 //    ArrayList<Enemy> enemies;
 //

@@ -84,7 +84,7 @@ public class HackAndSlash extends ApplicationAdapter {
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 //        e = new Enemy();
-//        spawn = new Spawner();
+        spawn = new Spawner();
 
 //        e = spawn.init_enemy_spawner();
         e = new ArrayList<Enemy>();
@@ -121,21 +121,21 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         sr.setProjectionMatrix(cam.combined);
         player.draw(sr);
-
-        if (time_aux >= 5) {
-            for (int i = 0; i < 1; i++) {
-                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
-            }
-
-
-            time_aux = 0;
-        } else {
-            time_aux += deltaTime;
-        }
-        for (Enemy enemies : e) {
-            enemies.draw(sr);
-            enemies.update(deltaTime, player);
-        }
+        spawn.spawnEnemies(e, deltaTime, player, sr);
+//        if (time_aux >= 5) {
+//            for (int i = 0; i < 1; i++) {
+//                e.add(new Enemy(rand.nextInt(2000), rand.nextInt(2000), (int) Math.floor(Math.random() * (100 - 50 + 1) + 50), 1, (int) Math.floor(Math.random() * (20 - 10 + 1) + 10), 1));
+//            }
+//
+//
+//            time_aux = 0;
+//        } else {
+//            time_aux += deltaTime;
+//        }
+//        for (Enemy enemies : e) {
+//            enemies.draw(sr);
+//            enemies.update(deltaTime, player);
+//        }
 
         stage.act(deltaTime);
         stage.draw();
