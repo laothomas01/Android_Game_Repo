@@ -1,40 +1,20 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
-import com.badlogic.gdx.graphics.g2d.PolygonSprite;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.EarClippingTriangulator;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.ShortArray;
-import com.hackslash.game.driver.HackAndSlash;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Player extends GameObject {
 
-    int playerHealth;
-
-
-    float maxSpeed;
-
-
     Vector2 player_position;
-    Vector2 center;
-    FloatArray vertices;
+    int playerHealth;
+    Sprite sprite;
+    Texture tex;
 
-    /**
-     * Filling in the polygon
-     */
-    Texture texture;
-    PolygonSprite polySprite;
-    PolygonSpriteBatch polyBatch;
+    Actor actor;
 
     public Player() {
         x = Gdx.graphics.getWidth() / 2;
@@ -50,32 +30,31 @@ public class Player extends GameObject {
         /**
          * with delta time, we move at speed * Number of units per second even if the frame rate drops.
          */
-        speed = 300;
+        speed = 300f;
 
-        playerHealth = 100;
+        //player health for health bar
+        playerHealth = 500;
 
-        maxSpeed = 300;
+        tex = new Texture(Gdx.files.internal("square.png"));
+        sprite = new Sprite(tex, 0, 0, 20, 20);
+
+        actor = new Actor();
 
 
     }
-
-    public void update(float dt) {
-
-
+    
+    public Player(float posX, float posY, int player_size, float player_speed) {
+        x = posX;
+        y = posY;
+        size = player_size;
+        speed = player_speed;
     }
 
-    public void draw(ShapeRenderer sr) {
-        sr.setColor(1, 1, 1, 1);
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.rect(player_position.x, player_position.y, 20, 20);
-        sr.end();
-//        sr.begin(ShapeRenderer.ShapeType.Line);
-//        sr.setColor(0, 1, 0, 1);
-//        setShape();
-//        sr.polygon(vertices.toArray());
-//
-//
-//        sr.end();
+   public void draw(Batch batch) {
+        batch.begin();
+        sprite.setPosition(player_position.x, player_position.y);
+        sprite.draw(batch);
+        batch.end();
     }
 
     public float getXPosition() {
@@ -111,9 +90,12 @@ public class Player extends GameObject {
         return playerHealth;
 
 
-    public void handleInputs(float dt) {
-        
-
+    public Actor getPlayerActor()
+    {
+        return actor;
+    }
+    public void dispose(){
+        tex.dispose();
     }
 
 
