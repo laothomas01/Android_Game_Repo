@@ -76,7 +76,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
         sr = new ShapeRenderer();
         player = new Player();
-        stage.addActor(player.getPlayerActor());
+        //stage.addActor(player.getPlayerActor());
 
         playerHB = new PlayerHealthBar(player);
         batch = new SpriteBatch();
