@@ -1,19 +1,18 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Enemy extends GameObject {
 
     int radius;
 
     Vector2 position;
-    Vector2 enemy_direction;
-
+    Sprite sprite;
+    Texture tex;
 
     public Enemy() {
         x = Gdx.graphics.getWidth() / 4;
@@ -26,37 +25,44 @@ public class Enemy extends GameObject {
         damage = 1;
         health = 1;
     }
+    
+    public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, float enemy_size, float enemy_health) {
+        x = posX;
+        y = posY;
+        position = new Vector2(x, y);
+        speed = enemy_speed;
+        damage = enemy_damage;
+        size = enemy_size;
+        health = enemy_health;
+
+        tex = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(tex, 0, 0, 20, 20);
+    }
 
     public void update(float dt, Player player) {
         basic_enemy_AI(player, dt);
     }
 
-    public void draw(ShapeRenderer sr) {
-        sr.setColor(1, 1, 1, 1);
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-
-        sr.circle(position.x, position.y, size);
-        sr.end();
-
+    public void draw(Batch batch) {
+        batch.begin();
+        sprite.setScale(getEnemySize(), getEnemySize());
+        sprite.setPosition(getXPosition(),getYPosition());
+        batch.draw(tex, getXPosition(),getYPosition(), getEnemySize(), getEnemySize());
+        batch.end();
     }
 
     public void basic_enemy_AI(Player player, float dt) {
 
-
         /**
          * two different ways to have the enemy or any object follow another object in the most basic form
          */
-        // Vector2 playerPos = new Vector2(player.getPlayerPosition());
-        //        enemy_position = enemy_position.add(MathUtils.cosDeg(angle) * speed * dt, MathUtils.sinDeg(angle) * speed * dt);
-        //        enemy_direction = playerPos.sub(enemy_position);
-        //        enemy_direction.nor();
-        //        enemy_position = enemy_position.add(enemy_direction.x * speed * dt, enemy_direction.y * speed * dt);
-
-        Vector2 playerPos = new Vector2(player.getPlayerPosition());
-        float angle = MathUtils.atan2(playerPos.y - position.y, playerPos.x - position.x) * MathUtils.radiansToDegrees;
-        getEnemyPosition().x += MathUtils.cos(angle) * speed * dt;
-        getEnemyPosition().y += MathUtils.sin(angle) * speed * dt;
-
+        Vector2 playerPos = player.getPlayerPosition();
+        Vector2 enemy_direction = new Vector2();
+        enemy_direction.x = (playerPos.x + 20) - (getEnemyPosition().x + 20);
+        enemy_direction.y = (playerPos.y + 20) - (getEnemyPosition().y + 20);
+        enemy_direction.nor();
+        getEnemyPosition().x += enemy_direction.x * speed * dt;
+        getEnemyPosition().y += enemy_direction.y * speed * dt;
     }
 
     public float getXPosition() {
@@ -69,6 +75,14 @@ public class Enemy extends GameObject {
 
     public Vector2 getEnemyPosition() {
         return position;
+    }
+    
+    public void setEnemySize(float size) {
+        this.size = size;
+    }
+
+    public float getEnemySize() {
+        return size;
     }
 
 
