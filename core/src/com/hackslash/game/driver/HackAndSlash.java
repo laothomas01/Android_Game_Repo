@@ -1,26 +1,23 @@
 package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
+import com.hackslash.game.model.Spawner;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -28,14 +25,13 @@ public class HackAndSlash extends ApplicationAdapter {
 
     ShapeRenderer sr;
     Player player;
-    Enemy enemy;
-
-    float xMove;
-    float yMove;
+    OrthographicCamera cam;
+    float player_x_Move;
+    float player_y_Move;
 
     // Player's Health Bar
     private PlayerHealthBar playerHB;
-    private int playerHBSize;
+    SpriteBatch batch;
 
     /**
      * -------TOUCH PAD------
@@ -46,34 +42,43 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-
     /**
-     * Orthographic camera
+     * -------------------------
      */
-    OrthographicCamera cam;
 
     float deltaTime;
-
-    SpriteBatch batch;
-
-
-    Camera cam;
-    float deltaTime;
-
 
     /**
-     * Method called once when the application is created.
-     * <p>
-     * like a Start() function in Unity
+     * --------------Initialize Spawners---------
+     */
+    ArrayList<Enemy> e1;
+    ArrayList<Enemy> e2;
+    ArrayList<Enemy> e3;
+    ArrayList<Enemy> e4;
+    ArrayList<Enemy> e5;
+    ArrayList<Enemy> e6;
+    ArrayList<Enemy> e7;
+    ArrayList<Enemy> e8;
+    Spawner quadrant1;
+    Spawner quadrant2;
+    Spawner quadrant3;
+    Spawner quadrant4;
+    Spawner Y_Intercept_Positive;
+    Spawner Y_Intercept_Negative;
+    Spawner X_Intercept_Positive;
+    Spawner X_Intercept_Negative;
+
+    /**
+     * --------------------------------
      */
 
     public void create() {
 
         sr = new ShapeRenderer();
         player = new Player();
+        stage.addActor(player.getPlayerActor());
 
         playerHB = new PlayerHealthBar(player);
-        playerHBSize = 500;
         batch = new SpriteBatch();
 
         skin = new Skin();
@@ -91,73 +96,95 @@ public class HackAndSlash extends ApplicationAdapter {
         touchpad.setBounds(15, 15, 200, 200);
 
         //Create a Stage and add TouchPad
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage();
         stage.addActor(touchpad);
 
         Gdx.input.setInputProcessor(stage);
-        enemy = new Enemy();
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 
+        e1 = new ArrayList<Enemy>();
+        e2 = new ArrayList<Enemy>();
+        e3 = new ArrayList<Enemy>();
+        e4 = new ArrayList<Enemy>();
+        e5 = new ArrayList<Enemy>();
+        e6 = new ArrayList<Enemy>();
+        e7 = new ArrayList<Enemy>();
+        e8 = new ArrayList<Enemy>();
+        quadrant1 = new Spawner(2000, 2000);
+        quadrant2 = new Spawner(-2000, 2000);
+        quadrant3 = new Spawner(-2000, -2000);
+        quadrant4 = new Spawner(2000, -2000);
 
-        enemy = new Enemy();
-        cam = new Camera();
-
+        Y_Intercept_Positive = new Spawner(0, 2000);
+        Y_Intercept_Negative = new Spawner(0, -2000);
+        X_Intercept_Positive = new Spawner(2000, 0);
+        X_Intercept_Negative = new Spawner(-2000, 0);
 
     }
-
 
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
+
     public void render() {
 
-        Gdx.gl.glClearColor(1f, 192/255f, 203/255f, 1f);
+        /**
+         * Screen Clearing every frame
+         */
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //draw health bar
+        sr.setProjectionMatrix(batch.getProjectionMatrix());
+        playerHB.draw(batch);
 
         /**
          * make game's frame rate independent
          */
+        float lerp = 0.1f;
         deltaTime = Gdx.graphics.getDeltaTime();
-
-        /**
-         * draw objects
-         */
-        player.draw(sr);
-
-        sr.setProjectionMatrix(batch.getProjectionMatrix());
-        playerHB.draw(sr, playerHBSize);
-
         /**
          * Update Player Movement
          */
-        xMove = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
-        yMove = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
-        player.setXPosition(xMove);
-        player.setYPosition(yMove);
-
-        enemy.draw(sr);
-        enemy.update(deltaTime, player);
+        player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
+        player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
+        player.setXPosition(player_x_Move);
+        player.setYPosition(player_y_Move);
+        sr.setProjectionMatrix(cam.combined);
+        player.draw(batch);
 
         stage.act(deltaTime);
         stage.draw();
+        /**
+         * Spawn Positions
+         */
+        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
+        quadrant2.spawnEnemies(e2, deltaTime, player, batch);
+        quadrant3.spawnEnemies(e3, deltaTime, player, batch);
+        quadrant4.spawnEnemies(e4, deltaTime, player, batch);
 
-        cam.position.set(player.getXPosition(), player.getYPosition(), 0);
-        sr.setProjectionMatrix(cam.combined);
+        Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, batch);
+        Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, batch);
+        X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, batch);
+        X_Intercept_Negative.spawnEnemies(e8, deltaTime, player, batch);
 
+/**
+ * Set cam Position
+ */
+        /**
+         * lerp: linear interpolation:
+         *  -smooth camera motion that is not too rigid.
+         *  -want to decrease jittery movement of the camera
+         * camera_position  + (target_position - camera_position) * lerp
+         *
+         */
+        Vector3 position = cam.position;
+        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
+        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
+        cam.position.set(position);
         cam.update();
-
-
-
-        deltaTime = Gdx.graphics.getDeltaTime();
-        ScreenUtils.clear(0, 0, 0, 0);
-        player.update(deltaTime);
-        player.draw(sr);
-        enemy.draw(sr);
-        enemy.update(deltaTime, player);
-        cam.update(player, deltaTime);
-
     }
 
 
@@ -188,6 +215,11 @@ public class HackAndSlash extends ApplicationAdapter {
     public void dispose() {
         sr.dispose();
         stage.dispose();
+        skin.dispose();
+        batch.dispose();
+        player.dispose();
+        playerHB.dispose();
+        //add enemy dispose later
     }
 
 
