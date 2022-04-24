@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -42,7 +43,7 @@ public class HackAndSlash extends ApplicationAdapter {
     float deltaTime;
 
     /**
-     * Initialize Spawners
+     * --------------Initialize Spawners---------
      */
     ArrayList<Enemy> e1;
     ArrayList<Enemy> e2;
@@ -60,6 +61,10 @@ public class HackAndSlash extends ApplicationAdapter {
     Spawner Y_Intercept_Negative;
     Spawner X_Intercept_Positive;
     Spawner X_Intercept_Negative;
+
+    /**
+     * --------------------------------
+     */
 
     public void create() {
 
@@ -125,6 +130,7 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * make game's frame rate independent
          */
+        float lerp = 0.1f;
         deltaTime = Gdx.graphics.getDeltaTime();
         /**
          * Update Player Movement
@@ -154,8 +160,17 @@ public class HackAndSlash extends ApplicationAdapter {
 /**
  * Set cam Position
  */
-        cam.position.x = player.getXPosition();
-        cam.position.y = player.getYPosition();
+        /**
+         * lerp: linear interpolation:
+         *  -smooth camera motion that is not too rigid.
+         *  -want to decrease jittery movement of the camera
+         * camera_position  + (target_position - camera_position) * lerp
+         *
+         */
+        Vector3 position = cam.position;
+        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
+        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
+        cam.position.set(position);
         cam.update();
     }
 
