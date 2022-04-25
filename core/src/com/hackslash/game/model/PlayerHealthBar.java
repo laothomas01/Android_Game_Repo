@@ -10,7 +10,7 @@ public class PlayerHealthBar {
 
     Player player;  //connected player
     Color cl;       //color of health bar
-    int currentHealth;  //current health points
+    float currentHealth;  //current health points
     int maxHealth = 500;
     Sprite sprite;
     Texture tex;
@@ -36,22 +36,47 @@ public class PlayerHealthBar {
         this.cl = newCL;
     }
     
-    public int getCurrentHealth()
+    public float getCurrentHealth()
     {
         currentHealth = player.getPlayerHealth();
         return currentHealth;
     }
-
-    public void setCurrentHealth(int newHealth)
+    
+    public void subtractHealth()
     {
-        if(newHealth < maxHealth)
+        float temp = currentHealth;
+        temp -= .5f;
+        setCurrentHealth(temp);
+    }
+
+    public void setCurrentHealth(float newHealth)
+    {
+        if(newHealth < maxHealth && newHealth > 0)
         {
             this.currentHealth = newHealth;
+            if(newHealth < (maxHealth/4f))
+            {
+                this.cl = Color.RED;
+            }
+            else if(newHealth < (maxHealth/2f))
+            {
+                this.cl = Color.ORANGE;
+            }
+            else if(newHealth < (maxHealth/1.5f))
+            {
+                this.cl = Color.YELLOW;
+            }
+            else
+            {
+                this.cl = Color.GREEN;
+            }
+        }
+        else if(newHealth < 0){
+            this.cl = Color.BLACK;
+            currentHealth = 0;
         }
         else
-        {
-            this.currentHealth = maxHealth;
-        }
+        { }
 
     }
 
