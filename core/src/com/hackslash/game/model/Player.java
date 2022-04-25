@@ -83,7 +83,7 @@ public class Player extends GameObject {
         player_position.y = dy;
     }
 
-    public int getPlayerHealth(){
+    public float getPlayerHealth(){
         return playerHealth;
 
 
