@@ -1,6 +1,7 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -45,9 +46,10 @@ public class Enemy extends GameObject {
 
     public void draw(Batch batch) {
         batch.begin();
+        batch.setColor(Color.WHITE);
         sprite.setScale(getEnemySize(), getEnemySize());
         sprite.setPosition(getXPosition(),getYPosition());
-        batch.draw(tex, getXPosition(),getYPosition(), getEnemySize(), getEnemySize());
+        atch.draw(tex, getXPosition(),getYPosition(), (getEnemySize()*2), (getEnemySize()*2));
         batch.end();
     }
 
@@ -85,5 +87,9 @@ public class Enemy extends GameObject {
         return size;
     }
 
+    public Sprite getSprite()
+    {
+        return sprite;
+    }
 
 }
