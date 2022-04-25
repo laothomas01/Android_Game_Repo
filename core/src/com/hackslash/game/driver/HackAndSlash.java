@@ -76,7 +76,6 @@ public class HackAndSlash extends ApplicationAdapter {
 
         sr = new ShapeRenderer();
         player = new Player();
-        //stage.addActor(player.getPlayerActor());
 
         playerHB = new PlayerHealthBar(player);
         batch = new SpriteBatch();
@@ -123,6 +122,21 @@ public class HackAndSlash extends ApplicationAdapter {
         X_Intercept_Negative = new Spawner(-2000, 0);
 
     }
+    
+    /**
+     * Method called to check that none of the enemies in the array list of enemies are
+     * touching the player character. if none are touching- do nothing. if an enemy
+     * is touching the player character, subtract health from the player.
+     * @param enemyList this is an <arraylist> of enemy
+     */
+    public void checkOverlap(ArrayList<Enemy> enemyList){
+        for(Enemy e : enemyList){
+            if(player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())){
+                playerHB.subtractHealth();
+            }
+            else {}
+        }
+    }
 
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
@@ -135,6 +149,16 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        //check if there are enemies touching the player character
+        checkOverlap(e1);
+        checkOverlap(e2);
+        checkOverlap(e3);
+        checkOverlap(e4);
+        checkOverlap(e5);
+        checkOverlap(e6);
+        checkOverlap(e7);
+        checkOverlap(e8);
 
         //draw health bar
         sr.setProjectionMatrix(batch.getProjectionMatrix());
