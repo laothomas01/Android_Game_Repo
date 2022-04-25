@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Player extends GameObject {
 
     Vector2 player_position;
-    int playerHealth;
+    float playerHealth;
     Sprite sprite;
     Texture tex;
 
@@ -33,12 +32,10 @@ public class Player extends GameObject {
         speed = 300f;
 
         //player health for health bar
-        playerHealth = 500;
+        playerHealth = 500f;
 
         tex = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
-
-        actor = new Actor();
 
 
     }
@@ -90,10 +87,11 @@ public class Player extends GameObject {
         return playerHealth;
 
 
-    public Actor getPlayerActor()
+    public Sprite getSprite()
     {
-        return actor;
+        return sprite;
     }
+        
     public void dispose(){
         tex.dispose();
     }
