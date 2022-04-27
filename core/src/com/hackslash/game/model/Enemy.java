@@ -19,7 +19,6 @@ public class Enemy extends GameObject {
         x = Gdx.graphics.getWidth() / 4;
         y = Gdx.graphics.getHeight() / 4;
         position = new Vector2(x, y);
-        enemy_direction = new Vector2();
         radius = 20;
         size = radius;
         speed = 100;
@@ -49,7 +48,7 @@ public class Enemy extends GameObject {
         batch.setColor(Color.WHITE);
         sprite.setScale(getEnemySize(), getEnemySize());
         sprite.setPosition(getXPosition(),getYPosition());
-        atch.draw(tex, getXPosition(),getYPosition(), (getEnemySize()*2), (getEnemySize()*2));
+        batch.draw(tex, getXPosition(),getYPosition(), (getEnemySize()*2), (getEnemySize()*2));
         batch.end();
     }
 

@@ -184,6 +184,7 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setYPosition(player_y_Move);
         sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
+
         Bullet.shootBullets(bullets, deltaTime, player, sr);
 
         stage.act(deltaTime);
