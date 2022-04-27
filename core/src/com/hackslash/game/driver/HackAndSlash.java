@@ -7,16 +7,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.hackslash.game.model.Bullet;
-import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
@@ -45,6 +41,8 @@ public class HackAndSlash extends ApplicationAdapter {
     private Drawable touchKnob;
     
     ArrayList<Bullet> bullets;
+    static float wait_time = 1f;
+    static float shootTimer = 0;
 
     /**
      * -------------------------
@@ -71,6 +69,8 @@ public class HackAndSlash extends ApplicationAdapter {
     Spawner Y_Intercept_Negative;
     Spawner X_Intercept_Positive;
     Spawner X_Intercept_Negative;
+
+    ArrayList<ArrayList<Enemy>> allEnemies;
 
     /**
      * --------------------------------
@@ -127,6 +127,16 @@ public class HackAndSlash extends ApplicationAdapter {
         X_Intercept_Positive = new Spawner(2000, 0);
         X_Intercept_Negative = new Spawner(-2000, 0);
 
+        allEnemies = new ArrayList<ArrayList<Enemy>>();
+        allEnemies.add(e1);
+        allEnemies.add(e2);
+        allEnemies.add(e3);
+        allEnemies.add(e4);
+        allEnemies.add(e5);
+        allEnemies.add(e6);
+        allEnemies.add(e7);
+        allEnemies.add(e8);
+
     }
     
     /**
@@ -142,6 +152,39 @@ public class HackAndSlash extends ApplicationAdapter {
             }
             else {}
         }
+    }
+
+    /**
+     * Method to find the distance between player and enemies using distance formula
+     * if the distance is <= 300f then shoot bullets at the enemy
+     * @param enemyList this is an <arraylist> of enemy
+     */
+    public void findDistance(ArrayList<Enemy> enemyList) {
+        float distance;
+        for(Enemy e : enemyList){
+            distance = (float) Math.sqrt(Math.pow(e.getXPosition() - player.getXPosition(), 2) + Math.pow(e.getYPosition() - player.getYPosition(), 2));
+            if(distance <= 300f) {
+                //System.out.println("enemy distance:" + distance);
+                shootBullets(e);
+
+            }
+        }
+
+
+    }
+
+    public void shootBullets(Enemy e) {
+        shootTimer += deltaTime;
+        if(shootTimer>=wait_time) {
+            bullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+
+        }
+
+        for (Bullet bullet : bullets) {
+            bullet.draw(batch);
+            bullet.update(deltaTime, e.getXPosition(), e.getYPosition());
+        }
+
     }
 
     /**
@@ -185,7 +228,35 @@ public class HackAndSlash extends ApplicationAdapter {
         sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
 
-        Bullet.shootBullets(bullets, deltaTime, player, sr);
+
+
+        findDistance(e1);
+        findDistance(e2);
+        findDistance(e3);
+        findDistance(e4);
+        findDistance(e5);
+        findDistance(e6);
+        findDistance(e7);
+        findDistance(e8);
+
+        //After bullet collides with enemy, remove enemy and remove bullet
+        ArrayList<Bullet> bulletsRemove = new ArrayList<Bullet>();
+        ArrayList<Enemy> enemyRemove = new ArrayList<Enemy>();
+        for (int j = bullets.size() - 1; j >= 0; j--) {
+            for(ArrayList<Enemy> enemyList : allEnemies) {
+                for(int i = enemyList.size() - 1; i >= 0; i--) {
+
+                    if(bullets.get(j).getSprite().getBoundingRectangle().overlaps(enemyList.get(i).getSprite().getBoundingRectangle())) {
+                        bulletsRemove.add(bullets.get(j));
+                        enemyRemove.add(enemyList.get(i));
+                    }
+                    enemyList.removeAll(enemyRemove);
+                }
+
+            }
+            bullets.removeAll(bulletsRemove);
+        }
+
 
         stage.act(deltaTime);
         stage.draw();
