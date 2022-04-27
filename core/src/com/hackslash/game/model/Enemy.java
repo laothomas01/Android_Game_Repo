@@ -91,5 +91,10 @@ public class Enemy extends GameObject {
     {
         return sprite;
     }
+    
+    public Texture getTex() 
+    { 
+        return tex; 
+    }
 
 }
