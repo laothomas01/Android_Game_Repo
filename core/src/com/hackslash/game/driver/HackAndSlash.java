@@ -16,10 +16,7 @@ import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class HackAndSlash extends ApplicationAdapter {
 
@@ -243,7 +240,24 @@ public class HackAndSlash extends ApplicationAdapter {
         batch.dispose();
         player.dispose();
         playerHB.dispose();
-        //add enemy dispose later
+        enemyTex(e1);
+        enemyTex(e2);
+        enemyTex(e3);
+        enemyTex(e4);
+        enemyTex(e5);
+        enemyTex(e6);
+        enemyTex(e7);
+        enemyTex(e8);
+    }
+    
+    /**
+     * method used to cycle through enemy arraylist to dispose of textures
+     * @param enemyList an arraylist of enemy
+     */
+    public void enemyTex(ArrayList<Enemy> enemyList){
+        for(Enemy e : enemyList){
+            e.getTex().dispose();
+        }
     }
 
 
