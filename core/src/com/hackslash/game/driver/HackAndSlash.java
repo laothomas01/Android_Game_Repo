@@ -9,12 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Camera;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
@@ -34,7 +36,7 @@ public class HackAndSlash extends ApplicationAdapter {
     //Enemy enemy;
     Camera cam;
     float deltaTime;
-
+    ArrayList<Bullet> bullets;
     /**
      * Method called once when the application is created.
      */
@@ -64,6 +66,8 @@ public class HackAndSlash extends ApplicationAdapter {
         //enemy = new Enemy();
         cam = new Camera();
 
+        bullets = new ArrayList<Bullet>();
+
     }
 
 
@@ -80,6 +84,10 @@ public class HackAndSlash extends ApplicationAdapter {
         ScreenUtils.clear(0, 0, 0, 0);
         player.update(deltaTime);
         player.draw(sr);
+
+
+        Bullet.shootBullets(bullets, deltaTime, player, sr);
+
         //enemy.draw(sr);
         //enemy.update(deltaTime, player);
         cam.update(player, deltaTime);
