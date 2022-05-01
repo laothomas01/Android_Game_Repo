@@ -2,11 +2,13 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -22,18 +24,15 @@ import java.util.ArrayList;
 
 public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
-
     ShapeRenderer sr;
     Player player;
     Enemy e;
     OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
-
     // Player's Health Bar
     private PlayerHealthBar playerHB;
     SpriteBatch batch;
-
     /**
      * -------TOUCH PAD------
      */
@@ -42,15 +41,14 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-
+    /**
+     * -----------------------
+     */
 //    ArrayList<Bullet> bullets;
 
     static float wait_time = 1f;
     static float shootTimer = 0;
 
-    /**
-     * -------------------------
-     */
 
     float deltaTime;
 
@@ -93,28 +91,37 @@ public class HackAndSlash extends ApplicationAdapter {
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
-
+        /**
+         * --------Create a Stage and add TouchPad------------
+         */
         touchBackground = skin.getDrawable("touchBackground");
         touchKnob = skin.getDrawable("touchKnob");
 
         touchpadStyle = new Touchpad.TouchpadStyle();
         touchpadStyle.background = touchBackground;
         touchpadStyle.knob = touchKnob;
-        //Create TouchPad with the style
+
         touchpad = new Touchpad(10, touchpadStyle);
         touchpad.setBounds(15, 15, 200, 200);
 
-        //Create a Stage and add TouchPad
 
-//        bullets = new ArrayList<Bullet>();
         stage = new Stage();
         stage.addActor(touchpad);
-
+        /**
+         * -----------------------------------------------------
+         */
         Gdx.input.setInputProcessor(stage);
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 
+
+        /**
+         * INITIALIZE LISTS OF ENEMIES
+         *
+         * 4 QUADRANTS
+         * 4 INTERCEPTS
+         */
         e1 = new ArrayList<Enemy>();
         e2 = new ArrayList<Enemy>();
         e3 = new ArrayList<Enemy>();
@@ -132,7 +139,9 @@ public class HackAndSlash extends ApplicationAdapter {
         Y_Intercept_Negative = new Spawner(0, -2000);
         X_Intercept_Positive = new Spawner(2000, 0);
         X_Intercept_Negative = new Spawner(-2000, 0);
-
+        /**
+         * -------------------------------------------------
+         */
         allEnemies = new ArrayList<ArrayList<Enemy>>();
         allEnemies.add(e1);
         allEnemies.add(e2);
@@ -209,15 +218,17 @@ public class HackAndSlash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //check if there are enemies touching the player character
-//        checkOverlap(e1);
-//        checkOverlap(e2);
-//        checkOverlap(e3);
-//        checkOverlap(e4);
-//        checkOverlap(e5);
-//        checkOverlap(e6);
-//        checkOverlap(e7);
-//        checkOverlap(e8);
+        /**
+         * CHECK IF ENEMIES ARE TOUCHING THE PLAYER
+         */
+        checkOverlap(e1);
+        checkOverlap(e2);
+        checkOverlap(e3);
+        checkOverlap(e4);
+        checkOverlap(e5);
+        checkOverlap(e6);
+        checkOverlap(e7);
+        checkOverlap(e8);
 
         //draw health bar
         sr.setProjectionMatrix(batch.getProjectionMatrix());
@@ -226,7 +237,6 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * make game's frame rate independent
          */
-        float lerp = 0.1f;
         deltaTime = Gdx.graphics.getDeltaTime();
         /**
          * Update Player Movement
@@ -236,12 +246,25 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
         sr.setProjectionMatrix(cam.combined);
+//        player.getBoundingCircle().set(new Vector2(0, 0), 100);
+//        player.update(deltaTime);
         player.draw(batch);
-//        player.shootBullets(e, deltaTime, bullets, batch);
+
+//
+//        Gdx.gl.glEnable(GL20.GL_BLEND);
+//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//        sr.begin(ShapeRenderer.ShapeType.Filled);
+//        sr.setColor(new Color(0, 1, 0, 0.5f));
+//        sr.circle(player.getXPosition(), player.getYPosition(), player.getBoundingCircle().radius);
+//
+//        sr.end();
+//        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        player.shootBullets(e, deltaTime, bullets, batch);
 
 
-//        e.draw(batch);
-//        e.update(deltaTime, player);
+        e.draw(batch);
+        e.update(deltaTime, player);
 
 
 //
@@ -298,10 +321,10 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
-        Vector3 position = cam.position;
-        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
-        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
-        cam.position.set(position);
+        float lerp = 0.1f;
+
+        cam.position.x += (player.getPlayerPosition().x + 1 - cam.position.x + 1) * lerp * 0.5f;
+        cam.position.y += (player.getPlayerPosition().y + 1 - cam.position.y + 1) * lerp * 0.5f;
         cam.update();
 
 
