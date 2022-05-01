@@ -37,6 +37,7 @@ public class Spawner extends GameObject {
         }
     }
 
+
     public float get_X_Spawn_Position() {
         return x;
     }

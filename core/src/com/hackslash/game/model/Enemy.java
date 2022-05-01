@@ -21,11 +21,13 @@ public class Enemy extends GameObject {
         position = new Vector2(x, y);
         radius = 20;
         size = radius;
-        speed = 100;
+        speed = 200;
         damage = 1;
         health = 1;
+        tex = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(tex, 0, 0, 20, 20);
     }
-    
+
     public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, float enemy_size, float enemy_health) {
         x = posX;
         y = posY;
@@ -40,6 +42,7 @@ public class Enemy extends GameObject {
     }
 
     public void update(float dt, Player player) {
+
         basic_enemy_AI(player, dt);
     }
 
@@ -47,8 +50,8 @@ public class Enemy extends GameObject {
         batch.begin();
         batch.setColor(Color.WHITE);
         sprite.setScale(getEnemySize(), getEnemySize());
-        sprite.setPosition(getXPosition(),getYPosition());
-        batch.draw(tex, getXPosition(),getYPosition(), (getEnemySize()*2), (getEnemySize()*2));
+        sprite.setPosition(getXPosition(), getYPosition());
+        batch.draw(tex, getXPosition(), getYPosition(), (getEnemySize() * 2), (getEnemySize() * 2));
         batch.end();
     }
 
@@ -77,7 +80,7 @@ public class Enemy extends GameObject {
     public Vector2 getEnemyPosition() {
         return position;
     }
-    
+
     public void setEnemySize(float size) {
         this.size = size;
     }
@@ -86,14 +89,12 @@ public class Enemy extends GameObject {
         return size;
     }
 
-    public Sprite getSprite()
-    {
+    public Sprite getSprite() {
         return sprite;
     }
-    
-    public Texture getTex() 
-    { 
-        return tex; 
+
+    public Texture getTex() {
+        return tex;
     }
 
 }

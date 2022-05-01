@@ -7,12 +7,20 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import java.util.ArrayList;
+
 public class Player extends GameObject {
 
     Vector2 player_position;
     float playerHealth;
     Sprite sprite;
     Texture tex;
+    float shoot_timer = 0;
+    float shoot_cooldown = 2;
+    float enemy_detection_radius = 100;
+    Sprite detection_circle;
+    Texture detection_circle_texture;
+
 
     Actor actor;
 
@@ -25,8 +33,6 @@ public class Player extends GameObject {
          * useful for vector functions
          */
         player_position = new Vector2(x, y);
-
-
         /**
          * with delta time, we move at speed * Number of units per second even if the frame rate drops.
          */
@@ -40,7 +46,7 @@ public class Player extends GameObject {
 
 
     }
-    
+
     public Player(float posX, float posY, int player_size, float player_speed) {
         x = posX;
         y = posY;
@@ -48,7 +54,7 @@ public class Player extends GameObject {
         speed = player_speed;
     }
 
-   public void draw(Batch batch) {
+    public void draw(Batch batch) {
         batch.begin();
         sprite.setPosition(player_position.x, player_position.y);
         sprite.draw(batch);
@@ -84,19 +90,42 @@ public class Player extends GameObject {
         player_position.y = dy;
     }
 
-    public float getPlayerHealth(){
+    public float getPlayerHealth() {
         return playerHealth;
 
     }
-    
 
-    public Sprite getSprite()
-    {
+
+    public Sprite getSprite() {
         return sprite;
     }
-        
-    public void dispose(){
+
+    public void dispose() {
         tex.dispose();
+    }
+
+    public void shootBullets(Enemy e, float dt, ArrayList<Bullet> bullets, Batch batch) {
+        shoot_timer += dt;
+        if (shoot_timer >= shoot_cooldown) {
+            bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
+            shoot_timer = 0;
+        } else {
+            shoot_timer += dt;
+        }
+
+
+//        for (Bullet bullet : bullets) {
+//            bullet.draw(batch);
+//            bullet.update(dt, 100, 100);
+//        }
+
+    }
+
+    public Enemy getClosestEnemy() {
+//        Enemy closestEnemy = null;
+//        float cloestEnemyDist = -1;
+//        ArrayList<Enemy> list_of_enemies = new ArrayList<Enemy>();
+
     }
 
 

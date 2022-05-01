@@ -17,12 +17,15 @@ import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
+
 import java.util.ArrayList;
 
 public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
+
     ShapeRenderer sr;
     Player player;
+    Enemy e;
     OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
@@ -39,8 +42,9 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-    
-    ArrayList<Bullet> bullets;
+
+//    ArrayList<Bullet> bullets;
+
     static float wait_time = 1f;
     static float shootTimer = 0;
 
@@ -72,6 +76,8 @@ public class HackAndSlash extends ApplicationAdapter {
 
     ArrayList<ArrayList<Enemy>> allEnemies;
 
+    ArrayList<Bullet> bullets;
+
     /**
      * --------------------------------
      */
@@ -99,8 +105,8 @@ public class HackAndSlash extends ApplicationAdapter {
         touchpad.setBounds(15, 15, 200, 200);
 
         //Create a Stage and add TouchPad
-       
-        bullets = new ArrayList<Bullet>();
+
+//        bullets = new ArrayList<Bullet>();
         stage = new Stage();
         stage.addActor(touchpad);
 
@@ -136,56 +142,60 @@ public class HackAndSlash extends ApplicationAdapter {
         allEnemies.add(e6);
         allEnemies.add(e7);
         allEnemies.add(e8);
+        e = new Enemy();
 
+        bullets = new ArrayList<>();
     }
-    
+
     /**
      * Method called to check that none of the enemies in the array list of enemies are
      * touching the player character. if none are touching- do nothing. if an enemy
      * is touching the player character, subtract health from the player.
+     *
      * @param enemyList this is an <arraylist> of enemy
      */
-    public void checkOverlap(ArrayList<Enemy> enemyList){
-        for(Enemy e : enemyList){
-            if(player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())){
+    public void checkOverlap(ArrayList<Enemy> enemyList) {
+        for (Enemy e : enemyList) {
+            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
                 playerHB.subtractHealth();
+            } else {
             }
-            else {}
         }
     }
 
     /**
      * Method to find the distance between player and enemies using distance formula
      * if the distance is <= 300f then shoot bullets at the enemy
+     *
      * @param enemyList this is an <arraylist> of enemy
      */
-    public void findDistance(ArrayList<Enemy> enemyList) {
-        float distance;
-        for(Enemy e : enemyList){
-            distance = (float) Math.sqrt(Math.pow(e.getXPosition() - player.getXPosition(), 2) + Math.pow(e.getYPosition() - player.getYPosition(), 2));
-            if(distance <= 300f) {
-                //System.out.println("enemy distance:" + distance);
-                shootBullets(e);
+//    public void findDistance(ArrayList<Enemy> enemyList) {
+//        float distance;
+//        for (Enemy e : enemyList) {
+//            distance = (float) Math.sqrt(Math.pow(e.getXPosition() - player.getXPosition(), 2) + Math.pow(e.getYPosition() - player.getYPosition(), 2));
+//            if (distance <= 300f) {
+//                //System.out.println("enemy distance:" + distance);
+//                shootBullets(e);
+//
+//            }
+//        }
+//
+//
+//    }
 
-            }
-        }
-
-
-    }
-
-    public void shootBullets(Enemy e) {
-        shootTimer += deltaTime;
-        if(shootTimer>=wait_time) {
-            bullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
-
-        }
-
-        for (Bullet bullet : bullets) {
-            bullet.draw(batch);
-            bullet.update(deltaTime, e.getXPosition(), e.getYPosition());
-        }
-
-    }
+//    public void shootBullets(Enemy e) {
+//        shootTimer += deltaTime;
+//        if (shootTimer >= wait_time) {
+//            bullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+//
+//        }
+//
+//        for (Bullet bullet : bullets) {
+//            bullet.draw(batch);
+//            bullet.update(deltaTime, e.getXPosition(), e.getYPosition());
+//        }
+//
+//    }
 
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
@@ -198,16 +208,16 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         //check if there are enemies touching the player character
-        checkOverlap(e1);
-        checkOverlap(e2);
-        checkOverlap(e3);
-        checkOverlap(e4);
-        checkOverlap(e5);
-        checkOverlap(e6);
-        checkOverlap(e7);
-        checkOverlap(e8);
+//        checkOverlap(e1);
+//        checkOverlap(e2);
+//        checkOverlap(e3);
+//        checkOverlap(e4);
+//        checkOverlap(e5);
+//        checkOverlap(e6);
+//        checkOverlap(e7);
+//        checkOverlap(e8);
 
         //draw health bar
         sr.setProjectionMatrix(batch.getProjectionMatrix());
@@ -227,35 +237,40 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setYPosition(player_y_Move);
         sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
+//        player.shootBullets(e, deltaTime, bullets, batch);
 
 
+//        e.draw(batch);
+//        e.update(deltaTime, player);
 
-        findDistance(e1);
-        findDistance(e2);
-        findDistance(e3);
-        findDistance(e4);
-        findDistance(e5);
-        findDistance(e6);
-        findDistance(e7);
-        findDistance(e8);
 
-        //After bullet collides with enemy, remove enemy and remove bullet
-        ArrayList<Bullet> bulletsRemove = new ArrayList<Bullet>();
-        ArrayList<Enemy> enemyRemove = new ArrayList<Enemy>();
-        for (int j = bullets.size() - 1; j >= 0; j--) {
-            for(ArrayList<Enemy> enemyList : allEnemies) {
-                for(int i = enemyList.size() - 1; i >= 0; i--) {
-
-                    if(bullets.get(j).getSprite().getBoundingRectangle().overlaps(enemyList.get(i).getSprite().getBoundingRectangle())) {
-                        bulletsRemove.add(bullets.get(j));
-                        enemyRemove.add(enemyList.get(i));
-                    }
-                    enemyList.removeAll(enemyRemove);
-                }
-
-            }
-            bullets.removeAll(bulletsRemove);
-        }
+//
+////        findDistance(e1);
+////        findDistance(e2);
+////        findDistance(e3);
+////        findDistance(e4);
+////        findDistance(e5);
+////        findDistance(e6);
+////        findDistance(e7);
+////        findDistance(e8);
+//
+//        //After bullet collides with enemy, remove enemy and remove bullet
+//        ArrayList<Bullet> bulletsRemove = new ArrayList<Bullet>();
+//        ArrayList<Enemy> enemyRemove = new ArrayList<Enemy>();
+//        for (int j = bullets.size() - 1; j >= 0; j--) {
+//            for(ArrayList<Enemy> enemyList : allEnemies) {
+//                for(int i = enemyList.size() - 1; i >= 0; i--) {
+//
+//                    if(bullets.get(j).getSprite().getBoundingRectangle().overlaps(enemyList.get(i).getSprite().getBoundingRectangle())) {
+//                        bulletsRemove.add(bullets.get(j));
+//                        enemyRemove.add(enemyList.get(i));
+//                    }
+//                    enemyList.removeAll(enemyRemove);
+//                }
+//
+//            }
+//            bullets.removeAll(bulletsRemove);
+//        }
 
 
         stage.act(deltaTime);
@@ -263,15 +278,15 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * Spawn Positions
          */
-        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
-        quadrant2.spawnEnemies(e2, deltaTime, player, batch);
-        quadrant3.spawnEnemies(e3, deltaTime, player, batch);
-        quadrant4.spawnEnemies(e4, deltaTime, player, batch);
-
-        Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, batch);
-        Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, batch);
-        X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, batch);
-        X_Intercept_Negative.spawnEnemies(e8, deltaTime, player, batch);
+//        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
+//        quadrant2.spawnEnemies(e2, deltaTime, player, batch);
+//        quadrant3.spawnEnemies(e3, deltaTime, player, batch);
+//        quadrant4.spawnEnemies(e4, deltaTime, player, batch);
+//
+//        Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, batch);
+//        Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, batch);
+//        X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, batch);
+//        X_Intercept_Negative.spawnEnemies(e8, deltaTime, player, batch);
 
 /**
  * Set cam Position
@@ -289,7 +304,6 @@ public class HackAndSlash extends ApplicationAdapter {
         cam.position.set(position);
         cam.update();
 
-        
 
     }
 
@@ -319,31 +333,32 @@ public class HackAndSlash extends ApplicationAdapter {
      * Called when the application is destroyed. It is preceded by a call to pause().
      */
     public void dispose() {
-        sr.dispose();
-        stage.dispose();
-        skin.dispose();
-        batch.dispose();
-        player.dispose();
-        playerHB.dispose();
-        enemyTex(e1);
-        enemyTex(e2);
-        enemyTex(e3);
-        enemyTex(e4);
-        enemyTex(e5);
-        enemyTex(e6);
-        enemyTex(e7);
-        enemyTex(e8);
+//        sr.dispose();
+//        stage.dispose();
+//        skin.dispose();
+//        batch.dispose();
+//        player.dispose();
+//        playerHB.dispose();
+//        enemyTex(e1);
+//        enemyTex(e2);
+//        enemyTex(e3);
+//        enemyTex(e4);
+//        enemyTex(e5);
+//        enemyTex(e6);
+//        enemyTex(e7);
+//        enemyTex(e8);
     }
-    
+
     /**
      * method used to cycle through enemy arraylist to dispose of textures
+     *
      * @param enemyList an arraylist of enemy
      */
-    public void enemyTex(ArrayList<Enemy> enemyList){
-        for(Enemy e : enemyList){
-            e.getTex().dispose();
-        }
-    }
+//    public void enemyTex(ArrayList<Enemy> enemyList) {
+//        for (Enemy e : enemyList) {
+//            e.getTex().dispose();
+//        }
+//    }
 
 
 }

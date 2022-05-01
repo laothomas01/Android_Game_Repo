@@ -16,14 +16,15 @@ public class Bullet extends GameObject {
     Sprite sprite;
     Texture tex;
 
+
     public Bullet(float x, float y) {
         this.x = x;
         this.y = y;
         position = new Vector2(x, y);
         speed = 5f;
 
-        tex = new Texture(Gdx.files.internal("square.png"));
-        sprite = new Sprite(tex, 0, 0, 5, 15);
+        tex = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(tex, 0, 0, 10, 10);
     }
 
     public void draw(Batch batch) {
@@ -36,14 +37,14 @@ public class Bullet extends GameObject {
 
     public void update(float dt, float dx, float dy) {
 
-        //Vector2 direction = player.getPlayerPosition();
+//        //Vector2 direction = player.getPlayerPosition();
         position.x += dx * speed * dt;
         position.y += dy * speed * dt;
 
     }
 
-    public Sprite getSprite()
-    {
+
+    public Sprite getSprite() {
         return sprite;
     }
 
