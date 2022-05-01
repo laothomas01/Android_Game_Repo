@@ -41,7 +41,7 @@ public class Bullet extends GameObject {
 
         bullet_direction.x = (enemy_pos.x + 20) - (this.getXPosition() + 20);
         bullet_direction.y = (enemy_pos.y + 20) - (this.getYPosition() + 20);
-//        bullet_direction.nor();
+        bullet_direction.nor();
         getBulletPosition().x += bullet_direction.x * getBulletSpeed() * dt;
         getBulletPosition().y += bullet_direction.y * getBulletSpeed() * dt;
 //        //Vector2 direction = player.getPlayerPosition();
