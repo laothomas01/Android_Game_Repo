@@ -21,12 +21,15 @@ import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
     ShapeRenderer sr;
     Player player;
     Enemy e;
+    Enemy e0;
     OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
@@ -44,7 +47,6 @@ public class HackAndSlash extends ApplicationAdapter {
     /**
      * -----------------------
      */
-//    ArrayList<Bullet> bullets;
 
     static float wait_time = 1f;
     static float shootTimer = 0;
@@ -75,6 +77,8 @@ public class HackAndSlash extends ApplicationAdapter {
     ArrayList<ArrayList<Enemy>> allEnemies;
 
     ArrayList<Bullet> bullets;
+
+    Queue<Enemy> enemyQueue;
 
     /**
      * --------------------------------
@@ -152,8 +156,10 @@ public class HackAndSlash extends ApplicationAdapter {
         allEnemies.add(e7);
         allEnemies.add(e8);
         e = new Enemy();
+        e0 = new Enemy();
 
         bullets = new ArrayList<>();
+        enemyQueue = new LinkedList<Enemy>();
     }
 
     /**
@@ -163,14 +169,14 @@ public class HackAndSlash extends ApplicationAdapter {
      *
      * @param enemyList this is an <arraylist> of enemy
      */
-    public void checkOverlap(ArrayList<Enemy> enemyList) {
-        for (Enemy e : enemyList) {
-            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
-                playerHB.subtractHealth();
-            } else {
-            }
-        }
-    }
+//    public void checkOverlap(ArrayList<Enemy> enemyList) {
+//        for (Enemy e : enemyList) {
+//            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
+//                playerHB.subtractHealth();
+//            } else {
+//            }
+//        }
+//    }
 
     /**
      * Method to find the distance between player and enemies using distance formula
@@ -221,14 +227,14 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * CHECK IF ENEMIES ARE TOUCHING THE PLAYER
          */
-        checkOverlap(e1);
-        checkOverlap(e2);
-        checkOverlap(e3);
-        checkOverlap(e4);
-        checkOverlap(e5);
-        checkOverlap(e6);
-        checkOverlap(e7);
-        checkOverlap(e8);
+//        checkOverlap(e1);
+//        checkOverlap(e2);
+//        checkOverlap(e3);
+//        checkOverlap(e4);
+//        checkOverlap(e5);
+//        checkOverlap(e6);
+//        checkOverlap(e7);
+//        checkOverlap(e8);
 
         //draw health bar
         sr.setProjectionMatrix(batch.getProjectionMatrix());
@@ -246,25 +252,19 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
         sr.setProjectionMatrix(cam.combined);
-//        player.getBoundingCircle().set(new Vector2(0, 0), 100);
-//        player.update(deltaTime);
         player.draw(batch);
 
+        player.shootBullets(e1, deltaTime, bullets, batch, enemyQueue);
 //
-//        Gdx.gl.glEnable(GL20.GL_BLEND);
-//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//        sr.begin(ShapeRenderer.ShapeType.Filled);
-//        sr.setColor(new Color(0, 1, 0, 0.5f));
-//        sr.circle(player.getXPosition(), player.getYPosition(), player.getBoundingCircle().radius);
-//
-//        sr.end();
-//        Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        player.shootBullets(e, deltaTime, bullets, batch);
+//        player.shootBullets(e, deltaTime, bullets, batch);
+//        player.shootBullets(e0, deltaTime, bullets, batch);
 
 
-        e.draw(batch);
-        e.update(deltaTime, player);
+//        e.draw(batch);
+//        e.update(deltaTime, player);
+//        e0.draw(batch);
+//        e0.update(deltaTime, player);
 
 
 //
@@ -301,7 +301,7 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * Spawn Positions
          */
-//        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
+        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
 //        quadrant2.spawnEnemies(e2, deltaTime, player, batch);
 //        quadrant3.spawnEnemies(e3, deltaTime, player, batch);
 //        quadrant4.spawnEnemies(e4, deltaTime, player, batch);

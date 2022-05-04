@@ -15,16 +15,18 @@ public class Bullet extends GameObject {
     Vector2 position;
     Sprite sprite;
     Texture tex;
-
+    int radius;
+    boolean hit;
 
     public Bullet(float x, float y) {
         this.x = x;
         this.y = y;
         position = new Vector2(x, y);
         speed = 2f;
-
+        radius = 15;
         tex = new Texture(Gdx.files.internal("circle.png"));
-        sprite = new Sprite(tex, 0, 0, 10, 10);
+        sprite = new Sprite(tex, 0, 0, radius, radius);
+        hit = false;
     }
 
     public void draw(Batch batch) {
@@ -35,19 +37,33 @@ public class Bullet extends GameObject {
         batch.end();
     }
 
+    /**
+     * Bullet will target 1 enemy at a time
+     */
     public void update(float dt, Enemy enemy) {
         Vector2 enemy_pos = enemy.getEnemyPosition();
         Vector2 bullet_direction = new Vector2();
 
         bullet_direction.x = (enemy_pos.x + 20) - (this.getXPosition() + 20);
         bullet_direction.y = (enemy_pos.y + 20) - (this.getYPosition() + 20);
-//        bullet_direction.nor();
+
         getBulletPosition().x += bullet_direction.x * getBulletSpeed() * dt;
         getBulletPosition().y += bullet_direction.y * getBulletSpeed() * dt;
-//        //Vector2 direction = player.getPlayerPosition();
-//        position.x += dx * speed * dt;
-//        position.y += dy * speed * dt;
 
+        float distance = Vector2.dst(enemy_pos.x, enemy_pos.y, getBulletPosition().x, getBulletPosition().y);
+        float sumRadius = this.getRadius() + enemy.getEnemySize();
+        if (distance < sumRadius) {
+            // do something
+            hit = true;
+        }
+    }
+
+    public boolean hasHit() {
+        return hit;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 
     public Vector2 getBulletPosition() {

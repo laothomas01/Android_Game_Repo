@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends GameObject {
 
-    int radius;
 
     Vector2 position;
     Sprite sprite;
@@ -19,16 +18,16 @@ public class Enemy extends GameObject {
         x = Gdx.graphics.getWidth() / 4;
         y = Gdx.graphics.getHeight() / 4;
         position = new Vector2(x, y);
-        radius = 20;
-        size = radius;
+
+        size = 20;
         speed = 200;
         damage = 1;
         health = 1;
         tex = new Texture(Gdx.files.internal("circle.png"));
-        sprite = new Sprite(tex, 0, 0, 20, 20);
+        sprite = new Sprite(tex, 0, 0, size, size);
     }
 
-    public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, float enemy_size, float enemy_health) {
+    public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, int enemy_size, float enemy_health) {
         x = posX;
         y = posY;
         position = new Vector2(x, y);
@@ -81,11 +80,11 @@ public class Enemy extends GameObject {
         return position;
     }
 
-    public void setEnemySize(float size) {
+    public void setEnemySize(int size) {
         this.size = size;
     }
 
-    public float getEnemySize() {
+    public int getEnemySize() {
         return size;
     }
 
@@ -96,5 +95,14 @@ public class Enemy extends GameObject {
     public Texture getTex() {
         return tex;
     }
+
+    public float getHealth() {
+        return health;
+    }
+
+    public void subtractHealth() {
+        health -= 1;
+    }
+
 
 }
