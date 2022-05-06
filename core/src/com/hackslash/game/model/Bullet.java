@@ -16,17 +16,17 @@ public class Bullet extends GameObject {
     Sprite sprite;
     Texture tex;
     int radius;
-    boolean hit;
+    boolean bullet_hit;
 
     public Bullet(float x, float y) {
         this.x = x;
         this.y = y;
         position = new Vector2(x, y);
-        speed = 2f;
+        speed = 5F;
         radius = 15;
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, radius, radius);
-        hit = false;
+        bullet_hit = false;
     }
 
     public void draw(Batch batch) {
@@ -54,12 +54,15 @@ public class Bullet extends GameObject {
         float sumRadius = this.getRadius() + enemy.getEnemySize();
         if (distance < sumRadius) {
             // do something
-            hit = true;
+            bullet_hit = true;
+//            enemy.set_is_hit(true);
         }
+
     }
 
+
     public boolean hasHit() {
-        return hit;
+        return bullet_hit;
     }
 
     public int getRadius() {

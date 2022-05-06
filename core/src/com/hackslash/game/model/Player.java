@@ -21,8 +21,9 @@ public class Player extends GameObject {
     Sprite sprite;
     Texture tex;
     float shoot_timer = 0;
-    float shoot_cooldown = 3;
-    float enemy_detection_radius = 300f;
+    float find_new_enemy_timer = 0;
+    float shoot_cooldown = 2;
+    float enemy_detection_radius = 30 - 0f;
     //    float circleCenterX;
 //    float circleCenterY;
     float circleCenterRadius;
@@ -116,47 +117,66 @@ public class Player extends GameObject {
 
     public void shootBullets(ArrayList<Enemy> enemies, float dt, ArrayList<Bullet> bullets, Batch batch, Queue<Enemy> enemyQueue) {
         shoot_timer += dt;
-        ArrayList<Enemy> removeEnemies = new ArrayList<Enemy>();
-        ArrayList<Bullet> removeBullets = new ArrayList<Bullet>();
         for (Enemy e : enemies) {
             if (detectEnemy(e)) {
                 enemyQueue.add(e);
                 Enemy spotted = enemyQueue.peek();
-                for (Bullet b : bullets) {
-                        if(b.hasHit())
-                }
                 if (spotted.getHealth() <= 0) {
-                    spotted.getSprite().getTexture().dispose();
-//                    removeEnemies.add(spotted);
-//                    spotted.getSprite().getTexture().dispose();
-//                    enemies.remove(spotted);
-//                    enemyQueue.remove();
-                } else if (shoot_timer >= shoot_cooldown) {
+                    e.set_is_dead(true);
+                }
+                if (shoot_timer >= shoot_cooldown) {
                     bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
                     shoot_timer = 0;
-                    e.subtractHealth();
                 } else {
                     shoot_timer += dt;
                 }
-                for (int i = 0; i < bullets.size(); i++) {
-                    bullets.get(i).draw(batch);
-                    bullets.get(i).update(dt, spotted);
-                    if (bullets.get(i).hasHit()) {
-                        System.out.println("BULLET:" + i + "HAS HIT!");
-                    }
+                for (Bullet b : bullets) {
+                    b.draw(batch);
+                    b.update(dt, e);
                 }
-//                for (Bullet b : bullets) {
-//                    b.draw(batch);
-//                    b.update(dt, spotted);
-//                    if (b.hasHit()) {
-//
-////                        removeBullets.add(b);
-//                    }
-////                    if (b.hasHit()) {
-////                        bullets.remove(b);
-////                    }
-//                }
+
             }
+//        ArrayList<Enemy> removeEnemies = new ArrayList<Enemy>();
+//        ArrayList<Bullet> removeBullets = new ArrayList<Bullet>();
+//        for (Enemy e : enemies) {
+//            if (detectEnemy(e)) {
+//                enemyQueue.add(e);
+//                Enemy spotted = enemyQueue.peek();
+//                for (Bullet b : bullets) {
+//
+//                }
+//                if (spotted.getHealth() <= 0) {
+//                    spotted.getSprite().getTexture().dispose();
+////                    removeEnemies.add(spotted);
+////                    spotted.getSprite().getTexture().dispose();
+////                    enemies.remove(spotted);
+////                    enemyQueue.remove();
+//                } else if (shoot_timer >= shoot_cooldown) {
+//                    bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
+//                    shoot_timer = 0;
+//                    e.subtractHealth();
+//                } else {
+//                    shoot_timer += dt;
+//                }
+//                for (int i = 0; i < bullets.size(); i++) {
+//                    bullets.get(i).draw(batch);
+//                    bullets.get(i).update(dt, spotted);
+//                    if (bullets.get(i).hasHit()) {
+//                        System.out.println("BULLET:" + i + "HAS HIT!");
+//                    }
+//                }
+////                for (Bullet b : bullets) {
+////                    b.draw(batch);
+////                    b.update(dt, spotted);
+////                    if (b.hasHit()) {
+////
+//////                        removeBullets.add(b);
+////                    }
+//////                    if (b.hasHit()) {
+//////                        bullets.remove(b);
+//////                    }
+////                }
+//            }
         }
 //
 //        for (Enemy e : removeEnemies) {

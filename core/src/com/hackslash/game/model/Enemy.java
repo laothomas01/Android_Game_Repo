@@ -13,6 +13,8 @@ public class Enemy extends GameObject {
     Vector2 position;
     Sprite sprite;
     Texture tex;
+    boolean enemy_hit;
+    boolean enemy_dead;
 
     public Enemy() {
         x = Gdx.graphics.getWidth() / 4;
@@ -38,6 +40,8 @@ public class Enemy extends GameObject {
 
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
+        enemy_hit = false;
+        enemy_dead = false;
     }
 
     public void update(float dt, Player player) {
@@ -66,6 +70,22 @@ public class Enemy extends GameObject {
         enemy_direction.nor();
         getEnemyPosition().x += enemy_direction.x * speed * dt;
         getEnemyPosition().y += enemy_direction.y * speed * dt;
+    }
+
+    public boolean isHit() {
+        return enemy_hit;
+    }
+
+    public boolean isDead() {
+        return enemy_dead;
+    }
+
+    public void set_is_hit(boolean h) {
+        enemy_hit = h;
+    }
+
+    public void set_is_dead(boolean d) {
+        d = enemy_dead;
     }
 
     public float getXPosition() {

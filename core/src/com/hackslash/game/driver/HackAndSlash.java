@@ -21,8 +21,10 @@ import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
@@ -53,31 +55,31 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
     float deltaTime;
-
+    Random r = new Random();
     /**
      * --------------Initialize Spawners---------
      */
     ArrayList<Enemy> e1;
-    ArrayList<Enemy> e2;
-    ArrayList<Enemy> e3;
-    ArrayList<Enemy> e4;
-    ArrayList<Enemy> e5;
-    ArrayList<Enemy> e6;
-    ArrayList<Enemy> e7;
-    ArrayList<Enemy> e8;
-    Spawner quadrant1;
-    Spawner quadrant2;
-    Spawner quadrant3;
-    Spawner quadrant4;
-    Spawner Y_Intercept_Positive;
-    Spawner Y_Intercept_Negative;
-    Spawner X_Intercept_Positive;
-    Spawner X_Intercept_Negative;
+//    ArrayList<Enemy> e2;
+//    ArrayList<Enemy> e3;
+//    ArrayList<Enemy> e4;
+//    ArrayList<Enemy> e5;
+//    ArrayList<Enemy> e6;
+//    ArrayList<Enemy> e7;
+//    ArrayList<Enemy> e8;
+//    Spawner quadrant1;
+//    Spawner quadrant2;
+//    Spawner quadrant3;
+//    Spawner quadrant4;
+//    Spawner Y_Intercept_Positive;
+//    Spawner Y_Intercept_Negative;
+//    Spawner X_Intercept_Positive;
+//    Spawner X_Intercept_Negative;
 
-    ArrayList<ArrayList<Enemy>> allEnemies;
+//    ArrayList<ArrayList<Enemy>> allEnemies;
 
     ArrayList<Bullet> bullets;
-
+    //
     Queue<Enemy> enemyQueue;
 
     /**
@@ -127,36 +129,41 @@ public class HackAndSlash extends ApplicationAdapter {
          * 4 INTERCEPTS
          */
         e1 = new ArrayList<Enemy>();
-        e2 = new ArrayList<Enemy>();
-        e3 = new ArrayList<Enemy>();
-        e4 = new ArrayList<Enemy>();
-        e5 = new ArrayList<Enemy>();
-        e6 = new ArrayList<Enemy>();
-        e7 = new ArrayList<Enemy>();
-        e8 = new ArrayList<Enemy>();
-        quadrant1 = new Spawner(2000, 2000);
-        quadrant2 = new Spawner(-2000, 2000);
-        quadrant3 = new Spawner(-2000, -2000);
-        quadrant4 = new Spawner(2000, -2000);
+        for (int i = 0; i < 10; i++) {
+            e1.add(new Enemy((int) Math.floor(Math.random() * (200 - 10 + 1) + 10), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 3));
+        }
 
-        Y_Intercept_Positive = new Spawner(0, 2000);
-        Y_Intercept_Negative = new Spawner(0, -2000);
-        X_Intercept_Positive = new Spawner(2000, 0);
-        X_Intercept_Negative = new Spawner(-2000, 0);
+
+//        e2 = new ArrayList<Enemy>();
+//        e3 = new ArrayList<Enemy>();
+//        e4 = new ArrayList<Enemy>();
+//        e5 = new ArrayList<Enemy>();
+//        e6 = new ArrayList<Enemy>();
+//        e7 = new ArrayList<Enemy>();
+//        e8 = new ArrayList<Enemy>();
+//        quadrant1 = new Spawner(2000, 2000);
+//        quadrant2 = new Spawner(-2000, 2000);
+//        quadrant3 = new Spawner(-2000, -2000);
+//        quadrant4 = new Spawner(2000, -2000);
+//
+//        Y_Intercept_Positive = new Spawner(0, 2000);
+//        Y_Intercept_Negative = new Spawner(0, -2000);
+//        X_Intercept_Positive = new Spawner(2000, 0);
+//        X_Intercept_Negative = new Spawner(-2000, 0);
         /**
          * -------------------------------------------------
          */
-        allEnemies = new ArrayList<ArrayList<Enemy>>();
-        allEnemies.add(e1);
-        allEnemies.add(e2);
-        allEnemies.add(e3);
-        allEnemies.add(e4);
-        allEnemies.add(e5);
-        allEnemies.add(e6);
-        allEnemies.add(e7);
-        allEnemies.add(e8);
-        e = new Enemy();
-        e0 = new Enemy();
+//        allEnemies = new ArrayList<ArrayList<Enemy>>();
+//        allEnemies.add(e1);
+//        allEnemies.add(e2);
+//        allEnemies.add(e3);
+//        allEnemies.add(e4);
+//        allEnemies.add(e5);
+//        allEnemies.add(e6);
+//        allEnemies.add(e7);
+//        allEnemies.add(e8);
+//        e = new Enemy();
+//        e0 = new Enemy();
 
         bullets = new ArrayList<>();
         enemyQueue = new LinkedList<Enemy>();
@@ -253,9 +260,37 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setYPosition(player_y_Move);
         sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
-
         player.shootBullets(e1, deltaTime, bullets, batch, enemyQueue);
+        for (Enemy e : e1) {
+            e.update(deltaTime, player);
+            e.draw(batch);
+        }
+
+        Iterator<Enemy> iter1 = e1.iterator();
+//        Iterator<Bullet> iter2 = bullets.iterator();
+//        while (iter1.hasNext()) {
+//            while (iter2.hasNext()) {
+//                Enemy enemy = iter1.next();
 //
+//                Bullet bullet = iter2.next();
+//
+//                if (bullet.hasHit()) {
+//                    if (enemy.isDead()) {
+//                        iter1.remove();
+//                        enemyQueue.remove(enemy);
+//                        iter2.remove();
+//                    } else {
+//                        iter2.remove();
+//                    }
+//                }
+//
+//            }
+//        }
+
+
+//        player.shootBullets(e1, deltaTime, bullets, batch, enemyQueue);
+//
+
 
 //        player.shootBullets(e, deltaTime, bullets, batch);
 //        player.shootBullets(e0, deltaTime, bullets, batch);
@@ -301,7 +336,7 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * Spawn Positions
          */
-        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
+//        quadrant1.spawnEnemies(e1, deltaTime, player, batch);
 //        quadrant2.spawnEnemies(e2, deltaTime, player, batch);
 //        quadrant3.spawnEnemies(e3, deltaTime, player, batch);
 //        quadrant4.spawnEnemies(e4, deltaTime, player, batch);
