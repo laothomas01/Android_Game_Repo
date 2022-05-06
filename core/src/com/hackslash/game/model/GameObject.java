@@ -21,7 +21,7 @@ public class GameObject {
     float dy;
 
     float speed;
-    float size;
+    int size;
     float damage;
     float health;
 
