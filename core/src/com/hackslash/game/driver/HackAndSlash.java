@@ -7,41 +7,46 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HackAndSlash extends ApplicationAdapter {
-
+    private Stage stage;
     ShapeRenderer sr;
     Player player;
+    Enemy e;
+    Enemy e0;
     OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
-
     // Player's Health Bar
     private PlayerHealthBar playerHB;
     SpriteBatch batch;
-
     /**
      * -------TOUCH PAD------
      */
-    private Stage stage;
     private Touchpad touchpad;
     private Touchpad.TouchpadStyle touchpadStyle;
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
     /**
-     * -------------------------
+     * -----------------------
      */
+
+    static float wait_time = 1f;
+    static float shootTimer = 0;
 
     float deltaTime;
 
@@ -65,6 +70,12 @@ public class HackAndSlash extends ApplicationAdapter {
     Spawner X_Intercept_Positive;
     Spawner X_Intercept_Negative;
 
+    ArrayList<ArrayList<Enemy>> allEnemies;
+
+    ArrayList<Bullet> bullets;
+
+    Queue<Enemy> enemyQueue;
+
     /**
      * --------------------------------
      */
@@ -80,26 +91,36 @@ public class HackAndSlash extends ApplicationAdapter {
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
-
+        /**
+         * --------Create a Stage and add TouchPad------------
+         */
         touchBackground = skin.getDrawable("touchBackground");
         touchKnob = skin.getDrawable("touchKnob");
 
         touchpadStyle = new Touchpad.TouchpadStyle();
         touchpadStyle.background = touchBackground;
         touchpadStyle.knob = touchKnob;
-        //Create TouchPad with the style
+
         touchpad = new Touchpad(10, touchpadStyle);
         touchpad.setBounds(15, 15, 200, 200);
 
-        //Create a Stage and add TouchPad
         stage = new Stage();
         stage.addActor(touchpad);
-
+        /**
+         * -----------------------------------------------------
+         */
         Gdx.input.setInputProcessor(stage);
 
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 
+
+        /**
+         * INITIALIZE LISTS OF ENEMIES
+         *
+         * 4 QUADRANTS
+         * 4 INTERCEPTS
+         */
         e1 = new ArrayList<Enemy>();
         e2 = new ArrayList<Enemy>();
         e3 = new ArrayList<Enemy>();
@@ -117,21 +138,36 @@ public class HackAndSlash extends ApplicationAdapter {
         Y_Intercept_Negative = new Spawner(0, -2000);
         X_Intercept_Positive = new Spawner(2000, 0);
         X_Intercept_Negative = new Spawner(-2000, 0);
+        /**
+         * -------------------------------------------------
+         */
+        allEnemies = new ArrayList<ArrayList<Enemy>>();
+        allEnemies.add(e1);
+        allEnemies.add(e2);
+        allEnemies.add(e3);
+        allEnemies.add(e4);
+        allEnemies.add(e5);
+        allEnemies.add(e6);
+        allEnemies.add(e7);
+        allEnemies.add(e8);
 
+        bullets = new ArrayList<>();
+        enemyQueue = new LinkedList<Enemy>();
     }
-    
+
     /**
      * Method called to check that none of the enemies in the array list of enemies are
      * touching the player character. if none are touching- do nothing. if an enemy
      * is touching the player character, subtract health from the player.
+     *
      * @param enemyList this is an <arraylist> of enemy
      */
-    public void checkOverlap(ArrayList<Enemy> enemyList){
-        for(Enemy e : enemyList){
-            if(player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())){
+    public void checkOverlap(ArrayList<Enemy> enemyList) {
+        for (Enemy e : enemyList) {
+            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
                 playerHB.subtractHealth();
+            } else {
             }
-            else {}
         }
     }
 
@@ -146,8 +182,10 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        //check if there are enemies touching the player character
+
+        /**
+         * CHECK IF ENEMIES ARE TOUCHING THE PLAYER
+         */
         checkOverlap(e1);
         checkOverlap(e2);
         checkOverlap(e3);
@@ -164,7 +202,6 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * make game's frame rate independent
          */
-        float lerp = 0.1f;
         deltaTime = Gdx.graphics.getDeltaTime();
         /**
          * Update Player Movement
@@ -176,6 +213,15 @@ public class HackAndSlash extends ApplicationAdapter {
         sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
 
+        player.shootBullets(e1, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e2, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e3, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e4, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e5, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e6, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e7, deltaTime, bullets, batch, enemyQueue);
+        player.shootBullets(e8, deltaTime, bullets, batch, enemyQueue);
+
         stage.act(deltaTime);
         stage.draw();
         /**
@@ -185,7 +231,6 @@ public class HackAndSlash extends ApplicationAdapter {
         quadrant2.spawnEnemies(e2, deltaTime, player, batch);
         quadrant3.spawnEnemies(e3, deltaTime, player, batch);
         quadrant4.spawnEnemies(e4, deltaTime, player, batch);
-
         Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, batch);
         Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, batch);
         X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, batch);
@@ -201,13 +246,14 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
-        Vector3 position = cam.position;
-        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
-        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
-        cam.position.set(position);
-        cam.update();
-    }
+        float lerp = 0.1f;
 
+        cam.position.x += (player.getPlayerPosition().x + 1 - cam.position.x + 1) * lerp * 0.5f;
+        cam.position.y += (player.getPlayerPosition().y + 1 - cam.position.y + 1) * lerp * 0.5f;
+        cam.update();
+
+
+    }
 
     /**
      * This method is called every time the game screen is re-sized and the game is not in the paused state. It is also called once just after the create() method.
@@ -249,13 +295,14 @@ public class HackAndSlash extends ApplicationAdapter {
         enemyTex(e7);
         enemyTex(e8);
     }
-    
+
     /**
      * method used to cycle through enemy arraylist to dispose of textures
+     *
      * @param enemyList an arraylist of enemy
      */
-    public void enemyTex(ArrayList<Enemy> enemyList){
-        for(Enemy e : enemyList){
+    public void enemyTex(ArrayList<Enemy> enemyList) {
+        for (Enemy e : enemyList) {
             e.getTex().dispose();
         }
     }
