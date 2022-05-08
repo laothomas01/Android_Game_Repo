@@ -47,6 +47,7 @@ public class Enemy extends GameObject {
     public void update(float dt, Player player) {
 
         basic_enemy_AI(player, dt);
+
     }
 
     public void draw(Batch batch) {
@@ -78,6 +79,14 @@ public class Enemy extends GameObject {
 
     public boolean isDead() {
         return enemy_dead;
+    }
+
+    public void setHealth(float damage) {
+
+        health -= damage;
+        if (health < 0) {
+            health = 0;
+        }
     }
 
     public void set_is_hit(boolean h) {

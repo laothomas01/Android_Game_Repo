@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,8 +23,8 @@ public class Player extends GameObject {
     Texture tex;
     float shoot_timer = 0;
     float find_new_enemy_timer = 0;
-    float shoot_cooldown = 2;
-    float enemy_detection_radius = 30 - 0f;
+    float shoot_cooldown = 0.5f;
+    float enemy_detection_radius = 200f;
     //    float circleCenterX;
 //    float circleCenterY;
     float circleCenterRadius;
@@ -59,10 +60,48 @@ public class Player extends GameObject {
         speed = player_speed;
     }
 
+    public void shootBullets(ArrayList<Enemy> enemies, ArrayList<Bullet> bullets, float dt, SpriteBatch batch) {
+//        ArrayList<Bullet> removeBullets = new ArrayList<>();
+//        ArrayList<Enemy> removeEnemies = new ArrayList<>();
+//        if (shoot_timer >= shoot_cooldown) {
+//            bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
+//            shoot_timer = 0;
+//        } else {
+//            for (Bullet b : bullets) {
+//                b.draw(batch);
+//                for (Enemy e : enemies) {
+//                    b.update(dt, e);
+//                }
+//            }
+//            shoot_timer += dt;
+//        }
+////        for (int i = 0; i < enemies.size(); i++) {
+//            if (detectEnemy(enemies.get(i))) {
+//
+//            }
+//            if (detectEnemy(enemies.get(i))) {
+//                for (Bullet b : bullets) {
+//                    b.draw(batch);
+//                    b.update(dt, enemies.get(i));
+//                    if (b.hasHit()) {
+//                        removeBullets.add(b);
+//                        b.getSprite().getTexture().dispose();
+//                    }
+//                    if (b.getLifeSpan() >= 3) {
+//                        removeBullets.add(b);
+//                        b.getSprite().getTexture().dispose();
+//                    }
+//                }
+//                if (enemies.get(i).getHealth() != 0) {
+//
+////                    bullets.removeAll(removeBullets);
+//
+//                }
+//
+//            }
+    }
+//        enemies.removeAll(removeEnemies);
 
-//    public void update(float dt) {
-//        boundingCircle.set(player_position.x + 9, player_position.y + 6, 100f);
-//    }
 
     public void draw(Batch batch) {
         batch.begin();
@@ -115,79 +154,6 @@ public class Player extends GameObject {
         tex.dispose();
     }
 
-    public void shootBullets(ArrayList<Enemy> enemies, float dt, ArrayList<Bullet> bullets, Batch batch, Queue<Enemy> enemyQueue) {
-        shoot_timer += dt;
-        for (Enemy e : enemies) {
-            if (detectEnemy(e)) {
-                enemyQueue.add(e);
-                Enemy spotted = enemyQueue.peek();
-                if (spotted.getHealth() <= 0) {
-                    e.set_is_dead(true);
-                }
-                if (shoot_timer >= shoot_cooldown) {
-                    bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
-                    shoot_timer = 0;
-                } else {
-                    shoot_timer += dt;
-                }
-                for (Bullet b : bullets) {
-                    b.draw(batch);
-                    b.update(dt, e);
-                }
-
-            }
-//        ArrayList<Enemy> removeEnemies = new ArrayList<Enemy>();
-//        ArrayList<Bullet> removeBullets = new ArrayList<Bullet>();
-//        for (Enemy e : enemies) {
-//            if (detectEnemy(e)) {
-//                enemyQueue.add(e);
-//                Enemy spotted = enemyQueue.peek();
-//                for (Bullet b : bullets) {
-//
-//                }
-//                if (spotted.getHealth() <= 0) {
-//                    spotted.getSprite().getTexture().dispose();
-////                    removeEnemies.add(spotted);
-////                    spotted.getSprite().getTexture().dispose();
-////                    enemies.remove(spotted);
-////                    enemyQueue.remove();
-//                } else if (shoot_timer >= shoot_cooldown) {
-//                    bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
-//                    shoot_timer = 0;
-//                    e.subtractHealth();
-//                } else {
-//                    shoot_timer += dt;
-//                }
-//                for (int i = 0; i < bullets.size(); i++) {
-//                    bullets.get(i).draw(batch);
-//                    bullets.get(i).update(dt, spotted);
-//                    if (bullets.get(i).hasHit()) {
-//                        System.out.println("BULLET:" + i + "HAS HIT!");
-//                    }
-//                }
-////                for (Bullet b : bullets) {
-////                    b.draw(batch);
-////                    b.update(dt, spotted);
-////                    if (b.hasHit()) {
-////
-//////                        removeBullets.add(b);
-////                    }
-//////                    if (b.hasHit()) {
-//////                        bullets.remove(b);
-//////                    }
-////                }
-//            }
-        }
-//
-//        for (Enemy e : removeEnemies) {
-//            enemies.remove(e);
-//            enemyQueue.remove(e);
-//        }
-//        for (Bullet e : removeBullets) {
-//            enemies.remove(e);
-//        }
-
-    }
 
     public boolean detectEnemy(Enemy e) {
         if (Vector2.dst(this.getXPosition(), this.getYPosition(), e.getXPosition(), e.getYPosition()) <= enemy_detection_radius) {
@@ -195,14 +161,6 @@ public class Player extends GameObject {
         }
         return false;
     }
-
-
-    //    public Enemy getClosestEnemy() {
-////        Enemy closestEnemy = null;
-////        float cloestEnemyDist = -1;
-////        ArrayList<Enemy> list_of_enemies = new ArrayList<Enemy>();
-//
-//    }
 
 
 }
