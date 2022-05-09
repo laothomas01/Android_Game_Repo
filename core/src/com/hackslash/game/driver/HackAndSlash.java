@@ -58,7 +58,7 @@ public class HackAndSlash extends ApplicationAdapter {
      */
 
 //    ArrayList<Bullet> allBullets;
-//    ArrayList<Enemy> allEnemies;
+    ArrayList<Enemy> enemies;
 //    ArrayList<Enemy> removeEnemies;
 //    ArrayList<Bullet> removeBullets;
 //    Queue<Enemy> enemyQueue;
@@ -72,8 +72,8 @@ public class HackAndSlash extends ApplicationAdapter {
 ////        MAX_BULLETS = 4;
 //        maxshootwaitTime = 5;
 //        shootTime = 0;
-//        spawnWait = 0;
-//        maxspawnWaitTime = 3;
+        spawnWait = 0;
+        maxspawnWaitTime = 3;
         sr = new ShapeRenderer();
         player = new Player();
 
@@ -109,27 +109,27 @@ public class HackAndSlash extends ApplicationAdapter {
 //
 
 //        allBullets = new ArrayList<>();
-//        allEnemies = new ArrayList<>();
-//        allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+//        enemies = new ArrayList<>();
+//        enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
 //
-//        allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+//        enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
 //
-//        allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
 //
-//        allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//        allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+//        enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+//        enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
 //        removeEnemies = new ArrayList<>();
 //        removeBullets = new ArrayList<>();
 //        enemyQueue = new LinkedList<>();
@@ -143,6 +143,7 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
+        enemies = new ArrayList<Enemy>();
     }
 
     /**
@@ -243,33 +244,41 @@ public class HackAndSlash extends ApplicationAdapter {
 //        player.fireBullets(deltaTime, batch);
 //
 
-//        if (spawnWait >= maxspawnWaitTime) {
-//            spawnWait = 0;
-//            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-//
-//            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//
-//            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-//
-//            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//        } else {
-//            spawnWait += deltaTime;
-//        }
+        if (spawnWait >= maxspawnWaitTime) {
+            spawnWait = 0;
+            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
 
-//        for (Enemy e : allEnemies) {
+            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+
+            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+
+            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+        } else {
+            spawnWait += deltaTime;
+        }
+        System.out.println(enemies.size());
+
+        for (Enemy e : enemies) {
+            e.update(deltaTime, player);
+            e.draw(batch);
+        }
+
+
+
+//        for (Enemy e : enemies) {
 //            e.update(deltaTime, player);
 //            e.draw(batch);
 //        }
@@ -296,7 +305,7 @@ public class HackAndSlash extends ApplicationAdapter {
 //        }
 //        for (int i = 0; i < allBullets.size(); i++) {
 //
-//            for (Enemy e : allEnemies) {
+//            for (Enemy e : enemies) {
 //                if (player.detectEnemy(e)) {
 //                    allBullets.get(i).draw(batch);
 //                    allBullets.get(i).update(deltaTime, e);
@@ -321,7 +330,7 @@ public class HackAndSlash extends ApplicationAdapter {
 //        for (int i = 0; i < removeBullets.size(); i++) {
 //            removeBullets.get(i).getSprite().getTexture().dispose();
 //        }
-//        for (Enemy e : allEnemies) {
+//        for (Enemy e : enemies) {
 //            e.getSprite().getTexture().dispose();
 //        }
 
@@ -330,17 +339,17 @@ public class HackAndSlash extends ApplicationAdapter {
 //        e.update(deltaTime, player);
 
 
-////        for (Enemy all : allEnemies) {
+////        for (Enemy all : enemies) {
 ////            all.update(deltaTime, player);
 ////            all.draw(batch);
 ////        }
 ////
-////        quadrant1.spawnEnemies(allEnemies, deltaTime, player, batch);
-////        quadrant2.spawnEnemies(allEnemies, deltaTime, player, batch);
-////        quadrant3.spawnEnemies(allEnemies, deltaTime, player, batch);
-////        quadrant4.spawnEnemies(allEnemies, deltaTime, player, batch);
+////        quadrant1.spawnEnemies(enemies, deltaTime, player, batch);
+////        quadrant2.spawnEnemies(enemies, deltaTime, player, batch);
+////        quadrant3.spawnEnemies(enemies, deltaTime, player, batch);
+////        quadrant4.spawnEnemies(enemies, deltaTime, player, batch);
 //
-//        player.shootBullets(allEnemies, bullets, deltaTime, batch);
+//        player.shootBullets(enemies, bullets, deltaTime, batch);
         stage.act(deltaTime);
         stage.draw();
         /**

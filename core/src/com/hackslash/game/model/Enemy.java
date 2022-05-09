@@ -40,7 +40,6 @@ public class Enemy extends GameObject {
 //
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
-//        enemy_dead = false;
     }
 
     public void update(float dt, Player player) {
@@ -50,12 +49,12 @@ public class Enemy extends GameObject {
     }
 
     public void draw(Batch batch) {
-//        batch.begin();
-//        batch.setColor(Color.WHITE);
-//        sprite.setScale(getEnemySize(), getEnemySize());
-//        sprite.setPosition(getXPosition(), getYPosition());
-//        batch.draw(tex, getXPosition(), getYPosition(), (getEnemySize() * 2), (getEnemySize() * 2));
-//        batch.end();
+        batch.begin();
+        batch.setColor(Color.WHITE);
+        sprite.setScale(getSize(), getSize());
+        sprite.setPosition(getXPosition(), getYPosition());
+        batch.draw(tex, getXPosition(), getYPosition(), (getSize() * 2), (getSize() * 2));
+        batch.end();
     }
 
     public void basic_enemy_AI(Player player, float dt) {
@@ -63,13 +62,24 @@ public class Enemy extends GameObject {
 //        /**
 //         * two different ways to have the enemy or any object follow another object in the most basic form
 //         */
-//        Vector2 playerPos = player.getPlayerPosition();
-//        Vector2 enemy_direction = new Vector2();
-        dx = (player.getXPosition() + 20) - (x + 20);
-        dy = (player.getYPosition() + 20) - (y + 20);
+//        Vector2 playerPos = player()
+        Vector2 enemy_direction = new Vector2();
+        dx = (player.getXPosition() + 20) - (this.getXPosition() + 20);
+        dy = (player.getYPosition() + 20) - (this.getYPosition() + 20);
 
-        x += dx * speed * dt;
-        y += dy * speed * dt;
+        enemy_direction.x = dx;
+        enemy_direction.y = dy;
+
+        enemy_direction.nor();
+
+        x += enemy_direction.x * speed * dt;
+        y += enemy_direction.y * speed * dt;
+
+//        dx = (player.getXPosition() + 20) - (x + 20);
+//        dy = (player.getYPosition() + 20) - (y + 20);
+//
+//        x += dx * speed * dt;
+//        y += dy * speed * dt;
 //        enemy_direction.x = (playerPos.x + 20) - (getEnemyPosition().x + 20);
 //        enemy_direction.y = (playerPos.y + 20) - (getEnemyPosition().y + 20);
 //        enemy_direction.nor();
@@ -102,11 +112,11 @@ public class Enemy extends GameObject {
 //    }
 //
     public float getXPosition() {
-        return position.x;
+        return x;
     }
 
     public float getYPosition() {
-        return position.y;
+        return y;
     }
 
     //    public Vector2 getEnemyPosition() {

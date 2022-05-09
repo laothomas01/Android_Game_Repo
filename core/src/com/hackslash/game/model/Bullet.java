@@ -55,6 +55,8 @@ public class Bullet extends GameObject {
      * Bullet will target 1 enemy at a time
      */
     public void update(float dt) {
+
+
         x += 50 * dt;
         y += 50 * dt;
         lifeSpan += dt;

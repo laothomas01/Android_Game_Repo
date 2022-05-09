@@ -17,7 +17,7 @@ import java.util.Queue;
 
 public class Player extends GameObject {
 
-    float MAX_BULLETS = 4;
+    float MAX_BULLETS = 1;
     float playerHealth;
     Sprite sprite;
     Texture tex;
