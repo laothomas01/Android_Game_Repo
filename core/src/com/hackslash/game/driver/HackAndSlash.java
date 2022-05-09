@@ -36,6 +36,7 @@ public class HackAndSlash extends ApplicationAdapter {
     // Player's Health Bar
     private PlayerHealthBar playerHB;
     SpriteBatch batch;
+    Queue<Enemy> targets;
     /**
      * -------TOUCH PAD------
      */
@@ -62,6 +63,8 @@ public class HackAndSlash extends ApplicationAdapter {
 //    ArrayList<Enemy> removeEnemies;
 //    ArrayList<Bullet> removeBullets;
 //    Queue<Enemy> enemyQueue;
+
+    Enemy e;
 
 
     /**
@@ -143,17 +146,17 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
+        e = new Enemy(2000, 2000, 100, 1, 10, 1);
         enemies = new ArrayList<Enemy>();
+        targets = new LinkedList<>();
     }
 
     /**
      * Method called to check that none of the enemies in the array list of enemies are
      * touching the player character. if none are touching- do nothing. if an enemy
      * is touching the player character, subtract health from the player.
-     *
-     * @param enemyList this is an <arraylist> of enemy
      */
-//    public void checkOverlap(ArrayList<Enemy> enemyList) {
+    //    public void checkOverlap(ArrayList<Enemy> enemyList) {
 //        for (Enemy e : enemyList) {
 //            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
 //                playerHB.subtractHealth();
@@ -161,6 +164,14 @@ public class HackAndSlash extends ApplicationAdapter {
 //            }
 //        }
 //    }
+    public void check_Bullet_Enemy_Overlap(ArrayList<Bullet> bullets) {
+        for (Bullet b : bullets) {
+            if (b.intersect(e)) {
+                e.subtractHealth();
+            }
+        }
+    }
+
 
     /**
      * Method to find the distance between player and enemies using distance formula
@@ -238,118 +249,55 @@ public class HackAndSlash extends ApplicationAdapter {
 
 //        sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
-        player.loadBullets();
-        player.fireBullets(deltaTime, batch);
-
-//        player.fireBullets(deltaTime, batch);
-//
-
-        if (spawnWait >= maxspawnWaitTime) {
-            spawnWait = 0;
-            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-
-            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-
-            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-
-            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-        } else {
-            spawnWait += deltaTime;
-        }
-        System.out.println(enemies.size());
-
-        for (Enemy e : enemies) {
-            e.update(deltaTime, player);
+        player.update(deltaTime, batch, e);
+        if (e != null) {
             e.draw(batch);
+            e.update(deltaTime, player);
+            if (e.shouldRemove()) {
+                e = null;
+            }
         }
 
+        player.update(deltaTime, batch, e);
+        check_Bullet_Enemy_Overlap(player.getBullets());
 
 
-//        for (Enemy e : enemies) {
-//            e.update(deltaTime, player);
-//            e.draw(batch);
-//        }
-//        allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
-//        for (Bullet b : allBullets) {
-//            b.update(deltaTime);
-//            b.draw(batch);
-//        }
-//        if (shootTime >= maxshootwaitTime) {
-//            shootTime = 0;
-//            if (allBullets.size() == MAX_BULLETS) {
-//                return;
-//            }
-//            allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+//
+//
+//        if (spawnWait >= maxspawnWaitTime) {
+//            spawnWait = 0;
+//            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+////
+////            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+////            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+////
+////            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+////
+////            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+////            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+////            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
 //        } else {
-//            shootTime += deltaTime;
+//            spawnWait += deltaTime;
 //        }
-
-//        allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+////        System.out.println(enemies.size());
 //
-//        for (int i = 0; i < allBullets.size(); i++) {
-//            allBullets.get(i).update(deltaTime);
-//            allBullets.get(i).draw(batch);
-//        }
-//        for (int i = 0; i < allBullets.size(); i++) {
-//
-//            for (Enemy e : enemies) {
-//                if (player.detectEnemy(e)) {
-//                    allBullets.get(i).draw(batch);
-//                    allBullets.get(i).update(deltaTime, e);
-//                    if (allBullets.get(i).getRemove()) {
-//                        allBullets.remove(i);
-//                        i--;
-//                    }
-////                    if (b.hasHit()) {
-////                        removeEnemies.add(e);
-////                        e.setHealth(b.getDamage());
-////
-////                        if (e.getHealth() == 0) {
-////                            removeEnemies.add(e);
-////                        }
-////
-////
-////                    }
-//
-//                }
-//            }
-//        }
-//        for (int i = 0; i < removeBullets.size(); i++) {
-//            removeBullets.get(i).getSprite().getTexture().dispose();
-//        }
-//        for (Enemy e : enemies) {
-//            e.getSprite().getTexture().dispose();
+////        player.loadBullets();
+//        for (int i = 0; i < enemies.size(); i++) {
+//            enemies.get(i).update(deltaTime, player);
+//            enemies.get(i).draw(batch);
 //        }
 
 
-//        e.draw(batch);
-//        e.update(deltaTime, player);
-
-
-////        for (Enemy all : enemies) {
-////            all.update(deltaTime, player);
-////            all.draw(batch);
-////        }
-////
-////        quadrant1.spawnEnemies(enemies, deltaTime, player, batch);
-////        quadrant2.spawnEnemies(enemies, deltaTime, player, batch);
-////        quadrant3.spawnEnemies(enemies, deltaTime, player, batch);
-////        quadrant4.spawnEnemies(enemies, deltaTime, player, batch);
-//
-//        player.shootBullets(enemies, bullets, deltaTime, batch);
         stage.act(deltaTime);
         stage.draw();
         /**

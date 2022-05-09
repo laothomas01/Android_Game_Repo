@@ -7,12 +7,16 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class Enemy extends GameObject {
 
     //
 //    Vector2 position;
     Sprite sprite;
     Texture tex;
+    boolean remove;
+    static boolean hit;
 //    boolean enemy_hit;
 //    boolean enemy_dead;
 
@@ -40,11 +44,18 @@ public class Enemy extends GameObject {
 //
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
+        remove = false;
+        hit = false;
+
     }
 
     public void update(float dt, Player player) {
 
         basic_enemy_AI(player, dt);
+
+        if (this.getHealth() <= 0) {
+            remove = true;
+        }
 
     }
 
@@ -58,7 +69,6 @@ public class Enemy extends GameObject {
     }
 
     public void basic_enemy_AI(Player player, float dt) {
-
 //        /**
 //         * two different ways to have the enemy or any object follow another object in the most basic form
 //         */
@@ -75,6 +85,8 @@ public class Enemy extends GameObject {
         x += enemy_direction.x * speed * dt;
         y += enemy_direction.y * speed * dt;
 
+
+
 //        dx = (player.getXPosition() + 20) - (x + 20);
 //        dy = (player.getYPosition() + 20) - (y + 20);
 //
@@ -87,6 +99,9 @@ public class Enemy extends GameObject {
 //        getEnemyPosition().y += enemy_direction.y * speed * dt;
     }
 
+    boolean isHit() {
+        return hit;
+    }
 //    public boolean isHit() {
 //        return enemy_hit;
 //    }
@@ -146,6 +161,15 @@ public class Enemy extends GameObject {
     public void subtractHealth() {
         health -= 1;
     }
+
+    public boolean shouldRemove() {
+        return remove;
+    }
+
+    public void setRemove(boolean r) {
+        remove = r;
+    }
+
 
 
 }

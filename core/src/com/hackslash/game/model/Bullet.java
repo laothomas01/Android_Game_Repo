@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -15,32 +16,32 @@ public class Bullet extends GameObject {
     //    Vector2 position;
     Sprite sprite;
     Texture tex;
-    //    boolean bullet_hit;
+    boolean hit;
     float lifeSpan;
     float maxLife;
     //    float damage;
-//    Vector2 bulletDirection;
     boolean remove;
+    int radius;
 
 
-    public Bullet(float x, float y) {
+    public Bullet(float x, float y, float radians) {
         this.x = x;
         this.y = y;
-        speed = 300f;
+        this.radians = radians;
+        speed = 350f;
         size = 15;
+        radius = 15;
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, size, size);
         lifeSpan = 0;
-        maxLife = 3;
-//        bullet_hit = false;
-//        lifeSpan = 0;
-//        maxLifespan = 10;
+        maxLife = 2;
         damage = 1;
-//        bulletDirection = new Vector2();
         remove = false;
-//        dx = x + 20;
-//        dy = y + 20;
-
+        hit = false;
+        //  x direction
+        dx = MathUtils.cos(radians) * speed;
+        //y direction
+        dy = MathUtils.sin(radians) * speed;
     }
 
     public void draw(Batch batch) {
@@ -56,13 +57,18 @@ public class Bullet extends GameObject {
      */
     public void update(float dt) {
 
+        x += dx * dt;
+        y += dy * dt;
 
-        x += 50 * dt;
-        y += 50 * dt;
         lifeSpan += dt;
         if (lifeSpan > maxLife) {
             remove = true;
         }
+
+
+//        basic_bullet_ai(dt, e);
+
+
 //        lifeSpan += dt;
 //        if (lifeSpan > maxLife) {
 //            remove = true;
@@ -95,11 +101,50 @@ public class Bullet extends GameObject {
 
     }
 
+    public void basic_bullet_ai(float dt) {
 
-    //    public boolean hasHit() {
-//        return bullet_hit;
-//    }
+//        x += speed * dt;
+//        y += speed * dt;
+//        dx += (e.getXPosition() + 20) - (this.getXPosition() + 20);
+//        dy += (e.getYPosition() + 20) - (this.getYPosition() + 20);
 //
+//        x += dx * getBulletSpeed() * dt;
+//        y += dy * getBulletSpeed() * dt;
+
+//        direction.x = (e.getXPosition() + 20) - (this.getXPosition() + 20);
+//        direction.y = (e.getYPosition() + 20) - (this.getYPosition() + 20);
+//
+//        x += direction.x * getBulletSpeed() * dt;
+//        y += direction.y * getBulletSpeed() * dt;
+//
+//        float distance = Vector2.dst(e.getXPosition(), e.getYPosition(), this.getXPosition(), this.getYPosition());
+//        float sumRadius = this.getRadius() + e.getSize();
+//        if (distance < sumRadius) {
+//            // do something
+//            remove = true;
+//
+////            enemy.set_is_hit(true);
+//        }
+        //        for (int i = 0; i < e.size(); i++) {
+//            dx = (e.get(i).getXPosition() + 20) - (x + 20);
+//            dy = (e.get(i).getYPosition() + 20) - (y + 20);
+//            x += dx * speed * dt;
+//            y += dy * speed * dt;
+//            float total_radius = size + e.get(i).getSize();
+//            float distance = Vector2.dst(e.get(i).getXPosition(), e.get(i).getYPosition(), x, y);
+//            if (distance < total_radius) {
+//                hit = true;
+//                remove = true;
+//            }
+//        }
+    }
+
+
+    public boolean hasHit() {
+        return hit;
+    }
+
+    //
 //    public boolean getRemove() {
 //        return remove;
 //    }
@@ -117,10 +162,11 @@ public class Bullet extends GameObject {
 //    }
 //
 //
-//    public int getRadius() {
-//        return radius;
-//    }
-//
+    public int getRadius() {
+        return radius;
+    }
+
+    //
     public boolean shouldRemove() {
         return remove;
     }
@@ -162,6 +208,17 @@ public class Bullet extends GameObject {
 
     public float getBulletSpeed() {
         return speed;
+    }
+
+
+    public boolean intersect(Enemy e) {
+        float total_radius = size + e.getSize();
+        float distance = Vector2.dst(e.getXPosition(), e.getYPosition(), x, y);
+        if (distance < total_radius) {
+            remove = true;
+            return true;
+        }
+        return false;
     }
 
 }

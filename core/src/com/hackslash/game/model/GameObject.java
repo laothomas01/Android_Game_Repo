@@ -19,7 +19,7 @@ public class GameObject {
 
     float dx;
     float dy;
-
+    float radians;
     float speed;
     int size;
     float damage;

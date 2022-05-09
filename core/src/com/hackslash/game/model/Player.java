@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -21,14 +22,11 @@ public class Player extends GameObject {
     float playerHealth;
     Sprite sprite;
     Texture tex;
-    float shoot_timer = 0;
-    float find_new_enemy_timer = 0;
-    float shoot_cooldown = 0.5f;
+    float fireTimer;
+    float fireTime;
 
-    float enemy_detection_radius = 200f;
-    //    float circleCenterX;
-//    float circleCenterY;
-    float circleCenterRadius;
+
+    float enemy_detection_radius = 1000f;
     ArrayList<Bullet> bullets;
 
     public Player() {
@@ -36,23 +34,14 @@ public class Player extends GameObject {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
         size = 25;
-//
-//        /**
-//         * useful for vector functions
-//         */
-////        player_position = new Vector2(x, y);
-//        /**
-//         * with delta time, we move at speed * Number of units per second even if the frame rate drops.
-//         */
         speed = 300f;
-//
-//        //player health for health bar
         playerHealth = 500f;
 //
         tex = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
-//        circleCenterRadius = 100;
         bullets = new ArrayList<Bullet>();
+        fireTimer = 0;
+        fireTime = 1;
     }
 
     public Player(float posX, float posY, int player_size, float player_speed) {
@@ -62,51 +51,39 @@ public class Player extends GameObject {
         speed = player_speed;
     }
 
+    public void update(float dt, Batch batch, Enemy e) {
+        if (detectEnemy(e)) {
+            if (!e.isHit()) {
+                fireTimer += dt;
+                if (fireTimer > fireTime) {
+                    fireTimer = 0;
+                    radians = MathUtils.atan2(e.getYPosition() - y, e.getXPosition() - x);
+                    loadBullets();
+                }
+            }
+        }
+        fireBullets(dt, batch);
+        //        loadBullets();
+//        fireBullets(dt, batch);
+//        if()
+//        if (!e.isHit()) {
+//            shoottimer += dt;
+//            if (shoottimer > shootTime) {
+//                shoottimer = 0;
+//                radians = MathUtils.atan2()
+//            }
+//        }
+
+
+    }
 
     public void loadBullets() {
         if (bullets.size() == MAX_BULLETS) {
             return;
         }
-        bullets.add(new Bullet(x, y));
-//        ArrayList<Bullet> removeBullets = new ArrayList<>();
-//        ArrayList<Enemy> removeEnemies = new ArrayList<>();
-//        if (shoot_timer >= shoot_cooldown) {
-//            bullets.add(new Bullet(this.getXPosition(), this.getYPosition()));
-//            shoot_timer = 0;
-//        } else {
-//            for (Bullet b : bullets) {
-//                b.draw(batch);
-//                for (Enemy e : enemies) {
-//                    b.update(dt, e);
-//                }
-//            }
-//            shoot_timer += dt;
-//        }
-////        for (int i = 0; i < enemies.size(); i++) {
-//            if (detectEnemy(enemies.get(i))) {
-//
-//            }
-//            if (detectEnemy(enemies.get(i))) {
-//                for (Bullet b : bullets) {
-//                    b.draw(batch);
-//                    b.update(dt, enemies.get(i));
-//                    if (b.hasHit()) {
-//                        removeBullets.add(b);
-//                        b.getSprite().getTexture().dispose();
-//                    }
-//                    if (b.getLifeSpan() >= 3) {
-//                        removeBullets.add(b);
-//                        b.getSprite().getTexture().dispose();
-//                    }
-//                }
-//                if (enemies.get(i).getHealth() != 0) {
-//
-////                    bullets.removeAll(removeBullets);
-//
-//                }
-//
-//            }
+        bullets.add(new Bullet(x, y, radians));
     }
+
 
     public void fireBullets(float dt, Batch batch) {
         for (int i = 0; i < bullets.size(); i++) {
@@ -117,8 +94,9 @@ public class Player extends GameObject {
                 i--;
             }
         }
+
+
     }
-//        enemies.removeAll(removeEnemies);
 
 
     public void draw(Batch batch) {
@@ -137,6 +115,7 @@ public class Player extends GameObject {
         return x;
     }
 
+
     public float getYPosition() {
         return y;
     }
@@ -145,9 +124,6 @@ public class Player extends GameObject {
         return speed;
     }
 
-    //    public Vector2 getPlayerPosition() {
-//        return player_position;
-//    }
     public void setSpeed(float speed) {
         this.speed = speed;
     }
@@ -168,18 +144,15 @@ public class Player extends GameObject {
     public Sprite getSprite() {
         return sprite;
     }
-//
-//    public void dispose() {
-//        tex.dispose();
-//    }
-//
-//
-//    public boolean detectEnemy(Enemy e) {
-//        if (Vector2.dst(this.getXPosition(), this.getYPosition(), e.getXPosition(), e.getYPosition()) <= enemy_detection_radius) {
-//            return true;
-//        }
-//        return false;
-//    }
+
+    public boolean detectEnemy(Enemy e) {
+        if (e != null) {
+            if (Vector2.dst(this.getXPosition(), this.getYPosition(), e.getXPosition(), e.getYPosition()) <= enemy_detection_radius) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }
