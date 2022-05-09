@@ -30,7 +30,7 @@ public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
     ShapeRenderer sr;
     Player player;
-    OrthographicCamera cam;
+    //    OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
     // Player's Health Bar
@@ -57,21 +57,23 @@ public class HackAndSlash extends ApplicationAdapter {
      * --------------Initialize Spawners---------
      */
 
-    ArrayList<Bullet> allBullets;
-    ArrayList<Enemy> allEnemies;
-    ArrayList<Enemy> removeEnemies;
-    ArrayList<Bullet> removeBullets;
-    Queue<Enemy> enemyQueue;
+//    ArrayList<Bullet> allBullets;
+//    ArrayList<Enemy> allEnemies;
+//    ArrayList<Enemy> removeEnemies;
+//    ArrayList<Bullet> removeBullets;
+//    Queue<Enemy> enemyQueue;
+
 
     /**
      * --------------------------------
      */
 
     public void create() {
-        maxshootwaitTime = 5;
-        shootTime = 0;
-        spawnWait = 0;
-        maxspawnWaitTime = 3;
+////        MAX_BULLETS = 4;
+//        maxshootwaitTime = 5;
+//        shootTime = 0;
+//        spawnWait = 0;
+//        maxspawnWaitTime = 3;
         sr = new ShapeRenderer();
         player = new Player();
 
@@ -102,12 +104,12 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         Gdx.input.setInputProcessor(stage);
 
-        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
+//        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
+//
 
-
-        allBullets = new ArrayList<>();
-        allEnemies = new ArrayList<>();
+//        allBullets = new ArrayList<>();
+//        allEnemies = new ArrayList<>();
 //        allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
 //        allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
 //        allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
@@ -128,10 +130,9 @@ public class HackAndSlash extends ApplicationAdapter {
 //        allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
 //        allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
 //        allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-
-        removeEnemies = new ArrayList<>();
-        removeBullets = new ArrayList<>();
-        enemyQueue = new LinkedList<>();
+//        removeEnemies = new ArrayList<>();
+//        removeBullets = new ArrayList<>();
+//        enemyQueue = new LinkedList<>();
         /**
          * INITIALIZE LISTS OF ENEMIES
          *
@@ -233,81 +234,98 @@ public class HackAndSlash extends ApplicationAdapter {
         player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
-        sr.setProjectionMatrix(cam.combined);
+
+//        sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
+        player.loadBullets();
+        player.fireBullets(deltaTime, batch);
 
-        if (shootTime >= maxshootwaitTime) {
-            shootTime = 0;
-            allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
-        } else {
-            shootTime += deltaTime * 2;
-        }
+//        player.fireBullets(deltaTime, batch);
+//
 
-        if (spawnWait >= maxspawnWaitTime) {
-            spawnWait = 0;
-            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+//        if (spawnWait >= maxspawnWaitTime) {
+//            spawnWait = 0;
+//            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+//
+//            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//
+//            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
+//
+//            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//        } else {
+//            spawnWait += deltaTime;
+//        }
 
-            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
+//        for (Enemy e : allEnemies) {
+//            e.update(deltaTime, player);
+//            e.draw(batch);
+//        }
+//        allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+//        for (Bullet b : allBullets) {
+//            b.update(deltaTime);
+//            b.draw(batch);
+//        }
+//        if (shootTime >= maxshootwaitTime) {
+//            shootTime = 0;
+//            if (allBullets.size() == MAX_BULLETS) {
+//                return;
+//            }
+//            allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+//        } else {
+//            shootTime += deltaTime;
+//        }
 
-            allEnemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-
-            allEnemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-            allEnemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-        } else {
-            spawnWait += deltaTime;
-        }
-
-        for (Enemy e : allEnemies) {
-            e.update(deltaTime, player);
-            e.draw(batch);
-        }
-
-
-        for (Bullet b : allBullets) {
-            for (Enemy e : allEnemies) {
-                if (player.detectEnemy(e)) {
-                    b.draw(batch);
-                    b.update(deltaTime, e);
-                    if (b.getLifeSpan() >= b.getMaxLifespan()) {
-                        b.setLifeSpan(0);
-                        removeBullets.add(b);
-//                        b.getSprite().getTexture().dispose();
-                    }
-                    if (b.hasHit()) {
-                        removeEnemies.add(e);
-                        e.setHealth(b.getDamage());
-
-                        if (e.getHealth() == 0) {
-                            removeEnemies.add(e);
-                        }
-
-                        removeBullets.add(b);
-
-                    }
-
-                }
-            }
-        }
+//        allBullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
+//
+//        for (int i = 0; i < allBullets.size(); i++) {
+//            allBullets.get(i).update(deltaTime);
+//            allBullets.get(i).draw(batch);
+//        }
+//        for (int i = 0; i < allBullets.size(); i++) {
+//
+//            for (Enemy e : allEnemies) {
+//                if (player.detectEnemy(e)) {
+//                    allBullets.get(i).draw(batch);
+//                    allBullets.get(i).update(deltaTime, e);
+//                    if (allBullets.get(i).getRemove()) {
+//                        allBullets.remove(i);
+//                        i--;
+//                    }
+////                    if (b.hasHit()) {
+////                        removeEnemies.add(e);
+////                        e.setHealth(b.getDamage());
+////
+////                        if (e.getHealth() == 0) {
+////                            removeEnemies.add(e);
+////                        }
+////
+////
+////                    }
+//
+//                }
+//            }
+//        }
 //        for (int i = 0; i < removeBullets.size(); i++) {
 //            removeBullets.get(i).getSprite().getTexture().dispose();
 //        }
 //        for (Enemy e : allEnemies) {
 //            e.getSprite().getTexture().dispose();
 //        }
-        allBullets.removeAll(removeBullets);
-        allEnemies.removeAll(removeEnemies);
+
+
 //        e.draw(batch);
 //        e.update(deltaTime, player);
 
@@ -346,11 +364,11 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
-        float lerp = 0.1f;
-
-        cam.position.x += (player.getPlayerPosition().x + 1 - cam.position.x + 1) * lerp * 0.5f;
-        cam.position.y += (player.getPlayerPosition().y + 1 - cam.position.y + 1) * lerp * 0.5f;
-        cam.update();
+//        float lerp = 0.1f;
+//
+//        cam.position.x += (player.getPlayerPosition().x + 1 - cam.position.x + 1) * lerp * 0.5f;
+//        cam.position.y += (player.getPlayerPosition().y + 1 - cam.position.y + 1) * lerp * 0.5f;
+//        cam.update();
 
 
     }
