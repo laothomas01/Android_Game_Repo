@@ -55,6 +55,9 @@ public class HackAndSlash extends ApplicationAdapter {
     float deltaTime;
     float spawnWait;
     float maxspawnWaitTime;
+
+    float rageTime;
+    float rageTimer;
     /**
      * --------------Initialize Spawners---------
      */
@@ -80,9 +83,9 @@ public class HackAndSlash extends ApplicationAdapter {
      */
 
     public void create() {
-////        MAX_BULLETS = 4;
-//        maxshootwaitTime = 5;
-//        shootTime = 0;
+
+        rageTime = 10;
+        rageTimer = 0;
         spawnWait = 0;
         maxspawnWaitTime = 3;
         sr = new ShapeRenderer();
@@ -154,15 +157,15 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
-        e1 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e2 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e3 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e4 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e5 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e6 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e7 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e8 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-        e9 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e1 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e2 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e3 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
+        e4 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
+        e5 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
+        e6 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
+        e7 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
+        e8 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
+        e9 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
 
         enemies = new ArrayList<Enemy>();
         enemies.add(e1);
@@ -318,19 +321,17 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setYPosition(player_y_Move);
 
 //        sr.setProjectionMatrix(cam.combined);
-        if (player != null) {
-            player.draw(batch);
-            player.update(deltaTime, batch, e1);
-            player.update(deltaTime, batch, e2);
-            player.update(deltaTime, batch, e4);
-            player.update(deltaTime, batch, e4);
-            player.update(deltaTime, batch, e5);
-            player.update(deltaTime, batch, e6);
-            player.update(deltaTime, batch, e7);
-            player.update(deltaTime, batch, e8);
-            player.update(deltaTime, batch, e9);
+        player.draw(batch);
+        player.update(deltaTime, batch, e1);
+        player.update(deltaTime, batch, e2);
+        player.update(deltaTime, batch, e4);
+        player.update(deltaTime, batch, e4);
+        player.update(deltaTime, batch, e5);
+        player.update(deltaTime, batch, e6);
+        player.update(deltaTime, batch, e7);
+        player.update(deltaTime, batch, e8);
+        player.update(deltaTime, batch, e9);
 
-        }
         if (player.shouldRemove()) {
             player = null;
         }
@@ -401,6 +402,17 @@ public class HackAndSlash extends ApplicationAdapter {
             e9.update(deltaTime, player);
             if (e9.shouldRemove()) {
                 e9 = null;
+            }
+        }
+
+        for (int i = 0; i < enemies.size(); i++) {
+            if (rageTimer > rageTime) {
+                rageTimer = 0;
+                enemies.get(i).setSpeed(5);
+                enemies.get(i).setSize(5);
+                enemies.get(i).getSprite().setColor(1, 0, 1, 1);
+            } else {
+                rageTimer += deltaTime;
             }
         }
 

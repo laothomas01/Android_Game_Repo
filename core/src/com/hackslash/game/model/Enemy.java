@@ -137,8 +137,8 @@ public class Enemy extends GameObject {
 //        return position;
 //    }
 //
-    public void setSize(int size) {
-        this.size = size;
+    public void setSize(int s) {
+        size += s;
     }
 
     public int getSize() {
@@ -167,6 +167,14 @@ public class Enemy extends GameObject {
 
     public void setRemove(boolean r) {
         remove = r;
+    }
+
+    public void setSpeed(float s) {
+        speed += s;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 
 

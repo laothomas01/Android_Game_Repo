@@ -186,4 +186,8 @@ public class Player extends GameObject {
         return remove;
     }
 
+    public void takeDamage(float h) {
+        playerHealth -= h;
+    }
+
 }
