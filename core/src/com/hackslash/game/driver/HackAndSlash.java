@@ -167,7 +167,7 @@ public class HackAndSlash extends ApplicationAdapter {
     public void check_Bullet_Enemy_Overlap(ArrayList<Bullet> bullets) {
         for (Bullet b : bullets) {
             if (b.intersect(e)) {
-                e.subtractHealth();
+                e.takeDamage(b.getDamage());
             }
         }
     }

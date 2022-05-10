@@ -34,7 +34,7 @@ public class Bullet extends GameObject {
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, size, size);
         lifeSpan = 0;
-        maxLife = 2;
+        maxLife = 3;
         damage = 1;
         remove = false;
         hit = false;

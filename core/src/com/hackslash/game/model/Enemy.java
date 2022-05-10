@@ -86,7 +86,6 @@ public class Enemy extends GameObject {
         y += enemy_direction.y * speed * dt;
 
 
-
 //        dx = (player.getXPosition() + 20) - (x + 20);
 //        dy = (player.getYPosition() + 20) - (y + 20);
 //
@@ -158,8 +157,8 @@ public class Enemy extends GameObject {
         return health;
     }
 
-    public void subtractHealth() {
-        health -= 1;
+    public void takeDamage(float damage) {
+        this.health -= damage;
     }
 
     public boolean shouldRemove() {
@@ -169,7 +168,6 @@ public class Enemy extends GameObject {
     public void setRemove(boolean r) {
         remove = r;
     }
-
 
 
 }
