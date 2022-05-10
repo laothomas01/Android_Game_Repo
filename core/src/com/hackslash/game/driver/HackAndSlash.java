@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -62,9 +63,16 @@ public class HackAndSlash extends ApplicationAdapter {
     ArrayList<Enemy> enemies;
 //    ArrayList<Enemy> removeEnemies;
 //    ArrayList<Bullet> removeBullets;
-//    Queue<Enemy> enemyQueue;
 
-    Enemy e;
+    Enemy e1;
+    Enemy e2;
+    Enemy e3;
+    Enemy e4;
+    Enemy e5;
+    Enemy e6;
+    Enemy e7;
+    Enemy e8;
+    Enemy e9;
 
 
     /**
@@ -146,9 +154,28 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
-        e = new Enemy(2000, 2000, 100, 1, 10, 1);
+        e1 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e2 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e3 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e4 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e5 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e6 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e7 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e8 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e9 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(1000, 2000), MathUtils.random(100, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+
         enemies = new ArrayList<Enemy>();
+        enemies.add(e1);
+        enemies.add(e2);
+        enemies.add(e3);
+        enemies.add(e4);
+        enemies.add(e5);
+        enemies.add(e6);
+        enemies.add(e7);
+        enemies.add(e8);
+        enemies.add(e9);
         targets = new LinkedList<>();
+
     }
 
     /**
@@ -156,18 +183,61 @@ public class HackAndSlash extends ApplicationAdapter {
      * touching the player character. if none are touching- do nothing. if an enemy
      * is touching the player character, subtract health from the player.
      */
-    //    public void checkOverlap(ArrayList<Enemy> enemyList) {
-//        for (Enemy e : enemyList) {
-//            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
-//                playerHB.subtractHealth();
-//            } else {
-//            }
-//        }
-//    }
+    public void check_Player_Enemy_Overlap(ArrayList<Enemy> enemyList) {
+        for (Enemy e : enemyList) {
+            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
+                playerHB.subtractHealth();
+            }
+
+        }
+    }
+
     public void check_Bullet_Enemy_Overlap(ArrayList<Bullet> bullets) {
         for (Bullet b : bullets) {
-            if (b.intersect(e)) {
-                e.takeDamage(b.getDamage());
+            if (e1 != null) {
+                if (b.intersect(e1)) {
+                    e1.takeDamage(b.getDamage());
+                }
+            }
+            if (e2 != null) {
+                if (b.intersect(e2)) {
+                    e2.takeDamage(b.getDamage());
+                }
+            }
+            if (e3 != null) {
+                if (b.intersect(e3)) {
+                    e3.takeDamage(b.getDamage());
+                }
+            }
+            if (e4 != null) {
+                if (b.intersect(e4)) {
+                    e4.takeDamage(b.getDamage());
+                }
+            }
+            if (e5 != null) {
+                if (b.intersect(e5)) {
+                    e5.takeDamage(b.getDamage());
+                }
+            }
+            if (e6 != null) {
+                if (b.intersect(e6)) {
+                    e6.takeDamage(b.getDamage());
+                }
+            }
+            if (e7 != null) {
+                if (b.intersect(e7)) {
+                    e7.takeDamage(b.getDamage());
+                }
+            }
+            if (e8 != null) {
+                if (b.intersect(e8)) {
+                    e8.takeDamage(b.getDamage());
+                }
+            }
+            if (e9 != null) {
+                if (b.intersect(e9)) {
+                    e9.takeDamage(b.getDamage());
+                }
             }
         }
     }
@@ -248,18 +318,95 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setYPosition(player_y_Move);
 
 //        sr.setProjectionMatrix(cam.combined);
-        player.draw(batch);
-        player.update(deltaTime, batch, e);
-        if (e != null) {
-            e.draw(batch);
-            e.update(deltaTime, player);
-            if (e.shouldRemove()) {
-                e = null;
+        if (player != null) {
+            player.draw(batch);
+            player.update(deltaTime, batch, e1);
+            player.update(deltaTime, batch, e2);
+            player.update(deltaTime, batch, e4);
+            player.update(deltaTime, batch, e4);
+            player.update(deltaTime, batch, e5);
+            player.update(deltaTime, batch, e6);
+            player.update(deltaTime, batch, e7);
+            player.update(deltaTime, batch, e8);
+            player.update(deltaTime, batch, e9);
+
+        }
+        if (player.shouldRemove()) {
+            player = null;
+        }
+
+
+//        for (int i = 0; i < enemies.size(); i++) {
+//            enemies.get(i).draw(batch);
+//            enemies.get(i).update(deltaTime, player);
+//        }
+        if (e1 != null) {
+            e1.draw(batch);
+            e1.update(deltaTime, player);
+            if (e1.shouldRemove()) {
+                e1 = null;
+            }
+        }
+        if (e2 != null) {
+            e2.draw(batch);
+            e2.update(deltaTime, player);
+            if (e2.shouldRemove()) {
+                e2 = null;
+            }
+        }
+        if (e3 != null) {
+            e3.draw(batch);
+            e3.update(deltaTime, player);
+            if (e3.shouldRemove()) {
+                e3 = null;
+            }
+        }
+        if (e4 != null) {
+            e4.draw(batch);
+            e4.update(deltaTime, player);
+            if (e4.shouldRemove()) {
+                e4 = null;
+            }
+        }
+        if (e5 != null) {
+            e5.draw(batch);
+            e5.update(deltaTime, player);
+            if (e5.shouldRemove()) {
+                e5 = null;
+            }
+        }
+        if (e6 != null) {
+            e6.draw(batch);
+            e6.update(deltaTime, player);
+            if (e6.shouldRemove()) {
+                e6 = null;
+            }
+        }
+        if (e7 != null) {
+            e7.draw(batch);
+            e7.update(deltaTime, player);
+            if (e7.shouldRemove()) {
+                e7 = null;
+            }
+        }
+        if (e8 != null) {
+            e8.draw(batch);
+            e8.update(deltaTime, player);
+            if (e8.shouldRemove()) {
+                e8 = null;
+            }
+        }
+        if (e9 != null) {
+            e9.draw(batch);
+            e9.update(deltaTime, player);
+            if (e9.shouldRemove()) {
+                e9 = null;
             }
         }
 
-        player.update(deltaTime, batch, e);
+
         check_Bullet_Enemy_Overlap(player.getBullets());
+        check_Player_Enemy_Overlap(enemies);
 
 
 //

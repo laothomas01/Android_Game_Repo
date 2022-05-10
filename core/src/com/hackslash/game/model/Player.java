@@ -24,9 +24,10 @@ public class Player extends GameObject {
     Texture tex;
     float fireTimer;
     float fireTime;
+    boolean remove;
 
 
-    float enemy_detection_radius = 1000f;
+    float enemy_detection_radius = 150f;
     ArrayList<Bullet> bullets;
 
     public Player() {
@@ -52,6 +53,27 @@ public class Player extends GameObject {
     }
 
     public void update(float dt, Batch batch, Enemy e) {
+//        for (int i = 0; i < l.size(); i++) {
+//            if (detectEnemy(l.get(i))) {
+//                if (!e_queue.contains(l.get(i))) {
+//                    e_queue.add(l.get(i));
+//                }
+//            }
+//        }
+
+//        Enemy target = e_queue.peek();
+//        if (!target.isHit()) {
+//
+//        }
+//        } else if (!e_queue.peek().isHit()) {
+//            fireTimer += dt;
+//            if (fireTimer > fireTime) {
+//                fireTimer = 0;
+//                radians = MathUtils.atan2(e_queue.peek().getYPosition() - y, e_queue.peek().getXPosition() - x);
+//                loadBullets();
+//            }
+//        }
+
         if (detectEnemy(e)) {
             if (!e.isHit()) {
                 fireTimer += dt;
@@ -61,8 +83,14 @@ public class Player extends GameObject {
                     loadBullets();
                 }
             }
+
+
         }
         fireBullets(dt, batch);
+
+        if (this.getPlayerHealth() <= 0) {
+            remove = true;
+        }
         //        loadBullets();
 //        fireBullets(dt, batch);
 //        if()
@@ -154,5 +182,8 @@ public class Player extends GameObject {
         return false;
     }
 
+    public boolean shouldRemove() {
+        return remove;
+    }
 
 }
