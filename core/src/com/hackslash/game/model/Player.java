@@ -27,7 +27,7 @@ public class Player extends GameObject {
     boolean remove;
 
 
-    float enemy_detection_radius = 150f;
+    float enemy_detection_radius = 500f;
     ArrayList<Bullet> bullets;
 
     public Player() {
@@ -36,13 +36,13 @@ public class Player extends GameObject {
         y = Gdx.graphics.getHeight() / 2;
         size = 25;
         speed = 300f;
-        playerHealth = 500f;
+        playerHealth = 1000f;
 //
         tex = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
         bullets = new ArrayList<Bullet>();
         fireTimer = 0;
-        fireTime = 1;
+        fireTime = 0.5f;
     }
 
     public Player(float posX, float posY, int player_size, float player_speed) {
@@ -53,26 +53,6 @@ public class Player extends GameObject {
     }
 
     public void update(float dt, Batch batch, Enemy e) {
-//        for (int i = 0; i < l.size(); i++) {
-//            if (detectEnemy(l.get(i))) {
-//                if (!e_queue.contains(l.get(i))) {
-//                    e_queue.add(l.get(i));
-//                }
-//            }
-//        }
-
-//        Enemy target = e_queue.peek();
-//        if (!target.isHit()) {
-//
-//        }
-//        } else if (!e_queue.peek().isHit()) {
-//            fireTimer += dt;
-//            if (fireTimer > fireTime) {
-//                fireTimer = 0;
-//                radians = MathUtils.atan2(e_queue.peek().getYPosition() - y, e_queue.peek().getXPosition() - x);
-//                loadBullets();
-//            }
-//        }
 
         if (detectEnemy(e)) {
             if (!e.isHit()) {
@@ -88,20 +68,6 @@ public class Player extends GameObject {
         }
         fireBullets(dt, batch);
 
-        if (this.getPlayerHealth() <= 0) {
-            remove = true;
-        }
-        //        loadBullets();
-//        fireBullets(dt, batch);
-//        if()
-//        if (!e.isHit()) {
-//            shoottimer += dt;
-//            if (shoottimer > shootTime) {
-//                shoottimer = 0;
-//                radians = MathUtils.atan2()
-//            }
-//        }
-
 
     }
 
@@ -114,9 +80,11 @@ public class Player extends GameObject {
 
 
     public void fireBullets(float dt, Batch batch) {
+
         for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).update(dt);
             bullets.get(i).draw(batch);
+            bullets.get(i).update(dt);
+
             if (bullets.get(i).shouldRemove()) {
                 bullets.remove(i);
                 i--;
@@ -189,5 +157,6 @@ public class Player extends GameObject {
     public void takeDamage(float h) {
         playerHealth -= h;
     }
+
 
 }

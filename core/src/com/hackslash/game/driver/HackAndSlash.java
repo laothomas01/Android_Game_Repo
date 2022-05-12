@@ -2,6 +2,7 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -64,6 +65,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
 //    ArrayList<Bullet> allBullets;
     ArrayList<Enemy> enemies;
+    ArrayList<Enemy> remove_enemies;
 //    ArrayList<Enemy> removeEnemies;
 //    ArrayList<Bullet> removeBullets;
 
@@ -76,11 +78,20 @@ public class HackAndSlash extends ApplicationAdapter {
     Enemy e7;
     Enemy e8;
     Enemy e9;
-
-
+    Enemy e1B;
+    Enemy e2B;
+    Enemy e3B;
+    Enemy e4B;
+    Enemy e5B;
+    Enemy e6B;
+    Enemy e7B;
+    Enemy e8B;
+    Enemy e9B;
     /**
      * --------------------------------
      */
+
+    boolean GAME_PAUSED;
 
     public void create() {
 
@@ -122,31 +133,6 @@ public class HackAndSlash extends ApplicationAdapter {
 //        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
 //
 
-//        allBullets = new ArrayList<>();
-//        enemies = new ArrayList<>();
-//        enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-//
-//        enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//        enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//
-//        enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-//
-//        enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-//        enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-//        enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//        enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//        removeEnemies = new ArrayList<>();
-//        removeBullets = new ArrayList<>();
-//        enemyQueue = new LinkedList<>();
         /**
          * INITIALIZE LISTS OF ENEMIES
          *
@@ -167,7 +153,18 @@ public class HackAndSlash extends ApplicationAdapter {
         e8 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
         e9 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
 
-        enemies = new ArrayList<Enemy>();
+        e1B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e2B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e3B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
+        e4B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
+        e5B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
+        e6B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
+        e7B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
+        e8B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
+        e9B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+
+
+        enemies = new ArrayList();
         enemies.add(e1);
         enemies.add(e2);
         enemies.add(e3);
@@ -177,7 +174,18 @@ public class HackAndSlash extends ApplicationAdapter {
         enemies.add(e7);
         enemies.add(e8);
         enemies.add(e9);
+        enemies.add(e1B);
+        enemies.add(e2B);
+        enemies.add(e3B);
+        enemies.add(e4B);
+        enemies.add(e5B);
+        enemies.add(e6B);
+        enemies.add(e7B);
+        enemies.add(e8B);
+        enemies.add(e9B);
         targets = new LinkedList<>();
+        remove_enemies = new ArrayList<>();
+        GAME_PAUSED = false;
 
     }
 
@@ -188,6 +196,7 @@ public class HackAndSlash extends ApplicationAdapter {
      */
     public void check_Player_Enemy_Overlap(ArrayList<Enemy> enemyList) {
         for (Enemy e : enemyList) {
+
             if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
                 playerHB.subtractHealth();
             }
@@ -197,49 +206,9 @@ public class HackAndSlash extends ApplicationAdapter {
 
     public void check_Bullet_Enemy_Overlap(ArrayList<Bullet> bullets) {
         for (Bullet b : bullets) {
-            if (e1 != null) {
-                if (b.intersect(e1)) {
-                    e1.takeDamage(b.getDamage());
-                }
-            }
-            if (e2 != null) {
-                if (b.intersect(e2)) {
-                    e2.takeDamage(b.getDamage());
-                }
-            }
-            if (e3 != null) {
-                if (b.intersect(e3)) {
-                    e3.takeDamage(b.getDamage());
-                }
-            }
-            if (e4 != null) {
-                if (b.intersect(e4)) {
-                    e4.takeDamage(b.getDamage());
-                }
-            }
-            if (e5 != null) {
-                if (b.intersect(e5)) {
-                    e5.takeDamage(b.getDamage());
-                }
-            }
-            if (e6 != null) {
-                if (b.intersect(e6)) {
-                    e6.takeDamage(b.getDamage());
-                }
-            }
-            if (e7 != null) {
-                if (b.intersect(e7)) {
-                    e7.takeDamage(b.getDamage());
-                }
-            }
-            if (e8 != null) {
-                if (b.intersect(e8)) {
-                    e8.takeDamage(b.getDamage());
-                }
-            }
-            if (e9 != null) {
-                if (b.intersect(e9)) {
-                    e9.takeDamage(b.getDamage());
+            for (int i = 0; i < enemies.size(); i++) {
+                if (b.intersect(enemies.get(i))) {
+                    enemies.get(i).takeDamage(b.getDamage());
                 }
             }
         }
@@ -247,62 +216,17 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
     /**
-     * Method to find the distance between player and enemies using distance formula
-     * if the distance is <= 300f then shoot bullets at the enemy
-     *
-     * @param enemyList this is an <arraylist> of enemy
-     */
-//    public void findDistance(ArrayList<Enemy> enemyList) {
-//        float distance;
-//        for (Enemy e : enemyList) {
-//            distance = (float) Math.sqrt(Math.pow(e.getXPosition() - player.getXPosition(), 2) + Math.pow(e.getYPosition() - player.getYPosition(), 2));
-//            if (distance <= 300f) {
-//                //System.out.println("enemy distance:" + distance);
-//                shootBullets(e);
-//
-//            }
-//        }
-//
-//
-//    }
-
-//    public void shootBullets(Enemy e) {
-//        shootTimer += deltaTime;
-//        if (shootTimer >= wait_time) {
-//            bullets.add(new Bullet(player.getXPosition(), player.getYPosition()));
-//
-//        }
-//
-//        for (Bullet bullet : bullets) {
-//            bullet.draw(batch);
-//            bullet.update(deltaTime, e.getXPosition(), e.getYPosition());
-//        }
-//
-//    }
-
-    /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
 
     public void render() {
+
 
         /**
          * Screen Clearing every frame
          */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        /**
-         * CHECK IF ENEMIES ARE TOUCHING THE PLAYER
-         */
-//        checkOverlap(e1);
-//        checkOverlap(e2);
-//        checkOverlap(e3);
-//        checkOverlap(e4);
-//        checkOverlap(e5);
-//        checkOverlap(e6);
-//        checkOverlap(e7);
-//        checkOverlap(e8);
 
         //draw health bar
         sr.setProjectionMatrix(batch.getProjectionMatrix());
@@ -320,155 +244,29 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
 
-//        sr.setProjectionMatrix(cam.combined);
         player.draw(batch);
-        player.update(deltaTime, batch, e1);
-        player.update(deltaTime, batch, e2);
-        player.update(deltaTime, batch, e4);
-        player.update(deltaTime, batch, e4);
-        player.update(deltaTime, batch, e5);
-        player.update(deltaTime, batch, e6);
-        player.update(deltaTime, batch, e7);
-        player.update(deltaTime, batch, e8);
-        player.update(deltaTime, batch, e9);
 
-        if (player.shouldRemove()) {
-            player = null;
-        }
-
-
-//        for (int i = 0; i < enemies.size(); i++) {
-//            enemies.get(i).draw(batch);
-//            enemies.get(i).update(deltaTime, player);
-//        }
-        if (e1 != null) {
-            e1.draw(batch);
-            e1.update(deltaTime, player);
-            if (e1.shouldRemove()) {
-                e1 = null;
-            }
-        }
-        if (e2 != null) {
-            e2.draw(batch);
-            e2.update(deltaTime, player);
-            if (e2.shouldRemove()) {
-                e2 = null;
-            }
-        }
-        if (e3 != null) {
-            e3.draw(batch);
-            e3.update(deltaTime, player);
-            if (e3.shouldRemove()) {
-                e3 = null;
-            }
-        }
-        if (e4 != null) {
-            e4.draw(batch);
-            e4.update(deltaTime, player);
-            if (e4.shouldRemove()) {
-                e4 = null;
-            }
-        }
-        if (e5 != null) {
-            e5.draw(batch);
-            e5.update(deltaTime, player);
-            if (e5.shouldRemove()) {
-                e5 = null;
-            }
-        }
-        if (e6 != null) {
-            e6.draw(batch);
-            e6.update(deltaTime, player);
-            if (e6.shouldRemove()) {
-                e6 = null;
-            }
-        }
-        if (e7 != null) {
-            e7.draw(batch);
-            e7.update(deltaTime, player);
-            if (e7.shouldRemove()) {
-                e7 = null;
-            }
-        }
-        if (e8 != null) {
-            e8.draw(batch);
-            e8.update(deltaTime, player);
-            if (e8.shouldRemove()) {
-                e8 = null;
-            }
-        }
-        if (e9 != null) {
-            e9.draw(batch);
-            e9.update(deltaTime, player);
-            if (e9.shouldRemove()) {
-                e9 = null;
-            }
-        }
 
         for (int i = 0; i < enemies.size(); i++) {
-            if (rageTimer > rageTime) {
-                rageTimer = 0;
-                enemies.get(i).setSpeed(5);
-                enemies.get(i).setSize(5);
-                enemies.get(i).getSprite().setColor(1, 0, 1, 1);
+            if (enemies.get(i).shouldRemove()) {
+                enemies.remove(i);
+                i--;
             } else {
-                rageTimer += deltaTime;
+                player.update(deltaTime, batch, enemies.get(i));
+                enemies.get(i).update(deltaTime, player);
+                enemies.get(i).draw(batch);
             }
         }
+        System.out.println(enemies.size());
 
 
         check_Bullet_Enemy_Overlap(player.getBullets());
         check_Player_Enemy_Overlap(enemies);
 
 
-//
-//
-//        if (spawnWait >= maxspawnWaitTime) {
-//            spawnWait = 0;
-//            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-////
-////            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-////            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-////
-////            enemies.add(new Enemy(2000, 2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(2000, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, 2000, 100, 1, 10, 1));
-////
-////            enemies.add(new Enemy(2000, 0, 100, 1, 10, 1));
-////            enemies.add(new Enemy(-2000, 0, 100, 1, 10, 1));
-////            enemies.add(new Enemy(0, -2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-////            enemies.add(new Enemy(0, 2000, 100, 1, 10, 1));
-//        } else {
-//            spawnWait += deltaTime;
-//        }
-////        System.out.println(enemies.size());
-//
-////        player.loadBullets();
-//        for (int i = 0; i < enemies.size(); i++) {
-//            enemies.get(i).update(deltaTime, player);
-//            enemies.get(i).draw(batch);
-//        }
-
-
         stage.act(deltaTime);
         stage.draw();
-        /**
-         * Spawn Positions
-         */
 
-
-//
-//        Y_Intercept_Positive.spawnEnemies(e5, deltaTime, player, batch);
-//        Y_Intercept_Negative.spawnEnemies(e6, deltaTime, player, batch);
-//        X_Intercept_Positive.spawnEnemies(e7, deltaTime, player, batch);
-//        X_Intercept_Negative.spawnEnemies(e8, deltaTime, player, batch);
 
 /**
  * Set cam Position
@@ -503,17 +301,21 @@ public class HackAndSlash extends ApplicationAdapter {
      * A good place to save the game state.
      */
     public void pause() {
+        GAME_PAUSED = !GAME_PAUSED;
     }
 
     /**
      * This method is called on Android, when the application resumes from a paused state, and on desktop when unminimized.
      */
     public void resume() {
+
     }
 
     /**
      * Called when the application is destroyed. It is preceded by a call to pause().
      */
+
+
     public void dispose() {
 //        sr.dispose();
 //        stage.dispose();
