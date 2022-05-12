@@ -28,13 +28,13 @@ public class Bullet extends GameObject {
         this.x = x;
         this.y = y;
         this.radians = radians;
-        speed = 350f;
+        speed = 300f;
         size = 15;
         radius = 15;
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, size, size);
         lifeSpan = 0;
-        maxLife = 3;
+        maxLife = 5;
         damage = 1;
         remove = false;
         hit = false;
@@ -212,6 +212,7 @@ public class Bullet extends GameObject {
 
 
     public boolean intersect(Enemy e) {
+
         float total_radius = size + e.getSize();
         float distance = Vector2.dst(e.getXPosition(), e.getYPosition(), x, y);
         if (distance < total_radius) {

@@ -143,25 +143,25 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
-        e1 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e2 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e3 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
-        e4 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
-        e5 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
-        e6 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
-        e7 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
-        e8 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
-        e9 = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e1 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e2 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e3 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
+        e4 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
+        e5 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
+        e6 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
+        e7 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
+        e8 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
+        e9 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
 
-        e1B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e2B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e3B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
-        e4B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
-        e5B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
-        e6B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
-        e7B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
-        e8B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
-        e9B = new Enemy(MathUtils.random(0, 2000), MathUtils.random(0, 2000), MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
+        e1B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e2B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
+        e3B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
+        e4B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
+        e5B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
+        e6B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
+        e7B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
+        e8B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
+        e9B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
 
 
         enemies = new ArrayList();
@@ -257,7 +257,8 @@ public class HackAndSlash extends ApplicationAdapter {
                 enemies.get(i).draw(batch);
             }
         }
-        System.out.println(enemies.size());
+
+        System.out.println(player.getBullets().size());
 
 
         check_Bullet_Enemy_Overlap(player.getBullets());

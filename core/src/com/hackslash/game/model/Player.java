@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class Player extends GameObject {
@@ -27,7 +28,7 @@ public class Player extends GameObject {
     boolean remove;
 
 
-    float enemy_detection_radius = 500f;
+    float enemy_detection_radius = 250f;
     ArrayList<Bullet> bullets;
 
     public Player() {
@@ -37,12 +38,12 @@ public class Player extends GameObject {
         size = 25;
         speed = 300f;
         playerHealth = 1000f;
-//
+
         tex = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(tex, 0, 0, 20, 20);
         bullets = new ArrayList<Bullet>();
         fireTimer = 0;
-        fireTime = 0.5f;
+        fireTime = 1f;
     }
 
     public Player(float posX, float posY, int player_size, float player_speed) {
@@ -56,17 +57,20 @@ public class Player extends GameObject {
 
         if (detectEnemy(e)) {
             if (!e.isHit()) {
-                fireTimer += dt;
+
                 if (fireTimer > fireTime) {
                     fireTimer = 0;
                     radians = MathUtils.atan2(e.getYPosition() - y, e.getXPosition() - x);
                     loadBullets();
+
+                } else {
+                    fireTimer += dt;
+                    fireBullets(dt, batch);
                 }
             }
 
 
         }
-        fireBullets(dt, batch);
 
 
     }
@@ -81,16 +85,13 @@ public class Player extends GameObject {
 
     public void fireBullets(float dt, Batch batch) {
 
-        for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).draw(batch);
-            bullets.get(i).update(dt);
-
-            if (bullets.get(i).shouldRemove()) {
-                bullets.remove(i);
-                i--;
+        if (!bullets.isEmpty()) {
+            bullets.get(0).draw(batch);
+            bullets.get(0).update(dt);
+            if (bullets.get(0).shouldRemove()) {
+                bullets.remove(0);
             }
         }
-
 
     }
 
@@ -142,12 +143,11 @@ public class Player extends GameObject {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (e != null) {
-            if (Vector2.dst(this.getXPosition(), this.getYPosition(), e.getXPosition(), e.getYPosition()) <= enemy_detection_radius) {
-                return true;
-            }
+        if (Vector2.dst(this.getXPosition(), this.getYPosition(), e.getXPosition(), e.getYPosition()) < enemy_detection_radius) {
+            return true;
         }
         return false;
+
     }
 
     public boolean shouldRemove() {
