@@ -38,6 +38,7 @@ public class HackAndSlash extends ApplicationAdapter {
     private PlayerHealthBar playerHB;
     SpriteBatch batch;
     Queue<Enemy> targets;
+    OrthographicCamera cam;
     /**
      * -------TOUCH PAD------
      */
@@ -179,7 +180,9 @@ public class HackAndSlash extends ApplicationAdapter {
         targets = new LinkedList<>();
         remove_enemies = new ArrayList<>();
         GAME_PAUSED = false;
-
+//        cam = new OrthographicCamera(player.getXPosition(), player.getYPosition());
+//        cam.setToOrtho(false);
+//        cam.update();
     }
 
     /**
@@ -222,9 +225,9 @@ public class HackAndSlash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //draw health bar
+//
         sr.setProjectionMatrix(batch.getProjectionMatrix());
         playerHB.draw(batch);
-
         /**
          * make game's frame rate independent
          */
