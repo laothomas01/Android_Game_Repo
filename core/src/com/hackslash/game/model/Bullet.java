@@ -19,7 +19,6 @@ public class Bullet extends GameObject {
     boolean hit;
     float lifeSpan;
     float maxLife;
-    //    float damage;
     boolean remove;
     int radius;
 
@@ -66,77 +65,6 @@ public class Bullet extends GameObject {
         }
 
 
-//        basic_bullet_ai(dt, e);
-
-
-//        lifeSpan += dt;
-//        if (lifeSpan > maxLife) {
-//            remove = true;
-//        }
-//        x += dx * dt;
-//        y += dy * dt;
-//        dx = (dt * getBulletPosition().x) * speed;
-//        dy = (dt * getBulletPosition().y) * speed;
-//        getBulletPosition().x += dx;
-//        getBulletPosition().y += dy;
-
-
-//        Vector2 pos = e.getEnemyPosition();
-//        bulletDirection.x = (pos.x + 20) - (this.getXPosition() + 20);
-//        bulletDirection.y = (pos.y + 20) - (this.getYPosition() + 20);
-//        lifeSpan += dt;
-//
-//        getBulletPosition().x += bulletDirection.x * getBulletSpeed() * dt;
-//        getBulletPosition().y += bulletDirection.y * getBulletSpeed() * dt;
-//
-//        float sumRadius = this.getRadius() + e.getEnemySize();
-//        float distance = Vector2.dst(pos.x, pos.y, getBulletPosition().x, getBulletPosition().y);
-//        if (distance < sumRadius) {
-//            bullet_hit = true;
-//            remove = true;
-//        } else if (lifeSpan > maxLifespan) {
-//            remove = true;
-//        }
-
-
-    }
-
-    public void basic_bullet_ai(float dt) {
-
-//        x += speed * dt;
-//        y += speed * dt;
-//        dx += (e.getXPosition() + 20) - (this.getXPosition() + 20);
-//        dy += (e.getYPosition() + 20) - (this.getYPosition() + 20);
-//
-//        x += dx * getBulletSpeed() * dt;
-//        y += dy * getBulletSpeed() * dt;
-
-//        direction.x = (e.getXPosition() + 20) - (this.getXPosition() + 20);
-//        direction.y = (e.getYPosition() + 20) - (this.getYPosition() + 20);
-//
-//        x += direction.x * getBulletSpeed() * dt;
-//        y += direction.y * getBulletSpeed() * dt;
-//
-//        float distance = Vector2.dst(e.getXPosition(), e.getYPosition(), this.getXPosition(), this.getYPosition());
-//        float sumRadius = this.getRadius() + e.getSize();
-//        if (distance < sumRadius) {
-//            // do something
-//            remove = true;
-//
-////            enemy.set_is_hit(true);
-//        }
-        //        for (int i = 0; i < e.size(); i++) {
-//            dx = (e.get(i).getXPosition() + 20) - (x + 20);
-//            dy = (e.get(i).getYPosition() + 20) - (y + 20);
-//            x += dx * speed * dt;
-//            y += dy * speed * dt;
-//            float total_radius = size + e.get(i).getSize();
-//            float distance = Vector2.dst(e.get(i).getXPosition(), e.get(i).getYPosition(), x, y);
-//            if (distance < total_radius) {
-//                hit = true;
-//                remove = true;
-//            }
-//        }
     }
 
 
@@ -144,29 +72,10 @@ public class Bullet extends GameObject {
         return hit;
     }
 
-    //
-//    public boolean getRemove() {
-//        return remove;
-//    }
-//
-//    public float getLifeSpan() {
-//        return lifeSpan;
-//    }
-//
-//    public float getMaxLifespan() {
-//        return maxLifespan;
-//    }
-//
-//    public void setLifeSpan(float l) {
-//        lifeSpan = l;
-//    }
-//
-//
     public int getRadius() {
         return radius;
     }
 
-    //
     public boolean shouldRemove() {
         return remove;
     }
@@ -179,16 +88,6 @@ public class Bullet extends GameObject {
         return damage;
     }
 
-    //
-//    public Vector2 getBulletPosition() {
-//        return position;
-//    }
-//
-//    public void set_pos(float x, float y) {
-//        getBulletPosition().x = x;
-//        getBulletPosition().y = y;
-//    }
-//
     public void set_pos(float x, float y) {
         this.x = x;
         this.y = y;

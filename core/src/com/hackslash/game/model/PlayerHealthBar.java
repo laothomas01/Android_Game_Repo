@@ -15,7 +15,7 @@ public class PlayerHealthBar {
     Sprite sprite;
     Texture tex;
 
-    public PlayerHealthBar(Player player){
+    public PlayerHealthBar(Player player) {
         this.player = player;
         cl = Color.GREEN;
         currentHealth = maxHealth;
@@ -28,59 +28,46 @@ public class PlayerHealthBar {
         batch.begin();
         batch.setColor(cl);
         sprite.setScale(maxHealth, 50);
-        batch.draw(tex, 250,100, currentHealth, 50);
+        batch.draw(tex, 250, 100, currentHealth, 50);
         batch.end();
     }
 
-    public void changeColor(Color newCL){
+    public void changeColor(Color newCL) {
         this.cl = newCL;
     }
-    
-    public float getCurrentHealth()
-    {
+
+    public float getCurrentHealth() {
         currentHealth = player.getPlayerHealth();
         return currentHealth;
     }
-    
-    public void subtractHealth()
-    {
+
+    public void subtractHealth() {
         float temp = currentHealth;
         temp -= .5f;
         setCurrentHealth(temp);
     }
 
-    public void setCurrentHealth(float newHealth)
-    {
-        if(newHealth < maxHealth && newHealth > 0)
-        {
+    public void setCurrentHealth(float newHealth) {
+        if (newHealth < maxHealth && newHealth > 0) {
             this.currentHealth = newHealth;
-            if(newHealth < (maxHealth/4f))
-            {
+            if (newHealth < (maxHealth / 4f)) {
                 this.cl = Color.RED;
-            }
-            else if(newHealth < (maxHealth/2f))
-            {
+            } else if (newHealth < (maxHealth / 2f)) {
                 this.cl = Color.ORANGE;
-            }
-            else if(newHealth < (maxHealth/1.5f))
-            {
+            } else if (newHealth < (maxHealth / 1.5f)) {
                 this.cl = Color.YELLOW;
-            }
-            else
-            {
+            } else {
                 this.cl = Color.GREEN;
             }
-        }
-        else if(newHealth < 0){
+        } else if (newHealth < 0) {
             this.cl = Color.BLACK;
             currentHealth = 0;
+        } else {
         }
-        else
-        { }
 
     }
 
-    public void dispose(){
+    public void dispose() {
         tex.dispose();
     }
 

@@ -32,7 +32,6 @@ public class HackAndSlash extends ApplicationAdapter {
     private Stage stage;
     ShapeRenderer sr;
     Player player;
-    //    OrthographicCamera cam;
     float player_x_Move;
     float player_y_Move;
     // Player's Health Bar
@@ -47,27 +46,23 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
+
     /**
      * -----------------------
      */
 
-    float maxshootwaitTime;
-    float shootTime;
     float deltaTime;
     float spawnWait;
     float maxspawnWaitTime;
-
+    float lerp;
     float rageTime;
     float rageTimer;
     /**
      * --------------Initialize Spawners---------
      */
 
-//    ArrayList<Bullet> allBullets;
     ArrayList<Enemy> enemies;
     ArrayList<Enemy> remove_enemies;
-//    ArrayList<Enemy> removeEnemies;
-//    ArrayList<Bullet> removeBullets;
 
     Enemy e1;
     Enemy e2;
@@ -95,6 +90,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
     public void create() {
 
+        lerp = 0.1f;
         rageTime = 10;
         rageTimer = 0;
         spawnWait = 0;
@@ -129,9 +125,6 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         Gdx.input.setInputProcessor(stage);
 
-//        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
-//
 
         /**
          * INITIALIZE LISTS OF ENEMIES
@@ -244,6 +237,7 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
 
+
         player.draw(batch);
 
 
@@ -279,11 +273,6 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
-//        float lerp = 0.1f;
-//
-//        cam.position.x += (player.getPlayerPosition().x + 1 - cam.position.x + 1) * lerp * 0.5f;
-//        cam.position.y += (player.getPlayerPosition().y + 1 - cam.position.y + 1) * lerp * 0.5f;
-//        cam.update();
 
 
     }
@@ -339,11 +328,6 @@ public class HackAndSlash extends ApplicationAdapter {
      *
      * @param enemyList an arraylist of enemy
      */
-//    public void enemyTex(ArrayList<Enemy> enemyList) {
-//        for (Enemy e : enemyList) {
-//            e.getTex().dispose();
-//        }
-//    }
 
 
 }
