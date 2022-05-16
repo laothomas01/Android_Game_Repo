@@ -2,9 +2,6 @@ package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Matrix4;
-
-import javax.xml.validation.ValidatorHandler;
 
 public class Camera {
     OrthographicCamera cam;
@@ -21,12 +18,5 @@ public class Camera {
     public void followPlayer(Player p, float dt) {
         cam.translate(p.getXPosition() * p.getPlayerSpeed() * dt, p.getYPosition() * dt);
     }
-
-
-//    public Matrix4 getCameraCombined() {
-//        return cam.combined;
-//    }
-
-
 
 }
