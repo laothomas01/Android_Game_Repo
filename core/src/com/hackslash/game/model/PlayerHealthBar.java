@@ -61,7 +61,7 @@ public class PlayerHealthBar{
     }
 
     public void dispose(){
-        sprite.getTexture().dispose();
+        tex.dispose();
     }
 
 
