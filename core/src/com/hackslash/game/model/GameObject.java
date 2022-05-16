@@ -19,13 +19,12 @@ public class GameObject {
 
     float dx;
     float dy;
-
+    float radians;
     float speed;
-    float size;
+    int size;
     float damage;
     float health;
 
     Vector2 position;
-
 
 }
