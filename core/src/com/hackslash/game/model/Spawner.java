@@ -1,11 +1,10 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.util.ArrayList;
 
 public class Spawner extends GameObject {
-    float wait_time = 8;
+    float wait_time = 5;
     float time_aux = 0;
 
     public Spawner() {
@@ -19,21 +18,13 @@ public class Spawner extends GameObject {
 
     public void spawnEnemies(ArrayList<Enemy> e, float deltaTime, Player player, SpriteBatch batch) {
         /**
-         * Every 5 seconds, the
+         * Every 5 seconds, the enemy will spawn
          */
         if (time_aux >= wait_time) {
-            for (int i = 0; i < 1f; i++) {
-                e.add(new Enemy(get_X_Spawn_Position(), get_Y_Spawn_Position(), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-            }
-
-
+            e.add(new Enemy(get_X_Spawn_Position(), get_Y_Spawn_Position(), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 3));
             time_aux = 0;
         } else {
             time_aux += deltaTime;
-        }
-        for (Enemy enemies : e) {
-            enemies.draw(batch);
-            enemies.update(deltaTime, player);
         }
     }
 
