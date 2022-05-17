@@ -60,31 +60,12 @@ public class HackAndSlash extends ApplicationAdapter {
     float lerp;
     float rageTime;
     float rageTimer;
-    float MAX_ENEMIES;
     /**
      * --------------Initialize Spawners---------
      */
 
     ArrayList<Enemy> enemies;
 
-    Enemy e1;
-    Enemy e2;
-    Enemy e3;
-    Enemy e4;
-    Enemy e5;
-    Enemy e6;
-    Enemy e7;
-    Enemy e8;
-    Enemy e9;
-    Enemy e1B;
-    Enemy e2B;
-    Enemy e3B;
-    Enemy e4B;
-    Enemy e5B;
-    Enemy e6B;
-    Enemy e7B;
-    Enemy e8B;
-    Enemy e9B;
     /**
      * --------------------------------
      */
@@ -92,11 +73,10 @@ public class HackAndSlash extends ApplicationAdapter {
     boolean GAME_PAUSED;
 
     public void create() {
-        MAX_ENEMIES = 1000;
         lerp = 0.1f;
         rageTime = 10;
         rageTimer = 0;
-        spawnTime = 5f;
+        spawnTime = 3f;
         spawnTimer = 0;
         sr = new ShapeRenderer();
         player = new Player();
@@ -127,18 +107,6 @@ public class HackAndSlash extends ApplicationAdapter {
          * -----------------------------------------------------
          */
         Gdx.input.setInputProcessor(stage);
-
-
-        /**
-         * INITIALIZE LISTS OF ENEMIES
-         *
-         * 4 QUADRANTS
-         *
-         * 4 INTERCEPTS
-         */
-        /**
-         * -------------------------------------------------
-         */
 
 
         enemies = new ArrayList();
@@ -190,44 +158,18 @@ public class HackAndSlash extends ApplicationAdapter {
 
     public void render() {
 
-
-//        if (spawnTimer >= spawnTime) {
-//            enemies.add(e1);
-//            enemies.add(e2);
-//            enemies.add(e3);
-//            enemies.add(e4);
-//            enemies.add(e5);
-//            enemies.add(e6);
-//            enemies.add(e7);
-//            enemies.add(e8);
-//            enemies.add(e9);
-//            enemies.add(e1B);
-//            enemies.add(e2B);
-//            enemies.add(e3B);
-//            enemies.add(e4B);
-//            enemies.add(e5B);
-//            enemies.add(e6B);
-//            enemies.add(e7B);
-//            enemies.add(e8B);
-//            enemies.add(e9B);
-//            spawnTimer = 0;
-//        } else {
-//            spawnTimer += deltaTime;
-//        }
-
         /**
          * Screen Clearing every frame
          */
-
-
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //draw health bar
 
+        /**
+         * draw the health bar
+         */
         batch.setProjectionMatrix(UIcam.combined);
         playerHB.draw(batch);
 
-//
         /**
          * make game's frame rate independent
          */
@@ -257,12 +199,27 @@ public class HackAndSlash extends ApplicationAdapter {
                 i--;
             } else {
                 player.update(deltaTime, batch, enemies.get(i));
-                enemies.get(i).update(deltaTime, player);
-                enemies.get(i).draw(batch);
+                enemies.get(i).update(deltaTime, player,batch);
+//                enemies.get(i).draw(batch);
             }
-        }
 
-        System.out.println(player.getBullets().size());
+//            if (rageTimer > rageTime) {
+//                rageTimer = 0;
+//                enemies.get(i).setSpeed(5);
+//                enemies.get(i).setSize(5);
+//                batch.begin();
+//                enemies.get(i).getSprite().setColor(Color.FIREBRICK);
+//                enemies.get(i).draw(batch);
+//                batch.end();
+//            } else {
+//                rageTimer += deltaTime;
+//                batch.begin();
+//                enemies.get(i).getSprite().setColor(Color.WHITE);
+//                enemies.get(i).draw(batch);
+//                batch.end();
+//
+//            }
+        }
 
 
         check_Bullet_Enemy_Overlap(player.getBullets());
@@ -337,13 +294,19 @@ public class HackAndSlash extends ApplicationAdapter {
 //        enemyTex(e8);
     }
 
-    /**
-     * (int) Math.floor(Math.random() * (200 - 10 + 1) + 10)
-     */
+
     public void loadEnemies() {
-//        if (enemies.size() == MAX_ENEMIES) {
-//            return;
-//        } else {
+        /**
+         * CREATE NEW ENEMIES
+         *
+         * 4 QUADRANTS
+         *
+         * 4 INTERCEPTS
+         *
+         */
+        /**
+         * -------------------------------------------------
+         */
         enemies.add(new Enemy(2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
         enemies.add(new Enemy(-2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
         enemies.add(new Enemy(-2000, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
@@ -353,7 +316,6 @@ public class HackAndSlash extends ApplicationAdapter {
         enemies.add(new Enemy(2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
         enemies.add(new Enemy(-2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
 
-//        }
     }
 
     /**
