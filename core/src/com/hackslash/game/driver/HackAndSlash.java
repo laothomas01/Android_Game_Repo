@@ -41,6 +41,7 @@ public class HackAndSlash extends ApplicationAdapter {
     SpriteBatch batch;
     OrthographicCamera cam;
     OrthographicCamera UIcam;
+    float MAX_ENEMIES;
     /**
      * -------TOUCH PAD------
      */
@@ -60,6 +61,8 @@ public class HackAndSlash extends ApplicationAdapter {
     float lerp;
     float rageTime;
     float rageTimer;
+    float currentGameTime;
+
     /**
      * --------------Initialize Spawners---------
      */
@@ -78,6 +81,8 @@ public class HackAndSlash extends ApplicationAdapter {
         rageTimer = 0;
         spawnTime = 3f;
         spawnTimer = 0;
+        currentGameTime = 0;
+        MAX_ENEMIES = 1000;
         sr = new ShapeRenderer();
         player = new Player();
 
@@ -199,26 +204,9 @@ public class HackAndSlash extends ApplicationAdapter {
                 i--;
             } else {
                 player.update(deltaTime, batch, enemies.get(i));
-                enemies.get(i).update(deltaTime, player,batch);
-//                enemies.get(i).draw(batch);
+                enemies.get(i).update(deltaTime, player, batch);
             }
 
-//            if (rageTimer > rageTime) {
-//                rageTimer = 0;
-//                enemies.get(i).setSpeed(5);
-//                enemies.get(i).setSize(5);
-//                batch.begin();
-//                enemies.get(i).getSprite().setColor(Color.FIREBRICK);
-//                enemies.get(i).draw(batch);
-//                batch.end();
-//            } else {
-//                rageTimer += deltaTime;
-//                batch.begin();
-//                enemies.get(i).getSprite().setColor(Color.WHITE);
-//                enemies.get(i).draw(batch);
-//                batch.end();
-//
-//            }
         }
 
 
@@ -245,6 +233,21 @@ public class HackAndSlash extends ApplicationAdapter {
         position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
         cam.position.set(position);
         cam.update();
+
+        if (currentGameTime > 60) {
+            currentGameTime = 0;
+            spawnTime -= 0.5f;
+            if (spawnTime <= 0) {
+                spawnTime = 3f;
+            }
+            MAX_ENEMIES += 1000;
+            if (MAX_ENEMIES == 20000) {
+                MAX_ENEMIES = 20000;
+            }
+        } else {
+            currentGameTime += deltaTime;
+        }
+
 
     }
 
@@ -307,14 +310,20 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
-        enemies.add(new Enemy(2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(-2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(-2000, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(2000, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(0, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(0, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
-        enemies.add(new Enemy(-2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+
+        if (enemies.size() == MAX_ENEMIES) {
+            return;
+        } else {
+            enemies.add(new Enemy(2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(-2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(-2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(0, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(0, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(-2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+
+        }
 
     }
 

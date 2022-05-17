@@ -23,7 +23,7 @@ public class Spawner extends GameObject {
          */
         if (time_aux >= wait_time) {
 //            for (int i = 0; i < 1f; i++) {
-            e.add(new Enemy(get_X_Spawn_Position(), get_Y_Spawn_Position(), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 3));
+//            e.add(new Enemy(get_X_Spawn_Position(), get_Y_Spawn_Position(), (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), ));
 //            }
 
 
@@ -31,10 +31,7 @@ public class Spawner extends GameObject {
         } else {
             time_aux += deltaTime;
         }
-//        for (Enemy enemies : e) {
-//            enemies.draw(batch);
-//            enemies.update(deltaTime, player);
-//        }
+
     }
 
 

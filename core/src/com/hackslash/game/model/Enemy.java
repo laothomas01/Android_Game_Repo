@@ -21,7 +21,7 @@ public class Enemy extends GameObject {
     boolean rage;
     float rageDurationTimer;
     float rageDurationTime;
-    float prevSize;
+    int prevSize;
     float prevSpeed;
 
     public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, int enemy_size, float enemy_health) {
@@ -61,17 +61,17 @@ public class Enemy extends GameObject {
         if (rageAgainTimer > rageWaitTime) {
             rageAgainTimer = 0;
             rage = true;
-            setSize(5);
-            setSpeed(7);
+            setSize(2);
+            setSpeed(50);
 
         } else {
+
             rageAgainTimer += dt;
         }
 
 
         draw(batch);
 
-//        System.out.println("RAGE:" + rage);
     }
 
     public void draw(Batch batch) {
@@ -162,6 +162,14 @@ public class Enemy extends GameObject {
 
     public float getRadians() {
         return radians;
+    }
+
+    public void resetSpeed(float s) {
+        speed = s;
+    }
+
+    public void resetSize(int s) {
+        size = s;
     }
 
 

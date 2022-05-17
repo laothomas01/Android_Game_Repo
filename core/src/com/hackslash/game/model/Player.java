@@ -43,7 +43,7 @@ public class Player extends GameObject {
         sprite = new Sprite(tex, 0, 0, 20, 20);
         bullets = new ArrayList<Bullet>();
         fireTimer = 0;
-        fireTime = 1f;
+        fireTime = 2f;
     }
 
     public Player(float posX, float posY, int player_size, float player_speed) {
