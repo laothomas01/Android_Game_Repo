@@ -28,7 +28,7 @@ public class Player extends GameObject {
     boolean remove;
 
 
-    float enemy_detection_radius = 500f;
+    float enemy_detection_radius = 1000f;
     ArrayList<Bullet> bullets;
 
     public Player() {

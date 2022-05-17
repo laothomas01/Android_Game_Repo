@@ -22,6 +22,8 @@ import com.hackslash.game.model.Player;
 import com.hackslash.game.model.PlayerHealthBar;
 import com.hackslash.game.model.Spawner;
 
+import org.graalvm.compiler.loop.MathUtil;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,7 +39,6 @@ public class HackAndSlash extends ApplicationAdapter {
     // Player's Health Bar
     private PlayerHealthBar playerHB;
     SpriteBatch batch;
-    Queue<Enemy> targets;
     OrthographicCamera cam;
     OrthographicCamera UIcam;
     /**
@@ -54,17 +55,17 @@ public class HackAndSlash extends ApplicationAdapter {
      */
 
     float deltaTime;
-    float spawnWait;
-    float maxspawnWaitTime;
+    float spawnTimer;
+    float spawnTime;
     float lerp;
     float rageTime;
     float rageTimer;
+    float MAX_ENEMIES;
     /**
      * --------------Initialize Spawners---------
      */
 
     ArrayList<Enemy> enemies;
-    ArrayList<Enemy> remove_enemies;
 
     Enemy e1;
     Enemy e2;
@@ -91,12 +92,12 @@ public class HackAndSlash extends ApplicationAdapter {
     boolean GAME_PAUSED;
 
     public void create() {
-
+        MAX_ENEMIES = 1000;
         lerp = 0.1f;
         rageTime = 10;
         rageTimer = 0;
-        spawnWait = 0;
-        maxspawnWaitTime = 3;
+        spawnTime = 5f;
+        spawnTimer = 0;
         sr = new ShapeRenderer();
         player = new Player();
 
@@ -138,48 +139,20 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * -------------------------------------------------
          */
-        e1 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e2 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e3 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
-        e4 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
-        e5 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
-        e6 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
-        e7 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
-        e8 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
-        e9 = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
-
-        e1B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e2B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(10, 20), MathUtils.random(1, 5));
-        e3B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(7, 16), MathUtils.random(1, 5));
-        e4B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 120), 1, MathUtils.random(6, 15), MathUtils.random(1, 5));
-        e5B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 14), MathUtils.random(1, 5));
-        e6B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(4, 13), MathUtils.random(1, 5));
-        e7B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(3, 12), MathUtils.random(1, 5));
-        e8B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(2, 11), MathUtils.random(1, 5));
-        e9B = new Enemy(MathUtils.random(0, 2500) + 20, MathUtils.random(0, 2500) + 20, MathUtils.random(50, 200), 1, MathUtils.random(5, 10), MathUtils.random(1, 5));
 
 
         enemies = new ArrayList();
-        enemies.add(e1);
-        enemies.add(e2);
-        enemies.add(e3);
-        enemies.add(e4);
-        enemies.add(e5);
-        enemies.add(e6);
-        enemies.add(e7);
-        enemies.add(e8);
-        enemies.add(e9);
-        enemies.add(e1B);
-        enemies.add(e2B);
-        enemies.add(e3B);
-        enemies.add(e4B);
-        enemies.add(e5B);
-        enemies.add(e6B);
-        enemies.add(e7B);
-        enemies.add(e8B);
-        enemies.add(e9B);
-        targets = new LinkedList<>();
+
+        /**
+         * Use one camera to follow the player
+         * -set the camera's projection before drawing the object you want the camera to focus on
+         */
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        /**
+         * Use another camera to focus on the UI
+         * -set the camera's projection before drawing the object you want the camera to focus on
+         */
         UIcam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         UIcam.position.set(UIcam.viewportWidth / 2f, UIcam.viewportHeight / 2f, 0);
         UIcam.update();
@@ -218,6 +191,30 @@ public class HackAndSlash extends ApplicationAdapter {
     public void render() {
 
 
+//        if (spawnTimer >= spawnTime) {
+//            enemies.add(e1);
+//            enemies.add(e2);
+//            enemies.add(e3);
+//            enemies.add(e4);
+//            enemies.add(e5);
+//            enemies.add(e6);
+//            enemies.add(e7);
+//            enemies.add(e8);
+//            enemies.add(e9);
+//            enemies.add(e1B);
+//            enemies.add(e2B);
+//            enemies.add(e3B);
+//            enemies.add(e4B);
+//            enemies.add(e5B);
+//            enemies.add(e6B);
+//            enemies.add(e7B);
+//            enemies.add(e8B);
+//            enemies.add(e9B);
+//            spawnTimer = 0;
+//        } else {
+//            spawnTimer += deltaTime;
+//        }
+
         /**
          * Screen Clearing every frame
          */
@@ -246,6 +243,13 @@ public class HackAndSlash extends ApplicationAdapter {
         batch.setProjectionMatrix(cam.combined);
         player.draw(batch);
 
+
+        if (spawnTimer > spawnTime) {
+            spawnTimer = 0;
+            loadEnemies();
+        } else {
+            spawnTimer += deltaTime;
+        }
 
         for (int i = 0; i < enemies.size(); i++) {
             if (enemies.get(i).shouldRemove()) {
@@ -331,6 +335,25 @@ public class HackAndSlash extends ApplicationAdapter {
 //        enemyTex(e6);
 //        enemyTex(e7);
 //        enemyTex(e8);
+    }
+
+    /**
+     * (int) Math.floor(Math.random() * (200 - 10 + 1) + 10)
+     */
+    public void loadEnemies() {
+//        if (enemies.size() == MAX_ENEMIES) {
+//            return;
+//        } else {
+        enemies.add(new Enemy(2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(-2000, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(-2000, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(2000, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(0, 2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(0, -2000, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+        enemies.add(new Enemy(-2000, 0, (int) Math.floor(Math.random() * (200 - 10 + 1) + 10), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), 1));
+
+//        }
     }
 
     /**
