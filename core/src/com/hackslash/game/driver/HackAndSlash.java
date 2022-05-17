@@ -39,6 +39,7 @@ public class HackAndSlash extends ApplicationAdapter {
     SpriteBatch batch;
     Queue<Enemy> targets;
     OrthographicCamera cam;
+    OrthographicCamera UIcam;
     /**
      * -------TOUCH PAD------
      */
@@ -178,11 +179,10 @@ public class HackAndSlash extends ApplicationAdapter {
         enemies.add(e8B);
         enemies.add(e9B);
         targets = new LinkedList<>();
-        remove_enemies = new ArrayList<>();
-        GAME_PAUSED = false;
-//        cam = new OrthographicCamera(player.getXPosition(), player.getYPosition());
-//        cam.setToOrtho(false);
-//        cam.update();
+        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        UIcam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        UIcam.position.set(UIcam.viewportWidth / 2f, UIcam.viewportHeight / 2f, 0);
+        UIcam.update();
     }
 
     /**
@@ -221,13 +221,16 @@ public class HackAndSlash extends ApplicationAdapter {
         /**
          * Screen Clearing every frame
          */
+
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         //draw health bar
-//
-        sr.setProjectionMatrix(batch.getProjectionMatrix());
+
+        batch.setProjectionMatrix(UIcam.combined);
         playerHB.draw(batch);
+
+//
         /**
          * make game's frame rate independent
          */
@@ -240,7 +243,7 @@ public class HackAndSlash extends ApplicationAdapter {
         player.setXPosition(player_x_Move);
         player.setYPosition(player_y_Move);
 
-
+        batch.setProjectionMatrix(cam.combined);
         player.draw(batch);
 
 
@@ -276,7 +279,11 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
-
+        Vector3 position = cam.position;
+        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
+        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
+        cam.position.set(position);
+        cam.update();
 
     }
 
