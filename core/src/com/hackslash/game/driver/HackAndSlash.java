@@ -257,6 +257,7 @@ public class HackAndSlash extends ApplicationAdapter {
             check_Player_Enemy_Overlap(enemies);
 
             if (playerHB.getCurrentHealth() <= 0) {
+                stage.clear();
                 currentScreen = Screen.GAME_OVER;
             }
             
@@ -270,12 +271,6 @@ public class HackAndSlash extends ApplicationAdapter {
             cam.update();
 
         } else if (currentScreen == Screen.GAME_OVER) {
-            stage.clear();
-            Vector3 position = cam.position;
-            position.x = Gdx.graphics.getWidth()/2;
-            position.y = Gdx.graphics.getHeight()/2;
-            cam.position.set(position);
-            cam.update();
             batch.begin();
             batch.draw(new Texture("gameover.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
 
