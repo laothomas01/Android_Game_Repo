@@ -16,13 +16,14 @@ public class Enemy extends GameObject {
     Texture tex;
     boolean remove;
     static boolean hit;
-    float rageAgainTimer;
+    float rageTimer;
     float rageWaitTime;
     boolean rage;
     float rageDurationTimer;
     float rageDurationTime;
     int prevSize;
     float prevSpeed;
+    boolean wait_for_rage_duration_timer;
 
     public Enemy(float posX, float posY, float enemy_speed, float enemy_damage, int enemy_size, float enemy_health) {
         x = posX;
@@ -35,11 +36,12 @@ public class Enemy extends GameObject {
         sprite = new Sprite(tex, 0, 0, 20, 20);
         remove = false;
         hit = false;
-        rageAgainTimer = 0;
-        rageWaitTime = 15f;
+        rageTimer = 0;
+        rageWaitTime = 10f;
         rageDurationTimer = 0;
-        rageDurationTime = 2f;
+        rageDurationTime = 5f;
         prevSize = getSize();
+        wait_for_rage_duration_timer = false;
         prevSpeed = getSpeed();
 
     }
@@ -58,17 +60,28 @@ public class Enemy extends GameObject {
          *  -how long should i stay angry?
          *  -after X amount of seconds staying angry, I should chill out.
          */
-        if (rageAgainTimer > rageWaitTime) {
-            rageAgainTimer = 0;
-            rage = true;
-            setSize(2);
-            setSpeed(50);
+
+
+        if (!wait_for_rage_duration_timer) {
+            if (rageTimer > rageWaitTime) {
+                rageTimer = 0;
+                rage = true;
+                wait_for_rage_duration_timer = true;
+                setSpeed(10);
+            } else {
+                rageTimer += dt;
+            }
 
         } else {
+            if (rageDurationTimer > rageDurationTime) {
+                rageDurationTimer = 0;
+                rage = false;
+                wait_for_rage_duration_timer = false;
 
-            rageAgainTimer += dt;
+            } else {
+                rageDurationTimer += dt;
+            }
         }
-
 
         draw(batch);
 
@@ -80,9 +93,11 @@ public class Enemy extends GameObject {
         batch.begin();
         sprite.setScale(getSize(), getSize());
         sprite.setPosition(getXPosition(), getYPosition());
-        batch.setColor(Color.WHITE);
         if (rage == true) {
             batch.setColor(Color.FIREBRICK);
+        }
+        if (rage == false) {
+            batch.setColor(Color.WHITE);
         }
 
 
@@ -119,8 +134,8 @@ public class Enemy extends GameObject {
         return y;
     }
 
-    public void setSize(float s) {
-        size += s;
+    public void setSize(int s) {
+        size = size + s;
     }
 
     public int getSize() {
@@ -152,7 +167,7 @@ public class Enemy extends GameObject {
     }
 
     public void setSpeed(float s) {
-        speed += s;
+        speed = speed + s;
     }
 
 

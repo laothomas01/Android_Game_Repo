@@ -234,7 +234,7 @@ public class HackAndSlash extends ApplicationAdapter {
         cam.position.set(position);
         cam.update();
 
-        if (currentGameTime > 60) {
+        if (currentGameTime > 30) {
             currentGameTime = 0;
             spawnTime -= 0.5f;
             if (spawnTime <= 0) {
@@ -247,7 +247,6 @@ public class HackAndSlash extends ApplicationAdapter {
         } else {
             currentGameTime += deltaTime;
         }
-
 
     }
 
@@ -311,17 +310,17 @@ public class HackAndSlash extends ApplicationAdapter {
          * -------------------------------------------------
          */
 
-        if (enemies.size() == MAX_ENEMIES) {
+        if (enemies.size() == 1) {
             return;
         } else {
-            enemies.add(new Enemy(2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(-2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(-2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(0, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(0, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
-            enemies.add(new Enemy(-2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 5)));
+            enemies.add(new Enemy(2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(-2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(-2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(2000, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(0, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(0, -2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
+            enemies.add(new Enemy(-2000, 0, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));
 
         }
 

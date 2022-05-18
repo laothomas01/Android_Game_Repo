@@ -27,13 +27,13 @@ public class Bullet extends GameObject {
         this.x = x;
         this.y = y;
         this.radians = radians;
-        speed = 300f;
+        speed = 400f;
         size = 15;
         radius = 15;
         tex = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(tex, 0, 0, size, size);
         lifeSpan = 0;
-        maxLife = 5;
+        maxLife = 2;
         damage = 1;
         remove = false;
         hit = false;
