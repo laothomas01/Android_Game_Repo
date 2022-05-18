@@ -7,14 +7,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
@@ -67,11 +72,21 @@ public class HackAndSlash extends ApplicationAdapter {
      * --------------Initialize Spawners---------
      */
     ArrayList<Enemy> enemies;
+
     /**
      * --------------------------------
      */
 
+    enum Screen {
+        MENU, MAIN_GAME, GAME_OVER;
+    }
+
+    Screen currentScreen = Screen.MENU;
+    BitmapFont font;
     boolean GAME_PAUSED;
+
+    float defaultCamX;
+    float defaultCamY;
 
     public void create() {
         MAXIMUM_ENEMY_SIZE = 500;
@@ -86,6 +101,8 @@ public class HackAndSlash extends ApplicationAdapter {
         player = new Player();
         playerHB = new PlayerHealthBar(player);
         batch = new SpriteBatch();
+        font = new BitmapFont();
+
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
@@ -104,7 +121,6 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
         stage = new Stage();
-        stage.addActor(touchpad);
         /**
          * -----------------------------------------------------
          */
@@ -119,6 +135,7 @@ public class HackAndSlash extends ApplicationAdapter {
          */
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+
         /**
          * Use another camera to focus on the UI
          * -set the camera's projection before drawing the object you want the camera to focus on
@@ -127,6 +144,15 @@ public class HackAndSlash extends ApplicationAdapter {
         UIcam.position.set(UIcam.viewportWidth / 2f, UIcam.viewportHeight / 2f, 0);
         UIcam.update();
     }
+
+    public void restartGame() {
+        player = new Player();
+        playerHB = new PlayerHealthBar(player);
+
+        enemies = new ArrayList();
+
+    }
+
 
     /**
      * Method called to check that none of the enemies in the array list of enemies are
@@ -157,61 +183,123 @@ public class HackAndSlash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
-
         /**
-         * Screen Clearing every frame
+         ** Screen Clearing every frame
          */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        /**
-         * draw the health bar
-         */
-        batch.setProjectionMatrix(UIcam.combined);
-        playerHB.draw(batch);
+        if (currentScreen == Screen.MENU) {
+            batch.begin();
+            batch.draw(new Texture("logo.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
+            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+            textButtonStyle.font = font;
+            textButtonStyle.fontColor = Color.WHITE;
+            textButtonStyle.font.getData().setScale(4.0f);
+            final TextButton playBtn = new TextButton("Play", textButtonStyle);
+            playBtn.setPosition((Gdx.graphics.getWidth() / 2 - playBtn.getWidth() / 2), (Gdx.graphics.getHeight() / 2 - playBtn.getHeight() / 2));
+            stage.addActor(playBtn);
+            playBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    stage.clear();
+                    currentScreen = Screen.MAIN_GAME;
 
-        /**
-         * make game's frame rate independent
-         */
-        deltaTime = Gdx.graphics.getDeltaTime();
-        /**
-         * Update Player Movement
-         */
-        player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
-        player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
-        player.setXPosition(player_x_Move);
-        player.setYPosition(player_y_Move);
+                }
+            });
 
-        batch.setProjectionMatrix(cam.combined);
-        player.draw(batch);
+            batch.end();
+        } else if (currentScreen == Screen.MAIN_GAME) {
+
+            stage.addActor(touchpad);
+            batch.begin();
+            /**
+             * draw the health bar
+             */
+            batch.setProjectionMatrix(UIcam.combined);
+            batch.end();
+            playerHB.draw(batch);
+
+            /**
+             * make game's frame rate independent
+             */
+            deltaTime = Gdx.graphics.getDeltaTime();
+            /**
+             * Update Player Movement
+             */
+            player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
+            player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
+            player.setXPosition(player_x_Move);
+            player.setYPosition(player_y_Move);
+
+            batch.setProjectionMatrix(cam.combined);
+            player.draw(batch);
 
 
-        if (spawnTimer > spawnTime) {
-            spawnTimer = 0;
-            loadEnemies();
-        } else {
-            spawnTimer += deltaTime;
-        }
-
-        for (int i = 0; i < enemies.size(); i++) {
-            if (enemies.get(i).shouldRemove()) {
-                enemies.remove(i);
-                i--;
+            if (spawnTimer > spawnTime) {
+                spawnTimer = 0;
+                loadEnemies();
             } else {
-                player.update(deltaTime, batch, enemies.get(i));
-                enemies.get(i).update(deltaTime, player, batch);
+                spawnTimer += deltaTime;
             }
 
+            for (int i = 0; i < enemies.size(); i++) {
+                if (enemies.get(i).shouldRemove()) {
+                    enemies.remove(i);
+                    i--;
+                } else {
+                    player.update(deltaTime, batch, enemies.get(i));
+                    enemies.get(i).update(deltaTime, player, batch);
+                }
+
+            }
+            check_Bullet_Enemy_Overlap(player.getBullets());
+            check_Player_Enemy_Overlap(enemies);
+
+            if (playerHB.getCurrentHealth() <= 0) {
+                currentScreen = Screen.GAME_OVER;
+            }
+            
+            /**
+             ** Set cam Position
+             */
+            Vector3 position = cam.position;
+            position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
+            position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
+            cam.position.set(position);
+            cam.update();
+
+        } else if (currentScreen == Screen.GAME_OVER) {
+            stage.clear();
+            Vector3 position = cam.position;
+            position.x = Gdx.graphics.getWidth()/2;
+            position.y = Gdx.graphics.getHeight()/2;
+            cam.position.set(position);
+            cam.update();
+            batch.begin();
+            batch.draw(new Texture("gameover.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
+
+            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+            textButtonStyle.font = font;
+            textButtonStyle.fontColor = Color.WHITE;
+            textButtonStyle.font.getData().setScale(4.0f);
+            TextButton againBtn = new TextButton("Try Again", textButtonStyle);
+            againBtn.setPosition((Gdx.graphics.getWidth() / 2 - againBtn.getWidth() / 2), (Gdx.graphics.getHeight() / 2 - againBtn.getHeight() / 2));
+            stage.addActor(againBtn);
+            againBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    stage.clear();
+                    currentScreen = Screen.MENU;
+                    restartGame();
+                }
+            });
+            batch.end();
+
         }
-        check_Bullet_Enemy_Overlap(player.getBullets());
-        check_Player_Enemy_Overlap(enemies);
         stage.act(deltaTime);
         stage.draw();
 
-
-        /**
-         * Set cam Position
-         */
 
 
         /**
@@ -222,11 +310,6 @@ public class HackAndSlash extends ApplicationAdapter {
          *
          */
 
-        Vector3 position = cam.position;
-        position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
-        position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
-        cam.position.set(position);
-        cam.update();
     }
 
     /**
@@ -258,20 +341,12 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
     public void dispose() {
-//        sr.dispose();
-//        stage.dispose();
-//        skin.dispose();
-//        batch.dispose();
+        sr.dispose();
+        stage.dispose();
+        skin.dispose();
+        batch.dispose();
 //        player.dispose();
 //        playerHB.dispose();
-//        enemyTex(e1);
-//        enemyTex(e2);
-//        enemyTex(e3);
-//        enemyTex(e4);
-//        enemyTex(e5);
-//        enemyTex(e6);
-//        enemyTex(e7);
-//        enemyTex(e8);
     }
 
 
