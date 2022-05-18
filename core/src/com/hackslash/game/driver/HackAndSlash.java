@@ -7,14 +7,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
@@ -87,6 +92,12 @@ public class HackAndSlash extends ApplicationAdapter {
      * --------------------------------
      */
 
+    enum Screen{
+        MENU, MAIN_GAME, GAME_OVER;
+    }
+
+    Screen currentScreen = Screen.MENU;
+    BitmapFont font;
     boolean GAME_PAUSED;
 
     public void create() {
@@ -101,6 +112,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
         playerHB = new PlayerHealthBar(player);
         batch = new SpriteBatch();
+        font = new BitmapFont();
 
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
@@ -120,7 +132,6 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
         stage = new Stage();
-        stage.addActor(touchpad);
         /**
          * -----------------------------------------------------
          */
@@ -216,52 +227,79 @@ public class HackAndSlash extends ApplicationAdapter {
      */
 
     public void render() {
-
-
-        /**
-         * Screen Clearing every frame
-         */
+/**
+ * Screen Clearing every frame
+ */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //draw health bar
-//
-        sr.setProjectionMatrix(batch.getProjectionMatrix());
-        playerHB.draw(batch);
-        /**
-         * make game's frame rate independent
-         */
-        deltaTime = Gdx.graphics.getDeltaTime();
-        /**
-         * Update Player Movement
-         */
-        player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
-        player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
-        player.setXPosition(player_x_Move);
-        player.setYPosition(player_y_Move);
+        if(currentScreen == Screen.MENU){
+
+            batch.begin();
+            batch.draw(new Texture("logo.png"),Gdx.graphics.getWidth()*.10f, Gdx.graphics.getHeight()*.5f, 900, 210);
+            //font.draw(batch, "Night Survival", Gdx.graphics.getWidth()*.25f, Gdx.graphics.getHeight() * .5f);
+            //font.draw(batch, "Click the circle to win.", Gdx.graphics.getWidth()*.25f, Gdx.graphics.getHeight() * .25f);
+            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+            textButtonStyle.font = font;
+            textButtonStyle.fontColor = Color.WHITE;
+            textButtonStyle.font.getData().setScale(4.0f);
+            final TextButton playBtn = new TextButton("Play", textButtonStyle);
+            playBtn.setPosition((Gdx.graphics.getWidth()/2 - playBtn.getWidth()/2),(Gdx.graphics.getHeight()/2 - playBtn.getHeight()/2) );
+            stage.addActor(playBtn);
+            playBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed (ChangeEvent event, Actor actor) {
+                    stage.clear();
+                    currentScreen = Screen.MAIN_GAME;
+
+                }
+            });
+
+            batch.end();
+        } else if(currentScreen == Screen.MAIN_GAME) {
+
+            stage.addActor(touchpad);
+            batch.begin();
+            //draw health bar
+            sr.setProjectionMatrix(batch.getProjectionMatrix());
+            batch.end();
+            playerHB.draw(batch);
+            /**
+             * make game's frame rate independent
+             */
+            deltaTime = Gdx.graphics.getDeltaTime();
+            /**
+             * Update Player Movement
+             */
+            player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
+            player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
+            player.setXPosition(player_x_Move);
+            player.setYPosition(player_y_Move);
 
 
-        player.draw(batch);
+            player.draw(batch);
 
 
-        for (int i = 0; i < enemies.size(); i++) {
-            if (enemies.get(i).shouldRemove()) {
-                enemies.remove(i);
-                i--;
-            } else {
-                player.update(deltaTime, batch, enemies.get(i));
-                enemies.get(i).update(deltaTime, player);
-                enemies.get(i).draw(batch);
+            for (int i = 0; i < enemies.size(); i++) {
+                if (enemies.get(i).shouldRemove()) {
+                    enemies.remove(i);
+                    i--;
+                } else {
+                    player.update(deltaTime, batch, enemies.get(i));
+                    enemies.get(i).update(deltaTime, player);
+                    enemies.get(i).draw(batch);
+                }
             }
+
+            System.out.println(player.getBullets().size());
+
+
+            check_Bullet_Enemy_Overlap(player.getBullets());
+            check_Player_Enemy_Overlap(enemies);
+
+        } else if (currentScreen == Screen.GAME_OVER) {
+
         }
-
-        System.out.println(player.getBullets().size());
-
-
-        check_Bullet_Enemy_Overlap(player.getBullets());
-        check_Player_Enemy_Overlap(enemies);
-
-
         stage.act(deltaTime);
         stage.draw();
 
@@ -310,10 +348,10 @@ public class HackAndSlash extends ApplicationAdapter {
 
 
     public void dispose() {
-//        sr.dispose();
-//        stage.dispose();
-//        skin.dispose();
-//        batch.dispose();
+        sr.dispose();
+        stage.dispose();
+        skin.dispose();
+        batch.dispose();
 //        player.dispose();
 //        playerHB.dispose();
 //        enemyTex(e1);
