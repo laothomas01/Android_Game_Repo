@@ -37,7 +37,6 @@ public class PlayerHealthBar {
     }
 
     public float getCurrentHealth() {
-        currentHealth = player.getPlayerHealth();
         return currentHealth;
     }
 
@@ -59,7 +58,7 @@ public class PlayerHealthBar {
             } else {
                 this.cl = Color.GREEN;
             }
-        } else if (newHealth < 0) {
+        } else if (newHealth <= 0) {
             this.cl = Color.BLACK;
             currentHealth = 0;
         } else {

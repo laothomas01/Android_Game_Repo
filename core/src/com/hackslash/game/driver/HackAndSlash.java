@@ -196,6 +196,33 @@ public class HackAndSlash extends ApplicationAdapter {
 //        cam.update();
     }
 
+    public void restartGame() {
+        player = new Player();
+        playerHB = new PlayerHealthBar(player);
+
+        enemies = new ArrayList();
+        enemies.add(e1);
+        enemies.add(e2);
+        enemies.add(e3);
+        enemies.add(e4);
+        enemies.add(e5);
+        enemies.add(e6);
+        enemies.add(e7);
+        enemies.add(e8);
+        enemies.add(e9);
+        enemies.add(e1B);
+        enemies.add(e2B);
+        enemies.add(e3B);
+        enemies.add(e4B);
+        enemies.add(e5B);
+        enemies.add(e6B);
+        enemies.add(e7B);
+        enemies.add(e8B);
+        enemies.add(e9B);
+
+    }
+
+
     /**
      * Method called to check that none of the enemies in the array list of enemies are
      * touching the player character. if none are touching- do nothing. if an enemy
@@ -234,11 +261,8 @@ public class HackAndSlash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(currentScreen == Screen.MENU){
-
             batch.begin();
             batch.draw(new Texture("logo.png"),Gdx.graphics.getWidth()*.10f, Gdx.graphics.getHeight()*.5f, 900, 210);
-            //font.draw(batch, "Night Survival", Gdx.graphics.getWidth()*.25f, Gdx.graphics.getHeight() * .5f);
-            //font.draw(batch, "Click the circle to win.", Gdx.graphics.getWidth()*.25f, Gdx.graphics.getHeight() * .25f);
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             textButtonStyle.font = font;
             textButtonStyle.fontColor = Color.WHITE;
@@ -297,7 +321,30 @@ public class HackAndSlash extends ApplicationAdapter {
             check_Bullet_Enemy_Overlap(player.getBullets());
             check_Player_Enemy_Overlap(enemies);
 
+            if(playerHB.getCurrentHealth() <= 0) {
+                currentScreen = Screen.GAME_OVER;
+            }
+
         } else if (currentScreen == Screen.GAME_OVER) {
+            batch.begin();
+            batch.draw(new Texture("gameover.png"),Gdx.graphics.getWidth()*.10f, Gdx.graphics.getHeight()*.5f, 900, 210);
+
+            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+            textButtonStyle.font = font;
+            textButtonStyle.fontColor = Color.WHITE;
+            textButtonStyle.font.getData().setScale(4.0f);
+            TextButton againBtn = new TextButton("Try Again", textButtonStyle);
+            againBtn.setPosition((Gdx.graphics.getWidth()/2 - againBtn.getWidth()/2),(Gdx.graphics.getHeight()/2 - againBtn.getHeight()/2) );
+            stage.addActor(againBtn);
+            againBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed (ChangeEvent event, Actor actor) {
+                    stage.clear();
+                    currentScreen = Screen.MENU;
+                    restartGame();
+                }
+            });
+            batch.end();
 
         }
         stage.act(deltaTime);
