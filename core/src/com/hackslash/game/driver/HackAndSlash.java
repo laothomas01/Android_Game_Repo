@@ -338,8 +338,9 @@ public class HackAndSlash extends ApplicationAdapter {
         stage.dispose();
         skin.dispose();
         batch.dispose();
-//        player.dispose();
-//        playerHB.dispose();
+        player.dispose();
+        playerHB.dispose();
+        enemyTex(enemies);
     }
 
 
@@ -377,6 +378,11 @@ public class HackAndSlash extends ApplicationAdapter {
      *
      * @param enemyList an arraylist of enemy
      */
+    public void enemyTex(ArrayList<Enemy> enemyList) {
+        for (Enemy e : enemyList) {
+            e.getTex().dispose();
+        }
+    }
 
 
 }
