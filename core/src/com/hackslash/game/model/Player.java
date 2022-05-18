@@ -158,6 +158,11 @@ public class Player extends GameObject {
     public void takeDamage(float h) {
         playerHealth -= h;
     }
+    
+     public void dispose()
+    {
+        tex.dispose();
+    }
 
 
 }
