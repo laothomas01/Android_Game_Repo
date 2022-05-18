@@ -85,9 +85,6 @@ public class HackAndSlash extends ApplicationAdapter {
     BitmapFont font;
     boolean GAME_PAUSED;
 
-    float defaultCamX;
-    float defaultCamY;
-
     public void create() {
         MAXIMUM_ENEMY_SIZE = 500;
         lerp = 0.1f;
@@ -272,6 +269,7 @@ public class HackAndSlash extends ApplicationAdapter {
 
         } else if (currentScreen == Screen.GAME_OVER) {
             batch.begin();
+            batch.setProjectionMatrix(UIcam.combined);
             batch.draw(new Texture("gameover.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
 
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
