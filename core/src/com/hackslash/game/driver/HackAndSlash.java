@@ -50,7 +50,6 @@ public class HackAndSlash extends ApplicationAdapter {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
-
     /**
      * -----------------------
      */
@@ -62,13 +61,12 @@ public class HackAndSlash extends ApplicationAdapter {
     float rageTime;
     float rageTimer;
     float currentGameTime;
+    float MAXIMUM_ENEMY_SIZE;
 
     /**
      * --------------Initialize Spawners---------
      */
-
     ArrayList<Enemy> enemies;
-
     /**
      * --------------------------------
      */
@@ -76,6 +74,7 @@ public class HackAndSlash extends ApplicationAdapter {
     boolean GAME_PAUSED;
 
     public void create() {
+        MAXIMUM_ENEMY_SIZE = 500;
         lerp = 0.1f;
         rageTime = 10;
         rageTimer = 0;
@@ -85,10 +84,8 @@ public class HackAndSlash extends ApplicationAdapter {
         MAX_ENEMIES = 1000;
         sr = new ShapeRenderer();
         player = new Player();
-
         playerHB = new PlayerHealthBar(player);
         batch = new SpriteBatch();
-
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
@@ -156,11 +153,9 @@ public class HackAndSlash extends ApplicationAdapter {
         }
     }
 
-
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
-
     public void render() {
 
         /**
@@ -208,19 +203,17 @@ public class HackAndSlash extends ApplicationAdapter {
             }
 
         }
-
-
         check_Bullet_Enemy_Overlap(player.getBullets());
         check_Player_Enemy_Overlap(enemies);
-
-
         stage.act(deltaTime);
         stage.draw();
 
 
-/**
- * Set cam Position
- */
+        /**
+         * Set cam Position
+         */
+
+
         /**
          * lerp: linear interpolation:
          *  -smooth camera motion that is not too rigid.
@@ -228,28 +221,13 @@ public class HackAndSlash extends ApplicationAdapter {
          * camera_position  + (target_position - camera_position) * lerp
          *
          */
+
         Vector3 position = cam.position;
         position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
         position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
         cam.position.set(position);
         cam.update();
-
-        if (currentGameTime > 30) {
-            currentGameTime = 0;
-            spawnTime -= 0.5f;
-            if (spawnTime <= 0) {
-                spawnTime = 3f;
-            }
-            MAX_ENEMIES += 1000;
-            if (MAX_ENEMIES == 20000) {
-                MAX_ENEMIES = 20000;
-            }
-        } else {
-            currentGameTime += deltaTime;
-        }
-
     }
-
 
     /**
      * This method is called every time the game screen is re-sized and the game is not in the paused state. It is also called once just after the create() method.
@@ -310,7 +288,7 @@ public class HackAndSlash extends ApplicationAdapter {
          * -------------------------------------------------
          */
 
-        if (enemies.size() == 1) {
+        if (enemies.size() > MAXIMUM_ENEMY_SIZE) {
             return;
         } else {
             enemies.add(new Enemy(2000, 2000, MathUtils.random(50, 100), 1, (int) Math.floor(Math.random() * (20 - 5 + 1) + 5), MathUtils.random(1, 3)));

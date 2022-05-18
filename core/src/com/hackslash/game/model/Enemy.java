@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class Enemy extends GameObject {
 
+
     Sprite sprite;
     Texture tex;
     boolean remove;
@@ -37,7 +38,7 @@ public class Enemy extends GameObject {
         remove = false;
         hit = false;
         rageTimer = 0;
-        rageWaitTime = 10f;
+        rageWaitTime = 5f;
         rageDurationTimer = 0;
         rageDurationTime = 5f;
         prevSize = getSize();
@@ -62,12 +63,13 @@ public class Enemy extends GameObject {
          */
 
 
+
         if (!wait_for_rage_duration_timer) {
             if (rageTimer > rageWaitTime) {
                 rageTimer = 0;
                 rage = true;
                 wait_for_rage_duration_timer = true;
-                setSpeed(10);
+                setSpeed(100);
             } else {
                 rageTimer += dt;
             }
@@ -77,7 +79,7 @@ public class Enemy extends GameObject {
                 rageDurationTimer = 0;
                 rage = false;
                 wait_for_rage_duration_timer = false;
-
+                setSpeed(-100);
             } else {
                 rageDurationTimer += dt;
             }
@@ -102,7 +104,6 @@ public class Enemy extends GameObject {
 
 
         batch.draw(tex, getXPosition(), getYPosition(), (getSize() * 2), (getSize() * 2));
-
         batch.end();
     }
 

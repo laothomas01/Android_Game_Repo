@@ -26,6 +26,7 @@ public class Player extends GameObject {
     float fireTimer;
     float fireTime;
     boolean remove;
+    boolean fired;
 
 
     float enemy_detection_radius = 1000f;
