@@ -11,6 +11,7 @@ public class player extends game_object {
     float current_health;
     float current_damage;
     float current_speed;
+    float current_size;
 
     /**
      * We will only create 1 player so parameters for the players are not needed
@@ -19,16 +20,19 @@ public class player extends game_object {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
         health = 10f;
+        size = 25f;
+        damage = 0;
+        speed = 0;
         current_health = health;
         current_damage = damage;
         current_speed = speed;
+        current_size = size;
         texture = new Texture(Gdx.files.internal("square.png"));
-        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
+        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(x, y);
         dx = 0;
         dy = 0;
     }
-
 
 
 //    float MAX_BULLETS = 1;

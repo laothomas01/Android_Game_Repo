@@ -3,19 +3,20 @@ package com.hackslash.game.driver;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.hackslash.game.model.enemy;
-
-import java.util.ArrayList;
+import com.hackslash.game.view.game_UI_view;
+import com.hackslash.game.view.game_object_view;
 
 public class hack_and_slash extends ApplicationAdapter {
-//    private Stage stage;
+    game_object_view game_object_view;
+    game_UI_view game_ui_view;
+    //    private Stage stage;
 //    ShapeRenderer sr;
 //    Player player;
 //    float player_x_Move;
 //    float player_y_Move;
 //    // Player's Health Bar
 //    private PlayerHealthBar playerHB;
-//    SpriteBatch batch;
+
 //    OrthographicCamera cam;
 //    OrthographicCamera UIcam;
 //    float MAX_ENEMIES;
@@ -57,7 +58,11 @@ public class hack_and_slash extends ApplicationAdapter {
 //    BitmapFont font;
 //    boolean GAME_PAUSED;
 
+
     public void create() {
+
+        game_object_view = new game_object_view();
+        game_ui_view = new game_UI_view();
 //        MAXIMUM_ENEMY_SIZE = 500;
 //        lerp = 0.1f;
 //        rageTime = 10;
@@ -69,7 +74,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //        sr = new ShapeRenderer();
 //        player = new Player();
 //        playerHB = new PlayerHealthBar(player);
-//        batch = new SpriteBatch();
+
 //        font = new BitmapFont();
 //
 //        skin = new Skin();
@@ -156,6 +161,10 @@ public class hack_and_slash extends ApplicationAdapter {
 //         */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game_object_view.draw_player(game_object_view.getSpriteBatch());
+        game_ui_view.draw_UI();
+
+
 //
 //        if (currentScreen == Screen.MENU) {
 //            batch.begin();
