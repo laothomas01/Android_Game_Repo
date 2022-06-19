@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.hackslash.game.model.player;
 
 
 public class game_UI_view {
@@ -17,7 +16,12 @@ public class game_UI_view {
     private Drawable touchBackground;
     private Drawable touchKnob;
 
+
     public game_UI_view() {
+
+    }
+
+    public void init_game_UI_View() {
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
@@ -30,16 +34,14 @@ public class game_UI_view {
 
         touchpad = new Touchpad(10, touchpadStyle);
         touchpad.setBounds(15, 15, 200, 200);
-
-
         stage = new Stage();
-
         Gdx.input.setInputProcessor(stage);
     }
 
-    public void draw_UI() {
+
+    public void update_touchpad() {
         stage.addActor(touchpad);
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(1 / 60);
         stage.draw();
     }
 

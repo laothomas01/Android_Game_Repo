@@ -1,6 +1,6 @@
 package com.hackslash.game.model;
 
-public class enemy extends game_object {
+public class enemy extends Game_Object {
 
 //
 //    Sprite sprite;

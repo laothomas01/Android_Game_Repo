@@ -1,6 +1,6 @@
 package com.hackslash.game.model;
 
-public class bullet extends game_object {
+public class bullet extends Game_Object {
 
 //    //    Vector2 position;
 //    Sprite sprite;

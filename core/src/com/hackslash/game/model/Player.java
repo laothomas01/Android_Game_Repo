@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
-public class player extends game_object {
+public class Player extends Game_Object {
 
 
     float current_health;
@@ -16,22 +16,23 @@ public class player extends game_object {
     /**
      * We will only create 1 player so parameters for the players are not needed
      */
-    public player() {
+    public Player() {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
         health = 10f;
         size = 25f;
         damage = 0;
-        speed = 0;
+        speed = 500;
         current_health = health;
         current_damage = damage;
         current_speed = speed;
         current_size = size;
         texture = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
-        position = new Vector2(x, y);
-        dx = 0;
-        dy = 0;
+        position = new Vector2(this.getX(), this.getY());
+        velocity = new Vector2(0, 0);
+        direction = new Vector2(0, 0);
+
     }
 
 

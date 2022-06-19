@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
-public class game_object {
+public class Game_Object {
     //    /**
 //     * MOVEMENT
 //     * x: x coordinate
@@ -29,7 +29,7 @@ public class game_object {
 //
 //    Vector2 position;
 //
-    game_object() {
+    Game_Object() {
 
     }
 
@@ -55,6 +55,8 @@ public class game_object {
     float size;
 
     Vector2 position;
+    Vector2 velocity;
+    Vector2 direction;
 
 
     Sprite sprite;
@@ -69,16 +71,16 @@ public class game_object {
         return x;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void set_X_Position(float x) {
+        this.position.x = x;
     }
 
     public float getY() {
         return y;
     }
 
-    public void setY(float y) {
-        this.y = y;
+    public void set_Y_Position(float y) {
+        this.position.y = y;
     }
 
     public float getDx() {
@@ -160,4 +162,42 @@ public class game_object {
     public void setDamage(float damage) {
         this.damage = damage;
     }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public float get_X_Velocity() {
+        return getVelocity().x;
+    }
+
+    public void set_Velocity(float dx, float dy) {
+//        dx = getDx();
+//        dy = getDy();
+        this.getVelocity().set(dx, dy);
+    }
+
+    public float get_Y_Velocity() {
+        return getVelocity().y;
+    }
+
+    /**
+     * directions
+     */
+    public float get_dx() {
+        return dx;
+    }
+
+    public float get_dy() {
+        return dy;
+    }
+
+    public void set_dx(float x_direction) {
+        dx = x_direction;
+    }
+
+    public void set_dy(float y_direction) {
+        dy = y_direction;
+    }
+
 }

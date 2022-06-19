@@ -3,13 +3,22 @@ package com.hackslash.game.driver;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.hackslash.game.model.Player;
 import com.hackslash.game.view.game_UI_view;
 import com.hackslash.game.view.game_object_view;
+import com.hackslash.game.controller.Player_Controller;
 
 public class hack_and_slash extends ApplicationAdapter {
     game_object_view game_object_view;
     game_UI_view game_ui_view;
-    //    private Stage stage;
+    Player_Controller player_controller;
+    Player p;
+//    private Stage stage;
 //    ShapeRenderer sr;
 //    Player player;
 //    float player_x_Move;
@@ -17,7 +26,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //    // Player's Health Bar
 //    private PlayerHealthBar playerHB;
 
-//    OrthographicCamera cam;
+    //    OrthographicCamera cam;
 //    OrthographicCamera UIcam;
 //    float MAX_ENEMIES;
 //    /**
@@ -60,9 +69,20 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void create() {
+        p = new Player();
+        game_object_view = new game_object_view(p);
+        game_object_view.draw_player(game_object_view.getSpriteBatch());
 
-        game_object_view = new game_object_view();
         game_ui_view = new game_UI_view();
+        game_ui_view.init_game_UI_View();
+
+
+        player_controller = new Player_Controller(p, game_ui_view);
+//        game_ui_view = new game_UI_view();
+//        game_ui_view.init_game_UI_View();
+
+
+//        player_controller = new Player_Controller();
 //        MAXIMUM_ENEMY_SIZE = 500;
 //        lerp = 0.1f;
 //        rageTime = 10;
@@ -81,8 +101,8 @@ public class hack_and_slash extends ApplicationAdapter {
 //        skin.add("touchBackground", new Texture("touchBackground.png"));
 //        skin.add("touchKnob", new Texture("touchKnob.png"));
 //        /**
-//         * --------Create a Stage and add TouchPad------------
-//         */
+//         //         * --------Create a Stage and add TouchPad------------
+//         //         */
 //        touchBackground = skin.getDrawable("touchBackground");
 //        touchKnob = skin.getDrawable("touchKnob");
 //
@@ -95,9 +115,9 @@ public class hack_and_slash extends ApplicationAdapter {
 //
 //
 //        stage = new Stage();
-//        /**
-//         * -----------------------------------------------------
-//         */
+////        /**
+////         * -----------------------------------------------------
+////         */
 //        Gdx.input.setInputProcessor(stage);
 //
 //
@@ -161,9 +181,14 @@ public class hack_and_slash extends ApplicationAdapter {
 //         */
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game_ui_view.update_touchpad();
         game_object_view.draw_player(game_object_view.getSpriteBatch());
-        game_ui_view.draw_UI();
+        player_controller.update(1 / 60f);
 
+//        player_controller.update(1 / 60);
+
+
+        //        player_controller.update(1 / 60f);
 
 //
 //        if (currentScreen == Screen.MENU) {
@@ -188,7 +213,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //            batch.end();
 //        } else if (currentScreen == Screen.MAIN_GAME) {
 //
-//            stage.addActor(touchpad);
+//        stage.addActor(touchpad);
 //            batch.begin();
 //            /**
 //             * draw the health bar
@@ -270,7 +295,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //            batch.end();
 //
 //        }
-//        stage.act(deltaTime);
+//        stage.act(1 / 60);
 //        stage.draw();
 //
 //

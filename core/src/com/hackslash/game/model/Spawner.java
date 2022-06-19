@@ -1,6 +1,6 @@
 package com.hackslash.game.model;
 
-public class Spawner extends game_object {
+public class Spawner extends Game_Object {
 
 //    float wait_time = 5;
 //    float time_aux = 0;
