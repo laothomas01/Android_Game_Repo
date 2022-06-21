@@ -1,7 +1,22 @@
 package com.hackslash.game.model;
 
-public class bullet extends Game_Object {
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
+public class Bullet extends Game_Object {
+    public Bullet(float x, float y, float radians) {
+        x = x;
+        y = y;
+        radians = radians;
+        speed = 500f;
+        size = 25f;
+        texture = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
+        currentLifeSpan = 0;
+        maxLifeSpan = 4;
+        remove = false;
+    }
 //    //    Vector2 position;
 //    Sprite sprite;
 //    Texture tex;

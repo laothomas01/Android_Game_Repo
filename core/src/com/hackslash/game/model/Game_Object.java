@@ -61,9 +61,98 @@ public class Game_Object {
 
     Sprite sprite;
 
+
+    float lifeSpan;
+    float maxLifeSpan;
+
+    boolean remove;
+
+    public float getLifeSpan() {
+        return lifeSpan;
+    }
+
+    public void setLifeSpan(float lifeSpan) {
+        this.lifeSpan = lifeSpan;
+    }
+
+    public float getMaxLifeSpan() {
+        return maxLifeSpan;
+    }
+
+    public void setMaxLifeSpan(float maxLifeSpan) {
+        this.maxLifeSpan = maxLifeSpan;
+    }
+
+    public float getCurrentLifeSpan() {
+        return currentLifeSpan;
+    }
+
+    public void setCurrentLifeSpan(float currentLifeSpan) {
+        this.currentLifeSpan = currentLifeSpan;
+    }
+
+    float currentLifeSpan;
+
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
+    }
+
+    public Vector2 getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Vector2 direction) {
+        this.direction = direction;
+    }
+
+    public float getCurrent_health() {
+        return current_health;
+    }
+
+    public void setCurrent_health(float current_health) {
+        this.current_health = current_health;
+    }
+
+    public float getCurrent_damage() {
+        return current_damage;
+    }
+
+    public void setCurrent_damage(float current_damage) {
+        this.current_damage = current_damage;
+    }
+
+    public float getCurrent_speed() {
+        return current_speed;
+    }
+
+    public void setCurrent_speed(float current_speed) {
+        this.current_speed = current_speed;
+    }
+
+    public float getCurrent_size() {
+        return current_size;
+    }
+
+    public void setCurrent_size(float current_size) {
+        this.current_size = current_size;
+    }
+
     Texture texture;
 
     float health;
+    float current_health;
+    float current_damage;
+    float current_speed;
+    float current_size;
 
     float damage;
 
@@ -199,5 +288,6 @@ public class Game_Object {
     public void set_dy(float y_direction) {
         dy = y_direction;
     }
+
 
 }

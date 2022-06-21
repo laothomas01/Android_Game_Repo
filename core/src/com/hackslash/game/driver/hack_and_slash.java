@@ -2,6 +2,7 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,11 +14,17 @@ import com.hackslash.game.view.game_UI_view;
 import com.hackslash.game.view.game_object_view;
 import com.hackslash.game.controller.Player_Controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class hack_and_slash extends ApplicationAdapter {
     game_object_view game_object_view;
     game_UI_view game_ui_view;
     Player_Controller player_controller;
-    Player p;
+    Player player;
+    BufferedWriter w;
 //    private Stage stage;
 //    ShapeRenderer sr;
 //    Player player;
@@ -69,15 +76,16 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void create() {
-        p = new Player();
-        game_object_view = new game_object_view(p);
-        game_object_view.draw_player(game_object_view.getSpriteBatch());
+        player = new Player();
+        game_object_view = new game_object_view();
+//        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
 
         game_ui_view = new game_UI_view();
         game_ui_view.init_game_UI_View();
 
 
-        player_controller = new Player_Controller(p, game_ui_view);
+        player_controller = new Player_Controller(player, game_ui_view);
+
 //        game_ui_view = new game_UI_view();
 //        game_ui_view.init_game_UI_View();
 
@@ -182,8 +190,24 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game_ui_view.update_touchpad();
-        game_object_view.draw_player(game_object_view.getSpriteBatch());
+        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+        /**
+         * input handling
+         */
         player_controller.update(1 / 60f);
+
+        /**
+         *
+         * GAME DATA
+         */
+//        System.out.println("CURRENT HEALTH:" + player.getCurrent_health());
+//        System.out.println("CURRENT SIZE:" + player.getCurrent_size());
+//        System.out.println("CURRENT DAMAGE:" + player.getCurrent_damage());
+//        System.out.println("CURRENT SPEED:" + player.getCurrent_speed());
+//        System.out.println("CURRENT POSITION:" + player.getPosition().toString());
+
+
+//        System.out.println("Player HEALTH:" + play
 
 //        player_controller.update(1 / 60);
 
@@ -324,6 +348,7 @@ public class hack_and_slash extends ApplicationAdapter {
      */
     public void pause() {
 //        GAME_PAUSED = !GAME_PAUSED;
+
     }
 
     /**
@@ -339,6 +364,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void dispose() {
+
 //        sr.dispose();
 //        stage.dispose();
 //        skin.dispose();

@@ -1,7 +1,30 @@
 package com.hackslash.game.model;
 
-public class enemy extends Game_Object {
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
+import org.w3c.dom.Text;
+
+import java.util.Vector;
+
+public class Enemy extends Game_Object {
+
+    public Enemy(float x_position, float y_position, float enemy_speed, float enemy_damage, float enemy_size, float enemy_health) {
+        x = x_position;
+        y = y_position;
+        current_health = enemy_health;
+        current_size = enemy_size;
+        current_damage = enemy_damage;
+        current_speed = enemy_speed;
+        position = new Vector2(x, y);
+        velocity = new Vector2(0, 0);
+        texture = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
+        dx = 0;
+        dy = 0;
+    }
 //
 //    Sprite sprite;
 //    Texture tex;

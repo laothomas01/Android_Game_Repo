@@ -5,22 +5,26 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hackslash.game.model.*;
 
 /**
- * This class will be used to display game objects and UI
+ * This class will be used to display game objects
  */
 public class game_object_view {
-    private Player player;
     private SpriteBatch spriteBatch;
 
-
-    public game_object_view(Player p) {
-        player = p;
+    public game_object_view() {
         spriteBatch = new SpriteBatch();
     }
 
-    public void draw_player(Batch batch) {
+    public void draw_player(Batch batch, Player p) {
         batch.begin();
-        player.getSprite().setPosition(player.getPosition().x, player.getPosition().y);
-        player.getSprite().draw(batch);
+        p.getSprite().setPosition(p.getPosition().x, p.getPosition().y);
+        p.getSprite().draw(batch);
+        batch.end();
+    }
+
+    public void draw_enemy(Batch batch, Enemy e) {
+        batch.begin();
+        e.getSprite().setPosition(e.getPosition().x, e.getPosition().y);
+        e.getSprite().draw(batch);
         batch.end();
     }
 

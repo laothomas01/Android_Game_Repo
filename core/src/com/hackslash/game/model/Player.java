@@ -3,15 +3,11 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Game_Object {
 
-
-    float current_health;
-    float current_damage;
-    float current_speed;
-    float current_size;
 
     /**
      * We will only create 1 player so parameters for the players are not needed
@@ -31,8 +27,8 @@ public class Player extends Game_Object {
         sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(this.getX(), this.getY());
         velocity = new Vector2(0, 0);
-        direction = new Vector2(0, 0);
-
+        dx = 0;
+        dy = 0;
     }
 
 
