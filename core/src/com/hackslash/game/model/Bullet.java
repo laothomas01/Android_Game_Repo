@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Bullet extends Game_Object {
-    public Bullet(float x, float y, float radians) {
+    public Bullet(float x_pos, float y_pos) {
         x = x;
         y = y;
         radians = radians;

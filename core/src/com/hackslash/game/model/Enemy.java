@@ -61,15 +61,15 @@ public class Enemy extends Game_Object {
 //    }
 //
 //    public void update(float dt, Player player, SpriteBatch batch) {
-//
-//        basic_enemy_AI(player, dt);
-//
-//        if (this.getHealth() <= 0) {
-//            remove = true;
-//        }
-//
-//        /**
-//         * if i get angry after waiting too long
+////
+////        basic_enemy_AI(player, dt);
+////
+////        if (this.getHealth() <= 0) {
+////            remove = true;
+////        }
+////
+////        /**
+////         * if i get angry after waiting too long
 //         *  -my anger should increase my stats
 //         *  -how long should i stay angry?
 //         *  -after X amount of seconds staying angry, I should chill out.

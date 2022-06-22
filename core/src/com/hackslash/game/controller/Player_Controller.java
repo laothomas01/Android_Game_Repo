@@ -18,9 +18,9 @@ public class Player_Controller {
     }
 
 
-    public void update(float dt) {
-        move(dt);
-    }
+//    public void update(float dt) {
+//        move(dt);
+////    }
 
     public void move(float dt) {
         /**
@@ -28,13 +28,13 @@ public class Player_Controller {
          velocity_y = y_direction * speed * delta_time
          velocity = vector2(velocity_x,velocity_y)
          player_new_position = old_position + velocity
-
          */
         player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
         player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
         player.set_Velocity(player.getDx(), player.getDy());
         player.setPosition(player.getPosition().add(player.getVelocity()));
     }
+
 
 
 }

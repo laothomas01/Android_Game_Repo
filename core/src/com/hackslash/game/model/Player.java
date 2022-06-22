@@ -17,7 +17,6 @@ public class Player extends Game_Object {
         y = Gdx.graphics.getHeight() / 2;
         health = 10f;
         size = 25f;
-        damage = 0;
         speed = 500;
         current_health = health;
         current_damage = damage;

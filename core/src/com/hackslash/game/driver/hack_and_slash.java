@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.hackslash.game.controller.Enemy_Controller;
+import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.game_UI_view;
 import com.hackslash.game.view.game_object_view;
@@ -23,8 +25,10 @@ public class hack_and_slash extends ApplicationAdapter {
     game_object_view game_object_view;
     game_UI_view game_ui_view;
     Player_Controller player_controller;
+    Enemy_Controller enemy_controller;
     Player player;
-    BufferedWriter w;
+    Enemy e;
+    Enemy e2;
 //    private Stage stage;
 //    ShapeRenderer sr;
 //    Player player;
@@ -77,15 +81,15 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
         player = new Player();
+        e = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
+        e2 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 0, 25f, 0);
         game_object_view = new game_object_view();
-//        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
-
         game_ui_view = new game_UI_view();
         game_ui_view.init_game_UI_View();
 
 
         player_controller = new Player_Controller(player, game_ui_view);
-
+        enemy_controller = new Enemy_Controller();
 //        game_ui_view = new game_UI_view();
 //        game_ui_view.init_game_UI_View();
 
@@ -191,11 +195,14 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game_ui_view.update_touchpad();
         game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
         /**
          * input handling
          */
-        player_controller.update(1 / 60f);
-
+        player_controller.move(1 / 60f);
+        enemy_controller.moveToPlayer(1 / 60f, e, player);
+        enemy_controller.moveToPlayer(1 / 60f, e2, player);
         /**
          *
          * GAME DATA
