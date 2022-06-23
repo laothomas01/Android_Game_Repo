@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.hackslash.game.controller.Enemy_Controller;
+import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.game_UI_view;
@@ -20,6 +21,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class hack_and_slash extends ApplicationAdapter {
     game_object_view game_object_view;
@@ -29,6 +31,8 @@ public class hack_and_slash extends ApplicationAdapter {
     Player player;
     Enemy e;
     Enemy e2;
+    ArrayList<Bullet> bullets;
+
 //    private Stage stage;
 //    ShapeRenderer sr;
 //    Player player;
@@ -81,8 +85,9 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
         player = new Player();
-        e = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
-        e2 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 0, 25f, 0);
+        e = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
+        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
+        bullets = new ArrayList<>();
         game_object_view = new game_object_view();
         game_ui_view = new game_UI_view();
         game_ui_view.init_game_UI_View();
@@ -207,6 +212,9 @@ public class hack_and_slash extends ApplicationAdapter {
          *
          * GAME DATA
          */
+        player_controller.detectEnemy(e);
+        player_controller.detectEnemy(e2);
+
 //        System.out.println("CURRENT HEALTH:" + player.getCurrent_health());
 //        System.out.println("CURRENT SIZE:" + player.getCurrent_size());
 //        System.out.println("CURRENT DAMAGE:" + player.getCurrent_damage());

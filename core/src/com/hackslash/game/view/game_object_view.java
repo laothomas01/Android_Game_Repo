@@ -28,6 +28,13 @@ public class game_object_view {
         batch.end();
     }
 
+    public void draw_bullets(Batch batch, Bullet b) {
+        batch.begin();
+        b.getSprite().setPosition(b.getPosition().x, b.getPosition().y);
+        b.getSprite().draw(batch);
+        batch.end();
+    }
+
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }

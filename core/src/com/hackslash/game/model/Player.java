@@ -12,6 +12,10 @@ public class Player extends Game_Object {
     /**
      * We will only create 1 player so parameters for the players are not needed
      */
+//    private Vector2 firePointPosition;
+//    private Vector2 firePointVelocity;
+//    float firePoint_dx = 0;
+//    float firePoint_dy = 0;
     public Player() {
         x = Gdx.graphics.getWidth() / 2;
         y = Gdx.graphics.getHeight() / 2;
@@ -25,6 +29,7 @@ public class Player extends Game_Object {
         texture = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(this.getX(), this.getY());
+//        firePointPosition = new Vector2()
         velocity = new Vector2(0, 0);
         dx = 0;
         dy = 0;
