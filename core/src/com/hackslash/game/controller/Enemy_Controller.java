@@ -27,4 +27,5 @@ public class Enemy_Controller {
         e.setPosition(e.getPosition().add(e.getVelocity().scl(e.getCurrent_speed() * dt)));
     }
 
+
 }

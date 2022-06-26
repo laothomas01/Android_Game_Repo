@@ -4,19 +4,21 @@ import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.game_UI_view;
+import com.hackslash.game.view.Game_UI_View;
 
 import java.util.ArrayList;
 
 /**
  * all updates to the player will occur
  */
+
 public class Player_Controller {
-    game_UI_view joyStick;
+    Game_UI_View joyStick;
     Player player;
+    float max_cooldown = 2f;
+    float current_cooldown = max_cooldown;
 
-
-    public Player_Controller(Player p, game_UI_view j) {
+    public Player_Controller(Player p, Game_UI_View j) {
         player = p;
         joyStick = j;
 
@@ -41,15 +43,22 @@ public class Player_Controller {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 100f) {
-//            System.out.println("FOUND ENEMY:" + e.hashCode());
+        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
+            return true;
         }
         return false;
     }
 
-    public void shoot(float dt, ArrayList<Bullet> b) {
+    public void shoot(float dt, ArrayList<Bullet> bullets) {
 
+        if (current_cooldown <= 0) {
 
+            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y));
+            current_cooldown = max_cooldown;
+        } else {
+//            }
+            current_cooldown -= dt;
+        }
     }
 
 

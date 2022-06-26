@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 
-public class game_UI_view {
+public class Game_UI_View {
     private Stage stage;
     private Touchpad touchpad;
     private Touchpad.TouchpadStyle touchpadStyle;
@@ -17,7 +17,7 @@ public class game_UI_view {
     private Drawable touchKnob;
 
 
-    public game_UI_view() {
+    public Game_UI_View() {
 
     }
 

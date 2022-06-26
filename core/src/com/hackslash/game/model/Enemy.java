@@ -24,7 +24,9 @@ public class Enemy extends Game_Object {
         sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         dx = 0;
         dy = 0;
+        object = OBJECT_TYPE.ENEMY;
     }
+
 //
 //    Sprite sprite;
 //    Texture tex;

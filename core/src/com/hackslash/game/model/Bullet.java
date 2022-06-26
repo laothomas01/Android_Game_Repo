@@ -3,6 +3,7 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Game_Object {
     public Bullet(float x_pos, float y_pos) {
@@ -18,9 +19,15 @@ public class Bullet extends Game_Object {
         current_size = size;
         texture = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
+        position = new Vector2(x, y);
+        velocity = new Vector2(0, 0);
+        dx = 0;
+        dy = 0;
         currentLifeSpan = 0;
         maxLifeSpan = 4;
         remove = false;
+        object = OBJECT_TYPE.BULLET;
+
     }
 //    //    Vector2 position;
 //    Sprite sprite;

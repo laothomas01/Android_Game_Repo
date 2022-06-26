@@ -2,36 +2,31 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.hackslash.game.controller.Bullet_Controller;
 import com.hackslash.game.controller.Enemy_Controller;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.game_UI_view;
-import com.hackslash.game.view.game_object_view;
+import com.hackslash.game.view.Game_UI_View;
+import com.hackslash.game.view.Game_Object_View;
 import com.hackslash.game.controller.Player_Controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class hack_and_slash extends ApplicationAdapter {
-    game_object_view game_object_view;
-    game_UI_view game_ui_view;
+    Game_Object_View game_object_view;
+    Game_UI_View game_ui_view;
     Player_Controller player_controller;
     Enemy_Controller enemy_controller;
+    Bullet_Controller bullet_controller;
     Player player;
-    Enemy e;
+    Enemy e1;
     Enemy e2;
+    ArrayList<Enemy> enemies;
     ArrayList<Bullet> bullets;
+    float deltaTime;
+
 
 //    private Stage stage;
 //    ShapeRenderer sr;
@@ -85,16 +80,20 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
         player = new Player();
-        e = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
+        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
         e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
         bullets = new ArrayList<>();
-        game_object_view = new game_object_view();
-        game_ui_view = new game_UI_view();
+        enemies = new ArrayList<>();
+        enemies.add(e1);
+        enemies.add(e2);
+        game_object_view = new Game_Object_View();
+        game_ui_view = new Game_UI_View();
         game_ui_view.init_game_UI_View();
 
 
         player_controller = new Player_Controller(player, game_ui_view);
         enemy_controller = new Enemy_Controller();
+        bullet_controller = new Bullet_Controller();
 //        game_ui_view = new game_UI_view();
 //        game_ui_view.init_game_UI_View();
 
@@ -196,24 +195,76 @@ public class hack_and_slash extends ApplicationAdapter {
 //        /**
 //         ** Screen Clearing every frame
 //         */
+        deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game_ui_view.update_touchpad();
         game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
-        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
+        for (Enemy e : enemies) {
+            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+            if (player_controller.detectEnemy(e)) {
+                player_controller.shoot(deltaTime, bullets);
+            }
+
+        }
         /**
          * input handling
          */
-        player_controller.move(1 / 60f);
-        enemy_controller.moveToPlayer(1 / 60f, e, player);
-        enemy_controller.moveToPlayer(1 / 60f, e2, player);
+        player_controller.move(deltaTime);
+
+
+//        game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e);
+
+//        if (player_controller.detectEnemy(e)) {
+//            player_controller.shoot(deltaTime, bullets);
+//        }
+//        for (Bullet b : bullets) {
+//            bullet_controller.moveTowardEnemy(deltaTime, e, b);
+//            game_object_view.confirm_detection(game_object_view.getSpriteBatch(), b, e);
+//        }
+
+
+//        enemy_controller.moveToPlayer(1 / 60f, e, player);
+//        enemy_controller.moveToPlayer(1 / 60f, e2, player);
         /**
          *
          * GAME DATA
          */
-        player_controller.detectEnemy(e);
-        player_controller.detectEnemy(e2);
+//        if (player_controller.detectEnemy(e)) {
+//            player_controller.shoot(deltaTime, bullets);
+//            for (Bullet b : bullets) {
+//
+//                bullet_controller.moveTowardEnemy(deltaTime, e, b);
+//                game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+//            }
+//        }
+
+
+//        player_controller.detectEnemy(e);
+//        for (Bullet b : bullets) {
+////            System.out.println("BULLET:" + b.hashCode() + "POSITION:" + b.getPosition().toString());
+////            b.setRadians(MathUtils.atan2(b.getPosition().y - 100, b.getPosition().x - 100));
+////            b.set_dx(MathUtils.cos(b.getRadians()));
+////            b.set_dy(MathUtils.sin(b.getRadians()));
+////            b.set_Velocity(100f, 100f);
+////            b.setPosition(b.getPosition().add(10, 10));
+////            b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * deltaTime)));
+////            if (player_controller.detectEnemy(e)) {
+////                System.out.println("E:" + e.hashCode() + "DETECTED:" + player_controller.detectEnemy(e));
+//////                b.setRadians(MathUtils.atan2(b.getPosition().y - e.getPosition().y, b.getPosition().x - e.getPosition().x));
+//////                b.set_dx(MathUtils.cos(b.getRadians()));
+//////                b.set_dy(MathUtils.sin(b.getRadians()));
+//////                b.set_Velocity(b.get_dx(), b.get_dy());
+//////                b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * deltaTime)));
+////                game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+////            }
+//
+//        }
+
+//        for (Bullet b : bullets) {
+//            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+//        }
 
 //        System.out.println("CURRENT HEALTH:" + player.getCurrent_health());
 //        System.out.println("CURRENT SIZE:" + player.getCurrent_size());

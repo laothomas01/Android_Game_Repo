@@ -1,5 +1,6 @@
 package com.hackslash.game.model;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -32,6 +33,17 @@ public class Game_Object {
     Game_Object() {
 
     }
+
+    enum OBJECT_TYPE {
+        ENEMY, PLAYER, EXP, BULLET
+    }
+
+    OBJECT_TYPE object = null;
+
+    public String getObjectType() {
+        return object.name();
+    }
+
 
     /**
      * x and y positions
@@ -289,5 +301,65 @@ public class Game_Object {
         dy = y_direction;
     }
 
+    /**
+     * circle and rectangle edge detection
+     *
+     * @param a Circle
+     * @param b Rectangle
+     * @return
+     */
+    public boolean hasCollided(Game_Object a, Game_Object b) {
+        if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET"))) {
+            float dist = Vector2.dst(a.getPosition().x, a.getPosition().y, b.getPosition().x, b.getPosition().y);
+            float total_radius = (a.getCurrent_size() - 20) + (b.getCurrent_size() - 20);
+            if (dist <= total_radius) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
 
+
+//            } else {
+//                return false;
+//            }
+//        } else
+//        if ((a.getObjectType().equals("Player") && b.getObjectType().equals("Enemy")) || (a.getObjectType().equals("Enemy") || b.getObjectType().equals("Player"))) {
+//            /**
+//             * Edge Detection
+//             */
+//        float testX = a.getPosition().x;
+//        float testY = a.getPosition().y;
+//        if (a.getPosition().x < b.getPosition().x) {
+//            testX = b.getPosition().x; // left edge
+//        } else if (a.getPosition().x > b.getPosition().x + b.getSprite().getWidth()) {
+//            testX = b.getPosition().x + b.getSprite().getWidth(); // right edge
+//        }
+//
+//        if (a.getPosition().y < b.getPosition().y) {
+//            testY = b.getPosition().y; // top edge
+//        } else if (a.getPosition().y > b.getPosition().y + b.getSprite().getHeight()) {
+//            testY = b.getPosition().y + b.getSprite().getHeight(); // bottom edge
+//        }
+
+        /**
+         * Collision Detection:
+         *
+         * use Pythagorean Theorem using circle's center and the two edge we found above
+         *
+         */
+//        float distX = a.getPosition().x - testX;
+//        float distY = a.getPosition().y - testY;
+//        double distance = Math.sqrt((distX * distX) + (distY * distY));
+//        if (distance <= a.getSprite().getWidth()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+
+//        }
+
+
+    }
 }

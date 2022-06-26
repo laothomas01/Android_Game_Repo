@@ -11,11 +11,18 @@ public class Bullet_Controller {
     }
 
     public void moveTowardEnemy(float dt, Enemy e, Bullet b) {
-        b.setRadians(MathUtils.atan2(b.getPosition().y - e.getPosition().y, b.getPosition().x - e.getPosition().x));
-        b.set_dx(MathUtils.cos(b.getRadians()));
-        b.set_dy(MathUtils.sin(b.getRadians()));
-        b.set_Velocity(b.getDx(), b.getDy());
-        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * dt)));
+
+
+        if (b.hasCollided(e, b)) {
+            b.setCurrent_speed(0f);
+        } else {
+            b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
+            b.set_dx(MathUtils.cos(b.getRadians()));
+            b.set_dy(MathUtils.sin(b.getRadians()));
+            b.set_Velocity(b.get_dx(), b.get_dy());
+            b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * dt)));
+        }
+
     }
 
 
