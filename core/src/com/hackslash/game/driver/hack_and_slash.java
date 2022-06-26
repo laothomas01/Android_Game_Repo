@@ -23,7 +23,7 @@ public class hack_and_slash extends ApplicationAdapter {
     Player player;
     Enemy e1;
     Enemy e2;
-    ArrayList<Enemy> enemies;
+    //    ArrayList<Enemy> enemies;
     ArrayList<Bullet> bullets;
     float deltaTime;
 
@@ -83,9 +83,9 @@ public class hack_and_slash extends ApplicationAdapter {
         e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
         e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
         bullets = new ArrayList<>();
-        enemies = new ArrayList<>();
-        enemies.add(e1);
-        enemies.add(e2);
+//        enemies = new ArrayList<>();
+//        enemies.add(e1);
+//        enemies.add(e2);
         game_object_view = new Game_Object_View();
         game_ui_view = new Game_UI_View();
         game_ui_view.init_game_UI_View();
@@ -199,15 +199,46 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game_ui_view.update_touchpad();
-        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
-        for (Enemy e : enemies) {
-            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-            if (player_controller.detectEnemy(e)) {
-                player_controller.shoot(deltaTime, bullets);
-            }
 
+        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+
+        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e1);
+        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
+
+        player_controller.shoot(deltaTime, bullets);
+//        System.out.println("BULLETS:" + bullets.toString().hashCode());
+        for (Bullet b : bullets) {
+            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+
+            if (b.hasCollided(e1, b)) {
+                bullets.remove(b);
+                b.setSpeed(0f);
+//                b.setSpeed(0f); <--- this line right here somehow allows the "TO BE" removed object to stay in screen. what???
+//                bullets.remove(b);
+            }
+            bullet_controller.moveTowardEnemy(deltaTime, e1, b);
         }
+//        game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e1);
+
+
+        // 3. Add ingredient C
+        // 4. Cut trees of D size
+        // 5. Apply recursion on C
+
+
+//        for (Enemy e : enemies) {
+//            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+//            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+//            if (player_controller.detectEnemy(e)) {
+//                player_controller.shoot(deltaTime, bullets);
+//                for (Bullet b : bullets) {
+//                    bullet_controller.moveTowardEnemy(deltaTime, e, b);
+//                    game_object_view.confirm_detection(game_object_view.getSpriteBatch(), b, e);
+//                }
+//            }
+////            game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e);
+//
+//        }
         /**
          * input handling
          */
@@ -218,10 +249,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
 //        if (player_controller.detectEnemy(e)) {
 //            player_controller.shoot(deltaTime, bullets);
-//        }
-//        for (Bullet b : bullets) {
-//            bullet_controller.moveTowardEnemy(deltaTime, e, b);
-//            game_object_view.confirm_detection(game_object_view.getSpriteBatch(), b, e);
 //        }
 
 

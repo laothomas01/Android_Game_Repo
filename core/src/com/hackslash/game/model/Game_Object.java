@@ -31,12 +31,9 @@ public class Game_Object {
 //    Vector2 position;
 //
     Game_Object() {
-
     }
 
-    enum OBJECT_TYPE {
-        ENEMY, PLAYER, EXP, BULLET
-    }
+    enum OBJECT_TYPE {ENEMY, PLAYER, EXP, BULLET}
 
     OBJECT_TYPE object = null;
 
@@ -48,6 +45,7 @@ public class Game_Object {
     /**
      * x and y positions
      */
+    // x and y positions
     float x;
     float y;
     /**
@@ -309,57 +307,52 @@ public class Game_Object {
      * @return
      */
     public boolean hasCollided(Game_Object a, Game_Object b) {
-        if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET"))) {
+        //CIRCLE ON CIRCLE SHAPE DETECTION
+        if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET")) || (a.getObjectType().equals("BULLET") && b.getObjectType().equals("ENEMY"))) {
             float dist = Vector2.dst(a.getPosition().x, a.getPosition().y, b.getPosition().x, b.getPosition().y);
-            float total_radius = (a.getCurrent_size() - 20) + (b.getCurrent_size() - 20);
+            float total_radius = (a.getCurrent_size() - 20f) + (b.getCurrent_size() - 20f);
             if (dist <= total_radius) {
                 return true;
             } else {
                 return false;
             }
         }
+        //SQUARE OR RECTANGLE ON CIRCLE SHAPE DETECTION
+        if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY")) || (a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY"))) {
+            //Edge Detection//
+            float testX = a.getPosition().x;
+            float testY = a.getPosition().y;
+            if (a.getPosition().x < b.getPosition().x) {
+                testX = b.getPosition().x; // left edge
+            } else if (a.getPosition().x > b.getPosition().x + b.getSprite().getWidth()) {
+                testX = b.getPosition().x + b.getSprite().getWidth(); // right edge
+            }
+
+            if (a.getPosition().y < b.getPosition().y) {
+                testY = b.getPosition().y; // top edge
+            } else if (a.getPosition().y > b.getPosition().y + b.getSprite().getHeight()) {
+                testY = b.getPosition().y + b.getSprite().getHeight(); // bottom edge
+            }
+
+            //  Collision Detection: use Pythagorean Theorem using circle's center
+
+            //  and the two edge we found above
+            float distX = a.getPosition().x - testX;
+            float distY = a.getPosition().y - testY;
+            //Pythagorean Theorem
+            double distance = Math.sqrt((distX * distX) + (distY * distY));
+            if (distance <= a.getSprite().getWidth()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+
         return false;
 
 
-//            } else {
-//                return false;
-//            }
-//        } else
-//        if ((a.getObjectType().equals("Player") && b.getObjectType().equals("Enemy")) || (a.getObjectType().equals("Enemy") || b.getObjectType().equals("Player"))) {
-//            /**
-//             * Edge Detection
-//             */
-//        float testX = a.getPosition().x;
-//        float testY = a.getPosition().y;
-//        if (a.getPosition().x < b.getPosition().x) {
-//            testX = b.getPosition().x; // left edge
-//        } else if (a.getPosition().x > b.getPosition().x + b.getSprite().getWidth()) {
-//            testX = b.getPosition().x + b.getSprite().getWidth(); // right edge
-//        }
-//
-//        if (a.getPosition().y < b.getPosition().y) {
-//            testY = b.getPosition().y; // top edge
-//        } else if (a.getPosition().y > b.getPosition().y + b.getSprite().getHeight()) {
-//            testY = b.getPosition().y + b.getSprite().getHeight(); // bottom edge
-//        }
-
-        /**
-         * Collision Detection:
-         *
-         * use Pythagorean Theorem using circle's center and the two edge we found above
-         *
-         */
-//        float distX = a.getPosition().x - testX;
-//        float distY = a.getPosition().y - testY;
-//        double distance = Math.sqrt((distX * distX) + (distY * distY));
-//        if (distance <= a.getSprite().getWidth()) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-
-//        }
-
-
     }
+
 }
