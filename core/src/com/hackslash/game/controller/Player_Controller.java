@@ -12,6 +12,13 @@ import java.util.ArrayList;
  * all updates to the player will occur
  */
 
+/**
+ * [] enemy detection :
+ *      how to think about this:
+ *          collection of enemies: ArrayList
+ *
+
+ */
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;

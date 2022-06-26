@@ -17,8 +17,9 @@ public class Player extends Game_Object {
 //    float firePoint_dx = 0;
 //    float firePoint_dy = 0;
     public Player() {
-        x = Gdx.graphics.getWidth() / 2;
-        y = Gdx.graphics.getHeight() / 2;
+        //divide by 2 but using right shifting
+        x = Gdx.graphics.getWidth() / 2f;
+        y = Gdx.graphics.getHeight() / 2f;
         health = 10f;
         size = 25f;
         speed = 500;
