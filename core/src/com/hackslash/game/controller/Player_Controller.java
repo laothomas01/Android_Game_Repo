@@ -7,6 +7,8 @@ import com.hackslash.game.model.Player;
 import com.hackslash.game.view.Game_UI_View;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * all updates to the player will occur
@@ -14,21 +16,25 @@ import java.util.ArrayList;
 
 /**
  * [] enemy detection :
- *      how to think about this:
- *          collection of enemies: ArrayList
- *
-
+ * how to think about this:
+ * 1) iterate through collection of enemies
+ * 2) use a linked list/queue to store the order of enemies being seen
+ * 3) look at the top of linked list to see first seen enemy
+ * 4) if seen enemy is not dead, keep shooting at it.
+ * 5) if seen enemy is dead, set top of the queue as an enemy object that will be removed
  */
+
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;
     float max_cooldown = 2f;
     float current_cooldown = max_cooldown;
+    Queue<Enemy> seen;
 
     public Player_Controller(Player p, Game_UI_View j) {
         player = p;
         joyStick = j;
-
+        seen = new LinkedList<>();
     }
 
 
@@ -50,11 +56,19 @@ public class Player_Controller {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
+        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 500f) {
             return true;
         }
         return false;
     }
+
+    public void storeSeenEnemy(Enemy e) {
+
+        if (!seen.contains(e)) {
+            seen.add(e);
+        }
+    }
+
 
     public void shoot(float dt, ArrayList<Bullet> bullets) {
 
@@ -66,6 +80,10 @@ public class Player_Controller {
 //            }
             current_cooldown -= dt;
         }
+    }
+
+    public Queue<Enemy> get_Seen_Enemies() {
+        return seen;
     }
 
 

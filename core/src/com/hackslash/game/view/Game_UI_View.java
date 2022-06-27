@@ -7,7 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
-
+//All inputs from joystick will be sent to the
+//player controller which then
 public class Game_UI_View {
     private Stage stage;
     private Touchpad touchpad;
