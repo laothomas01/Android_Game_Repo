@@ -1,0 +1,34 @@
+game objects:
+[] exp drops
+[] item drops
+[] inventory system
+more player features:
+[] special abilities
+health:
+[] enemy
+[] player
+camera:
+[] following camera
+UI:
+[] health bar
+[] fix sprite layering
+[] exp bar
+[] menu screen
+[] game over screen
+backend features:
+[] save states
+[] load game
+[] high score
+[] survival timer
+optimizations:
+[] create more efficient algorithms
+[] proper memory usage
+utility files:
+[] game configurations
+other artsy fartys stuff:
+[] better sprites
+[] audio
+
+
+
+
