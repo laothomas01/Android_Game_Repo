@@ -310,6 +310,7 @@ public class Game_Object {
         //CIRCLE ON CIRCLE SHAPE DETECTION
         if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET")) || (a.getObjectType().equals("BULLET") && b.getObjectType().equals("ENEMY"))) {
             float dist = Vector2.dst(a.getPosition().x, a.getPosition().y, b.getPosition().x, b.getPosition().y);
+            //Why did I have to subtract this offset to get better collision detection????
             float total_radius = (a.getCurrent_size() - 20f) + (b.getCurrent_size() - 20f);
             if (dist <= total_radius) {
                 return true;
@@ -320,6 +321,10 @@ public class Game_Object {
         //SQUARE OR RECTANGLE ON CIRCLE SHAPE DETECTION
         if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY")) || (a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY"))) {
             //Edge Detection//
+            //Note*
+            // Make sure you understand this code/math
+            //Website reference: http://www.jeffreythompson.org/collision-detection/circle-rect.php
+            //------------------------------------------------------------
             float testX = a.getPosition().x;
             float testY = a.getPosition().y;
             if (a.getPosition().x < b.getPosition().x) {
@@ -333,6 +338,7 @@ public class Game_Object {
             } else if (a.getPosition().y > b.getPosition().y + b.getSprite().getHeight()) {
                 testY = b.getPosition().y + b.getSprite().getHeight(); // bottom edge
             }
+            //------------------------------------------------------------
 
             //  Collision Detection: use Pythagorean Theorem using circle's center
 

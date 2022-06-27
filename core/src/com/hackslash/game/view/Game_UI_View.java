@@ -2,6 +2,7 @@ package com.hackslash.game.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -16,6 +17,7 @@ public class Game_UI_View {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
+    private ShapeRenderer sr;
 
 
     public Game_UI_View() {
