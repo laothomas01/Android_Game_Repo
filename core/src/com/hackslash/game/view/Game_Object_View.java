@@ -36,15 +36,14 @@ public class Game_Object_View {
         batch.end();
     }
 
-    public void confirm_detection(SpriteBatch batch, Game_Object a, Game_Object b) {
+    public void confirm_detection(SpriteBatch batch, Game_Object a) {
         batch.begin();
+//        if (a.hasCollided(a, b)) {
+        batch.setColor(Color.GREEN);
+        batch.draw(a.getTexture(), a.getPosition().x, a.getPosition().y, a.getCurrent_size(), a.getCurrent_size());
+//        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
 
-        if (a.hasCollided(a, b)) {
-            batch.setColor(Color.GREEN);
-            batch.draw(a.getTexture(), a.getPosition().x, a.getPosition().y, a.getCurrent_size(), a.getCurrent_size());
-            batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
-
-        }
+//        }
         batch.end();
 
     }

@@ -23,8 +23,10 @@ public class hack_and_slash extends ApplicationAdapter {
     Player player;
     Enemy e1;
     Enemy e2;
-    //    ArrayList<Enemy> enemies;
+    ArrayList<Enemy> enemies;
     ArrayList<Bullet> bullets;
+
+    //time passed between the last frame and the current frame
     float deltaTime;
 
 
@@ -81,11 +83,11 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
         player = new Player();
         e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
-        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
+        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 50f, 0, 25f, 0);
         bullets = new ArrayList<>();
-//        enemies = new ArrayList<>();
-//        enemies.add(e1);
-//        enemies.add(e2);
+        enemies = new ArrayList<>();
+        enemies.add(e1);
+        enemies.add(e2);
         game_object_view = new Game_Object_View();
         game_ui_view = new Game_UI_View();
         game_ui_view.init_game_UI_View();
@@ -192,56 +194,75 @@ public class hack_and_slash extends ApplicationAdapter {
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
     public void render() {
-//        /**
-//         ** Screen Clearing every frame
-//         */
         deltaTime = Gdx.graphics.getDeltaTime();
+        //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game_ui_view.update_touchpad();
-
         game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+//        Handle_OnScreen_Enemies();
 
-        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e1);
-        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
 
-        player_controller.shoot(deltaTime, bullets);
-//        System.out.println("BULLETS:" + bullets.toString().hashCode());
-        for (Bullet b : bullets) {
-            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-
-            if (b.hasCollided(e1, b)) {
-                bullets.remove(b);
-                b.setSpeed(0f);
-//                b.setSpeed(0f); <--- this line right here somehow allows the "TO BE" removed object to stay in screen. what???
-//                bullets.remove(b);
+        for (Enemy e : enemies) {
+            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+            if (player_controller.detectEnemy(e)) {
+                player_controller.storeSeenEnemy(e);
             }
-            bullet_controller.moveTowardEnemy(deltaTime, e1, b);
+            enemy_controller.moveToPlayer(deltaTime, e, player);
+
+
         }
-//        game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e1);
-
-
-        // 3. Add ingredient C
-        // 4. Cut trees of D size
-        // 5. Apply recursion on C
-
-
-//        for (Enemy e : enemies) {
-//            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-//            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-//            if (player_controller.detectEnemy(e)) {
-//                player_controller.shoot(deltaTime, bullets);
-//                for (Bullet b : bullets) {
-//                    bullet_controller.moveTowardEnemy(deltaTime, e, b);
-//                    game_object_view.confirm_detection(game_object_view.getSpriteBatch(), b, e);
-//                }
-//            }
-////            game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e);
+        System.out.println("SEEN:" + player_controller.get_Seen_Enemies().toString());
+        System.out.println("ENEMIES:" + enemies.toString());
+        if (player_controller.get_Seen_Enemies().peek() != null) {
+            Enemy curr = player_controller.get_Seen_Enemies().peek();
+            if (player_controller.detectEnemy(curr)) {
+                player_controller.shoot(deltaTime, bullets);
+                for (Bullet b : bullets) {
+                    game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+                    if (b.hasCollided(curr, b)) {
+                        enemies.remove(curr);
+                        player_controller.get_Seen_Enemies().remove(curr);
+                        bullets.remove(b);
+                        b.setSpeed(0f);
+                    } else {
+                        bullet_controller.moveTowardEnemy(deltaTime, curr, b);
+                    }
+                }
+            }
+//            System.out.println("CURRENT ENEMY:" + curr.toString());
+//            player_controller.shoot(deltaTime, bullets);
+//            for (Bullet b : bullets) {
 //
+//
+//            }
+        }
+
+//Loop here when drawing enemies
+
+
+//        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e1);
+//        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
+
+//        if (player_controller.detectEnemy(e1)) {
+//            player_controller.storeSeenEnemy(e1);
+//        } else {
+//            if (player_controller.get_Seen_Enemies().contains(e1)) {
+//                player_controller.get_Seen_Enemies().remove(e1);
+//            }
 //        }
-        /**
-         * input handling
-         */
+//
+//
+//        if (player_controller.detectEnemy(e2)) {
+//            player_controller.storeSeenEnemy(e2);
+//        } else {
+//            if (player_controller.get_Seen_Enemies().contains(e2)) {
+//                player_controller.get_Seen_Enemies().remove(e2);
+//            }
+//        }
+
+
+//input handling
         player_controller.move(deltaTime);
 
 
@@ -467,6 +488,10 @@ public class hack_and_slash extends ApplicationAdapter {
 //        enemyTex(enemies);
     }
 
+    public void Handle_OnScreen_Enemies() {
+
+
+    }
 
     public void loadEnemies() {
 //        /**
