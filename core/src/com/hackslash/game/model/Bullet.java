@@ -6,19 +6,20 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Game_Object {
-    public Bullet(float x_pos, float y_pos) {
+    public Bullet(float x_pos, float y_pos, int size) {
         x = x_pos;
         y = y_pos;
 
         speed = 500f;
-        size = 25f;
         damage = 1f;
 
         current_damage = damage;
         current_speed = speed;
         current_size = size;
         texture = new Texture(Gdx.files.internal("circle.png"));
-        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
+//        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
+        sprite = new Sprite(texture, 0, 0, current_size, current_size);
+
         position = new Vector2(x, y);
         velocity = new Vector2(0, 0);
         dx = 0;

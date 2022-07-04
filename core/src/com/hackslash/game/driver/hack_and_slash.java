@@ -30,7 +30,7 @@ public class hack_and_slash extends ApplicationAdapter {
     Enemy e7;
     Enemy e8;
     ArrayList<Enemy> enemies;
-    ArrayList<Bullet> bullets;
+//    ArrayList<Bullet> bullets;
 
     //time passed between the last frame and the current frame
     float deltaTime;
@@ -89,16 +89,16 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
         player = new Player();
         //Testing player's enemy detection
-        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 25f, 0);
-        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 25f, 0);
-        e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 0, 25f, 0);
-        e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 0, 25f, 0);
-        e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 0, 25f, 0);
-        e6 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 0, 25f, 0);
-        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 0, 25f, 0);
-        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 0, 25f, 0);
+        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 10, 1);
+        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 10, 1);
+        e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 0, 10, 1);
+        e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 0, 10, 1);
+        e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 0, 10, 1);
+        e6 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 0, 10, 1);
+        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 0, 10, 1);
+        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 0, 10, 1);
 
-        bullets = new ArrayList<>();
+//        bullets = new ArrayList<>();
         enemies = new ArrayList<>();
         enemies.add(e1);
         enemies.add(e2);
@@ -111,8 +111,6 @@ public class hack_and_slash extends ApplicationAdapter {
         game_object_view = new Game_Object_View();
         game_ui_view = new Game_UI_View();
         game_ui_view.init_game_UI_View();
-
-
         player_controller = new Player_Controller(player, game_ui_view);
         enemy_controller = new Enemy_Controller();
         bullet_controller = new Bullet_Controller();
@@ -221,13 +219,74 @@ public class hack_and_slash extends ApplicationAdapter {
         game_ui_view.update_touchpad();
         game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
 
+        for (Enemy e : enemies) {
+            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+            if (player_controller.detectEnemy(e)) {
+                player_controller.storeSeenEnemy(e);
+            }
+//            enemy_controller.moveToPlayer(deltaTime, e, player);
+        }
+//        System.out.println("SPRITE WIDTH:" + enemies.get(0).getSprite().getWidth());
+//        System.out.println("TEXTURE WIDTH:" + enemies.get(0).getSprite().getTexture().getWidth());
 
-//        System.out.println("SEEN:" + player_controller.get_Seen_Enemies().toString());
-//        System.out.println("ENEMIES:" + enemies.toString());
 
-        Handle_Unseen_Enemies();
-        Handle_Seen_Enemies();
+        if (player_controller.get_Seen_Enemies().peek() != null) {
+//            //Front of the queue
+            Enemy curr = player_controller.get_Seen_Enemies().peek();
+
+            if (player_controller.detectEnemy(curr)) {
+//                System.out.println("DETECTED:" + curr.hashCode());
+                player_controller.shoot(deltaTime);
+                System.out.println("BULLETS:" + player_controller.getBullets().toString());
+                for (Bullet b : player_controller.getBullets()) {
+                    game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+                    if (b.hasCollided(curr, b)) {
+                        player_controller.getBullets().remove(b);
+                    }
+                    bullet_controller.moveTowardEnemy(deltaTime, curr, b);
+                }
+            }
+//
+//
+//            if (player_controller.detectEnemy(curr)) {
+////                //this actually just loads in the bullets into an arraylist that will be instantiated later
+//                player_controller.shoot(deltaTime, bullets);
+////                //for each bullet loaded, draw them, check their collision, move them towards their respectful objects
+////                for (Bullet b : bullets) {
+//                if (!bullets.isEmpty()) {
+//                    for (Bullet b : bullets) {
+//                        game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+//                        if (b.hasCollided(curr, b)) {
+////                        if (curr.getCurrent_health() <= 0) {
+////                            enemies.remove(curr);
+////                            player_controller.get_Seen_Enemies().remove(curr);
+////                        } else {
+//                            System.out.println("PLAYER DAMAGE:" + player.getCurrent_damage());
+////                        System.out.println("ENEMY HEALTH:" + curr.getCurrent_health());
+////                        curr.setCurrent_health(curr.getCurrent_health() - player.getCurrent_damage());
+////                        }
+//
+//////                        enemies.remove(curr);
+//////                        player_controller.get_Seen_Enemies().remove(curr);
+//
+//                            bullets.remove(b);
+////                        b.setSpeed(0f);
+//                        } else {
+//                            bullet_controller.moveTowardEnemy(deltaTime, curr, b);
+//                        }
+//                    }
+//
+//                }
+////                }
+//            }
+        }
+
+//        Handle_Unseen_Enemies();
+//        Handle_Seen_Enemies();
+
         player_controller.move(deltaTime);
+
+
 //Loop here when drawing enemies
 
 
@@ -509,38 +568,11 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void Handle_Seen_Enemies() {
         //using a Queue to maintain the insertion order of my seen enemies
-        if (player_controller.get_Seen_Enemies().peek() != null) {
-            //Front of the queue
-            Enemy curr = player_controller.get_Seen_Enemies().peek();
 
-
-            if (player_controller.detectEnemy(curr)) {
-                //this actually just loads in the bullets into an arraylist that will be instantiated later
-                player_controller.shoot(deltaTime, bullets);
-                //for each bullet loaded, draw them, check their collision, move them towards their respectful objects
-                for (Bullet b : bullets) {
-                    game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-                    if (b.hasCollided(curr, b)) {
-                        enemies.remove(curr);
-                        player_controller.get_Seen_Enemies().remove(curr);
-                        bullets.remove(b);
-                        b.setSpeed(0f);
-                    } else {
-                        bullet_controller.moveTowardEnemy(deltaTime, curr, b);
-                    }
-                }
-            }
-        }
     }
 
     public void Handle_Unseen_Enemies() {
-        for (Enemy e : enemies) {
-            game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
-            if (player_controller.detectEnemy(e)) {
-                player_controller.storeSeenEnemy(e);
-            }
-            enemy_controller.moveToPlayer(deltaTime, e, player);
-        }
+
     }
 
     /**

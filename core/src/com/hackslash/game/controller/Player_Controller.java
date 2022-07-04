@@ -27,14 +27,16 @@ import java.util.Queue;
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;
-    float max_cooldown = 2f;
+    float max_cooldown = 0.5f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
+    ArrayList<Bullet> bullets;
 
     public Player_Controller(Player p, Game_UI_View j) {
         player = p;
         joyStick = j;
         seen = new LinkedList<>();
+        bullets = new ArrayList<>();
     }
 
 
@@ -56,7 +58,7 @@ public class Player_Controller {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 500f) {
+        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
             return true;
         }
         return false;
@@ -70,20 +72,24 @@ public class Player_Controller {
     }
 
 
-    public void shoot(float dt, ArrayList<Bullet> bullets) {
+    public void shoot(float dt) {
+
 
         if (current_cooldown <= 0) {
 
-            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y));
+            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
             current_cooldown = max_cooldown;
         } else {
-//            }
             current_cooldown -= dt;
         }
     }
 
     public Queue<Enemy> get_Seen_Enemies() {
         return seen;
+    }
+
+    public ArrayList<Bullet> getBullets() {
+        return bullets;
     }
 
 

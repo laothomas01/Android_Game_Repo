@@ -1,7 +1,9 @@
 package com.hackslash.game.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -17,7 +19,11 @@ public class Game_UI_View {
     private Skin skin;
     private Drawable touchBackground;
     private Drawable touchKnob;
+    //Healthbar UI
     private ShapeRenderer sr;
+    private Color clr;
+    private Sprite sprite;
+    private Texture tex;
 
 
     public Game_UI_View() {
@@ -25,6 +31,11 @@ public class Game_UI_View {
     }
 
     public void init_game_UI_View() {
+        init_touchpad();
+
+    }
+
+    public void init_touchpad() {
         skin = new Skin();
         skin.add("touchBackground", new Texture("touchBackground.png"));
         skin.add("touchKnob", new Texture("touchKnob.png"));
@@ -39,14 +50,23 @@ public class Game_UI_View {
         touchpad.setBounds(15, 15, 200, 200);
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-    }
 
+    }
 
     public void update_touchpad() {
         stage.addActor(touchpad);
-        stage.act(1 / 60);
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
+
+    public void init_helpbar() {
+
+    }
+
+    public void update_healthbar() {
+
+    }
+
 
     public float get_touchpad_x_input() {
         return touchpad.getKnobPercentX();

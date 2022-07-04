@@ -6,33 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class Game_Object {
-    //    /**
-//     * MOVEMENT
-//     * x: x coordinate
-//     * y: y coordinate
-//     * dx: x traveling direction
-//     * dy: y traveling direction
-//     * <p>
-//     * Enemy Shape: circles
-//     * Player Shape: square
-//     */
-//
-//    float x;
-//    float y;
-//
-//    float dx;
-//    float dy;
-//    float radians;
-//    float speed;
-//    int size;
-//    float damage;
-//    float health;
-//
-//    Vector2 position;
-//
     Game_Object() {
     }
 
+    //enumerator used to help developers indicate which game object they are using
     enum OBJECT_TYPE {ENEMY, PLAYER, EXP, BULLET}
 
     OBJECT_TYPE object = null;
@@ -41,28 +18,20 @@ public class Game_Object {
         return object.name();
     }
 
-
-    /**
-     * x and y positions
-     */
-    // x and y positions
+    //game object x and y position
     float x;
     float y;
-    /**
-     * direction
-     */
+    //x and y directions
     float dx;
     float dy;
-    /**
-     * angle
-     */
-
+    //game object angle but in radians
     float radians;
 
 
     float speed;
 
-    float size;
+
+    int size;
 
     Vector2 position;
     Vector2 velocity;
@@ -72,6 +41,7 @@ public class Game_Object {
     Sprite sprite;
 
 
+    //used to make sure objects on screen dont stay around too long
     float lifeSpan;
     float maxLifeSpan;
 
@@ -148,21 +118,24 @@ public class Game_Object {
         this.current_speed = current_speed;
     }
 
-    public float getCurrent_size() {
-        return current_size;
-    }
-
-    public void setCurrent_size(float current_size) {
-        this.current_size = current_size;
-    }
-
     Texture texture;
 
     float health;
     float current_health;
     float current_damage;
+
+    public void setCurrent_size(int current_size) {
+        this.current_size = current_size;
+    }
+
+    public int getCurrent_size() {
+        return current_size;
+    }
+
     float current_speed;
-    float current_size;
+    //    float current_size;
+    int current_size;
+
 
     float damage;
 
@@ -214,13 +187,13 @@ public class Game_Object {
         this.speed = speed;
     }
 
-    public float getSize() {
-        return size;
-    }
+//    public float getSize() {
+//        return size;
+//    }
 
-    public void setSize(float size) {
-        this.size = size;
-    }
+//    public void setSize(float size) {
+//        this.size = size;
+//    }
 
     public Vector2 getPosition() {
         return position;
@@ -266,23 +239,12 @@ public class Game_Object {
         return velocity;
     }
 
-    public float get_X_Velocity() {
-        return getVelocity().x;
-    }
 
     public void set_Velocity(float dx, float dy) {
-//        dx = getDx();
-//        dy = getDy();
         this.getVelocity().set(dx, dy);
     }
 
-    public float get_Y_Velocity() {
-        return getVelocity().y;
-    }
 
-    /**
-     * directions
-     */
     public float get_dx() {
         return dx;
     }
@@ -308,11 +270,15 @@ public class Game_Object {
      */
     public boolean hasCollided(Game_Object a, Game_Object b) {
         //CIRCLE ON CIRCLE SHAPE DETECTION
+
+        //checking which kind of object is being passed into this method.
+        //should be able to check BULLETS,ENEMY,PLAYER, and EXP OBJECTS
         if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET")) || (a.getObjectType().equals("BULLET") && b.getObjectType().equals("ENEMY"))) {
             float dist = Vector2.dst(a.getPosition().x, a.getPosition().y, b.getPosition().x, b.getPosition().y);
-            //Why did I have to subtract this offset to get better collision detection????
-            float total_radius = (a.getCurrent_size() - 20f) + (b.getCurrent_size() - 20f);
-            if (dist <= total_radius) {
+//            System.out.println("DISTANCE:" + dist);
+            float total_radius = b.getCurrent_size() + a.getCurrent_size();
+//            System.out.println("TOTAL RADIUS:" + total_radius);
+            if (dist < total_radius) {
                 return true;
             } else {
                 return false;
