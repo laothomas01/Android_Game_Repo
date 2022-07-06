@@ -33,8 +33,12 @@ code refactoring:
 controller classes:
 [] move toward object functions
 
-
-
+BUGS:
+[] cannot increase firerate due to the program being too fast when removing arraylist of bullet objects
+[] first enemy that collides with a bullet doesnt immediately get removed.
+Future refactor thoughts:
+[] check how long the player has not detected the current enemy it is suppose to see. if enemy not seen for X number of seconds, remove from linkedlist and replace with new incoming enemy
+[] object collision function should be part of object controller class, not object model.
 
 
 

@@ -27,7 +27,7 @@ import java.util.Queue;
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;
-    float max_cooldown = 0.5f;
+    float max_cooldown = 2f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
     ArrayList<Bullet> bullets;
@@ -40,17 +40,7 @@ public class Player_Controller {
     }
 
 
-//    public void update(float dt) {
-//        move(dt);
-////    }
-
     public void move(float dt) {
-        /**
-         velocity_x = x_direction * speed * delta_time
-         velocity_y = y_direction * speed * delta_time
-         velocity = vector2(velocity_x,velocity_y)
-         player_new_position = old_position + velocity
-         */
         player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
         player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
         player.set_Velocity(player.getDx(), player.getDy());
@@ -90,6 +80,15 @@ public class Player_Controller {
 
     public ArrayList<Bullet> getBullets() {
         return bullets;
+    }
+
+    public float getCurrent_cooldown() {
+        return current_cooldown;
+    }
+
+    public void setCurrent_Cooldown(float percentage, float cd) {
+
+
     }
 
 

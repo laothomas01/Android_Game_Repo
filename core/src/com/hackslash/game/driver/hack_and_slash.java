@@ -89,8 +89,8 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
         player = new Player();
         //Testing player's enemy detection
-        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 10, 1);
-        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 10, 1);
+        e1 = new Enemy(player.getPosition().x - 1000, player.getPosition().y, 100f, 0, 10, 1);
+        e2 = new Enemy(player.getPosition().x + 1000, player.getPosition().y, 100f, 0, 10, 1);
         e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 0, 10, 1);
         e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 0, 10, 1);
         e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 0, 10, 1);
@@ -109,8 +109,9 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.add(e7);
         enemies.add(e8);
         game_object_view = new Game_Object_View();
-        game_ui_view = new Game_UI_View();
+        game_ui_view = new Game_UI_View(player);
         game_ui_view.init_game_UI_View();
+        game_ui_view.init_helpbar();
         player_controller = new Player_Controller(player, game_ui_view);
         enemy_controller = new Enemy_Controller();
         bullet_controller = new Bullet_Controller();
@@ -211,289 +212,55 @@ public class hack_and_slash extends ApplicationAdapter {
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
      */
+
+    //Note to self:
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
         //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        //handle user input via joystick UI
         game_ui_view.update_touchpad();
-        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+        game_ui_view.update_healthbar(game_ui_view.getSpriteBatch());
 
+        game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
+        //display enemies and check if player detects enemy object
         for (Enemy e : enemies) {
             game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
+            enemy_controller.moveToPlayer(deltaTime, e, player);
             if (player_controller.detectEnemy(e)) {
                 player_controller.storeSeenEnemy(e);
             }
-//            enemy_controller.moveToPlayer(deltaTime, e, player);
         }
-//        System.out.println("SPRITE WIDTH:" + enemies.get(0).getSprite().getWidth());
-//        System.out.println("TEXTURE WIDTH:" + enemies.get(0).getSprite().getTexture().getWidth());
 
+        Enemy current_Seen_Enemy = player_controller.get_Seen_Enemies().peek();
+        System.out.println("QUEUE:" + player_controller.get_Seen_Enemies().toString());
+        //if you SEE an enemy, "shoot" it or by coding logic, load in the bullet to the array that will display the object
 
-        if (player_controller.get_Seen_Enemies().peek() != null) {
-//            //Front of the queue
-            Enemy curr = player_controller.get_Seen_Enemies().peek();
-
-            if (player_controller.detectEnemy(curr)) {
-//                System.out.println("DETECTED:" + curr.hashCode());
+        if (current_Seen_Enemy != null) {
+            if (player_controller.detectEnemy(current_Seen_Enemy)) {
                 player_controller.shoot(deltaTime);
-                System.out.println("BULLETS:" + player_controller.getBullets().toString());
-                for (Bullet b : player_controller.getBullets()) {
-                    game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-                    if (b.hasCollided(curr, b)) {
-                        player_controller.getBullets().remove(b);
-                    }
-                    bullet_controller.moveTowardEnemy(deltaTime, curr, b);
-                }
             }
-//
-//
-//            if (player_controller.detectEnemy(curr)) {
-////                //this actually just loads in the bullets into an arraylist that will be instantiated later
-//                player_controller.shoot(deltaTime, bullets);
-////                //for each bullet loaded, draw them, check their collision, move them towards their respectful objects
-////                for (Bullet b : bullets) {
-//                if (!bullets.isEmpty()) {
-//                    for (Bullet b : bullets) {
-//                        game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-//                        if (b.hasCollided(curr, b)) {
-////                        if (curr.getCurrent_health() <= 0) {
-////                            enemies.remove(curr);
-////                            player_controller.get_Seen_Enemies().remove(curr);
-////                        } else {
-//                            System.out.println("PLAYER DAMAGE:" + player.getCurrent_damage());
-////                        System.out.println("ENEMY HEALTH:" + curr.getCurrent_health());
-////                        curr.setCurrent_health(curr.getCurrent_health() - player.getCurrent_damage());
-////                        }
-//
-//////                        enemies.remove(curr);
-//////                        player_controller.get_Seen_Enemies().remove(curr);
-//
-//                            bullets.remove(b);
-////                        b.setSpeed(0f);
-//                        } else {
-//                            bullet_controller.moveTowardEnemy(deltaTime, curr, b);
-//                        }
-//                    }
-//
-//                }
-////                }
-//            }
         }
 
-//        Handle_Unseen_Enemies();
-//        Handle_Seen_Enemies();
+        //looping through list of bullets, if bullets collided, remove bullet object
+        for (Bullet b : player_controller.getBullets()) {
+            //if the player has not detected the enemy for a while, take detected enemy off the
+            if (b.hasCollided(current_Seen_Enemy, b)) {
+                enemies.remove(current_Seen_Enemy);
+                player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
+                b.setSpeed(0);
+                player_controller.getBullets().remove(b);
+            }
+
+            //draw the bullet
+            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+            //move bullets towards enemy
+            bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
+        }
+
 
         player_controller.move(deltaTime);
-
-
-//Loop here when drawing enemies
-
-
-//        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e1);
-//        game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e2);
-
-//        if (player_controller.detectEnemy(e1)) {
-//            player_controller.storeSeenEnemy(e1);
-//        } else {
-//            if (player_controller.get_Seen_Enemies().contains(e1)) {
-//                player_controller.get_Seen_Enemies().remove(e1);
-//            }
-//        }
-//
-//
-//        if (player_controller.detectEnemy(e2)) {
-//            player_controller.storeSeenEnemy(e2);
-//        } else {
-//            if (player_controller.get_Seen_Enemies().contains(e2)) {
-//                player_controller.get_Seen_Enemies().remove(e2);
-//            }
-//        }
-
-
-//input handling
-
-
-//        game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, e);
-
-//        if (player_controller.detectEnemy(e)) {
-//            player_controller.shoot(deltaTime, bullets);
-//        }
-
-
-//        enemy_controller.moveToPlayer(1 / 60f, e, player);
-//        enemy_controller.moveToPlayer(1 / 60f, e2, player);
-        /**
-         *
-         * GAME DATA
-         */
-//        if (player_controller.detectEnemy(e)) {
-//            player_controller.shoot(deltaTime, bullets);
-//            for (Bullet b : bullets) {
-//
-//                bullet_controller.moveTowardEnemy(deltaTime, e, b);
-//                game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-//            }
-//        }
-
-
-//        player_controller.detectEnemy(e);
-//        for (Bullet b : bullets) {
-////            System.out.println("BULLET:" + b.hashCode() + "POSITION:" + b.getPosition().toString());
-////            b.setRadians(MathUtils.atan2(b.getPosition().y - 100, b.getPosition().x - 100));
-////            b.set_dx(MathUtils.cos(b.getRadians()));
-////            b.set_dy(MathUtils.sin(b.getRadians()));
-////            b.set_Velocity(100f, 100f);
-////            b.setPosition(b.getPosition().add(10, 10));
-////            b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * deltaTime)));
-////            if (player_controller.detectEnemy(e)) {
-////                System.out.println("E:" + e.hashCode() + "DETECTED:" + player_controller.detectEnemy(e));
-//////                b.setRadians(MathUtils.atan2(b.getPosition().y - e.getPosition().y, b.getPosition().x - e.getPosition().x));
-//////                b.set_dx(MathUtils.cos(b.getRadians()));
-//////                b.set_dy(MathUtils.sin(b.getRadians()));
-//////                b.set_Velocity(b.get_dx(), b.get_dy());
-//////                b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getCurrent_speed() * deltaTime)));
-////                game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-////            }
-//
-//        }
-
-//        for (Bullet b : bullets) {
-//            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-//        }
-
-//        System.out.println("CURRENT HEALTH:" + player.getCurrent_health());
-//        System.out.println("CURRENT SIZE:" + player.getCurrent_size());
-//        System.out.println("CURRENT DAMAGE:" + player.getCurrent_damage());
-//        System.out.println("CURRENT SPEED:" + player.getCurrent_speed());
-//        System.out.println("CURRENT POSITION:" + player.getPosition().toString());
-
-
-//        System.out.println("Player HEALTH:" + play
-
-//        player_controller.update(1 / 60);
-
-
-        //        player_controller.update(1 / 60f);
-
-//
-//        if (currentScreen == Screen.MENU) {
-//            batch.begin();
-//            batch.draw(new Texture("logo.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
-//            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-//            textButtonStyle.font = font;
-//            textButtonStyle.fontColor = Color.WHITE;
-//            textButtonStyle.font.getData().setScale(4.0f);
-//            final TextButton playBtn = new TextButton("Play", textButtonStyle);
-//            playBtn.setPosition((Gdx.graphics.getWidth() / 2 - playBtn.getWidth() / 2), (Gdx.graphics.getHeight() / 2 - playBtn.getHeight() / 2));
-//            stage.addActor(playBtn);
-//            playBtn.addListener(new ChangeListener() {
-//                @Override
-//                public void changed(ChangeEvent event, Actor actor) {
-//                    stage.clear();
-//                    currentScreen = Screen.MAIN_GAME;
-//
-//                }
-//            });
-//
-//            batch.end();
-//        } else if (currentScreen == Screen.MAIN_GAME) {
-//
-//        stage.addActor(touchpad);
-//            batch.begin();
-//            /**
-//             * draw the health bar
-//             */
-//            batch.setProjectionMatrix(UIcam.combined);
-//            batch.end();
-//            playerHB.draw(batch);
-//
-//            /**
-//             * make game's frame rate independent
-//             */
-//            deltaTime = Gdx.graphics.getDeltaTime();
-//            /**
-//             * Update Player Movement
-//             */
-//            player_x_Move = player.getXPosition() + touchpad.getKnobPercentX() * player.getPlayerSpeed() * deltaTime;
-//            player_y_Move = player.getYPosition() + touchpad.getKnobPercentY() * player.getPlayerSpeed() * deltaTime;
-//            player.setXPosition(player_x_Move);
-//            player.setYPosition(player_y_Move);
-//
-//            batch.setProjectionMatrix(cam.combined);
-//            player.draw(batch);
-//
-//
-//            if (spawnTimer > spawnTime) {
-//                spawnTimer = 0;
-//                loadEnemies();
-//            } else {
-//                spawnTimer += deltaTime;
-//            }
-//
-//            for (int i = 0; i < enemies.size(); i++) {
-//                if (enemies.get(i).shouldRemove()) {
-//                    enemies.remove(i);
-//                    i--;
-//                } else {
-//                    player.update(deltaTime, batch, enemies.get(i));
-//                    enemies.get(i).update(deltaTime, player, batch);
-//                }
-//
-//            }
-//            check_Bullet_Enemy_Overlap(player.getBullets());
-//            check_Player_Enemy_Overlap(enemies);
-//
-//            if (playerHB.getCurrentHealth() <= 0) {
-//                stage.clear();
-//                currentScreen = Screen.GAME_OVER;
-//            }
-//
-//            /**
-//             ** Set cam Position
-//             */
-//            Vector3 position = cam.position;
-//            position.x = cam.position.x + (player.getXPosition() * 1 - cam.position.x) * deltaTime;
-//            position.y = cam.position.y + (player.getYPosition() * 1 - cam.position.y) * deltaTime;
-//            cam.position.set(position);
-//            cam.update();
-//
-//        } else if (currentScreen == Screen.GAME_OVER) {
-//            batch.begin();
-//            batch.setProjectionMatrix(UIcam.combined);
-//            batch.draw(new Texture("gameover.png"), Gdx.graphics.getWidth() * .10f, Gdx.graphics.getHeight() * .5f, 900, 210);
-//
-//            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-//            textButtonStyle.font = font;
-//            textButtonStyle.fontColor = Color.WHITE;
-//            textButtonStyle.font.getData().setScale(4.0f);
-//            TextButton againBtn = new TextButton("Try Again", textButtonStyle);
-//            againBtn.setPosition((Gdx.graphics.getWidth() / 2 - againBtn.getWidth() / 2), (Gdx.graphics.getHeight() / 2 - againBtn.getHeight() / 2));
-//            stage.addActor(againBtn);
-//            againBtn.addListener(new ChangeListener() {
-//                @Override
-//                public void changed(ChangeEvent event, Actor actor) {
-//                    stage.clear();
-//                    currentScreen = Screen.MENU;
-//                    restartGame();
-//                }
-//            });
-//            batch.end();
-//
-//        }
-//        stage.act(1 / 60);
-//        stage.draw();
-//
-//
-//
-//        /**
-//         * lerp: linear interpolation:
-//         *  -smooth camera motion that is not too rigid.
-//         *  -want to decrease jittery movement of the camera
-//         * camera_position  + (target_position - camera_position) * lerp
-//         *
-//         */
-
     }
 
     /**
@@ -572,6 +339,10 @@ public class hack_and_slash extends ApplicationAdapter {
     }
 
     public void Handle_Unseen_Enemies() {
+
+    }
+
+    public void Player_Bullet_Enemy_Interaction(Enemy curr) {
 
     }
 

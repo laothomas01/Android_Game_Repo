@@ -268,7 +268,10 @@ public class Game_Object {
      * @param b Rectangle
      * @return
      */
+    //this should be a GAME OBJECT CONTROLLER method
+    //refactor later!
     public boolean hasCollided(Game_Object a, Game_Object b) {
+
         //CIRCLE ON CIRCLE SHAPE DETECTION
 
         //checking which kind of object is being passed into this method.
