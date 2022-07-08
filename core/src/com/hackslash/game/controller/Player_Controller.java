@@ -3,6 +3,7 @@ package com.hackslash.game.controller;
 import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
+import com.hackslash.game.model.Game_Object;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.Game_UI_View;
 
@@ -32,6 +33,8 @@ public class Player_Controller {
     Queue<Enemy> seen;
     ArrayList<Bullet> bullets;
     int max_bullets = 1;
+
+
 
     public Player_Controller(Player p, Game_UI_View j) {
         player = p;
@@ -88,6 +91,16 @@ public class Player_Controller {
     public float getCurrent_cooldown() {
         return current_cooldown;
     }
+//
+    public void takeDamage(Game_Object e) {
+        if (player.getCurrent_health() <= 0) {
+            player.setCurrent_health(0);
+        } else {
+            player.setCurrent_health(player.getCurrent_health() - e.getCurrent_damage());
+        }
+
+    }
+
 
     public void setCurrent_Cooldown(float percentage, float cd) {
 

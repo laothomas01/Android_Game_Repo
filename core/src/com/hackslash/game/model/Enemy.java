@@ -3,6 +3,7 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import org.w3c.dom.Text;
@@ -23,6 +24,7 @@ public class Enemy extends Game_Object {
         texture = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(texture, 0, 0, 20, 20);
         sprite.setPosition(getPosition().x, getPosition().y);
+        spriteBatch = new SpriteBatch();
         dx = 0;
         dy = 0;
         object = OBJECT_TYPE.ENEMY;

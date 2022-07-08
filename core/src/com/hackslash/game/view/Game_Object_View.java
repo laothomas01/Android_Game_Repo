@@ -13,10 +13,26 @@ public class Game_Object_View {
 
     //used to send each texture's rectangle to the GPU(is this related to computer hardware or a completely different acronym??)
     // all at once
-    private SpriteBatch spriteBatch;
+//    private SpriteBatch bullet_sprite_batch;
+//    private SpriteBatch enemy_sprite_batch;
+//    private SpriteBatch player_sprite_batch;
+
+//    public SpriteBatch getBullet_sprite_batch() {
+//        return bullet_sprite_batch;
+//    }
+//
+//    public SpriteBatch getEnemy_sprite_batch() {
+//        return enemy_sprite_batch;
+//    }
+//
+//    public SpriteBatch getPlayer_sprite_batch() {
+//        return player_sprite_batch;
+//    }
 
     public Game_Object_View() {
-        spriteBatch = new SpriteBatch();
+//        bullet_sprite_batch = new SpriteBatch();
+//        enemy_sprite_batch = new SpriteBatch();
+//        player_sprite_batch = new SpriteBatch();
     }
 
     public void draw_player(Batch batch, Game_Object p) {
@@ -27,9 +43,7 @@ public class Game_Object_View {
 
     public void draw_enemy(Batch batch, Game_Object e) {
         batch.begin();
-
         batch.draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getCurrent_size(), e.getCurrent_size());
-
         batch.end();
     }
 
@@ -39,22 +53,27 @@ public class Game_Object_View {
         batch.end();
     }
 
-    public void confirm_detection(Batch batch, Game_Object a, Game_Object b) {
-        batch.begin();
+    public void confirm_detection(Game_Object a, Game_Object b) {
+
+        a.getSpriteBatch().begin();
 
         if (a.hasCollided(a, b)) {
-            batch.setColor(Color.GREEN);
+
+            a.getSpriteBatch().setColor(Color.GREEN);
         } else {
-            batch.setColor(Color.WHITE);
+            a.getSpriteBatch().setColor(Color.WHITE);
+        }
+        a.getSpriteBatch().end();
+
+        b.getSpriteBatch().begin();
+        if (!b.hasCollided(a, b)) {
+            b.getSpriteBatch().setColor(Color.WHITE);
+        } else {
+            b.getSpriteBatch().setColor(Color.RED);
         }
 
-        batch.end();
+        b.getSpriteBatch().end();
 
-
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
     }
 
 

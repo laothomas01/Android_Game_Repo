@@ -3,6 +3,7 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -20,7 +21,7 @@ public class Player extends Game_Object {
         //divide by 2 but using right shifting
         x = Gdx.graphics.getWidth() / 2f;
         y = Gdx.graphics.getHeight() / 2f;
-        health = 25f;
+        health = 100f;
         size = 25;
         speed = 500;
         damage = 1;
@@ -30,6 +31,7 @@ public class Player extends Game_Object {
         current_size = size;
         texture = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(texture, 0, 0, current_size, current_size);
+        spriteBatch = new SpriteBatch();
 //
 //        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(this.getX(), this.getY());

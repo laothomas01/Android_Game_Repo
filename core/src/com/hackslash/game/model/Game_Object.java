@@ -3,6 +3,7 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Game_Object {
@@ -44,6 +45,11 @@ public class Game_Object {
     //used to make sure objects on screen dont stay around too long
     float lifeSpan;
     float maxLifeSpan;
+    SpriteBatch spriteBatch;
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
 
     boolean remove;
 
@@ -270,6 +276,7 @@ public class Game_Object {
      */
     //this should be a GAME OBJECT CONTROLLER method
     //refactor later!
+    //This method can be refactored into only having to take 1 paremeter, checking the type of game object and doing the same calculations.
     public boolean hasCollided(Game_Object a, Game_Object b) {
 
         //CIRCLE ON CIRCLE SHAPE DETECTION
@@ -277,6 +284,7 @@ public class Game_Object {
         //checking which kind of object is being passed into this method.
         //should be able to check BULLETS,ENEMY,PLAYER, and EXP OBJECTS
         if ((a.getObjectType().equals("ENEMY") && b.getObjectType().equals("BULLET")) || (a.getObjectType().equals("BULLET") && b.getObjectType().equals("ENEMY"))) {
+
             float dist = Vector2.dst(a.getPosition().x, a.getPosition().y, b.getPosition().x, b.getPosition().y);
 //            System.out.println("DISTANCE:" + dist);
             float total_radius = b.getCurrent_size() + a.getCurrent_size();
@@ -288,11 +296,12 @@ public class Game_Object {
             }
         }
         //SQUARE OR RECTANGLE ON CIRCLE SHAPE DETECTION
-        if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY"))) {
+        if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY")) || (a.getObjectType().equals("ENEMY") && b.getObjectType().equals("PLAYER"))) {
             //Edge Detection//
             //Note*
             // Make sure you understand this code/math
             //Website reference: http://www.jeffreythompson.org/collision-detection/circle-rect.php
+
             //------------------------------------------------------------
             float testX = a.getPosition().x;
             float testY = a.getPosition().y;
