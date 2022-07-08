@@ -27,28 +27,20 @@ import java.util.Queue;
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;
-    float max_cooldown = 2f;
+    float max_cooldown = 1f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
+    ArrayList<Bullet> bullets;
 
     public Player_Controller(Player p, Game_UI_View j) {
         player = p;
         joyStick = j;
         seen = new LinkedList<>();
+        bullets = new ArrayList<>();
     }
 
 
-//    public void update(float dt) {
-//        move(dt);
-////    }
-
     public void move(float dt) {
-        /**
-         velocity_x = x_direction * speed * delta_time
-         velocity_y = y_direction * speed * delta_time
-         velocity = vector2(velocity_x,velocity_y)
-         player_new_position = old_position + velocity
-         */
         player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
         player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
         player.set_Velocity(player.getDx(), player.getDy());
@@ -56,7 +48,7 @@ public class Player_Controller {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 500f) {
+        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
             return true;
         }
         return false;
@@ -70,20 +62,33 @@ public class Player_Controller {
     }
 
 
-    public void shoot(float dt, ArrayList<Bullet> bullets) {
+    public void shoot(float dt) {
+
 
         if (current_cooldown <= 0) {
 
-            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y));
+            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
             current_cooldown = max_cooldown;
         } else {
-//            }
             current_cooldown -= dt;
         }
     }
 
     public Queue<Enemy> get_Seen_Enemies() {
         return seen;
+    }
+
+    public ArrayList<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public float getCurrent_cooldown() {
+        return current_cooldown;
+    }
+
+    public void setCurrent_Cooldown(float percentage, float cd) {
+
+
     }
 
 

@@ -6,9 +6,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hackslash.game.model.*;
 
 /**
- * This class will be used to display game objects
+ * Textures are draw with rectangular geometry
  */
 public class Game_Object_View {
+
+    //used to send each texture's rectangle to the GPU(is this related to computer hardware or a completely different acronym??)
+    // all at once
     private SpriteBatch spriteBatch;
 
     public Game_Object_View() {
@@ -17,33 +20,27 @@ public class Game_Object_View {
 
     public void draw_player(Batch batch, Game_Object p) {
         batch.begin();
-        p.getSprite().setPosition(p.getPosition().x, p.getPosition().y);
-        p.getSprite().draw(batch);
+        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size() / 2f, p.getCurrent_size());
         batch.end();
     }
 
     public void draw_enemy(Batch batch, Game_Object e) {
         batch.begin();
-        e.getSprite().setPosition(e.getPosition().x, e.getPosition().y);
-        e.getSprite().draw(batch);
+
+        batch.draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getCurrent_size(), e.getCurrent_size());
+
         batch.end();
     }
 
     public void draw_bullets(Batch batch, Game_Object b) {
         batch.begin();
-        b.getSprite().setPosition(b.getPosition().x, b.getPosition().y);
-        b.getSprite().draw(batch);
+        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
         batch.end();
     }
 
     public void confirm_detection(SpriteBatch batch, Game_Object a) {
         batch.begin();
-//        if (a.hasCollided(a, b)) {
         batch.setColor(Color.GREEN);
-        batch.draw(a.getTexture(), a.getPosition().x, a.getPosition().y, a.getCurrent_size(), a.getCurrent_size());
-//        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
-
-//        }
         batch.end();
 
     }

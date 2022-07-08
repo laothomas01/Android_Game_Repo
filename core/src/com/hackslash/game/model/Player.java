@@ -20,15 +20,18 @@ public class Player extends Game_Object {
         //divide by 2 but using right shifting
         x = Gdx.graphics.getWidth() / 2f;
         y = Gdx.graphics.getHeight() / 2f;
-        health = 10f;
-        size = 25f;
+        health = 25f;
+        size = 25;
         speed = 500;
+        damage = 1;
         current_health = health;
         current_damage = damage;
         current_speed = speed;
         current_size = size;
         texture = new Texture(Gdx.files.internal("square.png"));
-        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
+        sprite = new Sprite(texture, 0, 0, current_size, current_size);
+//
+//        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(this.getX(), this.getY());
 //        firePointPosition = new Vector2()
         velocity = new Vector2(0, 0);
