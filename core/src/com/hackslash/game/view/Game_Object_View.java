@@ -20,7 +20,7 @@ public class Game_Object_View {
 
     public void draw_player(Batch batch, Game_Object p) {
         batch.begin();
-        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size(), p.getCurrent_size());
+        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size() / 2f, p.getCurrent_size());
         batch.end();
     }
 

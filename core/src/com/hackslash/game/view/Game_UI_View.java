@@ -69,15 +69,14 @@ public class Game_UI_View {
 
         clr = Color.GREEN;
         tex = new Texture(Gdx.files.internal("square.png"));
-        sprite = new Sprite(tex, 0, 0, (int) player.getCurrent_health(), 50);
+//        sprite = new Sprite(tex, 0, 0, 10, 50);
     }
 
 
     public void update_healthbar(Batch batch) {
         batch.begin();
         batch.setColor(clr);
-        sprite.setScale(player.getCurrent_health(), 50);
-        batch.draw(tex, 250, 100, player.getCurrent_health(), 50);
+        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10 ,player.getCurrent_health(),5 );
         batch.end();
     }
 

@@ -27,7 +27,7 @@ import java.util.Queue;
 public class Player_Controller {
     Game_UI_View joyStick;
     Player player;
-    float max_cooldown = 2f;
+    float max_cooldown = 1f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
     ArrayList<Bullet> bullets;
