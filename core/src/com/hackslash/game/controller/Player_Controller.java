@@ -31,6 +31,7 @@ public class Player_Controller {
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
     ArrayList<Bullet> bullets;
+    int max_bullets = 1;
 
     public Player_Controller(Player p, Game_UI_View j) {
         player = p;
@@ -67,7 +68,9 @@ public class Player_Controller {
 
         if (current_cooldown <= 0) {
 
-            bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
+            if (bullets.size() < max_bullets) {
+                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
+            }
             current_cooldown = max_cooldown;
         } else {
             current_cooldown -= dt;

@@ -90,8 +90,8 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
         player = new Player();
         //Testing player's enemy detection
-        e1 = new Enemy(player.getPosition().x + 10, player.getPosition().y + 10, 100f, 0, 10, 1);
-        e2 = new Enemy(player.getPosition().x + 1000, player.getPosition().y, 100f, 0, 10, 1);
+        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0, 10, 1);
+        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 0, 10, 1);
         e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 0, 10, 1);
         e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 0, 10, 1);
         e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 0, 10, 1);
@@ -264,7 +264,7 @@ public class hack_and_slash extends ApplicationAdapter {
         //we do not want to delete bullet objects while looping through the array
         player_controller.getBullets().removeAll(bulletsToRemove);
         player_controller.move(deltaTime);
-
+        System.out.println("SIZE:" + player_controller.getBullets().size());
         /**
          * Sliders for game testing
          */
