@@ -11,9 +11,9 @@ public class Bullet_Controller {
     }
 
     //This function can be generalized to all game objects that move
-    //Refactor later
+    //Refactor this later
+    //I want the bullet to fly in the direction of the spotted enemy but not FOLLOW the enemy
     public void moveTowardEnemy(float dt, Enemy e, Bullet b) {
-
 
         b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
         b.set_dx(MathUtils.cos(b.getRadians()));

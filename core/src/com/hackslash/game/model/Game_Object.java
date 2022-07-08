@@ -288,7 +288,7 @@ public class Game_Object {
             }
         }
         //SQUARE OR RECTANGLE ON CIRCLE SHAPE DETECTION
-        if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY")) || (a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY"))) {
+        if ((a.getObjectType().equals("PLAYER") && b.getObjectType().equals("ENEMY"))) {
             //Edge Detection//
             //Note*
             // Make sure you understand this code/math

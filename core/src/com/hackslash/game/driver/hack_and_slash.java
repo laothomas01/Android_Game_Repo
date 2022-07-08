@@ -2,6 +2,7 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.hackslash.game.controller.Bullet_Controller;
 import com.hackslash.game.controller.Enemy_Controller;
@@ -111,8 +112,8 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.add(e8);
         game_object_view = new Game_Object_View();
         game_ui_view = new Game_UI_View(player);
-        game_ui_view.init_game_UI_View();
-        game_ui_view.init_helpbar();
+        game_ui_view.init_touchpad();
+        game_ui_view.init_healthbar();
         player_controller = new Player_Controller(player, game_ui_view);
         enemy_controller = new Enemy_Controller();
         bullet_controller = new Bullet_Controller();
@@ -223,48 +224,52 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //handle user input via joystick UI
         game_ui_view.update_touchpad();
-        game_ui_view.update_healthbar(game_ui_view.getSpriteBatch());
+        game_ui_view.updatePlayerHealthBar(game_ui_view.getSpriteBatch());
 
         game_object_view.draw_player(game_object_view.getSpriteBatch(), player);
         //display enemies and check if player detects enemy object
         for (Enemy e : enemies) {
             game_object_view.draw_enemy(game_object_view.getSpriteBatch(), e);
             enemy_controller.moveToPlayer(deltaTime, e, player);
+            //for each seen enemy, player will store seen enemy into a queue
             if (player_controller.detectEnemy(e)) {
                 player_controller.storeSeenEnemy(e);
             }
+
         }
 
+        //front of the queue
         Enemy current_Seen_Enemy = player_controller.get_Seen_Enemies().peek();
-//        System.out.println("QUEUE:" + player_controller.get_Seen_Enemies().toString());
-        //if you SEE an enemy, "shoot" it or by coding logic, load in the bullet to the array that will display the object
 
         if (current_Seen_Enemy != null) {
+            //if currently seen enemy is detected,shoot
             if (player_controller.detectEnemy(current_Seen_Enemy)) {
                 player_controller.shoot(deltaTime);
             }
         }
+        game_object_view.confirm_detection(game_object_view.getSpriteBatch(), player, current_Seen_Enemy);
+
 
         //looping through list of bullets, if bullets collided, remove bullet object
-        for (Bullet b : player_controller.getBullets()) {
-            //if the player has not detected the enemy for a while, take detected enemy off the
-            if (b.hasCollided(current_Seen_Enemy, b)) {
-                enemies.remove(current_Seen_Enemy);
-                player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
-//                System.out.println("BULLET HAS COLLIDED WITH " + current_Seen_Enemy.hashCode());
-                b.setCurrent_speed(0);
-                bulletsToRemove.add(b);
-            }
+//        for (Bullet b : player_controller.getBullets()) {
+//            //if the player has not detected the enemy for a while, take detected enemy off the
+//            if (b.hasCollided(current_Seen_Enemy, b)) {
+//                enemies.remove(current_Seen_Enemy);
+//                player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
+//                b.setCurrent_speed(0);
+//                bulletsToRemove.add(b);
+//            }
+//
+//            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
+//            //move bullets towards enemy
+//            bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
+//        }
 
-            game_object_view.draw_bullets(game_object_view.getSpriteBatch(), b);
-            //move bullets towards enemy
-            bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
-        }
 
         //we do not want to delete bullet objects while looping through the array
         player_controller.getBullets().removeAll(bulletsToRemove);
         player_controller.move(deltaTime);
-        System.out.println("SIZE:" + player_controller.getBullets().size());
+//        System.out.println("SIZE:" + player_controller.getBullets().size());
         /**
          * Sliders for game testing
          */

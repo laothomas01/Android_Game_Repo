@@ -1,5 +1,6 @@
 package com.hackslash.game.view;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -38,10 +39,17 @@ public class Game_Object_View {
         batch.end();
     }
 
-    public void confirm_detection(SpriteBatch batch, Game_Object a) {
+    public void confirm_detection(Batch batch, Game_Object a, Game_Object b) {
         batch.begin();
-        batch.setColor(Color.GREEN);
+
+        if (a.hasCollided(a, b)) {
+            batch.setColor(Color.GREEN);
+        } else {
+            batch.setColor(Color.WHITE);
+        }
+
         batch.end();
+
 
     }
 

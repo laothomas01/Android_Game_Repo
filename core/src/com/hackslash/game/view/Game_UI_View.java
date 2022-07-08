@@ -36,10 +36,6 @@ public class Game_UI_View {
         player = p;
     }
 
-    public void init_game_UI_View() {
-        init_touchpad();
-
-    }
 
     public void init_touchpad() {
         skin = new Skin();
@@ -65,7 +61,7 @@ public class Game_UI_View {
         stage.draw();
     }
 
-    public void init_helpbar() {
+    public void init_healthbar() {
 
         clr = Color.GREEN;
         tex = new Texture(Gdx.files.internal("square.png"));
@@ -73,10 +69,10 @@ public class Game_UI_View {
     }
 
 
-    public void update_healthbar(Batch batch) {
+    public void updatePlayerHealthBar(Batch batch) {
         batch.begin();
         batch.setColor(clr);
-        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10 ,player.getCurrent_health(),5 );
+        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getCurrent_health(), 5);
         batch.end();
     }
 
