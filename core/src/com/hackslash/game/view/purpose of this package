@@ -1,0 +1,3 @@
+-User interface that will be displayed or interacted with
+-just have information generated when the user interacts with the user interface.
+-have methods to update the user interface after the model responds to a request from the controller
