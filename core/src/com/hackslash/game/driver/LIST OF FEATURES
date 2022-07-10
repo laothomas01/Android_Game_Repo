@@ -1,3 +1,10 @@
+TODOlist:
+[X] enemy removal
+[X] bullet removal
+[X] decreasing bullet shoot max cool down
+[X] player and enemy collision
+[X] player health bar decrease
+
 game objects:
 [] exp drops
 [] item drops
@@ -25,7 +32,7 @@ optimizations:
 [] proper memory usage
 utility files:
 [] game configurations
-other artsy fartys stuff:
+other artsy fartsy stuff:
 [] better sprites
 [] audio
 Testing:
@@ -46,6 +53,22 @@ BUGS:
 Future refactor thoughts:
 [] check how long the player has not detected the current enemy it is suppose to see. if enemy not seen for X number of seconds, remove from linkedlist and replace with new incoming enemy
 [] object collision function should be part of object controller class, not object model.
+
+Thoughts of things to add:
+[] add procedurally generated walls/buildings/whatever later on
+[] theme: zombie, mutant, sci fi horror?
+[] detection radius = source of light?
+[] physical trait skill tree(utilizing linked lists????)
+[] backpack/inventory system
+[] picking up objects
+[] enemies dropping objects
+[] difficulty options
+[] menu configurations
+[] data persistence: loading in objects, sqlite database
+[] sprite generator: what is needed to compose a sprite?
+[] CI/CD automated testing!
+[] procedurally generated enemy behavior
+
 
 
 

@@ -25,7 +25,7 @@ import java.util.Queue;
  * 5) if seen enemy is dead, set top of the queue as an enemy object that will be removed
  */
 
-public class Player_Controller {
+public class Player_Controller extends Game_Object_Controller {
     Game_UI_View joyStick;
     Player player;
     float max_cooldown = 1f;
@@ -33,7 +33,6 @@ public class Player_Controller {
     Queue<Enemy> seen;
     ArrayList<Bullet> bullets;
     int max_bullets = 1;
-
 
 
     public Player_Controller(Player p, Game_UI_View j) {
@@ -91,7 +90,8 @@ public class Player_Controller {
     public float getCurrent_cooldown() {
         return current_cooldown;
     }
-//
+
+    //
     public void takeDamage(Game_Object e) {
         if (player.getCurrent_health() <= 0) {
             player.setCurrent_health(0);

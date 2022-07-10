@@ -3,6 +3,7 @@ package com.hackslash.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Game_Object {
@@ -28,6 +29,7 @@ public class Bullet extends Game_Object {
         maxLifeSpan = 4;
         remove = false;
         object = OBJECT_TYPE.BULLET;
+        spriteBatch = new SpriteBatch();
 
     }
 //    //    Vector2 position;

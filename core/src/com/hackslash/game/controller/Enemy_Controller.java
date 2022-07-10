@@ -6,7 +6,7 @@ import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
 
 
-public class Enemy_Controller {
+public class Enemy_Controller extends Game_Object_Controller {
     /**
      * We will make multiple enemies so let's not
      * pass in the enemy as a parameter to this constructor

@@ -42,15 +42,19 @@ public class Game_Object_View {
     }
 
     public void draw_enemy(Batch batch, Game_Object e) {
+
         batch.begin();
         batch.draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getCurrent_size(), e.getCurrent_size());
         batch.end();
+
     }
 
     public void draw_bullets(Batch batch, Game_Object b) {
+
         batch.begin();
         batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
         batch.end();
+
     }
 
     public void confirm_detection(Game_Object a, Game_Object b) {

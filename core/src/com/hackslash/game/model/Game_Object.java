@@ -189,9 +189,6 @@ public class Game_Object {
         return speed;
     }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
 
 //    public float getSize() {
 //        return size;

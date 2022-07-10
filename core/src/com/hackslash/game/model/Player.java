@@ -21,7 +21,7 @@ public class Player extends Game_Object {
         //divide by 2 but using right shifting
         x = Gdx.graphics.getWidth() / 2f;
         y = Gdx.graphics.getHeight() / 2f;
-        health = 100f;
+        health = 50f;
         size = 25;
         speed = 500;
         damage = 1;

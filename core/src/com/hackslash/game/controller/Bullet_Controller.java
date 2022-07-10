@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 
-public class Bullet_Controller {
+public class Bullet_Controller extends Game_Object_Controller {
 
     public Bullet_Controller() {
 
