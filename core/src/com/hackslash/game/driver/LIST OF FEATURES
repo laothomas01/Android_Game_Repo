@@ -1,9 +1,5 @@
 TODOlist:
-[X] enemy removal
-[X] bullet removal
-[X] decreasing bullet shoot max cool down
-[X] player and enemy collision
-[X] player health bar decrease
+[] implement following camera
 
 game objects:
 [] exp drops

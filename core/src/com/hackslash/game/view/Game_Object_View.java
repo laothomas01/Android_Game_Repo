@@ -2,8 +2,15 @@ package com.hackslash.game.view;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.hackslash.game.model.*;
 
 /**
@@ -17,7 +24,7 @@ public class Game_Object_View {
 //    private SpriteBatch enemy_sprite_batch;
 //    private SpriteBatch player_sprite_batch;
 
-//    public SpriteBatch getBullet_sprite_batch() {
+    //    public SpriteBatch getBullet_sprite_batch() {
 //        return bullet_sprite_batch;
 //    }
 //
@@ -28,6 +35,18 @@ public class Game_Object_View {
 //    public SpriteBatch getPlayer_sprite_batch() {
 //        return player_sprite_batch;
 //    }
+    SpriteBatch batch;
+    Stage stage;
+    Touchpad touchpad;
+    Touchpad.TouchpadStyle touchpadStyle;
+    Skin skin;
+    Drawable touchBackground;
+    Drawable touchKnob;
+    //Healthbar UI
+    ShapeRenderer sr;
+    Color clr;
+    Sprite sprite;
+    Texture tex;
 
     public Game_Object_View() {
 //        bullet_sprite_batch = new SpriteBatch();
@@ -35,50 +54,29 @@ public class Game_Object_View {
 //        player_sprite_batch = new SpriteBatch();
     }
 
-    public void draw_player(Batch batch, Game_Object p) {
-        batch.begin();
-        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size() / 2f, p.getCurrent_size());
-        batch.end();
-    }
 
-    public void draw_enemy(Batch batch, Game_Object e) {
-
-        batch.begin();
-        batch.draw(e.getTexture(), e.getPosition().x, e.getPosition().y, e.getCurrent_size(), e.getCurrent_size());
-        batch.end();
-
-    }
-
-    public void draw_bullets(Batch batch, Game_Object b) {
-
-        batch.begin();
-        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
-        batch.end();
-
-    }
-
-    public void confirm_detection(Game_Object a, Game_Object b) {
-
-        a.getSpriteBatch().begin();
-
-        if (a.hasCollided(a, b)) {
-
-            a.getSpriteBatch().setColor(Color.GREEN);
-        } else {
-            a.getSpriteBatch().setColor(Color.WHITE);
-        }
-        a.getSpriteBatch().end();
-
-        b.getSpriteBatch().begin();
-        if (!b.hasCollided(a, b)) {
-            b.getSpriteBatch().setColor(Color.WHITE);
-        } else {
-            b.getSpriteBatch().setColor(Color.RED);
-        }
-
-        b.getSpriteBatch().end();
-
-    }
+//    public void confirm_detection(Game_Object a, Game_Object b) {
+//
+//        a.getSpriteBatch().begin();
+//
+//        if (a.hasCollided(a, b)) {
+//
+//            a.getSpriteBatch().setColor(Color.GREEN);
+//        } else {
+//            a.getSpriteBatch().setColor(Color.WHITE);
+//        }
+//        a.getSpriteBatch().end();
+//
+//        b.getSpriteBatch().begin();
+//        if (!b.hasCollided(a, b)) {
+//            b.getSpriteBatch().setColor(Color.WHITE);
+//        } else {
+//            b.getSpriteBatch().setColor(Color.RED);
+//        }
+//
+//        b.getSpriteBatch().end();
+//
+//    }
 
 
 }

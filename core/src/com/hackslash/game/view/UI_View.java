@@ -2,11 +2,13 @@ package com.hackslash.game.view;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -16,24 +18,24 @@ import com.hackslash.game.model.Player;
 
 //All inputs from joystick will be sent to the
 //player controller which then
-public class Game_UI_View {
-    private Stage stage;
-    private Touchpad touchpad;
-    private Touchpad.TouchpadStyle touchpadStyle;
-    private Skin skin;
-    private Drawable touchBackground;
-    private Drawable touchKnob;
-    //Healthbar UI
-    private ShapeRenderer sr;
-    private Color clr;
-    private Sprite sprite;
-    private Texture tex;
-    private Player player;
-    private SpriteBatch batch;
+public class UI_View extends Game_Object_View {
 
-    public Game_UI_View(Player p) {
+    private Player player;
+    OrthographicCamera followCam;
+    OrthographicCamera uiCam;
+
+
+    public UI_View(Player p) {
         batch = new SpriteBatch();
         player = p;
+    }
+
+    public void init_cameras() {
+        //this camera will follow the player
+        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiCam.position.set(uiCam.viewportWidth / 2f, uiCam.viewportHeight / 2f, 0);
+        uiCam.update();
     }
 
 
@@ -66,6 +68,22 @@ public class Game_UI_View {
         clr = Color.GREEN;
         tex = new Texture(Gdx.files.internal("square.png"));
 //        sprite = new Sprite(tex, 0, 0, 10, 50);
+    }
+
+
+    public void update_cams(float dt, Batch batch) {
+        batch.begin();
+//        batch.setProjectionMatrix(uiCam.combined);
+        batch.setProjectionMatrix(followCam.combined);
+
+        batch.end();
+
+//        set the follow cam position
+        Vector3 followCamPosition = followCam.position;
+        followCamPosition.x = followCam.position.x + (player.getPosition().x * 1 - followCam.position.x) * dt;
+        followCamPosition.y = followCam.position.y + (player.getPosition().y * 1 - followCam.position.y) * dt;
+        followCam.position.set(followCamPosition);
+        followCam.update();
     }
 
 

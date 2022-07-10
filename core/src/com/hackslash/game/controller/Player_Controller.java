@@ -5,7 +5,7 @@ import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Game_Object;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.Game_UI_View;
+import com.hackslash.game.view.UI_View;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ import java.util.Queue;
  */
 
 public class Player_Controller extends Game_Object_Controller {
-    Game_UI_View joyStick;
+    UI_View joyStick;
     Player player;
     float max_cooldown = 1f;
     float current_cooldown = max_cooldown;
@@ -35,7 +35,7 @@ public class Player_Controller extends Game_Object_Controller {
     int max_bullets = 1;
 
 
-    public Player_Controller(Player p, Game_UI_View j) {
+    public Player_Controller(Player p, UI_View j) {
         player = p;
         joyStick = j;
         seen = new LinkedList<>();

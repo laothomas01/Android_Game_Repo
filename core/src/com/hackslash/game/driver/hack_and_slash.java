@@ -9,15 +9,20 @@ import com.hackslash.game.controller.Enemy_Controller;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.Game_UI_View;
+import com.hackslash.game.view.Bullet_View;
+import com.hackslash.game.view.Enemy_View;
+import com.hackslash.game.view.Player_View;
+import com.hackslash.game.view.UI_View;
 import com.hackslash.game.view.Game_Object_View;
 import com.hackslash.game.controller.Player_Controller;
 
 import java.util.ArrayList;
 
 public class hack_and_slash extends ApplicationAdapter {
-    Game_Object_View game_object_view;
-    Game_UI_View game_ui_view;
+    Player_View playerView;
+    Enemy_View enemyView;
+    Bullet_View bulletView;
+    UI_View ui_view;
     Player_Controller player_controller;
     Enemy_Controller enemy_controller;
     Bullet_Controller bullet_controller;
@@ -112,11 +117,14 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.add(e6);
         enemies.add(e7);
         enemies.add(e8);
-        game_object_view = new Game_Object_View();
-        game_ui_view = new Game_UI_View(player);
-        game_ui_view.init_touchpad();
-        game_ui_view.init_healthbar();
-        player_controller = new Player_Controller(player, game_ui_view);
+        playerView = new Player_View();
+        enemyView = new Enemy_View();
+        bulletView = new Bullet_View();
+        ui_view = new UI_View(player);
+        ui_view.init_touchpad();
+        ui_view.init_healthbar();
+        ui_view.init_cameras();
+        player_controller = new Player_Controller(player, ui_view);
         enemy_controller = new Enemy_Controller();
         bullet_controller = new Bullet_Controller();
         bulletsToRemove = new ArrayList<>();
@@ -226,23 +234,24 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //HANDLE JOY STICK INPUT
-        game_ui_view.update_touchpad();
-        game_ui_view.updatePlayerHealthBar(game_ui_view.getSpriteBatch());
-        game_object_view.draw_player(player.getSpriteBatch(), player);
+        ui_view.update_touchpad();
+        ui_view.updatePlayerHealthBar(ui_view.getSpriteBatch());
+        ui_view.update_cams(deltaTime, ui_view.getSpriteBatch());
+        playerView.draw_player(player.getSpriteBatch(), player);
 
         //DRAW ENEMIES
         //HANDLE PLAYER AND ENEMY INTERACTIONS
         for (Enemy e : enemies) {
             //display enemies
-            game_object_view.draw_enemy(e.getSpriteBatch(), e);
+            enemyView.draw_enemy(e.getSpriteBatch(), e);
             enemy_controller.moveToPlayer(deltaTime, e, player);
             if (player_controller.detectEnemy(e)) {
                 player_controller.storeSeenEnemy(e);
             }
             e.getSpriteBatch().begin();
-            if (e.hasCollided(e, player)) {
+            if (enemy_controller.hasCollided(e, player)) {
                 e.getSpriteBatch().setColor(Color.GREEN);
-                player_controller.takeDamage(e);
+//                player_controller.takeDamage(e);
             } else {
                 e.getSpriteBatch().setColor(Color.WHITE);
             }
@@ -264,13 +273,13 @@ public class hack_and_slash extends ApplicationAdapter {
         //DRAW BULLETS
         //HANDLE BULLET AND ENEMY INTERACTION
         for (Bullet b : player_controller.getBullets()) {
-            if (b.hasCollided(b, current_Seen_Enemy)) {
+            if (bullet_controller.hasCollided(b, current_Seen_Enemy)) {
                 b.setCurrent_speed(0);
                 bulletsToRemove.add(b);
                 player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
                 enemiesToRemove.add(current_Seen_Enemy);
             }
-            game_object_view.draw_bullets(b.getSpriteBatch(), b);
+            bulletView.draw_bullets(b.getSpriteBatch(), b);
             bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
         }
 
