@@ -241,6 +241,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //DRAW ENEMIES
         //HANDLE PLAYER AND ENEMY INTERACTIONS
+
         for (Enemy e : enemies) {
             //display enemies
             enemyView.draw_enemy(e.getSpriteBatch(), e);
