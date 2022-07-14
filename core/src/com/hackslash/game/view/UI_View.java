@@ -33,9 +33,11 @@ public class UI_View extends Game_Object_View {
     public void init_cameras() {
         //this camera will follow the player
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        followCam.position.set(followCam.viewportWidth / 2f, followCam.viewportHeight / 2f, 0);
         uiCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         uiCam.position.set(uiCam.viewportWidth / 2f, uiCam.viewportHeight / 2f, 0);
         uiCam.update();
+//        followCam.update();
     }
 
 
@@ -72,18 +74,33 @@ public class UI_View extends Game_Object_View {
 
 
     public void update_cams(float dt, Batch batch) {
-        batch.begin();
-//        batch.setProjectionMatrix(uiCam.combined);
-        batch.setProjectionMatrix(followCam.combined);
 
+        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
+        batch.begin();
+        batch.setProjectionMatrix(uiCam.combined);
         batch.end();
 
-//        set the follow cam position
+        batch.setProjectionMatrix(followCam.combined);
+
+////        batch.begin();
+////
+////        batch.setProjectionMatrix(uiCam.combined);
+////
+////        batch.end();
+////        batch.begin();
+////        batch.setProjectionMatrix(uiCam.combined);
+//        batch.setProjectionMatrix(followCam.combined);
+////
+////        batch.end();
+////
+////        set the follow cam position
         Vector3 followCamPosition = followCam.position;
         followCamPosition.x = followCam.position.x + (player.getPosition().x * 1 - followCam.position.x) * dt;
         followCamPosition.y = followCam.position.y + (player.getPosition().y * 1 - followCam.position.y) * dt;
         followCam.position.set(followCamPosition);
         followCam.update();
+//        uiCam.update();
+
     }
 
 

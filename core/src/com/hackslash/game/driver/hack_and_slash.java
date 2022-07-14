@@ -235,8 +235,11 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //HANDLE JOY STICK INPUT
         ui_view.update_touchpad();
-        ui_view.updatePlayerHealthBar(ui_view.getSpriteBatch());
-        ui_view.update_cams(deltaTime, ui_view.getSpriteBatch());
+
+        ui_view.updatePlayerHealthBar(player.getSpriteBatch());
+//        ui_view.updatePlayerHealthBar(ui_view.getSpriteBatch());
+
+//        ui_view.update_cams(deltaTime, player.getSpriteBatch());
         playerView.draw_player(player.getSpriteBatch(), player);
 
         //DRAW ENEMIES
