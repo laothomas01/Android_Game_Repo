@@ -32,6 +32,10 @@ public class Bullet extends Game_Object {
         spriteBatch = new SpriteBatch();
 
     }
+
+    public SpriteBatch getBulletSpriteBatch() {
+        return spriteBatch;
+    }
 //    //    Vector2 position;
 //    Sprite sprite;
 //    Texture tex;

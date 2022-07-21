@@ -29,5 +29,9 @@ public class Enemy extends Game_Object {
         dy = 0;
         object = OBJECT_TYPE.ENEMY;
     }
+    public SpriteBatch getEnemySpriteBatch()
+    {
+        return spriteBatch;
+    }
 
 }
