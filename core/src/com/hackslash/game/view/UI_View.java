@@ -57,13 +57,14 @@ public class UI_View extends Game_Object_View {
         touchpad.setBounds(15, 15, 200, 200);
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-
     }
 
     public void update_touchpad() {
+
         stage.addActor(touchpad);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
     }
 
     public void init_healthbar() {
@@ -77,6 +78,8 @@ public class UI_View extends Game_Object_View {
 
 
     public void updateCamera(float dt, SpriteBatch batch1, SpriteBatch batch2, OrthographicCamera cam1, OrthographicCamera cam2) {
+
+
 
 
 

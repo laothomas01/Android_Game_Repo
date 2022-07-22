@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.hackslash.game.controller.Bullet_Controller;
 import com.hackslash.game.controller.Enemy_Controller;
 import com.hackslash.game.model.Bullet;
@@ -30,6 +33,15 @@ public class hack_and_slash extends ApplicationAdapter {
     Texture img;
     OrthographicCamera cam;
 
+
+    OrthographicCamera cam2;
+    Sprite sprite;
+    Sprite sprite2;
+    float w, h; // viewport width and height.
+    float radians;
+    float dx;
+    float dy;
+
     /*
      * Notes:
      *
@@ -38,11 +50,32 @@ public class hack_and_slash extends ApplicationAdapter {
      *
      * */
     public void create() {
+
+        dx = 0;
+        dy = 0;
+        radians = 0;
         batch = new SpriteBatch();
-        img = new Texture("badlogic.jpg");
+        img = new Texture("square.png");
+        //the constructor does not take values for a sprite position. only texture regions, width, height
+        sprite = new Sprite(img, 0, 0, 25, 25);
+        sprite2 = new Sprite(img, 0, 0, 25, 25);
+
+        sprite2.setPosition(0, 0);
+        sprite.setPosition(100, 0);
+
+        sprite.setColor(new Color(Color.GREEN));
+        sprite2.setColor(new Color(Color.BLUE));
         //cam with viewports = to width and height of device screen
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
+
+        //        w = cam.viewportWidth;
+//        h = cam.viewportHeight;
+//        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
+        cam.position.set(sprite.getX(), sprite.getY(), 0);
+
+        cam.update();
+//        sprite.setPosition((int) cam.position.x, (int) cam.position.y);
+
     }
 
     public void restartGame() {
@@ -53,12 +86,37 @@ public class hack_and_slash extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        sprite.setPosition(sprite.getX() + 1, sprite.getY() + 1);
+        cam.position.x = sprite.getX();
+        cam.position.y = sprite.getY();
         cam.update();
+
+
         batch.setProjectionMatrix(cam.combined);
+
         batch.begin();
-        batch.draw(img, 0, 0);
+        sprite.draw(batch);
         batch.end();
+
+        batch.begin();
+        sprite2.draw(batch);
+
+        batch.end();
+
+
+//        moveToSprite(sprite2, sprite);
+        sprite.setPosition(sprite.getX() + 1, sprite.getY());
+
+//        sprite2.setPosition(sprite2.getX() + 4, sprite2.getY() + 1);
     }
+
+    public void moveToSprite(Sprite s2, Sprite s1) {
+        radians = MathUtils.atan2(s1.getY() - s2.getY(), s1.getX() - s2.getX());
+        dx = MathUtils.cos(radians);
+        dy = MathUtils.sin(radians);
+        s2.setPosition(s2.getX() + 10 + dx * 100 * Gdx.graphics.getDeltaTime(), s2.getY() * dy * 20 * Gdx.graphics.getDeltaTime());
+    }
+
 
     /**
      * This method is called every time the game screen is re-sized and the game is not in the paused state. It is also called once just after the create() method.
