@@ -71,9 +71,9 @@ public class hack_and_slash extends ApplicationAdapter {
         //        w = cam.viewportWidth;
 //        h = cam.viewportHeight;
 //        cam.translate(cam.viewportWidth / 2, cam.viewportHeight / 2);
-        cam.position.set(sprite.getX(), sprite.getY(), 0);
-
-        cam.update();
+//        cam.position.set(sprite.getX(), sprite.getY(), 0);
+//
+//        cam.update();
 //        sprite.setPosition((int) cam.position.x, (int) cam.position.y);
 
     }
