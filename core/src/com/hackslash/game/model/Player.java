@@ -33,11 +33,9 @@ public class Player extends Game_Object {
         current_size = size;
         texture = new Texture(Gdx.files.internal("square.png"));
         sprite = new Sprite(texture, 0, 0, current_size, current_size);
+        sprite.setPosition(this.getPosition().x, this.getPosition().y);
         spriteBatch = new SpriteBatch();
-//
-//        sprite = new Sprite(texture, 0, 0, (int) current_size, (int) current_size);
         position = new Vector2(this.getX(), this.getY());
-//        firePointPosition = new Vector2()
         velocity = new Vector2(0, 0);
         dx = 0;
         dy = 0;

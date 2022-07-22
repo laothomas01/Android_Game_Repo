@@ -42,40 +42,40 @@ import java.util.ArrayList;
  *
  * */
 public class hack_and_slash extends ApplicationAdapter {
-    Player_View playerView;
-    Enemy_View enemyView;
-    Bullet_View bulletView;
-    UI_View ui_view;
-    Player_Controller player_controller;
-    Enemy_Controller enemy_controller;
-    Bullet_Controller bullet_controller;
-    Player player;
-    Enemy e1;
-    Enemy e2;
-    Enemy e3;
-    Enemy e4;
-    Enemy e5;
-    Enemy e6;
-    Enemy e7;
-    Enemy e8;
-    ArrayList<Enemy> enemies;
-    ArrayList<Enemy> enemiesToRemove;
-    ArrayList<Bullet> bulletsToRemove;
+
+//    Player_View playerView;
+//    Enemy_View enemyView;
+//    Bullet_View bulletView;
+//    UI_View ui_view;
+//    Player_Controller player_controller;
+//    Enemy_Controller enemy_controller;
+//    Bullet_Controller bullet_controller;
+//    Player player;
+//    Enemy e1;
+//    Enemy e2;
+//    Enemy e3;
+//    Enemy e4;
+//    Enemy e5;
+//    Enemy e6;
+//    Enemy e7;
+//    Enemy e8;
+//    ArrayList<Enemy> enemies;
+//    ArrayList<Enemy> enemiesToRemove;
+//    ArrayList<Bullet> bulletsToRemove;
 //    ArrayList<Bullet> bullets;
 
     //time passed between the last frame and the current frame
     float deltaTime;
 
-    SpriteBatch batch;
     /*
      *
      *
      * TESTING ORTHOGRAPHIC CAMERA
      *
      * */
-
+    Player player;
     OrthographicCamera cam;
-    OrthographicCamera uiCam;
+//    OrthographicCamera uiCam;
 
 
 //    private Stage stage;
@@ -129,54 +129,60 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void create() {
+
         player = new Player();
-        //Testing player's enemy detection
-        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0.5f, 10, 10);
-        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 1, 10, 1);
-        e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 1, 10, 1);
-        e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 1, 10, 1);
-        e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 1, 10, 1);
-        e6 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 1, 10, 1);
-        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 1, 10, 1);
-        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 1, 10, 1);
-
-//        bullets = new ArrayList<>();
-
-        enemies = new ArrayList<>();
-        enemies.add(e1);
-        enemies.add(e2);
-        enemies.add(e3);
-        enemies.add(e4);
-        enemies.add(e5);
-        enemies.add(e6);
-        enemies.add(e7);
-        enemies.add(e8);
-        playerView = new Player_View();
-        enemyView = new Enemy_View();
-        bulletView = new Bullet_View();
-        ui_view = new UI_View(player);
-        ui_view.init_touchpad();
-        ui_view.init_healthbar();
-        ui_view.init_cameras();
-        player_controller = new Player_Controller(player, ui_view);
-        enemy_controller = new Enemy_Controller();
-        bullet_controller = new Bullet_Controller();
-        bulletsToRemove = new ArrayList<>();
-        enemiesToRemove = new ArrayList<>();
-//        game_ui_view = new game_UI_view();
-//        game_ui_view.init_game_UI_View();
-
-
         cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        cam.position.set(player.getSprite().getX(), player.getSprite().getY(), 0);
+        cam.update();
 
-
-        //THIS IS NEW. WHY DOES THIS WORK?
-        cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2, 0);
-
-        //JUST A TEMPORARY IMPLEMENTATION
-        batch = new SpriteBatch();
-        System.out.println("WIDTH:" + Gdx.graphics.getWidth() + "HEIGHT:" + Gdx.graphics.getHeight());
-        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
+//        player = new Player();
+//        //Testing player's enemy detection
+//        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0.5f, 10, 10);
+//        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 1, 10, 1);
+//        e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 1, 10, 1);
+//        e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 1, 10, 1);
+//        e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 1, 10, 1);
+//        e6 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 1, 10, 1);
+//        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 1, 10, 1);
+//        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 1, 10, 1);
+//
+////        bullets = new ArrayList<>();
+//
+//        enemies = new ArrayList<>();
+//        enemies.add(e1);
+//        enemies.add(e2);
+//        enemies.add(e3);
+//        enemies.add(e4);
+//        enemies.add(e5);
+//        enemies.add(e6);
+//        enemies.add(e7);
+//        enemies.add(e8);
+//        playerView = new Player_View();
+//        enemyView = new Enemy_View();
+//        bulletView = new Bullet_View();
+//        ui_view = new UI_View(player);
+//        ui_view.init_touchpad();
+//        ui_view.init_healthbar();
+//        ui_view.init_cameras();
+//        player_controller = new Player_Controller(player, ui_view);
+//        enemy_controller = new Enemy_Controller();
+//        bullet_controller = new Bullet_Controller();
+//        bulletsToRemove = new ArrayList<>();
+//        enemiesToRemove = new ArrayList<>();
+////        game_ui_view = new game_UI_view();
+////        game_ui_view.init_game_UI_View();
+//
+//
+//        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//
+//
+//        //THIS IS NEW. WHY DOES THIS WORK?
+//        cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2, 0);
+//
+//        //JUST A TEMPORARY IMPLEMENTATION
+//        batch = new SpriteBatch();
+//        System.out.println("WIDTH:" + Gdx.graphics.getWidth() + "HEIGHT:" + Gdx.graphics.getHeight());
+//        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
 
 //        uiCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 //        uiCam.position.set(uiCam.viewportWidth / 2f, uiCam.viewportHeight / 2f, 0);
@@ -285,205 +291,205 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //THIS IS NEW. WHY DOES THIS WORK?
-        batch.setProjectionMatrix(cam.combined);
-
-
-        //THIS IS NEW. IS THIS THE SAME AS THE METHODS I HAD IN MY CLASS FILES?????
-        batch.begin();
-        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, 25, 25);
-
-        batch.end();
-
-        //THIS IS JUST FOR AUTOMATED TESTING SO I DONT HAVE TO MANUALLY MOVE THE PLAYER!
-        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
-
-        //THIS IS NEW. WHY DOES IT WORK?
-        cam.update();
-
-        /*
-         *
-         *
-         * THESE CHANGES DO NOT INVOLVE THE HEALTH BAR!
-         *
-         * */
-
-
-//        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
-//        //Set Projection Matrix of SpriteBatch
+//        //THIS IS NEW. WHY DOES THIS WORK?
 //        batch.setProjectionMatrix(cam.combined);
-//        batch.begin();
 //
-//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, 1, 1);
+//
+//        //THIS IS NEW. IS THIS THE SAME AS THE METHODS I HAD IN MY CLASS FILES?????
+//        batch.begin();
+//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, 25, 25);
+//
 //        batch.end();
 //
-//        //providing joy stick input to the player to update player position
-//        ui_view.update_touchpad();
-//        //joystick input goes to this method and player will move
-//        player_controller.move(deltaTime);
-
-        /*
-
-        HYPOTHESIS:
-            `if the player moves too far to the right, the camera should shift with the player.
-         */
-
-
+//        //THIS IS JUST FOR AUTOMATED TESTING SO I DONT HAVE TO MANUALLY MOVE THE PLAYER!
+//        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
 //
-
-
-//        batch.setProjectionMatrix(cam.combined);
-//        batch.begin();
-//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
-//        batch.end();
-
-
+//        //THIS IS NEW. WHY DOES IT WORK?
+//        cam.update();
 //
-//        batch.begin();
-//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
-//        batch.end();
-
-
+//        /*
+//         *
+//         *
+//         * THESE CHANGES DO NOT INVOLVE THE HEALTH BAR!
+//         *
+//         * */
+//
+//
+////        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
+////        //Set Projection Matrix of SpriteBatch
+////        batch.setProjectionMatrix(cam.combined);
+////        batch.begin();
+////
+////        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, 1, 1);
+////        batch.end();
+////
+////        //providing joy stick input to the player to update player position
+////        ui_view.update_touchpad();
+////        //joystick input goes to this method and player will move
+////        player_controller.move(deltaTime);
+//
+//        /*
+//
+//        HYPOTHESIS:
+//            `if the player moves too far to the right, the camera should shift with the player.
+//         */
+//
+//
+////
+//
 //
 ////        batch.setProjectionMatrix(cam.combined);
-//
-//        batch.begin();
-//
-//
-//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
-//
-//        batch.end();
-//
-//        Vector3 position = cam.position;
+////        batch.begin();
+////        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
+////        batch.end();
 //
 //
-//        position.x = player.getPosition().x;
-//        position.y = player.getPosition().y;
+////
+////        batch.begin();
+////        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
+////        batch.end();
 //
-//        cam.position.set(position);
-//        batch.setProjectionMatrix(cam.combined);
 //
-//        cam.update();
+////
+//////        batch.setProjectionMatrix(cam.combined);
+////
+////        batch.begin();
+////
+////
+////        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
+////
+////        batch.end();
+////
+////        Vector3 position = cam.position;
+////
+////
+////        position.x = player.getPosition().x;
+////        position.y = player.getPosition().y;
+////
+////        cam.position.set(position);
+////        batch.setProjectionMatrix(cam.combined);
+////
+////        cam.update();
+////
+////        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
+////        System.out.println("CAM POSITION:" + cam.position.toString());
 //
-//        System.out.println("PLAYER POSITION:" + player.getPosition().toString());
-//        System.out.println("CAM POSITION:" + cam.position.toString());
-
-
-//        batch.begin();
 //
-//        cam.position.set(player.getPosition().x, player.getPosition().y, 0);
-//        cam.update();
-//        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, player.getCurrent_size() / 2f, player.getCurrent_size());
+////        batch.begin();
+////
+////        cam.position.set(player.getPosition().x, player.getPosition().y, 0);
+////        cam.update();
+////        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y, player.getCurrent_size() / 2f, player.getCurrent_size());
+////
 //
-
-
-//        //HANDLE JOY STICK INPUT
-
-//        batch.setProjectionMatrix(cam.combined);
 //
-//        batch.end();
-
-
-//        ui_view.updatePlayerHealthBar(ui_view.getHealthBarBatch());
-
-//        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
-
-//        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getUiCam());
-//        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getFollowCam());
-//        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
-//        ui_view.updatePlayerHealthBar(ui_view.getSpriteBatch());
-
-
-//        ui_view.update_cams(deltaTime, player.getSpriteBatch());
-
-        //DRAW ENEMIES
-        //HANDLE PLAYER AND ENEMY INTERACTIONS
-
-        for (Enemy e : enemies) {
-            //display enemies
-            enemyView.draw_enemy(e.getEnemySpriteBatch(), e);
-            enemy_controller.moveToPlayer(deltaTime, e, player);
-            if (player_controller.detectEnemy(e)) {
-                player_controller.storeSeenEnemy(e);
-            }
-            e.getSpriteBatch().begin();
-            if (enemy_controller.hasCollided(e, player)) {
-                e.getSpriteBatch().setColor(Color.GREEN);
-//                player_controller.takeDamage(e);
-            } else {
-                e.getSpriteBatch().setColor(Color.WHITE);
-            }
-            e.getSpriteBatch().end();
-
-        }
-
-
-        Enemy current_Seen_Enemy = player_controller.get_Seen_Enemies().peek();
-
-        if (current_Seen_Enemy != null) {
-            //if currently seen enemy is detected,shoot
-            if (player_controller.detectEnemy(current_Seen_Enemy)) {
-                player_controller.shoot(deltaTime);
-            }
-        }
-//        System.out.println("BULLETS:" + player_controller.getBullets().toString());
-//        System.out.println("QUEUE:" + player_controller.get_Seen_Enemies().toString());
-        //DRAW BULLETS
-        //HANDLE BULLET AND ENEMY INTERACTION
-//        for (Bullet b : player_controller.getBullets()) {
-//            if (bullet_controller.hasCollided(b, current_Seen_Enemy)) {
-//                b.setCurrent_speed(0);
-//                bulletsToRemove.add(b);
-//                player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
-//                enemiesToRemove.add(current_Seen_Enemy);
+////        //HANDLE JOY STICK INPUT
+//
+////        batch.setProjectionMatrix(cam.combined);
+////
+////        batch.end();
+//
+//
+////        ui_view.updatePlayerHealthBar(ui_view.getHealthBarBatch());
+//
+////        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
+//
+////        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getUiCam());
+////        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getFollowCam());
+////        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
+////        ui_view.updatePlayerHealthBar(ui_view.getSpriteBatch());
+//
+//
+////        ui_view.update_cams(deltaTime, player.getSpriteBatch());
+//
+//        //DRAW ENEMIES
+//        //HANDLE PLAYER AND ENEMY INTERACTIONS
+//
+//        for (Enemy e : enemies) {
+//            //display enemies
+//            enemyView.draw_enemy(e.getEnemySpriteBatch(), e);
+//            enemy_controller.moveToPlayer(deltaTime, e, player);
+//            if (player_controller.detectEnemy(e)) {
+//                player_controller.storeSeenEnemy(e);
 //            }
-//            bulletView.draw_bullets(b.getBulletSpriteBatch(), b);
-//            bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
+//            e.getSpriteBatch().begin();
+//            if (enemy_controller.hasCollided(e, player)) {
+//                e.getSpriteBatch().setColor(Color.GREEN);
+////                player_controller.takeDamage(e);
+//            } else {
+//                e.getSpriteBatch().setColor(Color.WHITE);
+//            }
+//            e.getSpriteBatch().end();
+//
 //        }
-
-        //GARBAGE COLLECTION
-        enemies.removeAll(enemiesToRemove);
-//        player_controller.getBullets().removeAll(bulletsToRemove);
-
-//        ui_view.getSpriteBatch().begin();
-//        ui_view.getSpriteBatch().setProjectionMatrix(uiCam.combined);
-//        ui_view.getSpriteBatch().end();
-//        ui_view.getSpriteBatch().setProjectionMatrix(followCam.combined);x
-
-//        player.getPlayerSpriteBatch().begin();
 //
-//        followCam.position.set(player.getPosition().x, player.getPosition().y, 0);
-//        followCam.update();
-//        player.getPlayerSpriteBatch().setProjectionMatrix(followCam.combined);
 //
-//        playerView.draw_player(player.getPlayerSpriteBatch(), player);
+//        Enemy current_Seen_Enemy = player_controller.get_Seen_Enemies().peek();
 //
-//        player.getPlayerSpriteBatch().end();
-
-
-//        ui_view.getSpriteBatch().begin();
-//        followCam.position.set(player.getPosition().x, player.getPosition().y, 0);
-//        followCam.update();
-//        ui_view.getSpriteBatch().setProjectionMatrix(followCam.combined);
-//        ui_view.getSpriteBatch().end();
-
-//        /**
-//         ** Set cam Position
-//         */
-//        Vector3 position = followCam.position;
-////        position.x = followCam.position.x + (player.getPosition().x * 1 - followCam.position.x) * deltaTime;
-//        position.x = followCam.position.x + (player.getPosition().x) * deltaTime;
+//        if (current_Seen_Enemy != null) {
+//            //if currently seen enemy is detected,shoot
+//            if (player_controller.detectEnemy(current_Seen_Enemy)) {
+//                player_controller.shoot(deltaTime);
+//            }
+//        }
+////        System.out.println("BULLETS:" + player_controller.getBullets().toString());
+////        System.out.println("QUEUE:" + player_controller.get_Seen_Enemies().toString());
+//        //DRAW BULLETS
+//        //HANDLE BULLET AND ENEMY INTERACTION
+////        for (Bullet b : player_controller.getBullets()) {
+////            if (bullet_controller.hasCollided(b, current_Seen_Enemy)) {
+////                b.setCurrent_speed(0);
+////                bulletsToRemove.add(b);
+////                player_controller.get_Seen_Enemies().remove(current_Seen_Enemy);
+////                enemiesToRemove.add(current_Seen_Enemy);
+////            }
+////            bulletView.draw_bullets(b.getBulletSpriteBatch(), b);
+////            bullet_controller.moveTowardEnemy(deltaTime, current_Seen_Enemy, b);
+////        }
+//
+//        //GARBAGE COLLECTION
+//        enemies.removeAll(enemiesToRemove);
+////        player_controller.getBullets().removeAll(bulletsToRemove);
+//
+////        ui_view.getSpriteBatch().begin();
+////        ui_view.getSpriteBatch().setProjectionMatrix(uiCam.combined);
+////        ui_view.getSpriteBatch().end();
+////        ui_view.getSpriteBatch().setProjectionMatrix(followCam.combined);x
+//
+////        player.getPlayerSpriteBatch().begin();
+////
+////        followCam.position.set(player.getPosition().x, player.getPosition().y, 0);
+////        followCam.update();
+////        player.getPlayerSpriteBatch().setProjectionMatrix(followCam.combined);
+////
+////        playerView.draw_player(player.getPlayerSpriteBatch(), player);
+////
+////        player.getPlayerSpriteBatch().end();
+//
+//
+////        ui_view.getSpriteBatch().begin();
+////        followCam.position.set(player.getPosition().x, player.getPosition().y, 0);
+////        followCam.update();
+////        ui_view.getSpriteBatch().setProjectionMatrix(followCam.combined);
+////        ui_view.getSpriteBatch().end();
+//
+////        /**
+////         ** Set cam Position
+////         */
+////        Vector3 position = followCam.position;
+//////        position.x = followCam.position.x + (player.getPosition().x * 1 - followCam.position.x) * deltaTime;
+////        position.x = followCam.position.x + (player.getPosition().x) * deltaTime;
+//////        position.y = followCam.position.y + (player.getPosition().y * 1 - followCam.position.y) * deltaTime;
 ////        position.y = followCam.position.y + (player.getPosition().y * 1 - followCam.position.y) * deltaTime;
-//        position.y = followCam.position.y + (player.getPosition().y * 1 - followCam.position.y) * deltaTime;
-//        followCam.position.set(position);
-//        followCam.update();
-//        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getHealthBarBatch(), ui_view.getFollowCam(), ui_view.getUiCam());
-
-//        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getFollowCam());
-//        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
-        /**
-         * Sliders for game testing
-         */
+////        followCam.position.set(position);
+////        followCam.update();
+////        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getHealthBarBatch(), ui_view.getFollowCam(), ui_view.getUiCam());
+//
+////        ui_view.updateCamera(deltaTime, ui_view.getHealthBarBatch(), ui_view.getFollowCam());
+////        ui_view.updateCamera(deltaTime, player.getPlayerSpriteBatch(), ui_view.getUiCam());
+////        /**
+//         * Sliders for game testing
+//         */
     }
 
     /**
