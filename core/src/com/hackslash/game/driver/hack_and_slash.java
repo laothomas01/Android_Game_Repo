@@ -46,6 +46,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
     Player player;
     Player player2;
+    OrthographicCamera followCam;
 //    Player_View playerView;
 //    Enemy_View enemyView;
 //    Bullet_View bulletView;
@@ -133,6 +134,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
 
+        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         player = new Player();
         player2 = new Player();
         player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
@@ -300,16 +302,25 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        followCam.position.x = player.getPosition().x;
+        followCam.position.y = player.getPosition().y;
+
+        //set the player's position relative to the camera for a following camera effect
+        player.getBatch().setProjectionMatrix(followCam.combined);
+        player2.getBatch().setProjectionMatrix(followCam.combined);
+        //Drawing game objects
         player.getBatch().begin();
         player.getSprite().draw(player.getBatch());
         player.getBatch().end();
 
-        player.setPosition(new Vector2(player.getPosition().x + 10, player.getPosition().y));
+        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
         System.out.println("POSITION:" + player.getPosition().toString());
-        
+
         player2.getBatch().begin();
         player2.getSprite().draw(player2.getBatch());
         player2.getBatch().end();
+
+        followCam.update();
 
 //        //THIS IS NEW. WHY DOES THIS WORK?
 //        batch.setProjectionMatrix(cam.combined);
@@ -517,6 +528,7 @@ public class hack_and_slash extends ApplicationAdapter {
      * The parameters are the new width and height the screen has been resized to in pixels.
      */
     public void resize(int width, int height) {
+
 //        stage.getViewport().update(width, height, true);
     }
 

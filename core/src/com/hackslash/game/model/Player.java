@@ -28,11 +28,13 @@ public class Player extends Game_Object {
 
         position = new Vector2(x, y);
 
+        //player direction
         dx = 0;
         dy = 0;
 
         speed = 0;
 
+        //angle in radians
         radians = 0;
 
 
@@ -69,9 +71,9 @@ public class Player extends Game_Object {
 
     }
 
-    public SpriteBatch getBatch() {
-        return batch;
-    }
+//    public SpriteBatch getBatch() {
+//        return batch;
+//    }
 
 
 //    float MAX_BULLETS = 1;

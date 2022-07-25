@@ -36,17 +36,17 @@ public class Game_Object_View {
 //        return player_sprite_batch;
 //    }
 //    SpriteBatch batch;
-//    Stage stage;
-//    Touchpad touchpad;
-//    Touchpad.TouchpadStyle touchpadStyle;
-//    Skin skin;
-//    Drawable touchBackground;
-//    Drawable touchKnob;
-//    //Healthbar UI
+    Stage stage;
+    Touchpad touchpad;
+    Touchpad.TouchpadStyle touchpadStyle;
+    Skin skin;
+    Drawable touchBackground;
+    Drawable touchKnob;
+    //    //Healthbar UI
 //    ShapeRenderer sr;
 //    Color clr;
 //    Sprite sprite;
-//    Texture tex;
+    Texture tex;
 
     public Game_Object_View() {
 //        bullet_sprite_batch = new SpriteBatch();

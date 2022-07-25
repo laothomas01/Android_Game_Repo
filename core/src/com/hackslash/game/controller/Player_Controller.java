@@ -35,18 +35,20 @@ public class Player_Controller extends Game_Object_Controller {
     int max_bullets = 1;
 
 
-//    public Player_Controller(Player p, UI_View j) {
-//        player = p;
-//        joyStick = j;
+    public Player_Controller(Player p, UI_View j) {
+        player = p;
+        joyStick = j;
+
 //        seen = new LinkedList<>();
 //        bullets = new ArrayList<>();
-//    }
-//
+    }
+
+    //
 //
 //    public void move(float dt) {
-//        player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
-//        player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
-//        player.set_Velocity(player.getDx(), player.getDy());
+//        player.setDx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
+//        player.setDy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
+//        player.setVelocity(new Vector2(player.getDx(), player.getDy()));
 //        player.setPosition(player.getPosition().add(player.getVelocity()));
 //    }
 //

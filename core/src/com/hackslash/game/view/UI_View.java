@@ -43,27 +43,28 @@ public class UI_View extends Game_Object_View {
 
 
     public void init_touchpad() {
-//        skin = new Skin();
-//        skin.add("touchBackground", new Texture("touchBackground.png"));
-//        skin.add("touchKnob", new Texture("touchKnob.png"));
-//        touchBackground = skin.getDrawable("touchBackground");
-//        touchKnob = skin.getDrawable("touchKnob");
-//
-//        touchpadStyle = new Touchpad.TouchpadStyle();
-//        touchpadStyle.background = touchBackground;
-//        touchpadStyle.knob = touchKnob;
-//
-//        touchpad = new Touchpad(10, touchpadStyle);
-//        touchpad.setBounds(15, 15, 200, 200);
-//        stage = new Stage();
-//        Gdx.input.setInputProcessor(stage);
+        //document how to do this later
+        skin = new Skin();
+        skin.add("touchBackground", new Texture("touchBackground.png"));
+        skin.add("touchKnob", new Texture("touchKnob.png"));
+        touchBackground = skin.getDrawable("touchBackground");
+        touchKnob = skin.getDrawable("touchKnob");
+
+        touchpadStyle = new Touchpad.TouchpadStyle();
+        touchpadStyle.background = touchBackground;
+        touchpadStyle.knob = touchKnob;
+
+        touchpad = new Touchpad(10, touchpadStyle);
+        touchpad.setBounds(15, 15, 200, 200);
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
 
     }
 
     public void update_touchpad() {
-//        stage.addActor(touchpad);
-//        stage.act(Gdx.graphics.getDeltaTime());
-//        stage.draw();
+        stage.addActor(touchpad);
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
 
     public void init_healthbar() {
