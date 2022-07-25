@@ -32,7 +32,6 @@ public class Enemy extends GameObject {
 
         //random positioning for test purposes
         x = MathUtils.random(0, 500);
-
         y = MathUtils.random(0, 500);
 
         //Enemy angle
@@ -40,18 +39,14 @@ public class Enemy extends GameObject {
         //Enemy direction
         dx = 0;
         dy = 0;
-
+        size = 1f;
         position = new Vector2(x, y);
-
         img = new Texture(Gdx.files.internal("circle.png"));
-
         sprite = new Sprite(img);
-        sprite.setScale(1f, 1f);
+        sprite.setScale(size, size);
         sprite.setPosition(position.x, position.y);
         sprite.setColor(new Color(Color.BLUE));
-
         batch = new SpriteBatch();
-
         object = OBJECT_TYPE.ENEMY;
 
     }

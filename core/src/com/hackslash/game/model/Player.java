@@ -23,25 +23,20 @@ public class Player extends GameObject {
         y = 0;
 
         position = new Vector2(x, y);
-
         //player direction
         dx = 0;
         dy = 0;
 
-        speed = 0;
-
+        speed = 100;
         //angle in radians
         radians = 0;
 
-
         img = new Texture("square.png");
-
         sprite = new Sprite(img);
         sprite.setColor(new Color(Color.GREEN));
         sprite.setPosition(position.x, position.y);
-        sprite.setScale(1f, 1f);
+        sprite.setScale(size, size);
         batch = new SpriteBatch();
-
         object = OBJECT_TYPE.PLAYER;
 
         //divide by 2 but using right shifting

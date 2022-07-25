@@ -1,7 +1,24 @@
 package com.hackslash.game.model;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+
 public class Bullet extends GameObject {
-    public Bullet(float x_pos, float y_pos, int size) {
+    //i want the bullet to start at the
+    public Bullet(GameObject obj) {
+
+        x = obj.getPosition().x;
+        y = obj.getPosition().y;
+        position = new Vector2(x, y);
+        velocity = new Vector2(0, 0);
+        dx = 0;
+        dy = 0;
+        speed = 500f;
+
+
 //        x = x_pos;
 //        y = y_pos;
 //
@@ -11,7 +28,12 @@ public class Bullet extends GameObject {
 //        current_damage = damage;
 //        current_speed = speed;
 //        current_size = size;
-//        texture = new Texture(Gdx.files.internal("circle.png"));
+        size = 0.5f;
+        img = new Texture(Gdx.files.internal("circle.png"));
+        sprite = new Sprite(img);
+        sprite.setScale(size, size);
+
+
 ////        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
 //        sprite = new Sprite(texture, 0, 0, current_size, current_size);
 //
@@ -22,8 +44,8 @@ public class Bullet extends GameObject {
 //        currentLifeSpan = 0;
 //        maxLifeSpan = 4;
 //        remove = false;
-//        object = OBJECT_TYPE.BULLET;
-//        spriteBatch = new SpriteBatch();
+        object = OBJECT_TYPE.BULLET;
+        batch = new SpriteBatch();
 
     }
 

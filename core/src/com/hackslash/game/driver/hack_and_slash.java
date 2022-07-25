@@ -356,6 +356,8 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
 
+//        player.setPosition(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime);
+
 
 //update the camera after shifting its position
         followCam.update();
