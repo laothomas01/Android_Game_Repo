@@ -1,10 +1,9 @@
 package com.hackslash.game.view;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.hackslash.game.model.Game_Object;
+import com.hackslash.game.model.GameObject;
 
 public class Player_View {
-    public void draw_player(Game_Object p) {
+    public void draw_player(GameObject p) {
 
 
 //            p.getSprite().draw(p.getSpriteBatch());

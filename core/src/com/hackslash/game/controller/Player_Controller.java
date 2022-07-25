@@ -1,14 +1,11 @@
 package com.hackslash.game.controller;
 
-import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
-import com.hackslash.game.model.Game_Object;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.UI_View;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -38,7 +35,6 @@ public class Player_Controller extends Game_Object_Controller {
     public Player_Controller(Player p, UI_View j) {
         player = p;
         joyStick = j;
-
 //        seen = new LinkedList<>();
 //        bullets = new ArrayList<>();
     }

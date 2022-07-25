@@ -1,12 +1,6 @@
 package com.hackslash.game.model;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-
-public class Bullet extends Game_Object {
+public class Bullet extends GameObject {
     public Bullet(float x_pos, float y_pos, int size) {
 //        x = x_pos;
 //        y = y_pos;

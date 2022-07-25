@@ -1,7 +1,5 @@
 package com.hackslash.game.Trash;
 
-import com.hackslash.game.model.Game_Object;
-
 public class Spawner {
 
 //    float wait_time = 5;

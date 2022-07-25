@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.hackslash.game.controller.Bullet_Controller;
@@ -47,7 +48,9 @@ public class hack_and_slash extends ApplicationAdapter {
     Player player;
     Player player2;
     OrthographicCamera followCam;
-//    Player_View playerView;
+
+    ArrayList<Enemy> enemies;
+    //    Player_View playerView;
 //    Enemy_View enemyView;
 //    Bullet_View bulletView;
 //    UI_View ui_view;
@@ -55,14 +58,14 @@ public class hack_and_slash extends ApplicationAdapter {
 //    Enemy_Controller enemy_controller;
 //    Bullet_Controller bullet_controller;
 //    Player player;
-//    Enemy e1;
-//    Enemy e2;
-//    Enemy e3;
-//    Enemy e4;
-//    Enemy e5;
-//    Enemy e6;
-//    Enemy e7;
-//    Enemy e8;
+    Enemy e1;
+    Enemy e2;
+    Enemy e3;
+    Enemy e4;
+    Enemy e5;
+    Enemy e6;
+    Enemy e7;
+    Enemy e8;
 //    ArrayList<Enemy> enemies;
 //    ArrayList<Enemy> enemiesToRemove;
 //    ArrayList<Bullet> bulletsToRemove;
@@ -140,6 +143,7 @@ public class hack_and_slash extends ApplicationAdapter {
         player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
         player2.getSprite().setColor(new Color(Color.RED));
 
+        enemies = new ArrayList<>();
 
 //        player = new Player();
 //        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -157,17 +161,26 @@ public class hack_and_slash extends ApplicationAdapter {
 //        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 1, 10, 1);
 //        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 1, 10, 1);
 //
+        e1 = new Enemy();
+        e2 = new Enemy();
+        e3 = new Enemy();
+        e4 = new Enemy();
+        e5 = new Enemy();
+        e6 = new Enemy();
+        e7 = new Enemy();
+        e8 = new Enemy();
+//
 ////        bullets = new ArrayList<>();
 //
 //        enemies = new ArrayList<>();
-//        enemies.add(e1);
-//        enemies.add(e2);
-//        enemies.add(e3);
-//        enemies.add(e4);
-//        enemies.add(e5);
-//        enemies.add(e6);
-//        enemies.add(e7);
-//        enemies.add(e8);
+        enemies.add(e1);
+        enemies.add(e2);
+        enemies.add(e3);
+        enemies.add(e4);
+        enemies.add(e5);
+        enemies.add(e6);
+        enemies.add(e7);
+        enemies.add(e8);
 //        playerView = new Player_View();
 //        enemyView = new Enemy_View();
 //        bulletView = new Bullet_View();
@@ -297,29 +310,54 @@ public class hack_and_slash extends ApplicationAdapter {
     //Note to self:
     public void render() {
 
+        //to make features framerate independent.
         deltaTime = Gdx.graphics.getDeltaTime();
         //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
+        //camera will follow the player
         followCam.position.x = player.getPosition().x;
         followCam.position.y = player.getPosition().y;
 
-        //set the player's position relative to the camera for a following camera effect
+        //set the object's position relative to the camera for a following camera effect
+        //anything you want seen in this camera, you set their position relative to the camera's position
+        //the camera will only follow the object you set its position to
         player.getBatch().setProjectionMatrix(followCam.combined);
         player2.getBatch().setProjectionMatrix(followCam.combined);
+
         //Drawing game objects
         player.getBatch().begin();
         player.getSprite().draw(player.getBatch());
         player.getBatch().end();
 
-        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
+//        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
         System.out.println("POSITION:" + player.getPosition().toString());
+
 
         player2.getBatch().begin();
         player2.getSprite().draw(player2.getBatch());
         player2.getBatch().end();
 
+        //draw all enemy objects
+        for (Enemy e : enemies) {
+
+            //project all enemy positions to be relative to the camera position
+            e.getBatch().setProjectionMatrix(followCam.combined);
+            //draw all enemies
+            e.getBatch().begin();
+            e.getSprite().draw(e.getBatch());
+            e.getBatch().end();
+
+            e.moveTowardObject(player);
+
+
+        }
+
+
+
+//update the camera after shifting its position
         followCam.update();
 
 //        //THIS IS NEW. WHY DOES THIS WORK?

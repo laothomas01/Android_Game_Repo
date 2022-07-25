@@ -1,16 +1,12 @@
 package com.hackslash.game.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import java.awt.*;
-
-public class Player extends Game_Object {
+public class Player extends GameObject {
 
 
     /**
@@ -46,6 +42,7 @@ public class Player extends Game_Object {
         sprite.setScale(1f, 1f);
         batch = new SpriteBatch();
 
+        object = OBJECT_TYPE.PLAYER;
 
         //divide by 2 but using right shifting
 //        x = Gdx.graphics.getWidth() / 2f;

@@ -1,7 +1,6 @@
 package com.hackslash.game.controller;
 
-import com.badlogic.gdx.math.Vector2;
-import com.hackslash.game.model.Game_Object;
+import com.hackslash.game.model.GameObject;
 
 public class Game_Object_Controller {
 
@@ -9,7 +8,7 @@ public class Game_Object_Controller {
 
     }
 
-//    public boolean hasCollided(Game_Object a, Game_Object b) {
+    //    public boolean hasCollided(Game_Object a, Game_Object b) {
 //
 //        //CIRCLE ON CIRCLE SHAPE DETECTION
 //
@@ -68,6 +67,10 @@ public class Game_Object_Controller {
 //
 //        return false;
 //
+//
+//    }
+
+//    public void moveTowardObject(GameObject obj1, GameObject obj2) {
 //
 //    }
 }

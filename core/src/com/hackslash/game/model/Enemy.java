@@ -1,16 +1,14 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import org.w3c.dom.Text;
-
-import java.util.Vector;
-
-public class Enemy extends Game_Object {
+public class Enemy extends GameObject {
 
     public Enemy(float x_position, float y_position, float enemy_speed, float enemy_damage, int enemy_size, float enemy_health) {
 //        x = x_position;
@@ -28,6 +26,34 @@ public class Enemy extends Game_Object {
 //        dx = 0;
 //        dy = 0;
 //        object = OBJECT_TYPE.ENEMY;
+    }
+
+    public Enemy() {
+
+        //random positioning for test purposes
+        x = MathUtils.random(0, 500);
+
+        y = MathUtils.random(0, 500);
+
+        //Enemy angle
+        radians = 0;
+        //Enemy direction
+        dx = 0;
+        dy = 0;
+
+        position = new Vector2(x, y);
+
+        img = new Texture(Gdx.files.internal("circle.png"));
+
+        sprite = new Sprite(img);
+        sprite.setScale(1f, 1f);
+        sprite.setPosition(position.x, position.y);
+        sprite.setColor(new Color(Color.BLUE));
+
+        batch = new SpriteBatch();
+
+        object = OBJECT_TYPE.ENEMY;
+
     }
 
 }

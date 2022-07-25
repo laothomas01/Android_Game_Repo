@@ -1,15 +1,16 @@
 package com.hackslash.game.model;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Game_Object {
-    Game_Object() {
+public class GameObject {
+    GameObject() {
 
     }
+
 
     //enumerator used to help developers indicate which game object they are using
     enum OBJECT_TYPE {ENEMY, PLAYER, EXP, BULLET}
@@ -72,6 +73,11 @@ public class Game_Object {
         getSprite().setPosition(position.x, position.y);
     }
 
+    public void setPosition(float x, float y) {
+        Vector2 new_position = new Vector2(x, y);
+        setPosition(new_position);
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -102,6 +108,17 @@ public class Game_Object {
 
     public void setImg(Texture img) {
         this.img = img;
+    }
+
+    //the game object calling this function will move towards the game object being passed into this function
+    public void moveTowardObject(GameObject obj) {
+
+
+        setRadians(MathUtils.atan2(obj.getPosition().y - this.getPosition().y, obj.getPosition().x - this.getPosition().x));
+        setDx(MathUtils.cos(this.getRadians()));
+        setDy(MathUtils.sin(this.getRadians()));
+        this.setPosition(new Vector2(this.getPosition().x + this.getDx(), this.getPosition().y + this.getDy()));
+
     }
 
     Sprite sprite;
@@ -431,5 +448,6 @@ public class Game_Object {
 //
 //
 //    }
+
 
 }
