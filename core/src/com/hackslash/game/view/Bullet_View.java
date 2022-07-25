@@ -7,9 +7,10 @@ public class Bullet_View {
 
     public void draw_bullets(Batch batch, Game_Object b) {
 
-        batch.begin();
-        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
-        batch.end();
+//        batch.begin();
+//        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
+//        batch.end();
+
 
     }
 }

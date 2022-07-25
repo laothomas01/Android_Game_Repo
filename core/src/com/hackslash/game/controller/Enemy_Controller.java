@@ -21,13 +21,13 @@ public class Enemy_Controller extends Game_Object_Controller {
 
     //This function can be generalized to all game objects that move
     //Refactor later
-    public void moveToPlayer(float dt, Enemy e, Player p) {
-        e.setRadians(MathUtils.atan2(p.getPosition().y - e.getPosition().y, p.getPosition().x - e.getPosition().x));
-        e.set_dx(MathUtils.cos(e.getRadians()));
-        e.set_dy(MathUtils.sin(e.getRadians()));
-        e.set_Velocity(e.getDx(), e.getDy());
-        e.setPosition(e.getPosition().add(e.getVelocity().scl(e.getCurrent_speed() * dt)));
-    }
+//    public void moveToPlayer(float dt, Enemy e, Player p) {
+//        e.setRadians(MathUtils.atan2(p.getPosition().y - e.getPosition().y, p.getPosition().x - e.getPosition().x));
+//        e.set_dx(MathUtils.cos(e.getRadians()));
+//        e.set_dy(MathUtils.sin(e.getRadians()));
+//        e.set_Velocity(e.getDx(), e.getDy());
+//        e.setPosition(e.getPosition().add(e.getVelocity().scl(e.getCurrent_speed() * dt)));
+//    }
 
 
 }

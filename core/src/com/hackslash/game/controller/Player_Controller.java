@@ -35,77 +35,77 @@ public class Player_Controller extends Game_Object_Controller {
     int max_bullets = 1;
 
 
-    public Player_Controller(Player p, UI_View j) {
-        player = p;
-        joyStick = j;
-        seen = new LinkedList<>();
-        bullets = new ArrayList<>();
-    }
-
-
-    public void move(float dt) {
-        player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
-        player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
-        player.set_Velocity(player.getDx(), player.getDy());
-        player.setPosition(player.getPosition().add(player.getVelocity()));
-    }
-
-    public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
-            return true;
-        }
-        return false;
-    }
-
-    public void storeSeenEnemy(Enemy e) {
-
-        if (!seen.contains(e)) {
-            seen.add(e);
-        }
-    }
-
-
-    public void shoot(float dt) {
-
-
-        if (current_cooldown <= 0) {
-
-            if (bullets.size() < max_bullets) {
-                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
-            }
-            current_cooldown = max_cooldown;
-        } else {
-            current_cooldown -= dt;
-        }
-    }
-
-    public Queue<Enemy> get_Seen_Enemies() {
-        return seen;
-    }
-
-    public ArrayList<Bullet> getBullets() {
-        return bullets;
-    }
-
-    public float getCurrent_cooldown() {
-        return current_cooldown;
-    }
-
-    //
-    public void takeDamage(Game_Object e) {
-        if (player.getCurrent_health() <= 0) {
-            player.setCurrent_health(0);
-        } else {
-            player.setCurrent_health(player.getCurrent_health() - e.getCurrent_damage());
-        }
-
-    }
-
-
-    public void setCurrent_Cooldown(float percentage, float cd) {
-
-
-    }
+//    public Player_Controller(Player p, UI_View j) {
+//        player = p;
+//        joyStick = j;
+//        seen = new LinkedList<>();
+//        bullets = new ArrayList<>();
+//    }
+//
+//
+//    public void move(float dt) {
+//        player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
+//        player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
+//        player.set_Velocity(player.getDx(), player.getDy());
+//        player.setPosition(player.getPosition().add(player.getVelocity()));
+//    }
+//
+//    public boolean detectEnemy(Enemy e) {
+//        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public void storeSeenEnemy(Enemy e) {
+//
+//        if (!seen.contains(e)) {
+//            seen.add(e);
+//        }
+//    }
+//
+//
+//    public void shoot(float dt) {
+//
+//
+//        if (current_cooldown <= 0) {
+//
+//            if (bullets.size() < max_bullets) {
+//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
+//            }
+//            current_cooldown = max_cooldown;
+//        } else {
+//            current_cooldown -= dt;
+//        }
+//    }
+//
+//    public Queue<Enemy> get_Seen_Enemies() {
+//        return seen;
+//    }
+//
+//    public ArrayList<Bullet> getBullets() {
+//        return bullets;
+//    }
+//
+//    public float getCurrent_cooldown() {
+//        return current_cooldown;
+//    }
+//
+//    //
+//    public void takeDamage(Game_Object e) {
+//        if (player.getCurrent_health() <= 0) {
+//            player.setCurrent_health(0);
+//        } else {
+//            player.setCurrent_health(player.getCurrent_health() - e.getCurrent_damage());
+//        }
+//
+//    }
+//
+//
+//    public void setCurrent_Cooldown(float percentage, float cd) {
+//
+//
+//    }
 
 
 }

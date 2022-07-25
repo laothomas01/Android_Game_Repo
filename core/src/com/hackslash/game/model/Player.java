@@ -1,11 +1,14 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import java.awt.*;
 
 public class Player extends Game_Object {
 
@@ -18,32 +21,56 @@ public class Player extends Game_Object {
 //    float firePoint_dx = 0;
 //    float firePoint_dy = 0;
     public Player() {
+
+
+        x = 0;
+        y = 0;
+
+        position = new Vector2(x, y);
+
+        dx = 0;
+        dy = 0;
+
+        speed = 0;
+
+        radians = 0;
+
+
+        img = new Texture("square.png");
+
+        sprite = new Sprite(img);
+        sprite.setColor(new Color(Color.GREEN));
+        sprite.setPosition(position.x, position.y);
+        sprite.setScale(1f, 1f);
+        batch = new SpriteBatch();
+
+
         //divide by 2 but using right shifting
 //        x = Gdx.graphics.getWidth() / 2f;
 //        y = Gdx.graphics.getHeight() / 2f;
-        x = 0;
-        y = 0;
-        health = 50f;
-        size = 25;
-        speed = 500;
-        damage = 1;
-        current_health = health;
-        current_damage = damage;
-        current_speed = speed;
-        current_size = size;
-        texture = new Texture(Gdx.files.internal("square.png"));
-        sprite = new Sprite(texture, 0, 0, current_size, current_size);
-        sprite.setPosition(this.getPosition().x, this.getPosition().y);
-        spriteBatch = new SpriteBatch();
-        position = new Vector2(this.getX(), this.getY());
-        velocity = new Vector2(0, 0);
-        dx = 0;
-        dy = 0;
-        object = OBJECT_TYPE.PLAYER;
+
+//        health = 25f;
+//        size = 25;
+//        speed = 500;
+//        damage = 1;
+//        current_health = health;
+//        current_damage = damage;
+//        current_speed = speed;
+//        current_size = size;
+//        texture = new Texture(Gdx.files.internal("square.png"));
+//        sprite = new Sprite(texture);
+//        sprite.setPosition(this.getPosition().x, this.getPosition().y);
+//        spriteBatch = new SpriteBatch();
+//        position = new Vector2(this.getX(), this.getY());
+//        velocity = new Vector2(0, 0);
+//        dx = 0;
+//        dy = 0;
+//        object = OBJECT_TYPE.PLAYER;
+
     }
 
-    public SpriteBatch getPlayerSpriteBatch() {
-        return spriteBatch;
+    public SpriteBatch getBatch() {
+        return batch;
     }
 
 

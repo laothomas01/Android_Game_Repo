@@ -20,15 +20,15 @@ import com.hackslash.game.model.Player;
 //player controller which then
 public class UI_View extends Game_Object_View {
 
-    private Player player;
-    OrthographicCamera followCam;
-    OrthographicCamera uiCam;
-    SpriteBatch healthBarBatch;
-    Color healthBarColor;
+//    private Player player;
+//    OrthographicCamera followCam;
+//    OrthographicCamera uiCam;
+//    SpriteBatch healthBarBatch;
+//    Color healthBarColor;
 
     public UI_View(Player p) {
-        batch = new SpriteBatch();
-        player = p;
+//        batch = new SpriteBatch();
+//        player = p;
     }
 
     public void init_cameras() {
@@ -43,34 +43,34 @@ public class UI_View extends Game_Object_View {
 
 
     public void init_touchpad() {
-        skin = new Skin();
-        skin.add("touchBackground", new Texture("touchBackground.png"));
-        skin.add("touchKnob", new Texture("touchKnob.png"));
-        touchBackground = skin.getDrawable("touchBackground");
-        touchKnob = skin.getDrawable("touchKnob");
-
-        touchpadStyle = new Touchpad.TouchpadStyle();
-        touchpadStyle.background = touchBackground;
-        touchpadStyle.knob = touchKnob;
-
-        touchpad = new Touchpad(10, touchpadStyle);
-        touchpad.setBounds(15, 15, 200, 200);
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
+//        skin = new Skin();
+//        skin.add("touchBackground", new Texture("touchBackground.png"));
+//        skin.add("touchKnob", new Texture("touchKnob.png"));
+//        touchBackground = skin.getDrawable("touchBackground");
+//        touchKnob = skin.getDrawable("touchKnob");
+//
+//        touchpadStyle = new Touchpad.TouchpadStyle();
+//        touchpadStyle.background = touchBackground;
+//        touchpadStyle.knob = touchKnob;
+//
+//        touchpad = new Touchpad(10, touchpadStyle);
+//        touchpad.setBounds(15, 15, 200, 200);
+//        stage = new Stage();
+//        Gdx.input.setInputProcessor(stage);
 
     }
 
     public void update_touchpad() {
-        stage.addActor(touchpad);
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
+//        stage.addActor(touchpad);
+//        stage.act(Gdx.graphics.getDeltaTime());
+//        stage.draw();
     }
 
     public void init_healthbar() {
 
-        healthBarColor = Color.RED;
-        tex = new Texture(Gdx.files.internal("square.png"));
-        healthBarBatch = batch;
+//        healthBarColor = Color.RED;
+//        tex = new Texture(Gdx.files.internal("square.png"));
+//        healthBarBatch = batch;
 
 //        sprite = new Sprite(tex, 0, 0, 10, 50);
     }
@@ -131,42 +131,42 @@ public class UI_View extends Game_Object_View {
     }
 
 
-    public void updatePlayerHealthBar(Batch batch) {
-//        batch.begin();
-        batch.setColor(getHealthBarColor());
-//        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getCurrent_health(), 5);
-        batch.draw(tex, 250, 100, player.getCurrent_health(), 50);
-//        batch.end();
-    }
-
-    public SpriteBatch getHealthBarBatch() {
-        return healthBarBatch;
-    }
-
-    public Color getHealthBarColor() {
-        return healthBarColor;
-    }
-
-
-    public float get_touchpad_x_input() {
-        return touchpad.getKnobPercentX();
-    }
-
-    public float get_touchpad_y_input() {
-        return touchpad.getKnobPercentY();
-    }
-
-    public OrthographicCamera getFollowCam() {
-        return followCam;
-    }
-
-    public OrthographicCamera getUiCam() {
-        return uiCam;
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return batch;
-    }
+//    public void updatePlayerHealthBar(Batch batch) {
+////        batch.begin();
+////        batch.setColor(getHealthBarColor());
+//////        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getCurrent_health(), 5);
+////        batch.draw(tex, 250, 100, player.getCurrent_health(), 50);
+////        batch.end();
+//    }
+//
+//    public SpriteBatch getHealthBarBatch() {
+////        return healthBarBatch;
+//    }
+//
+//    public Color getHealthBarColor() {
+////        return healthBarColor;
+//    }
+//
+//
+//    public float get_touchpad_x_input() {
+////        return touchpad.getKnobPercentX();
+//    }
+//
+//    public float get_touchpad_y_input() {
+////        return touchpad.getKnobPercentY();
+//    }
+//
+//    public OrthographicCamera getFollowCam() {
+////        return followCam;
+//    }
+//
+//    public OrthographicCamera getUiCam() {
+////        return uiCam;
+//    }
+//
+//    public SpriteBatch getSpriteBatch() {
+////        return batch;
+//    }
 
 
 }

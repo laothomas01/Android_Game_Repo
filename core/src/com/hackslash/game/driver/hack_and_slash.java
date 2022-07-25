@@ -43,6 +43,9 @@ import java.util.ArrayList;
  * */
 public class hack_and_slash extends ApplicationAdapter {
 
+
+    Player player;
+    Player player2;
 //    Player_View playerView;
 //    Enemy_View enemyView;
 //    Bullet_View bulletView;
@@ -73,8 +76,8 @@ public class hack_and_slash extends ApplicationAdapter {
      * TESTING ORTHOGRAPHIC CAMERA
      *
      * */
-    Player player;
-    OrthographicCamera cam;
+//    Player player;
+//    OrthographicCamera cam;
 //    OrthographicCamera uiCam;
 
 
@@ -131,9 +134,15 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
 
         player = new Player();
-        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(player.getSprite().getX(), player.getSprite().getY(), 0);
-        cam.update();
+        player2 = new Player();
+        player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
+        player2.getSprite().setColor(new Color(Color.RED));
+
+
+//        player = new Player();
+//        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        cam.position.set(player.getSprite().getX(), player.getSprite().getY(), 0);
+//        cam.update();
 
 //        player = new Player();
 //        //Testing player's enemy detection
@@ -290,6 +299,17 @@ public class hack_and_slash extends ApplicationAdapter {
         //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        player.getBatch().begin();
+        player.getSprite().draw(player.getBatch());
+        player.getBatch().end();
+
+        player.setPosition(new Vector2(player.getPosition().x + 10, player.getPosition().y));
+        System.out.println("POSITION:" + player.getPosition().toString());
+        
+        player2.getBatch().begin();
+        player2.getSprite().draw(player2.getBatch());
+        player2.getBatch().end();
 
 //        //THIS IS NEW. WHY DOES THIS WORK?
 //        batch.setProjectionMatrix(cam.combined);
