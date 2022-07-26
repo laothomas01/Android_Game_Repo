@@ -1,23 +1,17 @@
 package com.hackslash.game.controller;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Enemy;
-import com.hackslash.game.model.Player;
 
 
-public class Enemy_Controller extends Game_Object_Controller {
+public class EnemyController extends GameObjectController {
     /**
      * We will make multiple enemies so let's not
      * pass in the enemy as a parameter to this constructor
      */
-    public Enemy_Controller() {
+    public EnemyController() {
 
     }
 
-    public void update(float dt, Enemy e) {
-
-    }
 
     //This function can be generalized to all game objects that move
     //Refactor later

@@ -23,7 +23,7 @@ import java.util.Queue;
  * 5) if seen enemy is dead, set top of the queue as an enemy object that will be removed
  */
 
-public class Player_Controller extends Game_Object_Controller {
+public class PlayerController extends GameObjectController {
     UserInterfaceView joyStick;
     Player player;
     float max_cooldown = 1f;
@@ -33,7 +33,7 @@ public class Player_Controller extends Game_Object_Controller {
     int max_bullets = 1;
 
 
-    public Player_Controller(Player p, UserInterfaceView j) {
+    public PlayerController(Player p, UserInterfaceView j) {
         player = p;
         joyStick = j;
 //        seen = new LinkedList<>();
@@ -43,6 +43,8 @@ public class Player_Controller extends Game_Object_Controller {
     //
 //
     public void move(float dt) {
+
+        player.setDx(joyStick.getTouchpadXInput() * player.getSpeed() * dt);
         player.setDx(joyStick.getTouchpadXInput() * player.getSpeed() * dt);
         player.setDy(joyStick.getTouchpadYInput() * player.getSpeed() * dt);
         player.setVelocity(new Vector2(player.getDx(), player.getDy()));

@@ -10,7 +10,7 @@ import com.hackslash.game.model.Player;
 
 //All inputs from joystick will be sent to the
 //player controller which then
-public class UserInterfaceView extends Game_Object_View {
+public class UserInterfaceView extends GameObjectView {
 
     private Player player;
 
@@ -33,6 +33,7 @@ public class UserInterfaceView extends Game_Object_View {
 
         touchpad = new Touchpad(10, touchpadStyle);
         touchpad.setBounds(15, 15, 200, 200);
+        touchpad.setPosition(100,5);
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 

@@ -6,9 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.hackslash.game.controller.Game_Object_Controller;
+import com.hackslash.game.controller.EnemyController;
+import com.hackslash.game.controller.GameObjectController;
+import com.hackslash.game.controller.PlayerController;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
+import com.hackslash.game.view.EnemyView;
+import com.hackslash.game.view.GameObjectView;
+import com.hackslash.game.view.PlayerView;
 import com.hackslash.game.view.UserInterfaceView;
 
 import java.util.ArrayList;
@@ -34,8 +39,11 @@ import java.util.ArrayList;
 public class hack_and_slash extends ApplicationAdapter {
 
     UserInterfaceView uiview;
+    PlayerController playerController;
     Player player;
     Player player2;
+
+    PlayerView playerView;
     OrthographicCamera followCam;
 
     ArrayList<Enemy> enemies;
@@ -55,6 +63,7 @@ public class hack_and_slash extends ApplicationAdapter {
     Enemy e6;
     Enemy e7;
     Enemy e8;
+    EnemyView enemyView;
 //    ArrayList<Enemy> enemies;
 //    ArrayList<Enemy> enemiesToRemove;
 //    ArrayList<Bullet> bulletsToRemove;
@@ -63,7 +72,8 @@ public class hack_and_slash extends ApplicationAdapter {
     //time passed between the last frame and the current frame
     float deltaTime;
 
-    Game_Object_Controller object_controller;
+    EnemyController enemyController;
+//    GameObjectView objectView;
 
     /*
      *
@@ -127,17 +137,13 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void create() {
+        //joy stick
         uiview = new UserInterfaceView(player);
         uiview.init_touchpad();
-        object_controller = new Game_Object_Controller();
-        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        player = new Player();
-        player2 = new Player();
-        player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
-        player2.getSprite().setColor(new Color(Color.RED));
 
+        //update enemies
+        enemyController = new EnemyController();
         enemies = new ArrayList<>();
-
 //        player = new Player();
 //        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 //        cam.position.set(player.getSprite().getX(), player.getSprite().getY(), 0);
@@ -162,7 +168,6 @@ public class hack_and_slash extends ApplicationAdapter {
         e6 = new Enemy();
         e7 = new Enemy();
         e8 = new Enemy();
-
 //        bullets = new ArrayList<>();
 //
 //        enemies = new ArrayList<>();
@@ -174,6 +179,18 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.add(e6);
         enemies.add(e7);
         enemies.add(e8);
+        enemyView = new EnemyView();
+
+        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        player = new Player();
+        playerController = new PlayerController(player, uiview);
+        playerView = new PlayerView();
+        player2 = new Player();
+        player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
+        player2.getSprite().setColor(new Color(Color.RED));
+
+
 //        playerView = new Player_View();
 //        enemyView = new Enemy_View();
 //        bulletView = new Bullet_View();
@@ -305,44 +322,36 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //to make features framerate independent.
         deltaTime = Gdx.graphics.getDeltaTime();
+//        System.out.println("FRAMES:" + Gdx.graphics.getFramesPerSecond());
         //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        uiview.update_touchpad();
 
+        //------------UI VIEWS----------------------
+        uiview.update_touchpad();
         //camera will follow the player
+        //note: fix how the camera follows the player. interpolate between two values(dont make the camera have to readjust to the player though)
         followCam.position.x = player.getPosition().x;
         followCam.position.y = player.getPosition().y;
+
 
         //set the object's position relative to the camera for a following camera effect
         //anything you want seen in this camera, you set their position relative to the camera's position
         //the camera will only follow the object you set its position to
         player.getBatch().setProjectionMatrix(followCam.combined);
-        player2.getBatch().setProjectionMatrix(followCam.combined);
-
-        //Drawing game objects
-        player.getBatch().begin();
-        player.getSprite().draw(player.getBatch());
-        player.getBatch().end();
-
-        System.out.println("POSITION:" + player.getPosition().toString());
+        //---------------------------------------------
 
 
-        player2.getBatch().begin();
-        player2.getSprite().draw(player2.getBatch());
-        player2.getBatch().end();
-
+        playerView.draw(player);
+        playerController.move(deltaTime);
         //draw all enemy objects
         for (Enemy e : enemies) {
 
             //project all enemy positions to be relative to the camera position
             e.getBatch().setProjectionMatrix(followCam.combined);
             //draw all enemies
-            e.getBatch().begin();
-            e.getSprite().draw(e.getBatch());
-            e.getBatch().end();
-
-            object_controller.moveTowardObject(e, player);
+            enemyView.draw(e);
+            enemyController.moveTowardObject(e, player);
 
         }
 
@@ -350,7 +359,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //        player.setPosition(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime);
 
 
-//update the camera after shifting its position
+        //update the camera after shifting its position
         followCam.update();
 
 //        //THIS IS NEW. WHY DOES THIS WORK?

@@ -1,12 +1,6 @@
 package com.hackslash.game.view;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -16,7 +10,7 @@ import com.hackslash.game.model.*;
 /**
  * Textures are draw with rectangular geometry
  */
-public class Game_Object_View {
+public class GameObjectView {
 
     //used to send each texture's rectangle to the GPU(is this related to computer hardware or a completely different acronym??)
     // all at once
@@ -48,10 +42,16 @@ public class Game_Object_View {
 //    Sprite sprite;
     Texture tex;
 
-    public Game_Object_View() {
+    public GameObjectView() {
 //        bullet_sprite_batch = new SpriteBatch();
 //        enemy_sprite_batch = new SpriteBatch();
 //        player_sprite_batch = new SpriteBatch();
+    }
+
+    public void draw(GameObject obj) {
+        obj.getBatch().begin();
+        obj.getSprite().draw(obj.getBatch());
+        obj.getBatch().end();
     }
 
 

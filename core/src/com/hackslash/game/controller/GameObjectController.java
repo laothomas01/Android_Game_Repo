@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.GameObject;
 
-public class Game_Object_Controller {
+public class GameObjectController {
 
-    public Game_Object_Controller() {
+    public GameObjectController() {
 
     }
 

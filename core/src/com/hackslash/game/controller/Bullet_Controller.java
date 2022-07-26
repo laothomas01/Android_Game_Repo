@@ -1,10 +1,6 @@
 package com.hackslash.game.controller;
 
-import com.badlogic.gdx.math.MathUtils;
-import com.hackslash.game.model.Bullet;
-import com.hackslash.game.model.Enemy;
-
-public class Bullet_Controller extends Game_Object_Controller {
+public class Bullet_Controller extends GameObjectController {
 
     public Bullet_Controller() {
 
