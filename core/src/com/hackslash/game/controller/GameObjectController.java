@@ -22,7 +22,8 @@ public class GameObjectController {
         obj1.setRadians(MathUtils.atan2(obj2.getPosition().y - obj1.getPosition().y, obj2.getPosition().x - obj1.getPosition().x));
         obj1.setDx(MathUtils.cos(obj1.getRadians()));
         obj1.setDy(MathUtils.sin(obj1.getRadians()));
-        obj1.setPosition(new Vector2(obj1.getPosition().x + obj1.getDx() * obj1.getSpeed() * dt, obj1.getPosition().y + obj1.getDy() * obj1.getSpeed() * dt));
+        obj1.setVelocity(obj1.getDx(), obj1.getDy());
+        obj1.setPosition(obj1.getPosition().x + obj1.getDx() * obj1.getSpeed() * dt, obj1.getPosition().y + obj1.getDy() * obj1.getSpeed() * dt);
 
     }
 
@@ -46,7 +47,7 @@ public class GameObjectController {
 //            System.out.println("DISTANCE:" + dist);
             float total_radius = b.getCurrentSize() + a.getCurrentSize();
 //            System.out.println("TOTAL RADIUS:" + total_radius);
-            if (dist < total_radius) {
+            if (dist <= total_radius) {
                 return true;
             } else {
                 return false;

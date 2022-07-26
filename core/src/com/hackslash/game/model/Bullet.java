@@ -12,20 +12,21 @@ import org.graalvm.compiler.loop.MathUtil;
 public class Bullet extends GameObject {
     //i want the bullet to start at the
     public Bullet(GameObject obj) {
-//        x = obj.getPosition().x;
-//        y = obj.getPosition().y;
-       x = 0;
-       y = 0;
+        x = obj.getPosition().x;
+        y = obj.getPosition().y;
+//        x = MathUtils.random(0, 1000);
+//        y = MathUtils.random(0, 1000);
 
         position = new Vector2(x, y);
         velocity = new Vector2(0, 0);
         dx = 0;
         dy = 0;
-        speed = 500f;
+        speed = 300f;
         size = 0.5f;
         img = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(img);
         sprite.setScale(size, size);
+        sprite.setPosition(position.x, position.y);
         sprite.setColor(new Color(Color.PINK));
         object = OBJECT_TYPE.BULLET;
         batch = new SpriteBatch();

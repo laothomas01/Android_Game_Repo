@@ -407,19 +407,19 @@ public class hack_and_slash extends ApplicationAdapter {
         playerController.move(deltaTime);
 
         //draw all enemy objects
-//        for (Enemy e : enemies) {
-//
-//            //project all enemy positions to be relative to the camera position
-//            e.getBatch().setProjectionMatrix(followCam.combined);
-//            //draw all enemies
-//            enemyView.draw(e);
-//            enemyController.moveTowardObject(deltaTime, e, player);
-//
-//            if (playerController.detectGameObject(player, e)) {
-//                playerController.storeSeenEnemy(e);
-//            }
-//
-//        }
+        for (Enemy e : enemies) {
+
+            //project all enemy positions to be relative to the camera position
+            e.getBatch().setProjectionMatrix(followCam.combined);
+            //draw all enemies
+            enemyView.draw(e);
+            enemyController.moveTowardObject(deltaTime, e, player);
+
+            if (playerController.detectGameObject(player, e)) {
+                playerController.storeSeenEnemy(e);
+            }
+
+        }
         Enemy currentlySeenEnemy = playerController.getSeenEnemies().peek();
 
 
@@ -431,41 +431,37 @@ public class hack_and_slash extends ApplicationAdapter {
 //        bulletSprite.setPosition(player.getPosition().x, player.getPosition().y);
         //
 
-        for (Bullet b : bullets) {
-        }
-        for (Bullet b : bullets) {
-
+//        for (Bullet b : bullets) {
+//
 //            b.getBatch().setProjectionMatrix(followCam.combined);
-            b.getBatch().begin();
-            b.getSprite().setPosition(player.getPosition().x, player.getPosition().y);
-            b.getSprite().draw(b.getBatch());
-            b.getBatch().end();
-        }
+//            b.getBatch().begin();
+//            b.getSprite().draw(b.getBatch());
+//            b.getBatch().end();
+//        }
 
 
 //        bulletBatch.begin();
 //        bulletSprite.draw(bulletBatch);
 //        bulletBatch.end();
-//        playerController.shoot(deltaTime);
+        if (currentlySeenEnemy != null) {
+            if (playerController.detectGameObject(player, currentlySeenEnemy)) {
+                playerController.shoot(deltaTime);
+            }
+        }
+        for (Bullet b : playerController.getBullets()) {
+            b.getBatch().setProjectionMatrix(followCam.combined);
+            if (bulletController.hasCollided(b, currentlySeenEnemy)) {
+                b.setSpeed(0f);
+                bulletsToRemove.add(b);
+            }
 
-//        System.out.println("BULLETS:" + playerController.getBullets().toString());
-//        if (currentlySeenEnemy != null) {
-//            if (playerController.detectGameObject(player, currentlySeenEnemy)) {
-//                playerController.shoot(deltaTime);
-//                System.out.println("SEEN CURRENT ENEMY!");
-//            } else {
-//                System.out.println("CANNOT SEE CURRENT ENEMY!");
-//            }
-//        }
+            bulletView.draw(b);
+            bulletController.moveTowardObject(deltaTime, b, currentlySeenEnemy);
 
-        System.out.println("CURRENT COOLDOWN:" + playerController.getCurrentCooldown());
-
+        }
 
         //Garbage Collection
-//        playerController.getBullets().removeAll(bulletsToRemove);
-
-
-//        player.setPosition(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime);
+        playerController.getBullets().removeAll(bulletsToRemove);
 
 
         //update the camera after shifting its position

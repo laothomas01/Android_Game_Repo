@@ -86,6 +86,10 @@ public class GameObject {
         this.velocity = velocity;
     }
 
+    public void setVelocity(float x, float y) {
+        setVelocity(new Vector2(x, y));
+    }
+
     public Sprite getSprite() {
         return sprite;
     }
@@ -377,7 +381,6 @@ public class GameObject {
     //this should be a GAME OBJECT CONTROLLER method
     //refactor later!
     //This method can be refactored into only having to take 1 paremeter, checking the type of game object and doing the same calculations.
-
 
 
 }

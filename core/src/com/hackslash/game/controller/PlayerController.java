@@ -26,11 +26,11 @@ import java.util.Queue;
 
 public class PlayerController extends GameObjectController {
 
-    float max_cooldown = 1f;
+    float max_cooldown = 0.05f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> spottedEnemies;
     ArrayList<Bullet> bullets;
-    //    int max_bullets = 1;
+    int maxBullets = 1;
     float detectionRadius;
 
 
@@ -75,10 +75,9 @@ public class PlayerController extends GameObjectController {
 
 
         if (current_cooldown <= 0) {
-
-//            if (bullets.size() < max_bullets) {
-            bullets.add(new Bullet(player));
-//            }
+            if (bullets.size() < maxBullets) {
+                bullets.add(new Bullet(player));
+            }
             current_cooldown = max_cooldown;
         } else {
             current_cooldown -= dt;
