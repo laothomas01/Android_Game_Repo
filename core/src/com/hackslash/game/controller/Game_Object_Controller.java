@@ -1,5 +1,7 @@
 package com.hackslash.game.controller;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.GameObject;
 
 public class Game_Object_Controller {
@@ -7,6 +9,19 @@ public class Game_Object_Controller {
     public Game_Object_Controller() {
 
     }
+
+    //obj1 = main object that will updated with the collected information
+    //obj2 = the targeted object for this function
+    public void moveTowardObject(GameObject obj1, GameObject obj2) {
+
+
+        obj1.setRadians(MathUtils.atan2(obj2.getPosition().y - obj1.getPosition().y, obj2.getPosition().x - obj1.getPosition().x));
+        obj1.setDx(MathUtils.cos(obj1.getRadians()));
+        obj1.setDy(MathUtils.sin(obj1.getRadians()));
+        obj1.setPosition(new Vector2(obj1.getPosition().x + obj1.getDx(), obj1.getPosition().y + obj1.getDy()));
+
+    }
+
 
     //    public boolean hasCollided(Game_Object a, Game_Object b) {
 //

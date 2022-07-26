@@ -30,7 +30,7 @@ public class Player extends GameObject {
         speed = 100;
         //angle in radians
         radians = 0;
-
+        size = 1f;
         img = new Texture("square.png");
         sprite = new Sprite(img);
         sprite.setColor(new Color(Color.GREEN));

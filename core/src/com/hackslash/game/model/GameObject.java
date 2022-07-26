@@ -110,16 +110,7 @@ public class GameObject {
         this.img = img;
     }
 
-    //the game object calling this function will move towards the game object being passed into this function
-    public void moveTowardObject(GameObject obj) {
 
-
-        setRadians(MathUtils.atan2(obj.getPosition().y - this.getPosition().y, obj.getPosition().x - this.getPosition().x));
-        setDx(MathUtils.cos(this.getRadians()));
-        setDy(MathUtils.sin(this.getRadians()));
-        this.setPosition(new Vector2(this.getPosition().x + this.getDx(), this.getPosition().y + this.getDy()));
-
-    }
 
     Sprite sprite;
 

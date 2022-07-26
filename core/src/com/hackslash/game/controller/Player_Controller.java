@@ -1,9 +1,10 @@
 package com.hackslash.game.controller;
 
+import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.UI_View;
+import com.hackslash.game.view.UserInterfaceView;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -23,7 +24,7 @@ import java.util.Queue;
  */
 
 public class Player_Controller extends Game_Object_Controller {
-    UI_View joyStick;
+    UserInterfaceView joyStick;
     Player player;
     float max_cooldown = 1f;
     float current_cooldown = max_cooldown;
@@ -32,7 +33,7 @@ public class Player_Controller extends Game_Object_Controller {
     int max_bullets = 1;
 
 
-    public Player_Controller(Player p, UI_View j) {
+    public Player_Controller(Player p, UserInterfaceView j) {
         player = p;
         joyStick = j;
 //        seen = new LinkedList<>();
@@ -41,12 +42,12 @@ public class Player_Controller extends Game_Object_Controller {
 
     //
 //
-//    public void move(float dt) {
-//        player.setDx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
-//        player.setDy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
-//        player.setVelocity(new Vector2(player.getDx(), player.getDy()));
-//        player.setPosition(player.getPosition().add(player.getVelocity()));
-//    }
+    public void move(float dt) {
+        player.setDx(joyStick.getTouchpadXInput() * player.getSpeed() * dt);
+        player.setDy(joyStick.getTouchpadYInput() * player.getSpeed() * dt);
+        player.setVelocity(new Vector2(player.getDx(), player.getDy()));
+        player.setPosition(player.getPosition().add(player.getVelocity()));
+    }
 //
 //    public boolean detectEnemy(Enemy e) {
 //        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {

@@ -5,22 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.hackslash.game.controller.Bullet_Controller;
-import com.hackslash.game.controller.Enemy_Controller;
-import com.hackslash.game.model.Bullet;
+import com.hackslash.game.controller.Game_Object_Controller;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.Bullet_View;
-import com.hackslash.game.view.Enemy_View;
-import com.hackslash.game.view.Player_View;
-import com.hackslash.game.view.UI_View;
-import com.hackslash.game.view.Game_Object_View;
-import com.hackslash.game.controller.Player_Controller;
+import com.hackslash.game.view.UserInterfaceView;
 
 import java.util.ArrayList;
 
@@ -44,7 +33,7 @@ import java.util.ArrayList;
  * */
 public class hack_and_slash extends ApplicationAdapter {
 
-
+    UserInterfaceView uiview;
     Player player;
     Player player2;
     OrthographicCamera followCam;
@@ -73,6 +62,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
     //time passed between the last frame and the current frame
     float deltaTime;
+
+    Game_Object_Controller object_controller;
 
     /*
      *
@@ -136,7 +127,9 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     public void create() {
-
+        uiview = new UserInterfaceView(player);
+        uiview.init_touchpad();
+        object_controller = new Game_Object_Controller();
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         player = new Player();
         player2 = new Player();
@@ -169,8 +162,8 @@ public class hack_and_slash extends ApplicationAdapter {
         e6 = new Enemy();
         e7 = new Enemy();
         e8 = new Enemy();
-//
-////        bullets = new ArrayList<>();
+
+//        bullets = new ArrayList<>();
 //
 //        enemies = new ArrayList<>();
         enemies.add(e1);
@@ -315,7 +308,7 @@ public class hack_and_slash extends ApplicationAdapter {
         //Refresh the screen every frame
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        uiview.update_touchpad();
 
         //camera will follow the player
         followCam.position.x = player.getPosition().x;
@@ -332,7 +325,6 @@ public class hack_and_slash extends ApplicationAdapter {
         player.getSprite().draw(player.getBatch());
         player.getBatch().end();
 
-//        player.setPosition(new Vector2(player.getPosition().x + 1, player.getPosition().y));
         System.out.println("POSITION:" + player.getPosition().toString());
 
 
@@ -350,8 +342,7 @@ public class hack_and_slash extends ApplicationAdapter {
             e.getSprite().draw(e.getBatch());
             e.getBatch().end();
 
-            e.moveTowardObject(player);
-
+            object_controller.moveTowardObject(e, player);
 
         }
 
