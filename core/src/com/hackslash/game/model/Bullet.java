@@ -1,52 +1,34 @@
 package com.hackslash.game.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import org.graalvm.compiler.loop.MathUtil;
 
 public class Bullet extends GameObject {
     //i want the bullet to start at the
     public Bullet(GameObject obj) {
+//        x = obj.getPosition().x;
+//        y = obj.getPosition().y;
+       x = 0;
+       y = 0;
 
-        x = obj.getPosition().x;
-        y = obj.getPosition().y;
         position = new Vector2(x, y);
         velocity = new Vector2(0, 0);
         dx = 0;
         dy = 0;
         speed = 500f;
-
-
-//        x = x_pos;
-//        y = y_pos;
-//
-//        speed = 500f;
-//        damage = 1f;
-//
-//        current_damage = damage;
-//        current_speed = speed;
-//        current_size = size;
         size = 0.5f;
         img = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(img);
         sprite.setScale(size, size);
-
-
-////        sprite = new Sprite(texture, 0, 0, (int) size, (int) size);
-//        sprite = new Sprite(texture, 0, 0, current_size, current_size);
-//
-//        position = new Vector2(x, y);
-//        velocity = new Vector2(0, 0);
-//        dx = 0;
-//        dy = 0;
-//        currentLifeSpan = 0;
-//        maxLifeSpan = 4;
-//        remove = false;
+        sprite.setColor(new Color(Color.PINK));
         object = OBJECT_TYPE.BULLET;
         batch = new SpriteBatch();
-
     }
 
 //    public SpriteBatch getBulletSpriteBatch() {

@@ -27,7 +27,7 @@ public class Player extends GameObject {
         dx = 0;
         dy = 0;
 
-        speed = 100;
+        speed = 300;
         //angle in radians
         radians = 0;
         size = 1f;

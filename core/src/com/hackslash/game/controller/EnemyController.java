@@ -13,6 +13,7 @@ public class EnemyController extends GameObjectController {
     }
 
 
+
     //This function can be generalized to all game objects that move
     //Refactor later
 //    public void moveToPlayer(float dt, Enemy e, Player p) {

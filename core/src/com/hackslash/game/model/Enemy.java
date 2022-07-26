@@ -40,6 +40,7 @@ public class Enemy extends GameObject {
         dx = 0;
         dy = 0;
         size = 1f;
+        speed = 50f;
         position = new Vector2(x, y);
         img = new Texture(Gdx.files.internal("circle.png"));
         sprite = new Sprite(img);

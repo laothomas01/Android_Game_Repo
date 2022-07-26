@@ -1,8 +1,8 @@
 package com.hackslash.game.controller;
 
-public class Bullet_Controller extends GameObjectController {
+public class BulletController extends GameObjectController {
 
-    public Bullet_Controller() {
+    public BulletController() {
 
     }
 

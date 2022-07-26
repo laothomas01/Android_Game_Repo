@@ -5,16 +5,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
 import com.hackslash.game.controller.GameObjectController;
 import com.hackslash.game.controller.PlayerController;
+import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.Player;
-import com.hackslash.game.view.EnemyView;
-import com.hackslash.game.view.GameObjectView;
-import com.hackslash.game.view.PlayerView;
-import com.hackslash.game.view.UserInterfaceView;
+import com.hackslash.game.view.*;
 
 import java.util.ArrayList;
 
@@ -38,15 +41,33 @@ import java.util.ArrayList;
  * */
 public class hack_and_slash extends ApplicationAdapter {
 
-    UserInterfaceView uiview;
-    PlayerController playerController;
-    Player player;
-    Player player2;
-
+    //views
+    UserInterfaceView uiView;
     PlayerView playerView;
-    OrthographicCamera followCam;
+    EnemyView enemyView;
+    BulletView bulletView;
 
+    //game controllers
+    PlayerController playerController;
+    EnemyController enemyController;
+
+    BulletController bulletController;
+
+
+    //utilities
+    OrthographicCamera followCam;
+    float deltaTime;
+
+
+    //lists of objects
     ArrayList<Enemy> enemies;
+    ArrayList<Bullet> bulletsToRemove;
+    ArrayList<Enemy> enemiesToRemove;
+
+    ArrayList<Bullet> bullets;
+
+    Bullet b1, b2, b3, b4, b5;
+
     //    Player_View playerView;
 //    Enemy_View enemyView;
 //    Bullet_View bulletView;
@@ -55,6 +76,10 @@ public class hack_and_slash extends ApplicationAdapter {
 //    Enemy_Controller enemy_controller;
 //    Bullet_Controller bullet_controller;
 //    Player player;
+
+    //game objects
+    Player player;
+    Player player2;
     Enemy e1;
     Enemy e2;
     Enemy e3;
@@ -63,16 +88,14 @@ public class hack_and_slash extends ApplicationAdapter {
     Enemy e6;
     Enemy e7;
     Enemy e8;
-    EnemyView enemyView;
 //    ArrayList<Enemy> enemies;
 //    ArrayList<Enemy> enemiesToRemove;
 //    ArrayList<Bullet> bulletsToRemove;
 //    ArrayList<Bullet> bullets;
 
     //time passed between the last frame and the current frame
-    float deltaTime;
 
-    EnemyController enemyController;
+
 //    GameObjectView objectView;
 
     /*
@@ -135,11 +158,16 @@ public class hack_and_slash extends ApplicationAdapter {
 //    BitmapFont font;
 //    boolean GAME_PAUSED;
 
+    Sprite bulletSprite;
+    SpriteBatch bulletBatch;
+    Texture bulletImg;
 
     public void create() {
+
+
         //joy stick
-        uiview = new UserInterfaceView(player);
-        uiview.init_touchpad();
+        uiView = new UserInterfaceView(player);
+        uiView.init_touchpad();
 
         //update enemies
         enemyController = new EnemyController();
@@ -184,11 +212,44 @@ public class hack_and_slash extends ApplicationAdapter {
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         player = new Player();
-        playerController = new PlayerController(player, uiview);
+        playerController = new PlayerController(player, uiView);
         playerView = new PlayerView();
         player2 = new Player();
         player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
         player2.getSprite().setColor(new Color(Color.RED));
+
+        bullets = new ArrayList<>();
+
+        b1 = new Bullet(player);
+
+        b2 = new Bullet(player);
+
+        b3 = new Bullet(player);
+
+        b4 = new Bullet(player);
+
+        b5 = new Bullet(player);
+
+        bullets.add(b1);
+        bullets.add(b2);
+        bullets.add(b3);
+        bullets.add(b4);
+        bullets.add(b5);
+
+        bulletsToRemove = new ArrayList<>();
+        enemiesToRemove = new ArrayList<>();
+
+        bulletController = new BulletController();
+
+
+        bulletImg = new Texture(Gdx.files.internal("circle.png"));
+        bulletView = new BulletView();
+        bulletSprite = new Sprite(bulletImg);
+        bulletBatch = new SpriteBatch();
+
+        bulletSprite.scale(1f);
+        bulletSprite.setColor(new Color(Color.PINK));
+        bulletSprite.setPosition(player.getPosition().x, player.getPosition().y);
 
 
 //        playerView = new Player_View();
@@ -328,7 +389,7 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //------------UI VIEWS----------------------
-        uiview.update_touchpad();
+        uiView.update_touchpad();
         //camera will follow the player
         //note: fix how the camera follows the player. interpolate between two values(dont make the camera have to readjust to the player though)
         followCam.position.x = player.getPosition().x;
@@ -344,16 +405,64 @@ public class hack_and_slash extends ApplicationAdapter {
 
         playerView.draw(player);
         playerController.move(deltaTime);
+
         //draw all enemy objects
-        for (Enemy e : enemies) {
+//        for (Enemy e : enemies) {
+//
+//            //project all enemy positions to be relative to the camera position
+//            e.getBatch().setProjectionMatrix(followCam.combined);
+//            //draw all enemies
+//            enemyView.draw(e);
+//            enemyController.moveTowardObject(deltaTime, e, player);
+//
+//            if (playerController.detectGameObject(player, e)) {
+//                playerController.storeSeenEnemy(e);
+//            }
+//
+//        }
+        Enemy currentlySeenEnemy = playerController.getSeenEnemies().peek();
 
-            //project all enemy positions to be relative to the camera position
-            e.getBatch().setProjectionMatrix(followCam.combined);
-            //draw all enemies
-            enemyView.draw(e);
-            enemyController.moveTowardObject(e, player);
 
+        //HOW TO REPRESENT BULLET OBJECTS
+//        bulletBatch.setProjectionMatrix(followCam.combined);
+//        bulletBatch.begin();
+//        bulletSprite.draw(bulletBatch);
+//        bulletBatch.end();
+//        bulletSprite.setPosition(player.getPosition().x, player.getPosition().y);
+        //
+
+        for (Bullet b : bullets) {
         }
+        for (Bullet b : bullets) {
+
+//            b.getBatch().setProjectionMatrix(followCam.combined);
+            b.getBatch().begin();
+            b.getSprite().setPosition(player.getPosition().x, player.getPosition().y);
+            b.getSprite().draw(b.getBatch());
+            b.getBatch().end();
+        }
+
+
+//        bulletBatch.begin();
+//        bulletSprite.draw(bulletBatch);
+//        bulletBatch.end();
+//        playerController.shoot(deltaTime);
+
+//        System.out.println("BULLETS:" + playerController.getBullets().toString());
+//        if (currentlySeenEnemy != null) {
+//            if (playerController.detectGameObject(player, currentlySeenEnemy)) {
+//                playerController.shoot(deltaTime);
+//                System.out.println("SEEN CURRENT ENEMY!");
+//            } else {
+//                System.out.println("CANNOT SEE CURRENT ENEMY!");
+//            }
+//        }
+
+        System.out.println("CURRENT COOLDOWN:" + playerController.getCurrentCooldown());
+
+
+        //Garbage Collection
+//        playerController.getBullets().removeAll(bulletsToRemove);
 
 
 //        player.setPosition(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime);

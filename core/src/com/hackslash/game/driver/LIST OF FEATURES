@@ -13,7 +13,7 @@ health:
 camera:
 [] following camera
 UI:
-[] health bar
+[x] health bar
 [] fix sprite layering
 [] exp bar
 [] menu screen

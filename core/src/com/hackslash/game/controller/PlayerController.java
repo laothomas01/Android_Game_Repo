@@ -7,6 +7,7 @@ import com.hackslash.game.model.Player;
 import com.hackslash.game.view.UserInterfaceView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -24,20 +25,21 @@ import java.util.Queue;
  */
 
 public class PlayerController extends GameObjectController {
-    UserInterfaceView joyStick;
-    Player player;
+
     float max_cooldown = 1f;
     float current_cooldown = max_cooldown;
-    Queue<Enemy> seen;
+    Queue<Enemy> spottedEnemies;
     ArrayList<Bullet> bullets;
-    int max_bullets = 1;
+    //    int max_bullets = 1;
+    float detectionRadius;
 
 
     public PlayerController(Player p, UserInterfaceView j) {
         player = p;
         joyStick = j;
-//        seen = new LinkedList<>();
-//        bullets = new ArrayList<>();
+        spottedEnemies = new LinkedList<>();
+        detectionRadius = 1000f;
+        bullets = new ArrayList<>();
     }
 
     //
@@ -50,47 +52,53 @@ public class PlayerController extends GameObjectController {
         player.setVelocity(new Vector2(player.getDx(), player.getDy()));
         player.setPosition(player.getPosition().add(player.getVelocity()));
     }
-//
+
+    //
 //    public boolean detectEnemy(Enemy e) {
-//        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
+//        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < detectionRadius) {
 //            return true;
 //        }
 //        return false;
 //    }
+
+    //
+    public void storeSeenEnemy(Enemy e) {
+
+        if (!spottedEnemies.contains(e)) {
+            spottedEnemies.add(e);
+        }
+    }
+
+    //
 //
-//    public void storeSeenEnemy(Enemy e) {
-//
-//        if (!seen.contains(e)) {
-//            seen.add(e);
-//        }
-//    }
-//
-//
-//    public void shoot(float dt) {
-//
-//
-//        if (current_cooldown <= 0) {
-//
+    public void shoot(float dt) {
+
+
+        if (current_cooldown <= 0) {
+
 //            if (bullets.size() < max_bullets) {
-//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
+            bullets.add(new Bullet(player));
 //            }
-//            current_cooldown = max_cooldown;
-//        } else {
-//            current_cooldown -= dt;
-//        }
-//    }
-//
-//    public Queue<Enemy> get_Seen_Enemies() {
-//        return seen;
-//    }
-//
-//    public ArrayList<Bullet> getBullets() {
-//        return bullets;
-//    }
-//
-//    public float getCurrent_cooldown() {
-//        return current_cooldown;
-//    }
+            current_cooldown = max_cooldown;
+        } else {
+            current_cooldown -= dt;
+        }
+    }
+
+    //
+    public Queue<Enemy> getSeenEnemies() {
+        return spottedEnemies;
+    }
+
+    //
+    public ArrayList<Bullet> getBullets() {
+        return bullets;
+    }
+
+    //
+    public float getCurrentCooldown() {
+        return current_cooldown;
+    }
 //
 //    //
 //    public void takeDamage(Game_Object e) {
