@@ -1,3 +1,6 @@
+TODOlist:
+[] implement following camera
+
 game objects:
 [] exp drops
 [] item drops
@@ -6,11 +9,11 @@ more player features:
 [] special abilities
 health:
 [] enemy
-[] player
+[x] player
 camera:
-[] following camera
+[x] following camera
 UI:
-[] health bar
+[x] health bar
 [] fix sprite layering
 [] exp bar
 [] menu screen
@@ -25,20 +28,43 @@ optimizations:
 [] proper memory usage
 utility files:
 [] game configurations
-other artsy fartys stuff:
+other artsy fartsy stuff:
 [] better sprites
 [] audio
+Testing:
+   [] add sliders so you can play with in-game values.
 code refactoring:
 [] fired bullets at enemies should not home on enemies. should fly in a direction towards the enemy's position???
-controller classes:
-[] move toward object functions
-
+[] there are 2 ways to approach refactoring the Game_Object class's hasCollided function
+    1) we migrate all that code into an object_controller
+    2) we stick with the Game_Object class.
+        -refactoring this function means only needing to pass in 1 parameter rather than 2. it is important than that the passed in game object for the
+        function's collision detection must be explicit. If a player object is using the hasCollided funcition,
+        you would use a THIS keyword to utilize data within the current game object and then check for collision with the parameter's
+        game object.
+[] depending on which direction the enemy is coming from, offset the bullet from the center.
 BUGS:
-[] cannot decrease fire cool down without causing a concurrency modification error. bullets get removed faster than loaded.
-[] first enemy that collides with a bullet doesnt immediately get removed.
+[x] cannot decrease fire cool down without causing a concurrency modification error. bullets get removed faster than loaded.
+[x] first enemy that collides with a bullet doesnt immediately get removed.
 Future refactor thoughts:
 [] check how long the player has not detected the current enemy it is suppose to see. if enemy not seen for X number of seconds, remove from linkedlist and replace with new incoming enemy
 [] object collision function should be part of object controller class, not object model.
+
+Thoughts of things to add:
+[] add procedurally generated walls/buildings/whatever later on
+[] theme: zombie, mutant, sci fi horror?
+[] detection radius = source of light?
+[] physical trait skill tree(utilizing linked lists????)
+[] backpack/inventory system
+[] picking up objects
+[] enemies dropping objects
+[] difficulty options
+[] menu configurations
+[] data persistence: loading in objects, sqlite database
+[] sprite generator: what is needed to compose a sprite?
+[] CI/CD automated testing!
+[] procedurally generated enemy behavior
+
 
 
 

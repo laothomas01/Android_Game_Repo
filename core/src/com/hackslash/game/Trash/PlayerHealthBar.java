@@ -1,4 +1,4 @@
-package com.hackslash.game.model;
+package com.hackslash.game.Trash;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
