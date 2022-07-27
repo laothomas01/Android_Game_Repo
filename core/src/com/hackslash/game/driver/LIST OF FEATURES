@@ -9,9 +9,9 @@ more player features:
 [] special abilities
 health:
 [] enemy
-[] player
+[x] player
 camera:
-[] following camera
+[x] following camera
 UI:
 [x] health bar
 [] fix sprite layering
@@ -42,10 +42,10 @@ code refactoring:
         function's collision detection must be explicit. If a player object is using the hasCollided funcition,
         you would use a THIS keyword to utilize data within the current game object and then check for collision with the parameter's
         game object.
-
+[] depending on which direction the enemy is coming from, offset the bullet from the center.
 BUGS:
-[] cannot decrease fire cool down without causing a concurrency modification error. bullets get removed faster than loaded.
-[] first enemy that collides with a bullet doesnt immediately get removed.
+[x] cannot decrease fire cool down without causing a concurrency modification error. bullets get removed faster than loaded.
+[x] first enemy that collides with a bullet doesnt immediately get removed.
 Future refactor thoughts:
 [] check how long the player has not detected the current enemy it is suppose to see. if enemy not seen for X number of seconds, remove from linkedlist and replace with new incoming enemy
 [] object collision function should be part of object controller class, not object model.
