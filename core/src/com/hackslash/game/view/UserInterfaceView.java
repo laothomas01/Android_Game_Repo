@@ -1,10 +1,15 @@
 package com.hackslash.game.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.hackslash.game.model.GameObject;
+import com.hackslash.game.model.HealthBar;
 import com.hackslash.game.model.Player;
 
 
@@ -12,10 +17,13 @@ import com.hackslash.game.model.Player;
 //player controller which then
 public class UserInterfaceView extends GameObjectView {
 
-    private Player player;
 
-    public UserInterfaceView(Player p) {
-        player = p;
+    Player player;
+
+
+    public UserInterfaceView() {
+//        player = p;
+
     }
 
 
@@ -33,10 +41,17 @@ public class UserInterfaceView extends GameObjectView {
 
         touchpad = new Touchpad(10, touchpadStyle);
         touchpad.setBounds(15, 15, 200, 200);
-        touchpad.setPosition(100,5);
+        touchpad.setPosition(100, 5);
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
+    }
+
+    public void init_helpbar() {
+
+        clr = Color.GREEN;
+        tex = new Texture(Gdx.files.internal("square.png"));
+//        sprite = new Sprite(tex, 0, 0, 10, 50);
     }
 
     public void update_touchpad() {
@@ -45,14 +60,29 @@ public class UserInterfaceView extends GameObjectView {
         stage.draw();
     }
 
-    //    public void updatePlayerHealthBar(Batch batch) {
-////        batch.begin();
-////        batch.setColor(getHealthBarColor());
-//////        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getCurrent_health(), 5);
-////        batch.draw(tex, 250, 100, player.getCurrent_health(), 50);
-////        batch.end();
-//    }
+
+//    public void updatePlayerHealthBar() {
 //
+//        player.getBatch().begin();
+//        player.getHealthBarSprite().draw(player.getBatch());
+//        player.getBatch().end();
+//
+//        player.getHealthBarSprite().setPosition(player.getPosition().x, player.getPosition().y - 10);
+//        player.getHealthBarSprite().setScale(player.getHealth(), 1f);
+//    }
+
+
+    public void updatePlayerHealthBar(Batch batch, Player p) {
+//        System.out.println("POSITION:" + p.getPosition().toString());
+        batch.begin();
+        batch.setColor(Color.GREEN);
+        batch.draw(getTex(), p.getPosition().x, p.getPosition().y - 10, p.getHealth(), 5);
+//        batch.setColor(Color.GREEN);
+//        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getHealth(), 5);
+        batch.end();
+    }
+
+    //
 //    public SpriteBatch getHealthBarBatch() {
 ////        return healthBarBatch;
 //    }

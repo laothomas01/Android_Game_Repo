@@ -16,6 +16,10 @@ public class Player extends GameObject {
 //    private Vector2 firePointVelocity;
 //    float firePoint_dx = 0;
 //    float firePoint_dy = 0;
+    Texture healthBarImg;
+    Sprite healthBarSprite;
+
+
     public Player() {
 
 
@@ -33,11 +37,14 @@ public class Player extends GameObject {
         size = 1f;
         img = new Texture("square.png");
         sprite = new Sprite(img);
-        sprite.setColor(new Color(Color.GREEN));
+        sprite.setColor(Color.GREEN);
         sprite.setPosition(position.x, position.y);
         sprite.setScale(size, size);
         batch = new SpriteBatch();
         object = OBJECT_TYPE.PLAYER;
+        maxHealth = 10;
+        health = maxHealth;
+
 
         //divide by 2 but using right shifting
 //        x = Gdx.graphics.getWidth() / 2f;
@@ -62,6 +69,11 @@ public class Player extends GameObject {
 //        object = OBJECT_TYPE.PLAYER;
 
     }
+
+    public Sprite getHealthBarSprite() {
+        return healthBarSprite;
+    }
+
 
 //    public SpriteBatch getBatch() {
 //        return batch;

@@ -54,6 +54,10 @@ public class GameObjectView {
         obj.getBatch().end();
     }
 
+    public Texture getTex()
+    {
+        return tex;
+    }
 
 //    public void confirm_detection(Game_Object a, Game_Object b) {
 //

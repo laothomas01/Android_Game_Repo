@@ -16,6 +16,7 @@ import com.hackslash.game.controller.GameObjectController;
 import com.hackslash.game.controller.PlayerController;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
+import com.hackslash.game.model.HealthBar;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.*;
 
@@ -40,7 +41,7 @@ import java.util.ArrayList;
  *
  * */
 public class hack_and_slash extends ApplicationAdapter {
-
+    SpriteBatch healthBarBatch;
     //views
     UserInterfaceView uiView;
     PlayerView playerView;
@@ -52,7 +53,6 @@ public class hack_and_slash extends ApplicationAdapter {
     EnemyController enemyController;
 
     BulletController bulletController;
-
 
     //utilities
     OrthographicCamera followCam;
@@ -162,32 +162,17 @@ public class hack_and_slash extends ApplicationAdapter {
     SpriteBatch bulletBatch;
     Texture bulletImg;
 
+    HealthBar healthBar;
+
     public void create() {
-
-
+        healthBarBatch = new SpriteBatch();
         //joy stick
-        uiView = new UserInterfaceView(player);
+        uiView = new UserInterfaceView();
         uiView.init_touchpad();
 
         //update enemies
         enemyController = new EnemyController();
         enemies = new ArrayList<>();
-//        player = new Player();
-//        cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        cam.position.set(player.getSprite().getX(), player.getSprite().getY(), 0);
-//        cam.update();
-
-//        player = new Player();
-//        //Testing player's enemy detection
-//        e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0.5f, 10, 10);
-//        e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 1, 10, 1);
-//        e3 = new Enemy(player.getPosition().x - 200, player.getPosition().y, 100f, 1, 10, 1);
-//        e4 = new Enemy(player.getPosition().x + 200, player.getPosition().y, 100f, 1, 10, 1);
-//        e5 = new Enemy(player.getPosition().x - 300, player.getPosition().y, 100f, 1, 10, 1);
-//        e6 = new Enemy(player.getPosition().x + 300, player.getPosition().y, 100f, 1, 10, 1);
-//        e7 = new Enemy(player.getPosition().x - 400, player.getPosition().y, 100f, 1, 10, 1);
-//        e8 = new Enemy(player.getPosition().x + 400, player.getPosition().y, 100f, 1, 10, 1);
-//
         e1 = new Enemy();
         e2 = new Enemy();
         e3 = new Enemy();
@@ -196,9 +181,6 @@ public class hack_and_slash extends ApplicationAdapter {
         e6 = new Enemy();
         e7 = new Enemy();
         e8 = new Enemy();
-//        bullets = new ArrayList<>();
-//
-//        enemies = new ArrayList<>();
         enemies.add(e1);
         enemies.add(e2);
         enemies.add(e3);
@@ -250,6 +232,8 @@ public class hack_and_slash extends ApplicationAdapter {
         bulletSprite.scale(1f);
         bulletSprite.setColor(new Color(Color.PINK));
         bulletSprite.setPosition(player.getPosition().x, player.getPosition().y);
+
+        healthBar = new HealthBar(player);
 
 
 //        playerView = new Player_View();
@@ -354,25 +338,6 @@ public class hack_and_slash extends ApplicationAdapter {
      * touching the player character. if none are touching- do nothing. if an enemy
      * is touching the player character, subtract health from the player.
      */
-//    public void check_Player_Enemy_Overlap(ArrayList<Enemy> enemyList) {
-////        for (Enemy e : enemyList) {
-////
-////            if (player.getSprite().getBoundingRectangle().overlaps(e.getSprite().getBoundingRectangle())) {
-////                playerHB.subtractHealth();
-////            }
-////
-////        }
-//    }
-//
-//    public void check_Bullet_Enemy_Overlap(ArrayList<Bullet> bullets) {
-//        for (Bullet b : bullets) {
-//            for (int i = 0; i < enemies.size(); i++) {
-//                if (b.intersect(enemies.get(i))) {
-//                    enemies.get(i).takeDamage(b.getDamage());
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Method called by the game loop from the application every time rendering should be performed. Game logic updates are usually also performed in this method.
@@ -404,6 +369,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         playerView.draw(player);
+
         playerController.move(deltaTime);
 
         //draw all enemy objects
@@ -460,9 +426,16 @@ public class hack_and_slash extends ApplicationAdapter {
 
         }
 
+        healthBarBatch.setProjectionMatrix(followCam.combined);
+        uiView.updatePlayerHealthBar(healthBarBatch, player);
         //Garbage Collection
         playerController.getBullets().removeAll(bulletsToRemove);
 
+        //Handle player healthbar
+        //set the healthbar to be in the following camera
+//        healthBar.getBatch().setProjectionMatrix(followCam.combined);
+//        healthBar.updateHealthBar();
+//        uiView.draw(healthBar);
 
         //update the camera after shifting its position
         followCam.update();

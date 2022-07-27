@@ -46,7 +46,7 @@ public class Enemy extends GameObject {
         sprite = new Sprite(img);
         sprite.setScale(size, size);
         sprite.setPosition(position.x, position.y);
-        sprite.setColor(new Color(Color.BLUE));
+        sprite.setColor(Color.BLUE);
         batch = new SpriteBatch();
         object = OBJECT_TYPE.ENEMY;
 

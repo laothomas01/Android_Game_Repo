@@ -21,7 +21,7 @@ public class GameObject {
         return object.name();
     }
 
-    float x, y, dx, dy, radians, speed, size;
+    float x, y, dx, dy, radians, speed, size, health, maxHealth;
     Vector2 position, velocity;
 
     public float getDx() {
@@ -114,6 +114,13 @@ public class GameObject {
         this.img = img;
     }
 
+    public float getHealth() {
+        return health;
+    }
+
+    public void setHealth(float h) {
+        health = h;
+    }
 
     Sprite sprite;
 
