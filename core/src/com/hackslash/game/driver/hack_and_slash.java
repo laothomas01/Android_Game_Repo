@@ -807,17 +807,23 @@ public class hack_and_slash extends ApplicationAdapter {
                 currentSeenEnemy.getSpriteBatch().setColor(Color.BLUE);
             }
         }
+
+
         for (Bullet b : player_controller.getBullets()) {
             //set bullet object into focus of camera
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
             if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
                 b.setSpeed(0f);
+                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
+                enemiesToRemove.add(currentSeenEnemy);
                 bulletsToRemove.add(b);
             }
             bulletView.draw_bullets(b.getSpriteBatch(), b);
             bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
         }
+        enemies.removeAll(enemiesToRemove);
         player_controller.getBullets().removeAll(bulletsToRemove);
+
         followCam.update();
     }
 

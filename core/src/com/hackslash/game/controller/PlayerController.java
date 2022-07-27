@@ -180,14 +180,12 @@ public class PlayerController extends GameObjectController {
         return current_cooldown;
     }
 
-    //
     public void takeDamage(GameObject e) {
         if (player.getHealth() <= 0) {
             player.setHealth(0);
         } else {
             player.setHealth(player.getHealth() - e.getDamage());
         }
-
     }
 
 
