@@ -5,7 +5,14 @@ import com.hackslash.game.model.GameObject;
 
 public class BulletView extends GameObjectView {
 
-    public BulletView() {
+//    public BulletView() {
+//
+//    }
 
+    public void draw_bullets(Batch batch, GameObject b) {
+
+        batch.begin();
+        batch.draw(b.getTexture(), b.getPosition().x, b.getPosition().y, b.getCurrent_size(), b.getCurrent_size());
+        batch.end();
     }
 }
