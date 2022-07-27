@@ -16,7 +16,7 @@ public class PlayerView extends GameObjectView {
 //
     public void draw_player(Batch batch, GameObject p) {
         batch.begin();
-        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size(), p.getCurrent_size());
+        batch.draw(p.getTexture(), p.getPosition().x, p.getPosition().y, p.getCurrent_size()/2, p.getCurrent_size());
         batch.end();
     }
 }

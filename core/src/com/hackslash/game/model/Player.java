@@ -229,7 +229,7 @@ public class Player extends GameObject {
     public Player() {
         x = Gdx.graphics.getWidth()/2;
         y = Gdx.graphics.getHeight()/2;
-        maxHealth = 10f;
+        maxHealth = 25f;
         size = 25;
         speed = 500;
         damage = 1;

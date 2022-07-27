@@ -714,6 +714,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //
 //    }//
 
+    OrthographicCamera followCam;
     PlayerView playerView;
     EnemyView enemyView;
     BulletView bulletView;
@@ -736,6 +737,7 @@ public class hack_and_slash extends ApplicationAdapter {
     float deltaTime;
 
     public void create() {
+        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         player = new Player();
         e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0.5f, 30, 10);
         e2 = new Enemy(player.getPosition().x + 100, player.getPosition().y, 100f, 1, 30, 1);
@@ -761,6 +763,7 @@ public class hack_and_slash extends ApplicationAdapter {
         playerView = new PlayerView();
         ui_view = new UserInterfaceView();
         ui_view.init_touchpad();
+        ui_view.init_healthbar();
         player_controller = new PlayerController(player, ui_view);
         enemy_controller = new EnemyController();
         bullet_controller = new BulletController();
@@ -770,13 +773,28 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         ui_view.update_touchpad();
+        ui_view.updatePlayerHealthBar(player.getSpriteBatch(), player, followCam);
+
+        player.getSpriteBatch().setProjectionMatrix(followCam.combined);
+
+        followCam.position.x = player.getPosition().x;
+        followCam.position.y = player.getPosition().y;
         playerView.draw_player(player.getSpriteBatch(), player);
+        player_controller.move(deltaTime);
+
         for (Enemy e : enemies) {
+            e.getSpriteBatch().setProjectionMatrix(followCam.combined);
             enemyView.draw_enemy(e.getSpriteBatch(), e);
+            enemy_controller.moveToPlayer(deltaTime, e, player);
         }
+
+
+        followCam.update();
 
     }
 
