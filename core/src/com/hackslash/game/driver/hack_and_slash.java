@@ -56,6 +56,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
     //utilities
     OrthographicCamera followCam;
+    OrthographicCamera uiCam;
     float deltaTime;
 
 
@@ -99,7 +100,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //    GameObjectView objectView;
 
     /*
-     *
+//     *
      *
      * TESTING ORTHOGRAPHIC CAMERA
      *
@@ -165,10 +166,11 @@ public class hack_and_slash extends ApplicationAdapter {
     HealthBar healthBar;
 
     public void create() {
+        player = new Player();
+        playerView = new PlayerView();
+
         healthBarBatch = new SpriteBatch();
         //joy stick
-        uiView = new UserInterfaceView();
-        uiView.init_touchpad();
 
         //update enemies
         enemyController = new EnemyController();
@@ -193,12 +195,14 @@ public class hack_and_slash extends ApplicationAdapter {
 
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        player = new Player();
+        uiView = new UserInterfaceView(player);
+        uiView.init_touchpad();
+        uiView.initHealthBar();
         playerController = new PlayerController(player, uiView);
-        playerView = new PlayerView();
-        player2 = new Player();
-        player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
-        player2.getSprite().setColor(new Color(Color.RED));
+//        player2 = new Player();
+//        player2.setPosition(new Vector2(player2.getPosition().x + 100, player2.getPosition().y));
+//        player2.getSprite().setColor(new Color(Color.RED));
+
 
         bullets = new ArrayList<>();
 
@@ -233,7 +237,10 @@ public class hack_and_slash extends ApplicationAdapter {
         bulletSprite.setColor(new Color(Color.PINK));
         bulletSprite.setPosition(player.getPosition().x, player.getPosition().y);
 
-        healthBar = new HealthBar(player);
+
+//        uiCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        uiCam.position.set(uiCam.viewportWidth / 2f, uiCam.viewportHeight / 2f, 0);
+//        uiCam.update();
 
 
 //        playerView = new Player_View();
@@ -355,6 +362,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //------------UI VIEWS----------------------
         uiView.update_touchpad();
+//        uiView.getSpriteBatch().setProjectionMatrix(uiCam.combined);
+//        uiView.getSpriteBatch().setProjectionMatrix(followCam.combined);
         //camera will follow the player
         //note: fix how the camera follows the player. interpolate between two values(dont make the camera have to readjust to the player though)
         followCam.position.x = player.getPosition().x;
@@ -426,8 +435,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
         }
 
-        healthBarBatch.setProjectionMatrix(followCam.combined);
-        uiView.updatePlayerHealthBar(healthBarBatch, player);
+//        healthBarBatch.setProjectionMatrix(followCam.combined);
+//        uiView.updatePlayerHealthBar(healthBarBatch, player);
         //Garbage Collection
         playerController.getBullets().removeAll(bulletsToRemove);
 
@@ -437,7 +446,12 @@ public class hack_and_slash extends ApplicationAdapter {
 //        healthBar.updateHealthBar();
 //        uiView.draw(healthBar);
 
+//        uiView.getSpriteBatch().setProjectionMatrix(uiCam.combined);
         //update the camera after shifting its position
+//        uiView.getSpriteBatch().setProjectionMatrix(uiCam.combined);
+//        uiView.updatePlayerHealthBar(uiView.getSpriteBatch());
+//        uiView.getSpriteBatch().setProjectionMatrix(uiCam.combined);
+//
         followCam.update();
 
 //        //THIS IS NEW. WHY DOES THIS WORK?

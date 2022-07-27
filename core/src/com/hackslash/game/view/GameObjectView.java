@@ -1,6 +1,8 @@
 package com.hackslash.game.view;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
@@ -38,8 +40,8 @@ public class GameObjectView {
     Drawable touchKnob;
     //    //Healthbar UI
 //    ShapeRenderer sr;
-//    Color clr;
-//    Sprite sprite;
+    Color clr;
+    Sprite sprite;
     Texture tex;
 
     public GameObjectView() {
@@ -54,8 +56,7 @@ public class GameObjectView {
         obj.getBatch().end();
     }
 
-    public Texture getTex()
-    {
+    public Texture getTex() {
         return tex;
     }
 

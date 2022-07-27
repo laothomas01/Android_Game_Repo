@@ -18,12 +18,14 @@ import com.hackslash.game.model.Player;
 public class UserInterfaceView extends GameObjectView {
 
 
-    Player player;
+    private Player player;
+    private SpriteBatch batch;
 
 
-    public UserInterfaceView() {
-//        player = p;
+    public UserInterfaceView(Player p) {
 
+        player = p;
+        batch = new SpriteBatch();
     }
 
 
@@ -47,11 +49,10 @@ public class UserInterfaceView extends GameObjectView {
 
     }
 
-    public void init_helpbar() {
+    public void initHealthBar() {
 
         clr = Color.GREEN;
         tex = new Texture(Gdx.files.internal("square.png"));
-//        sprite = new Sprite(tex, 0, 0, 10, 50);
     }
 
     public void update_touchpad() {
@@ -61,26 +62,31 @@ public class UserInterfaceView extends GameObjectView {
     }
 
 
-//    public void updatePlayerHealthBar() {
-//
+    public void updatePlayerHealthBar(Batch batch) {
+        batch.begin();
+        batch.setColor(clr);
+        batch.draw(tex, player.getPosition().x, player.getPosition().y, player.getHealth(), 5);
+        batch.end();
+
+        //
 //        player.getBatch().begin();
 //        player.getHealthBarSprite().draw(player.getBatch());
 //        player.getBatch().end();
 //
 //        player.getHealthBarSprite().setPosition(player.getPosition().x, player.getPosition().y - 10);
 //        player.getHealthBarSprite().setScale(player.getHealth(), 1f);
-//    }
-
-
-    public void updatePlayerHealthBar(Batch batch, Player p) {
-//        System.out.println("POSITION:" + p.getPosition().toString());
-        batch.begin();
-        batch.setColor(Color.GREEN);
-        batch.draw(getTex(), p.getPosition().x, p.getPosition().y - 10, p.getHealth(), 5);
-//        batch.setColor(Color.GREEN);
-//        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getHealth(), 5);
-        batch.end();
     }
+
+
+//    public void updatePlayerHealthBar(Batch batch, Player p) {
+////        System.out.println("POSITION:" + p.getPosition().toString());
+//        batch.begin();
+//        batch.setColor(Color.GREEN);
+//        batch.draw(getTex(), p.getPosition().x, p.getPosition().y - 10, p.getHealth(), 5);
+////        batch.setColor(Color.GREEN);
+////        batch.draw(tex, player.getPosition().x, player.getPosition().y - 10, player.getHealth(), 5);
+//        batch.end();
+//    }
 
     //
 //    public SpriteBatch getHealthBarBatch() {
@@ -92,6 +98,10 @@ public class UserInterfaceView extends GameObjectView {
 //    }
 //
 //
+    public SpriteBatch getSpriteBatch() {
+        return batch;
+    }
+
     public float getTouchpadXInput() {
         return touchpad.getKnobPercentX();
     }
