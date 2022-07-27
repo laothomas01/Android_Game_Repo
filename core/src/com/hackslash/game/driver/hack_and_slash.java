@@ -41,7 +41,7 @@ import java.util.ArrayList;
  *
  * */
 public class hack_and_slash extends ApplicationAdapter {
-//    SpriteBatch healthBarBatch;
+    //    SpriteBatch healthBarBatch;
 //    //views
 //    UserInterfaceView uiView;
 //    PlayerView playerView;
@@ -713,7 +713,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //    public void Player_Bullet_Enemy_Interaction(Enemy curr) {
 //
 //    }//
-
+    SpriteBatch healthBarBatch;
     OrthographicCamera followCam;
     PlayerView playerView;
     EnemyView enemyView;
@@ -737,6 +737,7 @@ public class hack_and_slash extends ApplicationAdapter {
     float deltaTime;
 
     public void create() {
+        healthBarBatch = new SpriteBatch();
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         player = new Player();
         e1 = new Enemy(player.getPosition().x - 100, player.getPosition().y, 100f, 0.5f, 30, 10);
@@ -761,6 +762,7 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.add(e8);
         enemyView = new EnemyView();
         playerView = new PlayerView();
+        bulletView = new BulletView();
         ui_view = new UserInterfaceView();
         ui_view.init_touchpad();
         ui_view.init_healthbar();
@@ -778,8 +780,8 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         ui_view.update_touchpad();
-        ui_view.updatePlayerHealthBar(player.getSpriteBatch(), player, followCam);
 
+        ui_view.updatePlayerHealthBar(healthBarBatch, player, followCam);
         player.getSpriteBatch().setProjectionMatrix(followCam.combined);
 
         followCam.position.x = player.getPosition().x;
@@ -791,11 +793,32 @@ public class hack_and_slash extends ApplicationAdapter {
             e.getSpriteBatch().setProjectionMatrix(followCam.combined);
             enemyView.draw_enemy(e.getSpriteBatch(), e);
             enemy_controller.moveToPlayer(deltaTime, e, player);
+            if (player_controller.detectEnemy(e)) {
+                player_controller.storeSeenEnemy(e);
+            }
         }
-
-
+        Enemy currentSeenEnemy = player_controller.get_Seen_Enemies().peek();
+        //testing purposes
+        if (currentSeenEnemy != null) {
+            if (player_controller.detectEnemy(currentSeenEnemy)) {
+                currentSeenEnemy.getSpriteBatch().setColor(Color.RED);
+                player_controller.shoot(deltaTime);
+            } else {
+                currentSeenEnemy.getSpriteBatch().setColor(Color.BLUE);
+            }
+        }
+        for (Bullet b : player_controller.getBullets()) {
+            //set bullet object into focus of camera
+            b.getSpriteBatch().setProjectionMatrix(followCam.combined);
+            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
+                b.setSpeed(0f);
+                bulletsToRemove.add(b);
+            }
+            bulletView.draw_bullets(b.getSpriteBatch(), b);
+            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
+        }
+        player_controller.getBullets().removeAll(bulletsToRemove);
         followCam.update();
-
     }
 
 }

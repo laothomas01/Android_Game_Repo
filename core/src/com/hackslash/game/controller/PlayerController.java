@@ -118,9 +118,10 @@ public class PlayerController extends GameObjectController {
 
     UserInterfaceView joyStick;
     Player player;
-    float max_cooldown = 1f;
+    float max_cooldown = 0.05f;
     float current_cooldown = max_cooldown;
     Queue<Enemy> seen;
+    float detectionRange;
     ArrayList<Bullet> bullets;
     int max_bullets = 1;
 
@@ -129,6 +130,7 @@ public class PlayerController extends GameObjectController {
         joyStick = j;
         seen = new LinkedList<>();
         bullets = new ArrayList<>();
+        detectionRange = 500f;
     }
 
     public void move(float dt) {
@@ -139,7 +141,7 @@ public class PlayerController extends GameObjectController {
     }
 
     public boolean detectEnemy(Enemy e) {
-        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < 1000f) {
+        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < detectionRange) {
             return true;
         }
         return false;
