@@ -226,9 +226,22 @@ public class hack_and_slash extends ApplicationAdapter {
                 enemiesToRemove.add(currentSeenEnemy);
                 bulletsToRemove.add(b);
             }
+            //in case the targeted enemy isnt hit, hit another object and remove
+            for (Enemy e : enemies) {
+                if (bullet_controller.hasCollided(b, e)) {
+                    b.setSpeed(0f);
+                    enemiesToRemove.add(e);
+                    bulletsToRemove.add(b);
+                }
+
+            }
+
+            System.out.println("BULLET:" + b.hashCode() + "DIRECTION:" + b.getVelocity().toString());
             bulletView.draw_bullets(b.getSpriteBatch(), b);
             bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
         }
+
+
         enemies.removeAll(enemiesToRemove);
         player_controller.getBullets().removeAll(bulletsToRemove);
 

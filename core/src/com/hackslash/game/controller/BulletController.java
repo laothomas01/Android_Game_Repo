@@ -6,9 +6,9 @@ import com.hackslash.game.model.Enemy;
 
 public class BulletController extends GameObjectController {
 
-//    public BulletController() {
-//
-//    }
+    public BulletController() {
+
+    }
 //
 //    //This function can be generalized to all game objects that move
 //    //Refactor this later
@@ -23,8 +23,8 @@ public class BulletController extends GameObjectController {
 ////
 ////    }
 
+    //bullets should fly in direction of enemies, but should not HOME on to enemies.
     public void moveTowardEnemy(float dt, Enemy e, Bullet b) {
-
         b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
         b.set_dx(MathUtils.cos(b.getRadians()));
         b.set_dy(MathUtils.sin(b.getRadians()));
