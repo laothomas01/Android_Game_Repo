@@ -5,18 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
-import com.hackslash.game.controller.GameObjectController;
 import com.hackslash.game.controller.PlayerController;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
-import com.hackslash.game.model.HealthBar;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.*;
 
@@ -195,7 +190,7 @@ public class hack_and_slash extends ApplicationAdapter {
         if (currentSeenEnemy != null) {
             if (player_controller.detectEnemy(currentSeenEnemy)) {
                 currentSeenEnemy.getSpriteBatch().setColor(Color.RED);
-                player_controller.shoot(deltaTime);
+                player_controller.shoot(deltaTime, currentSeenEnemy);
             } else {
 
                 currentSeenEnemy.getSpriteBatch().setColor(Color.BLUE);
@@ -206,7 +201,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
                     currentFindNextEnemyTimer = maxFindNextEnemyTimer;
                 } else {
-                    System.out.println("SEEN CURRENT ENEMY TIMER:" + currentFindNextEnemyTimer);
+//                    System.out.println("SEEN CURRENT ENEMY TIMER:" + currentFindNextEnemyTimer);
                     currentFindNextEnemyTimer -= deltaTime;
                 }
 
@@ -218,27 +213,31 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         for (Bullet b : player_controller.getBullets()) {
+//            System.out.println(" RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+
             //set bullet object into focus of camera
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
-            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
-                b.setSpeed(0f);
-                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
-                enemiesToRemove.add(currentSeenEnemy);
-                bulletsToRemove.add(b);
-            }
-            //in case the targeted enemy isnt hit, hit another object and remove
-            for (Enemy e : enemies) {
-                if (bullet_controller.hasCollided(b, e)) {
-                    b.setSpeed(0f);
-                    enemiesToRemove.add(e);
-                    bulletsToRemove.add(b);
-                }
+//            System.out.println("BULLET:" + b.hashCode() + "VELOCITY:" + b.getVelocity().toString());
+//            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
+//                b.setSpeed(0f);
+//                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
+//                enemiesToRemove.add(currentSeenEnemy);
+//                bulletsToRemove.add(b);
+//            }
+//            //in case the targeted enemy isnt hit, hit another object and remove
+//            for (Enemy e : enemies) {
+//                if (bullet_controller.hasCollided(b, e)) {
+//                    b.setSpeed(0f);
+//                    enemiesToRemove.add(e);
+//                    bulletsToRemove.add(b);
+//                }
+//
+//            }
 
-            }
-
-            System.out.println("BULLET:" + b.hashCode() + "DIRECTION:" + b.getVelocity().toString());
+//            System.out.println("BULLET:" + b.hashCode() + "DIRECTION:" + b.getVelocity().toString());
             bulletView.draw_bullets(b.getSpriteBatch(), b);
-            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
+            bullet_controller.move(deltaTime, b);
+//            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
         }
 
 

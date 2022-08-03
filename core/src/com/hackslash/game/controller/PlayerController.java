@@ -1,11 +1,13 @@
 package com.hackslash.game.controller;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 import com.hackslash.game.model.GameObject;
 import com.hackslash.game.model.Player;
 import com.hackslash.game.view.UserInterfaceView;
+import org.graalvm.compiler.loop.MathUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,94 +29,6 @@ import java.util.Queue;
 
 public class PlayerController extends GameObjectController {
 
-//    float max_cooldown = 0.05f;
-//    float current_cooldown = max_cooldown;
-//    Queue<Enemy> spottedEnemies;
-//    ArrayList<Bullet> bullets;
-//    int maxBullets = 1;
-//    float detectionRadius;
-//
-//
-//    public PlayerController(Player p, UserInterfaceView j) {
-//        player = p;
-//        joyStick = j;
-//        spottedEnemies = new LinkedList<>();
-//        detectionRadius = 1000f;
-//        bullets = new ArrayList<>();
-//    }
-//
-//    //
-////
-//    public void move(float dt) {
-//
-//        player.setDx(joyStick.getTouchpadXInput() * player.getSpeed() * dt);
-//        player.setDx(joyStick.getTouchpadXInput() * player.getSpeed() * dt);
-//        player.setDy(joyStick.getTouchpadYInput() * player.getSpeed() * dt);
-//        player.setVelocity(new Vector2(player.getDx(), player.getDy()));
-//        player.setPosition(player.getPosition().add(player.getVelocity()));
-//    }
-//
-//    //
-////    public boolean detectEnemy(Enemy e) {
-////        if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < detectionRadius) {
-////            return true;
-////        }
-////        return false;
-////    }
-//
-//    //
-//    public void storeSeenEnemy(Enemy e) {
-//
-//        if (!spottedEnemies.contains(e)) {
-//            spottedEnemies.add(e);
-//        }
-//    }
-//
-//    //
-////
-//    public void shoot(float dt) {
-//
-//
-//        if (current_cooldown <= 0) {
-//            if (bullets.size() < maxBullets) {
-//                bullets.add(new Bullet(player));
-//            }
-//            current_cooldown = max_cooldown;
-//        } else {
-//            current_cooldown -= dt;
-//        }
-//    }
-//
-//    //
-//    public Queue<Enemy> getSeenEnemies() {
-//        return spottedEnemies;
-//    }
-//
-//    //
-//    public ArrayList<Bullet> getBullets() {
-//        return bullets;
-//    }
-//
-//    //
-//    public float getCurrentCooldown() {
-//        return current_cooldown;
-//    }
-////
-////    //
-////    public void takeDamage(Game_Object e) {
-////        if (player.getCurrent_health() <= 0) {
-////            player.setCurrent_health(0);
-////        } else {
-////            player.setCurrent_health(player.getCurrent_health() - e.getCurrent_damage());
-////        }
-////
-////    }
-////
-////
-////    public void setCurrent_Cooldown(float percentage, float cd) {
-////
-////
-////    }
 
     UserInterfaceView joyStick;
     Player player;
@@ -154,13 +68,37 @@ public class PlayerController extends GameObjectController {
         }
     }
 
-    public void shoot(float dt) {
+    public void shoot(float dt, Enemy e) {
 
 
         if (current_cooldown <= 0) {
 
             if (bullets.size() < max_bullets) {
-                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
+                System.out.println("ENEMY POSITION:" + e.getPosition());
+//                System.out.println("RADIANS:" + MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
+                float radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
+                float dx = MathUtils.cos(radians);
+                float dy = MathUtils.sin(radians);
+                Vector2 velocity = new Vector2(dx, dy);
+                bullets.add(new Bullet(0, 0, 10, radians, dx, dy, velocity));
+
+//                bullets.add(new Bullet(player.getPosition().x,
+//
+//                        player.getPosition().y,
+//                        10,
+//                        MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x),
+//                        MathUtils.cos(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)),
+//                        MathUtils.sin(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)),
+//                        new Vector2(MathUtils.cos(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)), MathUtils.sin(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)))
+//                ));
+//                bullets.add(new Bullet(player.getPosition().x,player.getPosition().y,10,MathUtils.atan2(e.getPosition().y - player.getPosition().y,e.getPosition().x - player.getPosition().x)));
+//                Bullet b = new Bullet(player.getPosition().x, player.getPosition().y, 10);
+//                b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
+//                b.set_dx(MathUtils.cos(b.getRadians()));
+//                b.set_dy(MathUtils.sin(b.getRadians()));
+//                b.set_Velocity(b.get_dx(), b.get_dy());
+//                bullets.add(b);
+//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
             }
             current_cooldown = max_cooldown;
         } else {

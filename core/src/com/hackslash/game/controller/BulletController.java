@@ -23,13 +23,23 @@ public class BulletController extends GameObjectController {
 ////
 ////    }
 
-    //bullets should fly in direction of enemies, but should not HOME on to enemies.
-    public void moveTowardEnemy(float dt, Enemy e, Bullet b) {
-        b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
-        b.set_dx(MathUtils.cos(b.getRadians()));
-        b.set_dy(MathUtils.sin(b.getRadians()));
-        b.set_Velocity(b.get_dx(), b.get_dy());
-        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getSpeed() * dt)));
+    //bullets follow and fly towards enemies
+    public void homingAbility(float dt, Enemy e, Bullet b) {
 
+//        b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
+//
+        //        b.set_dx(MathUtils.cos(b.getRadians()))
+        //        b.set_dy(MathUtils.sin(b.getRadians()));
+        //        b.set_Velocity(b.get_dx(), b.get_dy());
+        //        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getSpeed() * dt)));
+
+    }
+
+    //just move your bullet
+    public void move(float dt, Bullet b) {
+//        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getSpeed() * dt)));
+        System.out.println(" RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+//        System.out.println((b.getPosition().add(b.getVelocity()).toString()));
+        b.setPosition(b.getPosition().add(b.getVelocity().scl( 60 * dt)));
     }
 }

@@ -423,6 +423,7 @@ public class GameObject {
     float speed;
     Vector2 position;
     Vector2 velocity;
+    Vector2 previousVelocity;
     //------------------------------
     //ATTRIBUTES
     Texture texture;
