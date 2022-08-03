@@ -168,8 +168,8 @@ public class hack_and_slash extends ApplicationAdapter {
         ui_view.updatePlayerHealthBar(healthBarBatch, player, followCam);
         player.getSpriteBatch().setProjectionMatrix(followCam.combined);
 
-        followCam.position.x = player.getPosition().x;
-        followCam.position.y = player.getPosition().y;
+//        followCam.position.x = player.getPosition().x;
+//        followCam.position.y = player.getPosition().y;
         playerView.draw_player(player.getSpriteBatch(), player);
         player_controller.move(deltaTime);
 
@@ -245,7 +245,7 @@ public class hack_and_slash extends ApplicationAdapter {
         enemies.removeAll(enemiesToRemove);
         player_controller.getBullets().removeAll(bulletsToRemove);
 
-        followCam.update();
+//        followCam.update();
     }
 
 }
