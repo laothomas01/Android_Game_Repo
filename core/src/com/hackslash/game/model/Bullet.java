@@ -12,6 +12,9 @@ import org.graalvm.compiler.loop.MathUtil;
 public class Bullet extends GameObject {
 
 
+    float lifeSpan;
+    float maxLifeSpan;
+
     public Bullet(float x_pos, float y_pos, int s, float r, float x_dir, float y_dir, Vector2 v) {
         x = x_pos;
         y = y_pos;
@@ -25,8 +28,18 @@ public class Bullet extends GameObject {
         velocity = v;
         dx = x_dir;
         dy = y_dir;
+        maxLifeSpan = 2;
+        lifeSpan = maxLifeSpan;
         object = OBJECT_TYPE.BULLET;
         spriteBatch = new SpriteBatch();
 
+    }
+
+    public float getLifeSpan() {
+        return lifeSpan;
+    }
+
+    public void setLifeSpan(float span) {
+        lifeSpan = span;
     }
 }

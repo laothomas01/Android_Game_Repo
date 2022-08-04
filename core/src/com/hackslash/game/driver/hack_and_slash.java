@@ -36,6 +36,8 @@ import java.util.ArrayList;
  *
  * */
 public class hack_and_slash extends ApplicationAdapter {
+    String TAG1 = "BULLETS";
+    String TAG2 = "BULLET";
     SpriteBatch healthBarBatch;
     OrthographicCamera followCam;
     PlayerView playerView;
@@ -211,19 +213,37 @@ public class hack_and_slash extends ApplicationAdapter {
             return;
         }
 
+        Gdx.app.log(TAG2, "BULLETS:" + player_controller.getBullets().toString());
+//        System.out.println("BULLETS:" + player_controller.getBullets().toString());
 
         for (Bullet b : player_controller.getBullets()) {
-//            System.out.println(" RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+            Gdx.app.log(TAG1, "BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+//            System.out.println("BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
 
             //set bullet object into focus of camera
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
-//            System.out.println("BULLET:" + b.hashCode() + "VELOCITY:" + b.getVelocity().toString());
-//            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
-//                b.setSpeed(0f);
-//                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
-//                enemiesToRemove.add(currentSeenEnemy);
-//                bulletsToRemove.add(b);
-//            }
+
+            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
+                b.setSpeed(0f);
+                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
+                enemiesToRemove.add(currentSeenEnemy);
+                bulletsToRemove.add(b);
+            }
+            for (Enemy e : enemies) {
+                if (bullet_controller.hasCollided(b, e)) {
+                    b.setSpeed(0);
+                    enemiesToRemove.add(e);
+                    bulletsToRemove.add(b);
+                }
+            }
+            if (b.getLifeSpan() <= 0) {
+                b.setSpeed(0);
+                bulletsToRemove.add(b);
+            } else {
+                b.setLifeSpan(b.getLifeSpan() - deltaTime);
+            }
+
+
 //            //in case the targeted enemy isnt hit, hit another object and remove
 //            for (Enemy e : enemies) {
 //                if (bullet_controller.hasCollided(b, e)) {
@@ -234,7 +254,6 @@ public class hack_and_slash extends ApplicationAdapter {
 //
 //            }
 
-//            System.out.println("BULLET:" + b.hashCode() + "DIRECTION:" + b.getVelocity().toString());
             bulletView.draw_bullets(b.getSpriteBatch(), b);
             bullet_controller.move(deltaTime, b);
 //            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);

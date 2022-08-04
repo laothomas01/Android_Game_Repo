@@ -38,8 +38,8 @@ public class BulletController extends GameObjectController {
     //just move your bullet
     public void move(float dt, Bullet b) {
 //        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getSpeed() * dt)));
-        System.out.println(" RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
 //        System.out.println((b.getPosition().add(b.getVelocity()).toString()));
-        b.setPosition(b.getPosition().add(b.getVelocity().scl( 60 * dt)));
+//        b.setPosition(b.getPosition().add(b.getVelocity()).add(b.getSpeed() * dt, b.getSpeed() * dt));
+
     }
 }

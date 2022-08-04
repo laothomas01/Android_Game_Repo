@@ -39,7 +39,16 @@ public class PlayerController extends GameObjectController {
     ArrayList<Bullet> bullets;
     int max_bullets = 1;
 
+    float radians;
+    float dx;
+    float dy;
+    Vector2 velocity;
+
     public PlayerController(Player p, UserInterfaceView j) {
+        radians = 0;
+        dx = 0;
+        dy = 0;
+        velocity = new Vector2(dx, dy);
         player = p;
         joyStick = j;
         seen = new LinkedList<>();
@@ -76,12 +85,12 @@ public class PlayerController extends GameObjectController {
             if (bullets.size() < max_bullets) {
                 System.out.println("ENEMY POSITION:" + e.getPosition());
 //                System.out.println("RADIANS:" + MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
-                float radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
-                float dx = MathUtils.cos(radians);
-                float dy = MathUtils.sin(radians);
+                radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
+                System.out.println("RADIANS:" + radians);
+                dx = MathUtils.cos(radians);
+                dy = MathUtils.sin(radians);
                 Vector2 velocity = new Vector2(dx, dy);
-                bullets.add(new Bullet(0, 0, 10, radians, dx, dy, velocity));
-
+                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, radians, dx, dy, velocity));
 //                bullets.add(new Bullet(player.getPosition().x,
 //
 //                        player.getPosition().y,
