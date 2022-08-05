@@ -39,16 +39,17 @@ public class PlayerController extends GameObjectController {
     ArrayList<Bullet> bullets;
     int max_bullets = 1;
 
-    float radians;
-    float dx;
-    float dy;
-    Vector2 velocity;
+    //    float radians;
+    float shoot_dx;
+    float shoot_dy;
+
+    Vector2 shootVelocity;
 
     public PlayerController(Player p, UserInterfaceView j) {
-        radians = 0;
-        dx = 0;
-        dy = 0;
-        velocity = new Vector2(dx, dy);
+//        radians = 0;
+        shoot_dx = 0;
+        shoot_dy = 0;
+        shootVelocity = new Vector2(shoot_dx, shoot_dy);
         player = p;
         joyStick = j;
         seen = new LinkedList<>();
@@ -67,6 +68,7 @@ public class PlayerController extends GameObjectController {
         if (Vector2.dst(player.getPosition().x, player.getPosition().y, e.getPosition().x, e.getPosition().y) < detectionRange) {
             return true;
         }
+
         return false;
     }
 
@@ -79,18 +81,25 @@ public class PlayerController extends GameObjectController {
 
     public void shoot(float dt, Enemy e) {
 
+        player.setRadians(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
+        shoot_dx = MathUtils.cos(player.getRadians());
+        shoot_dy = MathUtils.sin(player.getRadians());
+        shootVelocity = new Vector2(shoot_dx, shoot_dy);
+//        System.out.println("RADIANS:" + player.getRadians() + " VELOCITY:" + shootVelocity.toString());
+
 
         if (current_cooldown <= 0) {
 
             if (bullets.size() < max_bullets) {
-                System.out.println("ENEMY POSITION:" + e.getPosition());
+                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, shoot_dx, shoot_dy, shootVelocity));
+//                System.out.println("ENEMY POSITION:" + e.getPosition());
 //                System.out.println("RADIANS:" + MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
-                radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
-                System.out.println("RADIANS:" + radians);
-                dx = MathUtils.cos(radians);
-                dy = MathUtils.sin(radians);
-                Vector2 velocity = new Vector2(dx, dy);
-                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, radians, dx, dy, velocity));
+//                radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
+//                System.out.println("RADIANS:" + radians);
+//                dx = MathUtils.cos(radians);
+//                dy = MathUtils.sin(radians);
+//                Vector2 velocity = new Vector2(dx, dy);
+//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, radians, dx, dy, velocity));
 //                bullets.add(new Bullet(player.getPosition().x,
 //
 //                        player.getPosition().y,

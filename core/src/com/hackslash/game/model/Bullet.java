@@ -15,11 +15,11 @@ public class Bullet extends GameObject {
     float lifeSpan;
     float maxLifeSpan;
 
-    public Bullet(float x_pos, float y_pos, int s, float r, float x_dir, float y_dir, Vector2 v) {
+    public Bullet(float x_pos, float y_pos, int s, float x_dir, float y_dir, Vector2 v) {
         x = x_pos;
         y = y_pos;
         size = s;
-        radians = r;
+//        radians = r;
         speed = 500f;
         damage = 1f;
         texture = new Texture(Gdx.files.internal("circle.png"));
@@ -33,6 +33,10 @@ public class Bullet extends GameObject {
         object = OBJECT_TYPE.BULLET;
         spriteBatch = new SpriteBatch();
 
+    }
+
+    public String toString() {
+        return "BULLET:" + this.hashCode() + "POSITION:" + this.getPosition().toString() + "VELOCITY:" + this.getVelocity().toString();
     }
 
     public float getLifeSpan() {

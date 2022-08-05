@@ -88,58 +88,58 @@ public class hack_and_slash extends ApplicationAdapter {
 
         e1 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
         e2 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e3 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e4 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e5 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e6 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e7 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e8 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-
-        e9 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-        e10 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e11 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e12 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e13 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-        e14 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e15 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e16 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e16 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e17 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e18 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e19 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-
-        e20 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e21 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e22 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e23 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-        e24 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 100), 100f, 1, 30, 1);
+//        e3 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e4 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e5 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e6 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e7 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e8 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//
+//        e9 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
+//        e10 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e11 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e12 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e13 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
+//        e14 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e15 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e16 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e16 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e17 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e18 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e19 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//
+//        e20 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e21 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e22 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e23 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e24 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 100), 100f, 1, 30, 1);
 
         enemies = new ArrayList<>();
         enemies.add(e1);
-        enemies.add(e2);
-        enemies.add(e3);
-        enemies.add(e4);
-        enemies.add(e5);
-        enemies.add(e6);
-        enemies.add(e7);
-        enemies.add(e8);
-        enemies.add(e9);
-        enemies.add(e10);
-        enemies.add(e11);
-        enemies.add(e12);
-        enemies.add(e13);
-        enemies.add(e14);
-        enemies.add(e15);
-        enemies.add(e16);
-        enemies.add(e17);
-        enemies.add(e17);
-        enemies.add(e18);
-        enemies.add(e19);
-        enemies.add(e20);
-        enemies.add(e21);
-        enemies.add(e22);
-        enemies.add(e23);
-        enemies.add(e24);
+//        enemies.add(e2);
+//        enemies.add(e3);
+//        enemies.add(e4);
+//        enemies.add(e5);
+//        enemies.add(e6);
+//        enemies.add(e7);
+//        enemies.add(e8);
+//        enemies.add(e9);
+//        enemies.add(e10);
+//        enemies.add(e11);
+//        enemies.add(e12);
+//        enemies.add(e13);
+//        enemies.add(e14);
+//        enemies.add(e15);
+//        enemies.add(e16);
+//        enemies.add(e17);
+//        enemies.add(e17);
+//        enemies.add(e18);
+//        enemies.add(e19);
+//        enemies.add(e20);
+//        enemies.add(e21);
+//        enemies.add(e22);
+//        enemies.add(e23);
+//        enemies.add(e24);
 
         enemyView = new EnemyView();
         playerView = new PlayerView();
@@ -213,51 +213,68 @@ public class hack_and_slash extends ApplicationAdapter {
             return;
         }
 
-        Gdx.app.log(TAG2, "BULLETS:" + player_controller.getBullets().toString());
-//        System.out.println("BULLETS:" + player_controller.getBullets().toString());
 
         for (Bullet b : player_controller.getBullets()) {
-            Gdx.app.log(TAG1, "BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
-//            System.out.println("BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
-
-            //set bullet object into focus of camera
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
-
             if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
                 b.setSpeed(0f);
-                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
-                enemiesToRemove.add(currentSeenEnemy);
                 bulletsToRemove.add(b);
             }
-            for (Enemy e : enemies) {
-                if (bullet_controller.hasCollided(b, e)) {
-                    b.setSpeed(0);
-                    enemiesToRemove.add(e);
-                    bulletsToRemove.add(b);
-                }
-            }
             if (b.getLifeSpan() <= 0) {
-                b.setSpeed(0);
                 bulletsToRemove.add(b);
             } else {
                 b.setLifeSpan(b.getLifeSpan() - deltaTime);
             }
+            bullet_controller.move(deltaTime, b);
+            bulletView.draw_bullets(b.getSpriteBatch(), b);
+            System.out.println(b.toString());
+        }
 
+//        Gdx.app.log(TAG2, "BULLETS:" + player_controller.getBullets().toString());
+//        System.out.println("BULLETS:" + player_controller.getBullets().toString());
 
-//            //in case the targeted enemy isnt hit, hit another object and remove
+//        for (Bullet b : player_controller.getBullets()) {
+//            Gdx.app.log(TAG1, "BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+////            System.out.println("BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
+//
+//            //set bullet object into focus of camera
+//            b.getSpriteBatch().setProjectionMatrix(followCam.combined);
+//
+//            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
+//                b.setSpeed(0f);
+//                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
+//                enemiesToRemove.add(currentSeenEnemy);
+//                bulletsToRemove.add(b);
+//            }
 //            for (Enemy e : enemies) {
 //                if (bullet_controller.hasCollided(b, e)) {
-//                    b.setSpeed(0f);
+//                    b.setSpeed(0);
 //                    enemiesToRemove.add(e);
 //                    bulletsToRemove.add(b);
 //                }
-//
 //            }
-
-            bulletView.draw_bullets(b.getSpriteBatch(), b);
-            bullet_controller.move(deltaTime, b);
-//            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
-        }
+//            if (b.getLifeSpan() <= 0) {
+//                b.setSpeed(0);
+//                bulletsToRemove.add(b);
+//            } else {
+//                b.setLifeSpan(b.getLifeSpan() - deltaTime);
+//            }
+//
+//
+////            //in case the targeted enemy isnt hit, hit another object and remove
+////            for (Enemy e : enemies) {
+////                if (bullet_controller.hasCollided(b, e)) {
+////                    b.setSpeed(0f);
+////                    enemiesToRemove.add(e);
+////                    bulletsToRemove.add(b);
+////                }
+////
+////            }
+//
+//            bulletView.draw_bullets(b.getSpriteBatch(), b);
+//            bullet_controller.move(deltaTime, b);
+////            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
+//        }
 
 
         enemies.removeAll(enemiesToRemove);

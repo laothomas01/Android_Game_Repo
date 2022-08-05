@@ -23,6 +23,7 @@ public class Player extends GameObject {
         velocity = new Vector2(0, 0);
         dx = 0;
         dy = 0;
+        radians = 0;
         object = OBJECT_TYPE.PLAYER;
     }
 }
