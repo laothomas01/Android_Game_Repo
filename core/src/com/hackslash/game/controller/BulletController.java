@@ -1,6 +1,7 @@
 package com.hackslash.game.controller;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.model.Bullet;
 import com.hackslash.game.model.Enemy;
 
@@ -40,7 +41,12 @@ public class BulletController extends GameObjectController {
 
 //        b.setPosition(b.getPosition().add(b.getVelocity().scl(b.getSpeed() * dt)));
 //        System.out.println((b.getPosition().add(b.getVelocity()).toString()));
-        b.setPosition(b.getPosition().add(b.getVelocity()));
+        b.set_Velocity(b.get_dx() * b.getSpeed() * dt, b.get_dy() * b.getSpeed() * dt);
+        b.setPosition(
+                b.getPosition().add(
+                        b.getVelocity()
+                )
+        );
 
     }
 }

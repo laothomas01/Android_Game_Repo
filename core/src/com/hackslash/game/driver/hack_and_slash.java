@@ -216,18 +216,23 @@ public class hack_and_slash extends ApplicationAdapter {
 
         for (Bullet b : player_controller.getBullets()) {
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
-            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
-                b.setSpeed(0f);
-                bulletsToRemove.add(b);
-            }
+//            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
+//                b.setSpeed(0f);
+//                bulletsToRemove.add(b);
+//            }
+
+            bullet_controller.move(deltaTime, b);
+            bulletView.draw_bullets(b.getSpriteBatch(), b);
+//            System.out.println(b.toString());
+        }
+
+
+        for (Bullet b : player_controller.getBullets()) {
             if (b.getLifeSpan() <= 0) {
                 bulletsToRemove.add(b);
             } else {
                 b.setLifeSpan(b.getLifeSpan() - deltaTime);
             }
-            bullet_controller.move(deltaTime, b);
-            bulletView.draw_bullets(b.getSpriteBatch(), b);
-            System.out.println(b.toString());
         }
 
 //        Gdx.app.log(TAG2, "BULLETS:" + player_controller.getBullets().toString());

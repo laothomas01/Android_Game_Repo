@@ -28,7 +28,7 @@ public class Bullet extends GameObject {
         velocity = v;
         dx = x_dir;
         dy = y_dir;
-        maxLifeSpan = 2;
+        maxLifeSpan = 5;
         lifeSpan = maxLifeSpan;
         object = OBJECT_TYPE.BULLET;
         spriteBatch = new SpriteBatch();
