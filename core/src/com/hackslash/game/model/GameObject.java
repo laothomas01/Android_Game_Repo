@@ -611,6 +611,15 @@ public class GameObject {
 
     }
 
+    public void takeDamage(GameObject obj) {
+        if (this.getHealth() <= 0) {
+            this.setHealth(0);
+        } else {
+            this.setHealth(this.getHealth() - obj.getDamage());
+        }
+
+    }
+
 
 }
 

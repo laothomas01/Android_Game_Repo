@@ -165,6 +165,10 @@ public class GameObjectController {
 ////
 ////    }
 
+    /**
+     * for any updates that can occur for all object
+     * ex: taking damage, collision, etc....
+     */
     public GameObjectController() {
 
     }

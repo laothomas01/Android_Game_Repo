@@ -46,7 +46,6 @@ public class PlayerController extends GameObjectController {
     Vector2 shootVelocity;
 
     public PlayerController(Player p, UserInterfaceView j) {
-//        radians = 0;
         shoot_dx = 0;
         shoot_dy = 0;
         shootVelocity = new Vector2(shoot_dx, shoot_dy);
@@ -81,42 +80,15 @@ public class PlayerController extends GameObjectController {
 
     public void shoot(float dt, Enemy e) {
 
+        //before shooting, calculate angles and velocity of bullet trajectory
         player.setRadians(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
         shoot_dx = MathUtils.cos(player.getRadians());
         shoot_dy = MathUtils.sin(player.getRadians());
         shootVelocity = new Vector2(shoot_dx, shoot_dy);
-//        System.out.println("RADIANS:" + player.getRadians() + " VELOCITY:" + shootVelocity.toString());
-
-
         if (current_cooldown <= 0) {
 
             if (bullets.size() < max_bullets) {
                 bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, shoot_dx, shoot_dy, shootVelocity));
-//                System.out.println("ENEMY POSITION:" + e.getPosition());
-//                System.out.println("RADIANS:" + MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
-//                radians = MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x);
-//                System.out.println("RADIANS:" + radians);
-//                dx = MathUtils.cos(radians);
-//                dy = MathUtils.sin(radians);
-//                Vector2 velocity = new Vector2(dx, dy);
-//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10, radians, dx, dy, velocity));
-//                bullets.add(new Bullet(player.getPosition().x,
-//
-//                        player.getPosition().y,
-//                        10,
-//                        MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x),
-//                        MathUtils.cos(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)),
-//                        MathUtils.sin(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)),
-//                        new Vector2(MathUtils.cos(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)), MathUtils.sin(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x)))
-//                ));
-//                bullets.add(new Bullet(player.getPosition().x,player.getPosition().y,10,MathUtils.atan2(e.getPosition().y - player.getPosition().y,e.getPosition().x - player.getPosition().x)));
-//                Bullet b = new Bullet(player.getPosition().x, player.getPosition().y, 10);
-//                b.setRadians(MathUtils.atan2(e.getPosition().y - b.getPosition().y, e.getPosition().x - b.getPosition().x));
-//                b.set_dx(MathUtils.cos(b.getRadians()));
-//                b.set_dy(MathUtils.sin(b.getRadians()));
-//                b.set_Velocity(b.get_dx(), b.get_dy());
-//                bullets.add(b);
-//                bullets.add(new Bullet(player.getPosition().x, player.getPosition().y, 10));
             }
             current_cooldown = max_cooldown;
         } else {
@@ -132,17 +104,19 @@ public class PlayerController extends GameObjectController {
         return bullets;
     }
 
-    public float getCurrent_cooldown() {
+    public float getCurrentCooldown() {
         return current_cooldown;
     }
 
-    public void takeDamage(GameObject e) {
-        if (player.getHealth() <= 0) {
-            player.setHealth(0);
-        } else {
-            player.setHealth(player.getHealth() - e.getDamage());
-        }
-    }
+
+    //this should be a reusable function for all objects with health
+//    public void takeDamage(GameObject e) {
+//        if (player.getHealth() <= 0) {
+//            player.setHealth(0);
+//        } else {
+//            player.setHealth(player.getHealth() - e.getDamage());
+//        }
+//    }
 
 
 }

@@ -49,29 +49,29 @@ public class hack_and_slash extends ApplicationAdapter {
     BulletController bullet_controller;
     Player player;
     Enemy e1;
-    Enemy e2;
-    Enemy e3;
-    Enemy e4;
-    Enemy e5;
-    Enemy e6;
-    Enemy e7;
-    Enemy e8;
-    Enemy e9;
-    Enemy e10;
-    Enemy e11;
-    Enemy e12;
-    Enemy e13;
-    Enemy e14;
-    Enemy e15;
-    Enemy e16;
-    Enemy e17;
-    Enemy e18;
-    Enemy e19;
-    Enemy e20;
-    Enemy e21;
-    Enemy e22;
-    Enemy e23;
-    Enemy e24;
+    //    Enemy e2;
+//    Enemy e3;
+//    Enemy e4;
+//    Enemy e5;
+//    Enemy e6;
+//    Enemy e7;
+//    Enemy e8;
+//    Enemy e9;
+//    Enemy e10;
+//    Enemy e11;
+//    Enemy e12;
+//    Enemy e13;
+//    Enemy e14;
+//    Enemy e15;
+//    Enemy e16;
+//    Enemy e17;
+//    Enemy e18;
+//    Enemy e19;
+//    Enemy e20;
+//    Enemy e21;
+//    Enemy e22;
+//    Enemy e23;
+//    Enemy e24;
     ArrayList<Enemy> enemies;
     ArrayList<Enemy> enemiesToRemove;
     ArrayList<Bullet> bulletsToRemove;
@@ -87,7 +87,7 @@ public class hack_and_slash extends ApplicationAdapter {
         player = new Player();
 
         e1 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-        e2 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
+//        e2 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
 //        e3 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
 //        e4 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
 //        e5 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
@@ -177,7 +177,17 @@ public class hack_and_slash extends ApplicationAdapter {
             if (player_controller.detectEnemy(e)) {
                 player_controller.storeSeenEnemy(e);
             }
+            if (player.hasCollided(player, e)) {
+                player.takeDamage(e);
+            }
+
+
+//            if (player_controller.hasCollided(player, e)) {
+//                player.takeDamage(e);
+//            }
         }
+
+
         Enemy currentSeenEnemy = player_controller.get_Seen_Enemies().peek();
         //testing purposes
 
@@ -216,6 +226,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
         for (Bullet b : player_controller.getBullets()) {
             b.getSpriteBatch().setProjectionMatrix(followCam.combined);
+
+            //bullet collision
 //            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
 //                b.setSpeed(0f);
 //                bulletsToRemove.add(b);
@@ -223,7 +235,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
             bullet_controller.move(deltaTime, b);
             bulletView.draw_bullets(b.getSpriteBatch(), b);
-//            System.out.println(b.toString());
         }
 
 
@@ -235,55 +246,10 @@ public class hack_and_slash extends ApplicationAdapter {
             }
         }
 
-//        Gdx.app.log(TAG2, "BULLETS:" + player_controller.getBullets().toString());
-//        System.out.println("BULLETS:" + player_controller.getBullets().toString());
-
-//        for (Bullet b : player_controller.getBullets()) {
-//            Gdx.app.log(TAG1, "BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
-////            System.out.println("BULLET:" + b.hashCode() + " RADIANS: " + b.getRadians() + " DX: " + b.getDx() + " DY: " + b.getDy() + " VELOCITY: " + b.getVelocity().toString());
-//
-//            //set bullet object into focus of camera
-//            b.getSpriteBatch().setProjectionMatrix(followCam.combined);
-//
-//            if (bullet_controller.hasCollided(b, currentSeenEnemy)) {
-//                b.setSpeed(0f);
-//                player_controller.get_Seen_Enemies().remove(currentSeenEnemy);
-//                enemiesToRemove.add(currentSeenEnemy);
-//                bulletsToRemove.add(b);
-//            }
-//            for (Enemy e : enemies) {
-//                if (bullet_controller.hasCollided(b, e)) {
-//                    b.setSpeed(0);
-//                    enemiesToRemove.add(e);
-//                    bulletsToRemove.add(b);
-//                }
-//            }
-//            if (b.getLifeSpan() <= 0) {
-//                b.setSpeed(0);
-//                bulletsToRemove.add(b);
-//            } else {
-//                b.setLifeSpan(b.getLifeSpan() - deltaTime);
-//            }
-//
-//
-////            //in case the targeted enemy isnt hit, hit another object and remove
-////            for (Enemy e : enemies) {
-////                if (bullet_controller.hasCollided(b, e)) {
-////                    b.setSpeed(0f);
-////                    enemiesToRemove.add(e);
-////                    bulletsToRemove.add(b);
-////                }
-////
-////            }
-//
-//            bulletView.draw_bullets(b.getSpriteBatch(), b);
-//            bullet_controller.move(deltaTime, b);
-////            bullet_controller.moveTowardEnemy(deltaTime, currentSeenEnemy, b);
-//        }
-
 
         enemies.removeAll(enemiesToRemove);
         player_controller.getBullets().removeAll(bulletsToRemove);
+
 
 //        followCam.update();
     }

@@ -135,7 +135,6 @@ public class UserInterfaceView extends GameObjectView {
     public void updatePlayerHealthBar(Batch batch, Player player, OrthographicCamera cam) {
 
         //pass in a spritebatch for the health bar and project that batch object onto the follow camera's position.
-
         batch.begin();
         batch.setColor(clr);
         batch.setProjectionMatrix(cam.combined);

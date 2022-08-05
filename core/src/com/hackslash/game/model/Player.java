@@ -11,7 +11,7 @@ public class Player extends GameObject {
     public Player() {
         x = 0;
         y = 0;
-        maxHealth = 25f;
+        maxHealth = 100f;
         size = 25;
         speed = 500;
         damage = 1;

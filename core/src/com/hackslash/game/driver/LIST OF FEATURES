@@ -1,6 +1,8 @@
 TODOlist:
 [] implement following camera
 
+optimizations:
+[] use built in framework datastructures instead of java's.
 game objects:
 [] exp drops
 [] item drops
@@ -51,6 +53,7 @@ Future refactor thoughts:
 [] object collision function should be part of object controller class, not object model.
 
 Thoughts of things to add:
+[] bouncy collision
 [] add procedurally generated walls/buildings/whatever later on
 [] theme: zombie, mutant, sci fi horror?
 [] detection radius = source of light?
@@ -64,8 +67,8 @@ Thoughts of things to add:
 [] sprite generator: what is needed to compose a sprite?
 [] CI/CD automated testing!
 [] procedurally generated enemy behavior
-
-
+[] run test cases for player movement so i dont have to play with the joystick
+[] build a simple skill tree.
 
 
 
