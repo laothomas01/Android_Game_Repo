@@ -24,17 +24,19 @@ import java.util.ArrayList;
 /***
  *
  *
- *     Vector2 testPosition2;
- *     Sprite testSprite2;
- *     Texture img2;
+ *     float deltaTime;
+ *     Vector2 rotatingObjectPosition;
+ *     Sprite rotatingSprite;
+ *     Texture rotatingSpriteImg; // spin object
  *     SpriteBatch batch;
  *
  *     public void create() {
- *         img2 = new Texture("circle.png");
- *         testSprite2 = new Sprite(img2);
- *         testPosition = new Vector2(center.x + 100, center.y + 100);
- *         testSprite.scale(1f);
- *         testSprite2.scale(1f);
+ *         //spin object
+ *         deltaTime = 0;
+ *         rotatingSpriteImg = new Texture("square.png");
+ *         rotatingSprite = new Sprite(rotatingSpriteImg); // player sprite
+ *         rotatingObjectPosition = new Vector2(center.x + 100, center.y + 100);
+ *         rotatingSprite.scale(1f);
  *         batch = new SpriteBatch();
  *     }
  *
@@ -45,18 +47,18 @@ import java.util.ArrayList;
  *
  *         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
  *         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
- *
- *         testSprite.setPosition(testPosition.x, testPosition.y);
- *         testSprite2.setPosition(testPosition2.x, testPosition2.y);
+ *         rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+ *         playerSprite.setPosition(playerPosition.x, playerPosition.y);
  *         batch.begin();
- *         testSprite2.draw(batch);
- *         testSprite.draw(batch);
+ *         rotatingSprite.draw(batch);
  *         batch.end();
  *
- *         testPosition.set(testPosition.rotateAroundDeg(testPosition2, 270 * deltaTime));
- *         testPosition2.set(testPosition2.x + 100 * deltaTime, testPosition2.y + 100 * deltaTime);
- *     }
+ *         rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(playerPosition, 270 * deltaTime));
  *
+ *         playerPosition.set(playerPosition.x + 100 * deltaTime, playerPosition.y + 100 * deltaTime);
+ *
+ *
+ *     }
  *
  */
 
@@ -81,10 +83,10 @@ import java.util.ArrayList;
  * */
 public class hack_and_slash extends ApplicationAdapter {
 
-    Vector2 testPosition2;
-    Sprite testSprite2;
-    Texture img2;
-    SpriteBatch batch;
+    Vector2 rotatingObjectPosition;
+    Sprite rotatingSprite;
+    Texture rotatingSpriteImg; // spin object
+    SpriteBatch rotatingBatch;
 
 
     String TAG1 = "BULLETS";
@@ -131,6 +133,8 @@ public class hack_and_slash extends ApplicationAdapter {
     float currentFindNextEnemyTimer;
 
     public void create() {
+
+
         maxFindNextEnemyTimer = 5f;
         float currentFindNextEnemyTimer = maxFindNextEnemyTimer;
         healthBarBatch = new SpriteBatch();
@@ -204,11 +208,11 @@ public class hack_and_slash extends ApplicationAdapter {
         bulletsToRemove = new ArrayList<>();
         enemiesToRemove = new ArrayList<>();
 
-        batch = new SpriteBatch();
-        img2 = new Texture("circle.png");
-        testSprite2 = new Sprite(img2);
-        testSprite2.scale(1f);
-        testPosition2 = new Vector2(player.getPosition().add(100, 100));
+
+        rotatingSpriteImg = new Texture("circle.png");
+        rotatingBatch = new SpriteBatch();
+        rotatingSprite = new Sprite(rotatingSpriteImg);
+        rotatingObjectPosition = new Vector2(player.getPosition().x + 100, player.getPosition().y + 100);
 
     }
 
@@ -227,13 +231,12 @@ public class hack_and_slash extends ApplicationAdapter {
 //        followCam.position.y = player.getPosition().y;
         playerView.draw_player(player.getSpriteBatch(), player);
         player_controller.move(deltaTime);
-
-        batch.begin();
-        testSprite2.draw(batch);
-        batch.setProjectionMatrix(followCam.combined);
-        batch.end();
-
-        testSprite2.setPosition(testPosition2.x, testPosition2.y);
+        player.getSpriteBatch().begin();
+        rotatingSprite.draw(player.getSpriteBatch());
+        player.getSpriteBatch().end();
+        rotatingBatch.setProjectionMatrix(followCam.combined);
+        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
 
 
         for (Enemy e : enemies) {
