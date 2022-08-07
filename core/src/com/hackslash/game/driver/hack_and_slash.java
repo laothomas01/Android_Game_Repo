@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.controller.BulletController;
@@ -83,14 +84,13 @@ import java.util.ArrayList;
  * */
 public class hack_and_slash extends ApplicationAdapter {
 
+    Affine2 af;
     Vector2 rotatingObjectPosition;
     Sprite rotatingSprite;
     Texture rotatingSpriteImg; // spin object
     SpriteBatch rotatingBatch;
 
 
-    String TAG1 = "BULLETS";
-    String TAG2 = "BULLET";
     SpriteBatch healthBarBatch;
     OrthographicCamera followCam;
     PlayerView playerView;
@@ -102,29 +102,6 @@ public class hack_and_slash extends ApplicationAdapter {
     BulletController bullet_controller;
     Player player;
     Enemy e1;
-    //    Enemy e2;
-//    Enemy e3;
-//    Enemy e4;
-//    Enemy e5;
-//    Enemy e6;
-//    Enemy e7;
-//    Enemy e8;
-//    Enemy e9;
-//    Enemy e10;
-//    Enemy e11;
-//    Enemy e12;
-//    Enemy e13;
-//    Enemy e14;
-//    Enemy e15;
-//    Enemy e16;
-//    Enemy e17;
-//    Enemy e18;
-//    Enemy e19;
-//    Enemy e20;
-//    Enemy e21;
-//    Enemy e22;
-//    Enemy e23;
-//    Enemy e24;
     ArrayList<Enemy> enemies;
     ArrayList<Enemy> enemiesToRemove;
     ArrayList<Bullet> bulletsToRemove;
@@ -134,7 +111,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
 
-
+        af = new Affine2();
         maxFindNextEnemyTimer = 5f;
         float currentFindNextEnemyTimer = maxFindNextEnemyTimer;
         healthBarBatch = new SpriteBatch();
@@ -142,59 +119,9 @@ public class hack_and_slash extends ApplicationAdapter {
         player = new Player();
 
         e1 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-//        e2 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e3 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e4 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e5 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e6 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e7 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e8 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//
-//        e9 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-//        e10 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e11 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e12 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e13 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 0.5f, 30, 10);
-//        e14 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e15 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e16 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e16 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e17 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e18 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e19 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//
-//        e20 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e21 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e22 = new Enemy(MathUtils.random(0, 1000) * -1, MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e23 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 1000), 100f, 1, 30, 1);
-//        e24 = new Enemy(MathUtils.random(0, 1000), MathUtils.random(0, 100), 100f, 1, 30, 1);
 
         enemies = new ArrayList<>();
         enemies.add(e1);
-//        enemies.add(e2);
-//        enemies.add(e3);
-//        enemies.add(e4);
-//        enemies.add(e5);
-//        enemies.add(e6);
-//        enemies.add(e7);
-//        enemies.add(e8);
-//        enemies.add(e9);
-//        enemies.add(e10);
-//        enemies.add(e11);
-//        enemies.add(e12);
-//        enemies.add(e13);
-//        enemies.add(e14);
-//        enemies.add(e15);
-//        enemies.add(e16);
-//        enemies.add(e17);
-//        enemies.add(e17);
-//        enemies.add(e18);
-//        enemies.add(e19);
-//        enemies.add(e20);
-//        enemies.add(e21);
-//        enemies.add(e22);
-//        enemies.add(e23);
-//        enemies.add(e24);
 
         enemyView = new EnemyView();
         playerView = new PlayerView();
@@ -213,6 +140,7 @@ public class hack_and_slash extends ApplicationAdapter {
         rotatingBatch = new SpriteBatch();
         rotatingSprite = new Sprite(rotatingSpriteImg);
         rotatingObjectPosition = new Vector2(player.getPosition().x + 100, player.getPosition().y + 100);
+        rotatingSprite.setPosition(player.getPosition().x + 100, player.getPosition().y + 100);
 
     }
 
@@ -231,12 +159,22 @@ public class hack_and_slash extends ApplicationAdapter {
 //        followCam.position.y = player.getPosition().y;
         playerView.draw_player(player.getSpriteBatch(), player);
         player_controller.move(deltaTime);
-        player.getSpriteBatch().begin();
-        rotatingSprite.draw(player.getSpriteBatch());
-        player.getSpriteBatch().end();
+        rotatingBatch.begin();
+        rotatingSprite.draw(rotatingBatch);
+        rotatingBatch.end();
+        rotatingSprite = new Sprite(rotatingSpriteImg);
         rotatingBatch.setProjectionMatrix(followCam.combined);
-        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
-        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
+////        rotatingObjectPosition.set(player.getPosition().x + 100, player.getPosition().y + 100);
+//        rotatingObjectPosition.set((rotatingObjectPosition.rotateAroundDeg(rotatingObjectPosition, 90 * deltaTime));
+//        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+
+
+//        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
+//        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+//        player.setPosition(new Vector2(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime));
+//        rotatingSprite.setPosition(player.getPosition().x + rotatingObjectPosition.x, player.getPosition().y + rotatingObjectPosition.y);
+
+//        rotatingObjectPosition = new Vector2(player.getPosition().x + 100, player.getPosition().y + 100);
 
 
         for (Enemy e : enemies) {
@@ -246,9 +184,9 @@ public class hack_and_slash extends ApplicationAdapter {
             if (player_controller.detectEnemy(e)) {
                 player_controller.storeSeenEnemy(e);
             }
-            if (player.hasCollided(player, e)) {
-                player.takeDamage(e);
-            }
+//            if (player.hasCollided(player, e)) {
+//                player.takeDamage(e);
+//            }
 //            if (player_controller.hasCollided(player, e)) {
 //                player.takeDamage(e);
 //            }
