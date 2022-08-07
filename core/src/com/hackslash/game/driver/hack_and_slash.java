@@ -99,12 +99,12 @@ public class hack_and_slash extends ApplicationAdapter {
 //    Vector2 center;
     float deltaTime;
     Vector2 center;
-    Vector2 testPosition;
-    Vector2 testPosition2;
-    Sprite testSprite;
-    Sprite testSprite2;
-    Texture img;
-    Texture img2;
+    Vector2 rotatingObjectPosition;
+    Vector2 playerPosition;
+    Sprite rotatingSprite;
+    Sprite playerSprite;
+    Texture rotatingSpriteImg; // spin object
+    Texture playerSpriteImg; // moving object
     SpriteBatch batch;
 
     public void create() {
@@ -198,15 +198,22 @@ public class hack_and_slash extends ApplicationAdapter {
 //        bulletsToRemove = new ArrayList<>();
 //        enemiesToRemove = new ArrayList<>();
         deltaTime = 0;
-        img = new Texture("square.png");
-        img2 = new Texture("circle.png");
+        //spin object
+        rotatingSpriteImg = new Texture("square.png");
+        //player object
+        playerSpriteImg = new Texture("circle.png");
+        //center of the screen
         center = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        testPosition2 = new Vector2(center.x, center.y);
-        testSprite2 = new Sprite(img2);
-        testSprite = new Sprite(img);
-        testPosition = new Vector2(center.x + 100, center.y + 100);
-        testSprite.scale(1f);
-        testSprite2.scale(1f);
+
+        playerPosition = new Vector2(center.x, center.y);
+
+        rotatingSprite = new Sprite(rotatingSpriteImg); // player sprite
+        playerSprite = new Sprite(playerSpriteImg); // moving object sprite
+
+        rotatingObjectPosition = new Vector2(center.x + 100, center.y + 100);
+
+        rotatingSprite.scale(1f);
+        playerSprite.scale(1f);
         batch = new SpriteBatch();
     }
 
@@ -217,16 +224,16 @@ public class hack_and_slash extends ApplicationAdapter {
 
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        testSprite.setPosition(testPosition.x, testPosition.y);
-        testSprite2.setPosition(testPosition2.x, testPosition2.y);
+        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+        playerSprite.setPosition(playerPosition.x, playerPosition.y);
         batch.begin();
-        testSprite2.draw(batch);
-        testSprite.draw(batch);
+        playerSprite.draw(batch);
+        rotatingSprite.draw(batch);
         batch.end();
 
-        testPosition.set(testPosition.rotateAroundDeg(testPosition2, 270 * deltaTime));
-        testPosition2.set(testPosition2.x + 100 * deltaTime, testPosition2.y + 100 * deltaTime);
+        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(playerPosition, 270 * deltaTime));
+
+        playerPosition.set(playerPosition.x + 100 * deltaTime, playerPosition.y + 100 * deltaTime);
 
 
     }
