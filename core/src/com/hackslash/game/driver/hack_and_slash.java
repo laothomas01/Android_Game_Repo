@@ -5,8 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
 import com.hackslash.game.controller.PlayerController;
@@ -16,6 +19,47 @@ import com.hackslash.game.model.Player;
 import com.hackslash.game.view.*;
 
 import java.util.ArrayList;
+
+
+/***
+ *
+ *
+ *     Vector2 testPosition2;
+ *     Sprite testSprite2;
+ *     Texture img2;
+ *     SpriteBatch batch;
+ *
+ *     public void create() {
+ *         img2 = new Texture("circle.png");
+ *         testSprite2 = new Sprite(img2);
+ *         testPosition = new Vector2(center.x + 100, center.y + 100);
+ *         testSprite.scale(1f);
+ *         testSprite2.scale(1f);
+ *         batch = new SpriteBatch();
+ *     }
+ *
+ *     public void render() {
+ *
+ *
+ *         deltaTime = Gdx.graphics.getDeltaTime();
+ *
+ *         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+ *         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+ *
+ *         testSprite.setPosition(testPosition.x, testPosition.y);
+ *         testSprite2.setPosition(testPosition2.x, testPosition2.y);
+ *         batch.begin();
+ *         testSprite2.draw(batch);
+ *         testSprite.draw(batch);
+ *         batch.end();
+ *
+ *         testPosition.set(testPosition.rotateAroundDeg(testPosition2, 270 * deltaTime));
+ *         testPosition2.set(testPosition2.x + 100 * deltaTime, testPosition2.y + 100 * deltaTime);
+ *     }
+ *
+ *
+ */
+
 
 /*
  *
@@ -36,6 +80,13 @@ import java.util.ArrayList;
  *
  * */
 public class hack_and_slash extends ApplicationAdapter {
+
+    Vector2 testPosition2;
+    Sprite testSprite2;
+    Texture img2;
+    SpriteBatch batch;
+
+
     String TAG1 = "BULLETS";
     String TAG2 = "BULLET";
     SpriteBatch healthBarBatch;
@@ -152,6 +203,13 @@ public class hack_and_slash extends ApplicationAdapter {
         bullet_controller = new BulletController();
         bulletsToRemove = new ArrayList<>();
         enemiesToRemove = new ArrayList<>();
+
+        batch = new SpriteBatch();
+        img2 = new Texture("circle.png");
+        testSprite2 = new Sprite(img2);
+        testSprite2.scale(1f);
+        testPosition2 = new Vector2(player.getPosition().add(100, 100));
+
     }
 
     public void render() {
@@ -170,6 +228,14 @@ public class hack_and_slash extends ApplicationAdapter {
         playerView.draw_player(player.getSpriteBatch(), player);
         player_controller.move(deltaTime);
 
+        batch.begin();
+        testSprite2.draw(batch);
+        batch.setProjectionMatrix(followCam.combined);
+        batch.end();
+
+        testSprite2.setPosition(testPosition2.x, testPosition2.y);
+
+
         for (Enemy e : enemies) {
             e.getSpriteBatch().setProjectionMatrix(followCam.combined);
             enemyView.draw_enemy(e.getSpriteBatch(), e);
@@ -180,8 +246,6 @@ public class hack_and_slash extends ApplicationAdapter {
             if (player.hasCollided(player, e)) {
                 player.takeDamage(e);
             }
-
-
 //            if (player_controller.hasCollided(player, e)) {
 //                player.takeDamage(e);
 //            }
@@ -189,9 +253,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         Enemy currentSeenEnemy = player_controller.get_Seen_Enemies().peek();
-        //testing purposes
-
-
         /**
          * -Enemy is default colored LIME
          *
@@ -199,6 +260,7 @@ public class hack_and_slash extends ApplicationAdapter {
          * -If you are out of range for an enemy, it's lit blue
          * -Being out of range for 5 seconds means getting rid of the currently seen enemy and deciding to attack the next enemy in the queue
          */
+
         if (currentSeenEnemy != null) {
             if (player_controller.detectEnemy(currentSeenEnemy)) {
                 currentSeenEnemy.getSpriteBatch().setColor(Color.RED);
@@ -213,7 +275,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
                     currentFindNextEnemyTimer = maxFindNextEnemyTimer;
                 } else {
-//                    System.out.println("SEEN CURRENT ENEMY TIMER:" + currentFindNextEnemyTimer);
                     currentFindNextEnemyTimer -= deltaTime;
                 }
 
