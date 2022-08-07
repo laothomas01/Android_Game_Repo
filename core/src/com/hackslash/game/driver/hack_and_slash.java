@@ -221,7 +221,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         deltaTime = Gdx.graphics.getDeltaTime();
-
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
@@ -230,9 +229,7 @@ public class hack_and_slash extends ApplicationAdapter {
         playerSprite.draw(batch);
         rotatingSprite.draw(batch);
         batch.end();
-
         rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(playerPosition, 270 * deltaTime));
-
         playerPosition.set(playerPosition.x + 100 * deltaTime, playerPosition.y + 100 * deltaTime);
 
 
