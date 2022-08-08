@@ -13,7 +13,7 @@ public class Player extends GameObject {
         y = 0;
         maxHealth = 100f;
         size = 25;
-        speed = 100;
+        speed = 500;
         damage = 1;
         health = maxHealth;
         texture = new Texture(Gdx.files.internal("square.png"));
