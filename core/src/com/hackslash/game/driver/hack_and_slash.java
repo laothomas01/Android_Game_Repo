@@ -108,10 +108,12 @@ public class hack_and_slash extends ApplicationAdapter {
     float deltaTime;
     float maxFindNextEnemyTimer;
     float currentFindNextEnemyTimer;
+    float absoluteDistanceBetweenPlayerAndRotatingProjectile;
 
     public void create() {
 
-        af = new Affine2();
+        absoluteDistanceBetweenPlayerAndRotatingProjectile = 0;
+//        af = new Affine2();
         maxFindNextEnemyTimer = 5f;
         float currentFindNextEnemyTimer = maxFindNextEnemyTimer;
         healthBarBatch = new SpriteBatch();
@@ -139,13 +141,27 @@ public class hack_and_slash extends ApplicationAdapter {
         rotatingSpriteImg = new Texture("circle.png");
         rotatingBatch = new SpriteBatch();
         rotatingSprite = new Sprite(rotatingSpriteImg);
-        rotatingObjectPosition = new Vector2(player.getPosition().x + 100, player.getPosition().y + 100);
-        rotatingSprite.setPosition(player.getPosition().x + 100, player.getPosition().y + 100);
+        //intialize a player's world coordinate position
+        rotatingObjectPosition = new Vector2(
+                player.getPosition().x + 100,
+//                player.getPosition().y + 100);
+                player.getPosition().y + 0);
+        //initialize a player's sprite position
+        rotatingSprite.setPosition(player.getPosition().x + 100,
+                player.getPosition().y + 100);
+//                player.getPosition().y + 0);
 
     }
 
     float i = 0;
 
+    /* Function operating as the first degree integral for incorporating
+    what has changed between the previous frames and current frame to be rendered
+    ie this is the integral
+
+    2 * delta_time := new information to incorporate
+    P_new = P_old + V * T_delta
+     */
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
 
@@ -160,18 +176,40 @@ public class hack_and_slash extends ApplicationAdapter {
 //        followCam.position.x = player.getPosition().x;
 //        followCam.position.y = player.getPosition().y;
         playerView.draw_player(player.getSpriteBatch(), player);
+        //update player position
         player_controller.move(deltaTime);
+
+
         rotatingBatch.begin();
         rotatingSprite.draw(rotatingBatch);
         rotatingBatch.end();
-        rotatingSprite = new Sprite(rotatingSpriteImg);
 
+        //update the rotate object's position
+        // rotating object position operates as an X,Y position container
+        rotatingObjectPosition
+                // get X,Y of project and compute change ie angular velocity wrt to origin (player) given change in time
+                .set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
+        absoluteDistanceBetweenPlayerAndRotatingProjectile = rotatingObjectPosition.dst(player.getPosition());
+        // declaration of skill parameters
+        float r = rotatingObjectPosition.dst(player.getPosition());
+//        System.out.println(" ABSOLUTE DISTANCE " + r);
+//        float RADIUS = 100;
+//        System.out.println();
+        // upkeep for skill parameters
+        //
+//        rotatingObjectPosition.set(player.getPosition().x + 100, player.getPosition().y + 100);
+
+        //update the rotating object's sprite
+        // apply update for the projectile's the new position
+        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
 //        rotatingSprite.setPosition(player.getPosition().x + 100, player.getPosition().y + 100);
 //
 //        rotatingSprite.setOriginBasedPosition(player.getPosition().x, player.getPosition().y);
 
 //        rotatingSprite.setRotation( i+= 10);
 //        rotatingSprite.setRotation(i++);
+//        rotatingSprite.setPosition(player.getPosition().x + 100, player.getPosition().y + 100);
+//        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
 
 
         rotatingBatch.setProjectionMatrix(followCam.combined);

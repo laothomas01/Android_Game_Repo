@@ -57,9 +57,11 @@ public class PlayerController extends GameObjectController {
     }
 
     public void move(float dt) {
+        //unit vector * scale * time between previous frames and current frames
         player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
         player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
         player.set_Velocity(player.getDx(), player.getDy());
+        //newPosition = oldPosition + velocity
         player.setPosition(player.getPosition().add(player.getVelocity()));
     }
 
