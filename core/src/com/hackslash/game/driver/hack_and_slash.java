@@ -144,6 +144,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
     }
 
+    float i = 0;
+
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
 
@@ -163,20 +165,16 @@ public class hack_and_slash extends ApplicationAdapter {
         rotatingSprite.draw(rotatingBatch);
         rotatingBatch.end();
         rotatingSprite = new Sprite(rotatingSpriteImg);
-        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
+
+//        rotatingSprite.setPosition(player.getPosition().x + 100, player.getPosition().y + 100);
+//
+//        rotatingSprite.setOriginBasedPosition(player.getPosition().x, player.getPosition().y);
+
+//        rotatingSprite.setRotation( i+= 10);
+//        rotatingSprite.setRotation(i++);
+
 
         rotatingBatch.setProjectionMatrix(followCam.combined);
-//        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
-
-////        rotatingObjectPosition.set(player.getPosition().x + 100, player.getPosition().y + 100);
-//        rotatingObjectPosition.set((rotatingObjectPosition.rotateAroundDeg(rotatingObjectPosition, 90 * deltaTime));
-//        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
-
-
-        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(player.getPosition(), 90 * deltaTime));
-//        player.setPosition(new Vector2(player.getPosition().x + 1 * player.getSpeed() * deltaTime, player.getPosition().y + 1 * player.getSpeed() * deltaTime));
-//        rotatingObjectPosition.set(rotatingObjectPosition.x + 1, rotatingObjectPosition.y + 1);
-
 
         for (Enemy e : enemies) {
             e.getSpriteBatch().setProjectionMatrix(followCam.combined);
