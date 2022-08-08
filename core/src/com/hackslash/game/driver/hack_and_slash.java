@@ -2,14 +2,14 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
 import com.hackslash.game.controller.PlayerController;
@@ -98,6 +98,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //    float currentFindNextEnemyTimer;
 //    Vector2 center;
     float deltaTime;
+
     Vector2 center;
     Vector2 rotatingObjectPosition;
     Vector2 playerPosition;
@@ -106,6 +107,16 @@ public class hack_and_slash extends ApplicationAdapter {
     Texture rotatingSpriteImg; // spin object
     Texture playerSpriteImg; // moving object
     SpriteBatch batch;
+    float val = 0;
+
+    float mat2[][];
+    float matRes[][];
+
+    float matCoords[][];
+    float currentX, currentY = 0;
+    float newX, newY = 0;
+    float tempX, tempY = 0;
+
 
     public void create() {
 //        center = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
@@ -197,25 +208,52 @@ public class hack_and_slash extends ApplicationAdapter {
 //        bullet_controller = new BulletController();
 //        bulletsToRemove = new ArrayList<>();
 //        enemiesToRemove = new ArrayList<>();
+
+
         deltaTime = 0;
         //spin object
         rotatingSpriteImg = new Texture("square.png");
+        rotatingSprite = new Sprite(rotatingSpriteImg);
+        rotatingSprite.setPosition(Gdx.graphics.getWidth() / 2 + 100, Gdx.graphics.getHeight() / 2 + 100);
+
         //player object
         playerSpriteImg = new Texture("circle.png");
-        //center of the screen
-        center = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        playerSprite = new Sprite(playerSpriteImg);
+        //point to rotate around
+        playerSprite.setPosition(1, 1);
 
-        playerPosition = new Vector2(center.x, center.y);
-
-        rotatingSprite = new Sprite(rotatingSpriteImg); // player sprite
-        playerSprite = new Sprite(playerSpriteImg); // moving object sprite
-
-        rotatingObjectPosition = new Vector2(center.x + 100, center.y + 100);
-
-        rotatingSprite.scale(1f);
-        playerSprite.scale(1f);
         batch = new SpriteBatch();
+
+        currentX = (rotatingSprite.getX() - playerSprite.getX());
+        currentY = (rotatingSprite.getY() - playerSprite.getY());
+
+        tempX = currentX;
+        tempY = currentY;
+        mat2 = new float[][]{
+
+                {MathUtils.cosDeg(45), -MathUtils.sinDeg(45), 0},
+                {MathUtils.sinDeg(45), MathUtils.cosDeg(45), 0},
+                {0, 0, 1}
+
+
+        };
+
+        matCoords = new float[][]{
+
+                {rotatingSprite.getX()},
+                {rotatingSprite.getY()},
+                {1}
+        };
+        matRes = new float[][];
+
     }
+
+//    int i = 0;
+//    float radians = 0;
+//    float newX = 0;
+//    float nextX = ;
+//    float newY = 0;
+//    float nextY = 0;
 
     public void render() {
 
@@ -223,14 +261,50 @@ public class hack_and_slash extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
-        playerSprite.setPosition(playerPosition.x, playerPosition.y);
         batch.begin();
         playerSprite.draw(batch);
         rotatingSprite.draw(batch);
         batch.end();
-        rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(playerPosition, 270 * deltaTime));
-        playerPosition.set(playerPosition.x + 100 * deltaTime, playerPosition.y + 100 * deltaTime);
+        rotatingSprite.setPosition(0, 0);
+
+//
+//        rotatingSprite.setPosition(
+//
+//                (rotatingSprite.getX() - Gdx.graphics.getWidth()) * MathUtils.cosDeg(90) - (rotatingSprite.getY() - Gdx.graphics.getHeight()) * MathUtils.sinDeg(90) * deltaTime,
+//                (rotatingSprite.getX() - Gdx.graphics.getWidth()) * MathUtils.sinDeg(90) + (rotatingSprite.getY() - Gdx.graphics.getHeight()) * MathUtils.cosDeg(90) * deltaTime
+//
+//        );
+
+
+//        newX = -currentY + playerSprite.getX();
+//        newY = currentX + playerSprite.getY();
+//
+//        rotatingSprite.setPosition(newX, newY);
+
+
+//        currentX = newX + playerSprite.getX();
+//        currentY = newY + playerSprite.getY();
+////        rotatingSprite.setPosition(newX, newY);
+//
+//        currentX = rotatingSprite.getX() - playerSprite.getX();
+//        currentY = rotatingSprite.getY() - playerSprite.getY();
+
+
+//        currX = rotatingSprite.getX() - playerSprite.getX();
+//        currY = rotatingSprite.getY() - playerSprite.getY();
+//
+//
+//        System.out.println(" CURR: " + currX + " : " + currY);
+//
+//        newX = -currY;
+//        newY = currX;
+//
+//        newX = newX + playerSprite.getX();
+//        newY = newY + playerSprite.getY();
+//
+//        System.out.println(" new X " + newX);
+//        System.out.println(" new Y " + newY);
+        //we will go 90 degrees counter clock wise rotation
 
 
     }
