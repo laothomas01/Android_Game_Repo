@@ -31,6 +31,7 @@ public class hack_and_slash extends ApplicationAdapter {
     float positionToRotateDx;
     float positionToRotateDy;
 
+    Vector2 positionToRotateVelocity;
     float projectilePositionDx;
     float projectilePositionDy;
 
@@ -54,12 +55,14 @@ public class hack_and_slash extends ApplicationAdapter {
     float angle;
 
     public void create() {
-        angle = 0;
-        angleA = 0.01f;
-        angleV = 0.1f;
         radius = 0;
         radians = 0;
         arcLength = 0;
+        positionToRotateDx = 0;
+        positionToRotateDy = 0;
+
+        positionToRotateVelocity = new Vector2(positionToRotateDx, positionToRotateDy);
+
         batch = new SpriteBatch();
 
 
@@ -99,10 +102,42 @@ public class hack_and_slash extends ApplicationAdapter {
         arcLength = radians * radius;
         System.out.println("    RADIANS: " + radians + "    RADIUS:  " + radius + " ARC LENGTH: " + arcLength);
 
+        positionToRotateDx = MathUtils.cos(radians);
+        positionToRotateDy = MathUtils.sin(radians);
 
-        projectilePosition.set(projectilePosition.rotateAroundDeg(positionToRotateAround, 90 * deltaTime));
-        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
-        //between some interval of time,  we are adding more angular acceleration until 60 frames are up.
+        //rotate projectile around a point
+        positionToRotateAround.set(positionToRotateAround.x + positionToRotateVelocity.x * 500 * deltaTime, positionToRotateAround.y + positionToRotateVelocity.y * 500 * deltaTime);
+        positionToRotateSprite.setPosition(positionToRotateAround.x, positionToRotateAround.y);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            positionToRotateVelocity.y = 10;
+            positionToRotateVelocity.x = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateVelocity.y = 10;
+            positionToRotateVelocity.x = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            positionToRotateVelocity.y = 10;
+            positionToRotateVelocity.x = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateVelocity.y = 10;
+            positionToRotateVelocity.x = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            positionToRotateVelocity.x = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            positionToRotateVelocity.y = 10;
+
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateVelocity.y = 10;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            positionToRotateVelocity.x = 10;
+
+        }
+//            System.out.println("UP!");
+
+//            return;
+//        }
+//        projectilePosition.set(projectilePosition.rotateAroundDeg(positionToRotateAround, 90 * deltaTime));
+//        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
 
 
     }
