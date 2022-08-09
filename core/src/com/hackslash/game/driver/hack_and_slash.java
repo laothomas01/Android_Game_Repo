@@ -22,69 +22,8 @@ import com.hackslash.game.view.*;
 import java.util.ArrayList;
 
 
-/***
- *
- *
- *     float deltaTime;
- *     Vector2 rotatingObjectPosition;
- *     Sprite rotatingSprite;
- *     Texture rotatingSpriteImg; // spin object
- *     SpriteBatch batch;
- *
- *     public void create() {
- *         //spin object
- *         deltaTime = 0;
- *         rotatingSpriteImg = new Texture("square.png");
- *         rotatingSprite = new Sprite(rotatingSpriteImg); // player sprite
- *         rotatingObjectPosition = new Vector2(center.x + 100, center.y + 100);
- *         rotatingSprite.scale(1f);
- *         batch = new SpriteBatch();
- *     }
- *
- *     public void render() {
- *
- *
- *         deltaTime = Gdx.graphics.getDeltaTime();
- *
- *         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
- *         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
- *         rotatingSprite.setPosition(rotatingObjectPosition.x, rotatingObjectPosition.y);
- *         playerSprite.setPosition(playerPosition.x, playerPosition.y);
- *         batch.begin();
- *         rotatingSprite.draw(batch);
- *         batch.end();
- *
- *         rotatingObjectPosition.set(rotatingObjectPosition.rotateAroundDeg(playerPosition, 270 * deltaTime));
- *
- *         playerPosition.set(playerPosition.x + 100 * deltaTime, playerPosition.y + 100 * deltaTime);
- *
- *
- *     }
- *
- */
-
-
-/*
- *
- * Having issues with the camera following the player.
- *
- * why?
- *
- * player has its own spritebatch
- *
- * healthbar has its own sprite batch
- *
- *
- * so how should i fix this problem?
- *
- * let's refactor how our view classes go about drawing textures. we will not batch.begin...batch.end the draw functions, but will do that in the render.
- *
- *
- *
- * */
 public class hack_and_slash extends ApplicationAdapter {
 
-    Affine2 af;
     Vector2 rotatingObjectPosition;
     Sprite rotatingSprite;
     Texture rotatingSpriteImg; // spin object
@@ -113,9 +52,8 @@ public class hack_and_slash extends ApplicationAdapter {
     public void create() {
 
         absoluteDistanceBetweenPlayerAndRotatingProjectile = 0;
-//        af = new Affine2();
         maxFindNextEnemyTimer = 5f;
-        float currentFindNextEnemyTimer = maxFindNextEnemyTimer;
+        float currentFindNextEnemyTigit mer = maxFindNextEnemyTimer;
         healthBarBatch = new SpriteBatch();
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         player = new Player();
