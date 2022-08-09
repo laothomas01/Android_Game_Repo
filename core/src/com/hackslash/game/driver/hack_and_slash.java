@@ -44,7 +44,22 @@ public class hack_and_slash extends ApplicationAdapter {
 
     SpriteBatch batch;
 
+    float radius;
+    float radians;
+
+    float arcLength;
+
+    float angleV;
+    float angleA;
+    float angle;
+
     public void create() {
+        angle = 0;
+        angleA = 0.01f;
+        angleV = 0.1f;
+        radius = 0;
+        radians = 0;
+        arcLength = 0;
         batch = new SpriteBatch();
 
 
@@ -78,6 +93,16 @@ public class hack_and_slash extends ApplicationAdapter {
         positionToRotateSprite.draw(batch);
         projectileSprite.draw(batch);
         batch.end();
+
+        radians = MathUtils.atan2(projectilePosition.y - positionToRotateAround.y, projectilePosition.x - positionToRotateAround.x);
+        radius = positionToRotateAround.dst(projectilePosition);
+        arcLength = radians * radius;
+        System.out.println("    RADIANS: " + radians + "    RADIUS:  " + radius + " ARC LENGTH: " + arcLength);
+
+
+        projectilePosition.set(projectilePosition.rotateAroundDeg(positionToRotateAround, 90 * deltaTime));
+        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
+        //between some interval of time,  we are adding more angular acceleration until 60 frames are up.
 
 
     }
