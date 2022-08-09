@@ -58,9 +58,11 @@ public class PlayerController extends GameObjectController {
 
     public void move(float dt) {
         //unit vector * scale * time between previous frames and current frames
-        player.set_dx(joyStick.get_touchpad_x_input() * player.getSpeed() * dt);
-        player.set_dy(joyStick.get_touchpad_y_input() * player.getSpeed() * dt);
-        player.set_Velocity(player.getDx(), player.getDy());
+        player.set_dx(joyStick.get_touchpad_x_input());
+//        player.set_dx(joyStick.get_touchpad_x_input());
+//        player.set_dy(joyStick.get_touchpad_y_input());
+        player.set_dy(joyStick.get_touchpad_y_input());
+        player.set_Velocity(player.getDx() * player.getSpeed() * dt, player.getDy() * player.getSpeed() * dt);
         //newPosition = oldPosition + velocity
         player.setPosition(player.getPosition().add(player.getVelocity()));
     }
@@ -82,7 +84,7 @@ public class PlayerController extends GameObjectController {
 
     public void shoot(float dt, Enemy e) {
 
-        //before shooting, calculate angles and velocity of bullet trajectory
+        //before shooting, cal culate angles and velocity of bullet trajectory
         player.setRadians(MathUtils.atan2(e.getPosition().y - player.getPosition().y, e.getPosition().x - player.getPosition().x));
         shoot_dx = MathUtils.cos(player.getRadians());
         shoot_dy = MathUtils.sin(player.getRadians());
