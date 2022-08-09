@@ -33,7 +33,6 @@ public class hack_and_slash extends ApplicationAdapter {
 
     public void create() {
         positionToRotateAround = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        
     }
 
 
