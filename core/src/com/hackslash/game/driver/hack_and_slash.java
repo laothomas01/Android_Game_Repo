@@ -25,14 +25,44 @@ public class hack_and_slash extends ApplicationAdapter {
 
     float deltaTime = 0;
     Vector2 positionToRotateAround;
+
     Vector2 projectilePosition;
-    Sprite testSprite;
-    Sprite rotatingSprite;
-    Texture pointToRotateImg;
+
+    float positionToRotateDx;
+    float positionToRotateDy;
+
+    float projectilePositionDx;
+    float projectilePositionDy;
+
+
+    Sprite projectileSprite;
+    Sprite positionToRotateSprite;
+
+
+    Texture positionToRotateImg;
     Texture projectileImg;
 
+    SpriteBatch batch;
+
     public void create() {
+        batch = new SpriteBatch();
+
+
+        positionToRotateImg = new Texture("square.png");
+        positionToRotateSprite = new Sprite(positionToRotateImg);
         positionToRotateAround = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        positionToRotateSprite.setPosition(positionToRotateAround.x, positionToRotateAround.y);
+        positionToRotateSprite.scale(1);
+        positionToRotateDx = 0;
+        positionToRotateDy = 0;
+
+        projectileImg = new Texture("circle.png");
+        projectileSprite = new Sprite(projectileImg);
+        projectilePosition = new Vector2(Gdx.graphics.getWidth() / 2 + 100, Gdx.graphics.getHeight() / 2 + 100);
+        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
+        projectileSprite.scale(1);
+        projectilePositionDx = 0;
+        projectilePositionDy = 0;
     }
 
 
@@ -42,6 +72,12 @@ public class hack_and_slash extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //draw sprites
+        batch.begin();
+        positionToRotateSprite.draw(batch);
+        projectileSprite.draw(batch);
+        batch.end();
 
 
     }
