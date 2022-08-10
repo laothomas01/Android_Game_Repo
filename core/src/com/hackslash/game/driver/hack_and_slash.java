@@ -129,19 +129,15 @@ public class hack_and_slash extends ApplicationAdapter {
             positionToRotateVelocity.x = 0;
             positionToRotateVelocity.y = 0;
         }
-        //rotate projectile around a point
+
+
+        projectilePosition.rotateAroundDeg(positionToRotateAround, 90 * deltaTime).add(positionToRotateVelocity);
+        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
+
+
         positionToRotateAround.set(positionToRotateAround.x + positionToRotateVelocity.x * 1000 * deltaTime, positionToRotateAround.y + positionToRotateVelocity.y * 1000 * deltaTime);
+
         positionToRotateSprite.setPosition(positionToRotateAround.x, positionToRotateAround.y);
-
-
-////            System.out.println("UP!");
-//
-////            return;
-////        }
-//        projectilePosition.set(projectilePosition.rotateAroundDeg(positionToRotateAround, 90 * deltaTime)).add(positionToRotateDx, positionToRotateDy);
-//        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
-
-//        projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
 
 
     }
