@@ -1,5 +1,6 @@
 TODOlist:
 [] implement following camera
+[] linear interpolatiing camera movement
 
 optimizations:
 [] use built in framework datastructures instead of java's.

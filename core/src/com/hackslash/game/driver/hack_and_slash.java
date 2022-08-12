@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 public class hack_and_slash extends ApplicationAdapter {
 
+    OrthographicCamera followCam;
     float deltaTime = 0;
     Vector2 positionToRotateAround;
 
@@ -38,7 +39,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     Sprite projectileSprite;
-    Sprite positionToRotateSprite;
+    Sprite SpriteOfPositionToRotate;
 
 
     Texture positionToRotateImg;
@@ -61,7 +62,11 @@ public class hack_and_slash extends ApplicationAdapter {
     float rotateObjectDx;
     float rotateObjectDy;
 
+
     public void create() {
+        followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+//        followCam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         x = 0;
         y = 0;
         distance = 0;
@@ -81,16 +86,16 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         positionToRotateImg = new Texture("square.png");
-        positionToRotateSprite = new Sprite(positionToRotateImg);
-        positionToRotateAround = new Vector2(200, 300);
-        positionToRotateSprite.setPosition(positionToRotateAround.x, positionToRotateAround.y);
-        positionToRotateSprite.scale(1);
+        SpriteOfPositionToRotate = new Sprite(positionToRotateImg);
+        positionToRotateAround = new Vector2(0, 0);
+        SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
+        SpriteOfPositionToRotate.scale(1);
         positionToRotateDx = 0;
         positionToRotateDy = 0;
 
         projectileImg = new Texture("circle.png");
         projectileSprite = new Sprite(projectileImg);
-        projectilePosition = new Vector2(300, 300);
+        projectilePosition = new Vector2(positionToRotateAround.x + 100, positionToRotateAround.y + 100);
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
         projectileSprite.scale(1);
         projectilePositionDx = 0;
@@ -107,40 +112,15 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(followCam.combined);
         //draw sprites
         batch.begin();
-        positionToRotateSprite.draw(batch);
+        SpriteOfPositionToRotate.draw(batch);
         projectileSprite.draw(batch);
         batch.end();
 
-//        radius = positionToRotateAround.dst(projectilePosition);
-//        arcLength = radians * radius;
 
-
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            positionToRotateDx = 1;
-            positionToRotateDy = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            positionToRotateDx = -1;
-            positionToRotateDy = -1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            positionToRotateDx = -1;
-            positionToRotateDy = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            positionToRotateDx = 1;
-            positionToRotateDy = -1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            positionToRotateDx = -1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            positionToRotateDy = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            positionToRotateDy = -1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            positionToRotateDx = 1;
-        } else {
-            positionToRotateDx = 0;
-            positionToRotateDy = 0;
-        }
+        handleUserInput();
 
         if (radians < MathUtils.PI * 2) {
             radians += .05f;
@@ -151,19 +131,11 @@ public class hack_and_slash extends ApplicationAdapter {
         distance = projectilePosition.dst(positionToRotateAround);
         distance = MathUtils.round(distance);
 
-        VelocityOfPositionToRotateAround.set(positionToRotateDx, positionToRotateDy);
+        move();
+
+
         VelocityOfRotatingObject.set(MathUtils.cos(radians) * distance, MathUtils.sin(radians) * distance);
 
-        positionToRotateAround.set(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * 500 * deltaTime, positionToRotateAround.y + VelocityOfPositionToRotateAround.y * 500 * deltaTime);
-        positionToRotateSprite.setPosition(positionToRotateAround.x, positionToRotateAround.y);
-
-//        System.out.println(" DISTANCE: " + distance + " DEGREES: " + degrees + "----->" + " RADIANS:" + radians + " x: " + positionToRotateAround.x + " y: " + positionToRotateAround.y + "   COS    " + MathUtils.cos(radians) + "," + MathUtils.sin(radians) + "*" + distance + "=" + positionToRotateAround.x + MathUtils.cos(radians) * distance + "    SIN     " + positionToRotateAround.y + MathUtils.sin(radians) * distance);
-
-//        System.out.println(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * distance + ":" + positionToRotateAround.y + VelocityOfPositionToRotateAround.y * distance);
-
-//        VelocityOfPositionToRotateAround.set(MathUtils.cos(radians), MathUtils.sin(radians));
-
-        System.out.println("DISTANCE:" + distance);
         /**
          *
          *
@@ -202,6 +174,41 @@ public class hack_and_slash extends ApplicationAdapter {
 
         System.out.println("PROJECTILE POSITION:" + projectilePosition.toString());
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
+
+
+    }
+
+    public void handleUserInput() {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            positionToRotateDx = 1;
+            positionToRotateDy = 1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateDx = -1;
+            positionToRotateDy = -1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            positionToRotateDx = -1;
+            positionToRotateDy = 1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateDx = 1;
+            positionToRotateDy = -1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            positionToRotateDx = -1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            positionToRotateDy = 1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            positionToRotateDy = -1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            positionToRotateDx = 1;
+        } else {
+            positionToRotateDx = 0;
+            positionToRotateDy = 0;
+        }
+    }
+
+    public void move() {
+        VelocityOfPositionToRotateAround.set(positionToRotateDx, positionToRotateDy);
+        positionToRotateAround.set(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * 500 * deltaTime, positionToRotateAround.y + VelocityOfPositionToRotateAround.y * 500 * deltaTime);
+        SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
 
 
     }
