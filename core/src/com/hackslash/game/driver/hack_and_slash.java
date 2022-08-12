@@ -129,6 +129,8 @@ public class hack_and_slash extends ApplicationAdapter {
         batch.begin();
         SpriteOfPositionToRotate.draw(batch);
         projectileSprite.draw(batch);
+
+        //draw test sprites for collision detection
         for (Sprite s : sprites) {
             s.draw(batch);
         }
@@ -137,63 +139,41 @@ public class hack_and_slash extends ApplicationAdapter {
 
         handleUserInput();
 
+
+        // in radians, check when radians = 6.28 radians OR (360 degrees).
         if (radians < MathUtils.PI * 2) {
             radians += .05f;
         } else {
             radians = 0;
         }
 
+
         distance = projectilePosition.dst(positionToRotateAround);
         distance = MathUtils.round(distance);
 
-        move();
+
+        movePlayer();
 
 
+        //calculate x and y direction of rotating object using polar coordinates
+        //x = distance * cos(radians)
+        //y = distance * sin(radians)
         VelocityOfRotatingObject.set(MathUtils.cos(radians) * distance, MathUtils.sin(radians) * distance);
 
-        /**
-         *
-         *
-         *
-         * projectilePosition = positionRotateAroundPosition + directionOfPositionToRotateAround * how much to be away from the rotating position
-         *
-         * Am I using Polar Coordinates????
-         *
-         * We are using polar coordinates.
-         *
-         * We make known 2 components: the angle we are rotating at, the distance between the rotating object and the point being rotated around
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-         */
         projectilePosition.set(
-                //if no player movement, positionToRotateAround does not change, but the radians change.
-
-                /**
-                 *
-                 *  convert distance and theta to X and Y cartesian coordinates
-                 *
-                 *          dx = distance * cos(theta)
-                 *          dy = distance * sin(theta)
-                 *
-                 *
-                 * */
-
-                //player position           player direction
+                //player position       +     rotating object direction = rotating object moving in direction of player
                 positionToRotateAround.x + VelocityOfRotatingObject.x, positionToRotateAround.y + VelocityOfRotatingObject.y);
 
 
-        System.out.println("PROJECTILE POSITION:" + projectilePosition.toString());
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
 
+
+        //linear interpolate the following camera's position
         Vector3 position = followCam.position;
         // a + (b - a) * lerp
         // b = target
         // a = current camera position
+
         position.x = followCam.position.x + (positionToRotateAround.x * 1f - followCam.position.x) * 0.5f;
         position.y = followCam.position.y + (positionToRotateAround.y * 1f - followCam.position.y) * 0.5f;
 
@@ -229,7 +209,7 @@ public class hack_and_slash extends ApplicationAdapter {
         }
     }
 
-    public void move() {
+    public void movePlayer() {
         VelocityOfPositionToRotateAround.set(positionToRotateDx, positionToRotateDy);
         positionToRotateAround.set(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * 500 * deltaTime, positionToRotateAround.y + VelocityOfPositionToRotateAround.y * 500 * deltaTime);
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
