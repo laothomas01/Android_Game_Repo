@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
 import com.hackslash.game.controller.PlayerController;
@@ -62,8 +63,11 @@ public class hack_and_slash extends ApplicationAdapter {
     float rotateObjectDx;
     float rotateObjectDy;
 
+    ArrayList<Sprite> sprites;
+
 
     public void create() {
+        sprites = new ArrayList<>();
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 //        followCam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -100,6 +104,14 @@ public class hack_and_slash extends ApplicationAdapter {
         projectileSprite.scale(1);
         projectilePositionDx = 0;
         projectilePositionDy = 0;
+
+        for (int i = 0; i < 100; i++) {
+            sprites.add(new Sprite(new Texture("circle.png")));
+        }
+        for (Sprite s : sprites) {
+            s.setPosition(MathUtils.random(0, Gdx.graphics.getWidth()), MathUtils.random(0, Gdx.graphics.getHeight()));
+            s.scale(MathUtils.random(0.2f, 1));
+        }
     }
 
 
@@ -117,6 +129,9 @@ public class hack_and_slash extends ApplicationAdapter {
         batch.begin();
         SpriteOfPositionToRotate.draw(batch);
         projectileSprite.draw(batch);
+        for (Sprite s : sprites) {
+            s.draw(batch);
+        }
         batch.end();
 
 
@@ -175,7 +190,16 @@ public class hack_and_slash extends ApplicationAdapter {
         System.out.println("PROJECTILE POSITION:" + projectilePosition.toString());
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
 
+        Vector3 position = followCam.position;
+        // a + (b - a) * lerp
+        // b = target
+        // a = current camera position
+        position.x = followCam.position.x + (positionToRotateAround.x * 1f - followCam.position.x) * 0.5f;
+        position.y = followCam.position.y + (positionToRotateAround.y * 1f - followCam.position.y) * 0.5f;
 
+
+        followCam.position.set(position);
+        followCam.update();
     }
 
     public void handleUserInput() {
