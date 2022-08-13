@@ -22,12 +22,70 @@ import org.graalvm.compiler.loop.MathUtil;
 
 import java.util.ArrayList;
 
+/**
+ * SUMMARY
+ * ________
+ * THIS IS A BRANCH I WILL USE TO TEST NEW FEATURES AND WILL INTEGRATE MY WORK BACK INTO THE MAIN BRANCH
+ * <p>
+ * CONSIDER THIS A PLAYGROUND OF SORTS
+ * [x] following camera
+ * [x] orbiting sprite around another sprite
+ * [x] testing out linear interpolation
+ * [] bouncy sprite collision
+ */
+class TestObject {
+    Vector2 position;
+    Vector2 velocity;
+    float size;
+    Texture img;
+    Sprite sprite;
+
+    public TestObject() {
+
+        size = 50;
+        position = new Vector2(MathUtils.random(0, Gdx.graphics.getWidth()), MathUtils.random(0, Gdx.graphics.getHeight()));
+        velocity = new Vector2();
+        img = new Texture("circle.png");
+        sprite = new Sprite(img);
+        sprite.setPosition(position.x, position.y);
+        sprite.setSize(size, size);
+    }
+
+    public void draw(SpriteBatch batch) {
+        getSprite().draw(batch);
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public Vector2 getTestObjectVelocity() {
+        return velocity;
+    }
+
+    public Vector2 getTestObjectPosition() {
+        return position;
+    }
+
+    public float getSize() {
+        return size;
+    }
+
+}
+
 public class hack_and_slash extends ApplicationAdapter {
 
+    /**
+     * Impulse for giving collisions a slight bounce
+     */
+    public static final float COLLISION_COEFF = 0.1f;
+    //camera following player during gameplay
     OrthographicCamera followCam;
     float deltaTime = 0;
+
     Vector2 positionToRotateAround;
 
+    //orbitting object around a position
     Vector2 projectilePosition;
 
     float positionToRotateDx;
@@ -35,6 +93,11 @@ public class hack_and_slash extends ApplicationAdapter {
 
     Vector2 VelocityOfPositionToRotateAround;
     Vector2 VelocityOfRotatingObject;
+
+    Vector2 testSpriteVelocity;
+
+
+    //direction of orbiting object
     float projectilePositionDx;
     float projectilePositionDy;
 
@@ -51,32 +114,32 @@ public class hack_and_slash extends ApplicationAdapter {
     float radius;
     float radians;
 
-    float arcLength;
-
-    float degrees;
 
     float distance;
     float x;
     float y;
 
-
-    float rotateObjectDx;
-    float rotateObjectDy;
-
-    ArrayList<Sprite> sprites;
+    //initialize testing sprites
+    ArrayList<TestObject> listOfObjects;
+    //Creating variables for collision testing and experimenting
+    Vector2 velocity;
+    Vector2 normal;
+    Vector2 temp;
 
 
     public void create() {
-        sprites = new ArrayList<>();
+
+        listOfObjects = new ArrayList<>();
+        velocity = new Vector2();
+        normal = new Vector2();
+        temp = new Vector2();
+
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 //        followCam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         x = 0;
         y = 0;
         distance = 0;
-        degrees = 45;
-        radians = degrees * (MathUtils.PI / 180);
-        arcLength = 0;
         positionToRotateDx = 0;
         positionToRotateDy = 0;
 
@@ -93,7 +156,8 @@ public class hack_and_slash extends ApplicationAdapter {
         SpriteOfPositionToRotate = new Sprite(positionToRotateImg);
         positionToRotateAround = new Vector2(0, 0);
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
-        SpriteOfPositionToRotate.scale(1);
+        SpriteOfPositionToRotate.setSize(50, 50);
+//        SpriteOfPositionToRotate.scale(1);
         positionToRotateDx = 0;
         positionToRotateDy = 0;
 
@@ -101,17 +165,16 @@ public class hack_and_slash extends ApplicationAdapter {
         projectileSprite = new Sprite(projectileImg);
         projectilePosition = new Vector2(positionToRotateAround.x + 100, positionToRotateAround.y + 100);
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
-        projectileSprite.scale(1);
+//        projectileSprite.scale(1);
+        projectileSprite.setSize(50, 50);
         projectilePositionDx = 0;
         projectilePositionDy = 0;
 
-        for (int i = 0; i < 100; i++) {
-            sprites.add(new Sprite(new Texture("circle.png")));
+        for (int i = 0; i < 20; i++) {
+            listOfObjects.add(new TestObject());
         }
-        for (Sprite s : sprites) {
-            s.setPosition(MathUtils.random(0, Gdx.graphics.getWidth()), MathUtils.random(0, Gdx.graphics.getHeight()));
-            s.scale(MathUtils.random(0.2f, 1));
-        }
+
+
     }
 
 
@@ -128,12 +191,15 @@ public class hack_and_slash extends ApplicationAdapter {
         //draw sprites
         batch.begin();
         SpriteOfPositionToRotate.draw(batch);
+
+        for (int i = 0; i < listOfObjects.size(); i++) {
+            listOfObjects.get(i).draw(batch);
+        }
+
         projectileSprite.draw(batch);
 
         //draw test sprites for collision detection
-        for (Sprite s : sprites) {
-            s.draw(batch);
-        }
+
         batch.end();
 
 
@@ -180,8 +246,48 @@ public class hack_and_slash extends ApplicationAdapter {
 
         followCam.position.set(position);
         followCam.update();
+
+        /**
+         * Check for Collisions
+         *
+         * */
+
+//        for (int i = 0; i < listOfObjects.size(); i++) {
+        //what is a normal vector?
+        normal.set(listOfObjects.get(0).getTestObjectPosition().sub(positionToRotateAround));
+        //length of the normal vector
+        float dist = normal.len();
+        float impactDistance = (50 + listOfObjects.get(0).getSize()) / 2;
+        normal.nor();
+
+        if (dist < impactDistance) {
+
+            temp.set(normal).scl((impactDistance - dist) / 2);
+            listOfObjects.get(0).getTestObjectPosition().add(temp);
+            temp.set(normal).scl((impactDistance - dist) / 2);
+            listOfObjects.get(0).getTestObjectPosition().sub(temp);
+
+            //Newton's Law of Impact
+            // Convert the two velocities into a single reference frame
+            velocity.set(listOfObjects.get(0).getTestObjectVelocity().sub(positionToRotateAround));
+
+            //Compute Impulse
+            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
+                    (normal.dot(normal) * (1 / 1.0f + 1 / 1.0f));
+
+            // Change velocity of the two objects using this impulse
+            temp.set(normal).scl(impulse / 1.0f);
+            listOfObjects.get(0).getTestObjectVelocity().add(temp);
+            temp.set(normal).scl(impulse / 1.0f);
+            listOfObjects.get(0).getTestObjectVelocity().sub(temp);
+
+//            }
+        }
+
     }
 
+
+    //testing purposes
     public void handleUserInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             positionToRotateDx = 1;
@@ -213,9 +319,30 @@ public class hack_and_slash extends ApplicationAdapter {
         VelocityOfPositionToRotateAround.set(positionToRotateDx, positionToRotateDy);
         positionToRotateAround.set(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * 500 * deltaTime, positionToRotateAround.y + VelocityOfPositionToRotateAround.y * 500 * deltaTime);
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
-
-
     }
+
+//    public void checkForCollision(TestObject obj, Vector2 pos, Vector2 vel) {
+//        normal.set(obj.getTestObjectPosition().sub(pos));
+//        float distance = normal.len();
+//        float impactDist = (obj.getSize() + 50) / 3f;
+//        normal.nor();
+//
+//        if (distance < impactDist) {
+//            temp.set(normal).scl((impactDist - distance) / 2);
+//            obj.getTestObjectPosition().add(temp);
+//            temp.set(normal).scl((impactDist - distance) / 2);
+//            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) / (normal.dot(normal) * (1 / 1.0f + 1 / 1.0f));
+//
+//            temp.set(normal).scl(impulse/ 1.0f);
+//            obj.getTestObjectVelocity().add(temp);
+//            temp.set(normal).scl(impulse/1.0f);
+//
+//        }
+//
+//
+//    }
 
 
 }
+
+
