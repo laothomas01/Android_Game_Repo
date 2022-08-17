@@ -44,10 +44,10 @@ class TestObject {
     public TestObject() {
 
         speed = 500;
-        size = 50;
+        size = 10;
         velocity = new Vector2();
         position = new Vector2(MathUtils.random(0, Gdx.graphics.getWidth()), MathUtils.random(0, Gdx.graphics.getHeight()));
-        img = new Texture("square.png");
+        img = new Texture("circle.png");
         sprite = new Sprite(img);
         sprite.setPosition(position.x, position.y);
         sprite.setSize(size, size);
@@ -89,23 +89,29 @@ public class hack_and_slash extends ApplicationAdapter {
      * Impulse for giving collisions a slight bounce
      */
     public static final float COLLISION_COEFF = 0.1f;
-    //camera following player during gameplay
     OrthographicCamera followCam;
     float deltaTime = 0;
 
     Vector2 positionToRotateAround;
 
-    //orbitting object around a position
     Vector2 projectilePosition;
+
+
+    //----------------------------- SUB ORBITING PROJECTILE TESTING --------------------------------
+    Vector2 orbitingSubProjectilePosition;
+    Vector2 orbitingSubProjectileVelocity;
+    float orbitingSubProjectileDx;
+    float orbitingSubProjectileDy;
+    Sprite orbitingSubProjectileSprite;
+    Texture orbitingSubProjectileImg;
+    // -----------------------------------------------------------------------------------------------
 
     float positionToRotateDx;
     float positionToRotateDy;
 
+
     Vector2 VelocityOfPositionToRotateAround;
     Vector2 VelocityOfRotatingObject;
-
-    Vector2 testSpriteVelocity;
-
 
     //direction of orbiting object
     float projectilePositionDx;
@@ -125,44 +131,42 @@ public class hack_and_slash extends ApplicationAdapter {
     float radians;
 
 
-    float distance;
+    float distanceOfRotatingObject;
+
     float x;
     float y;
 
-    // ------------------- MADE FOR TESTING AND UNDERSTANDING IMPULSE PHYSICS --------------
     ArrayList<TestObject> listOfObjects;
-    //Creating variables for collision testing and experimenting
+
+
+    // ------------------- MADE FOR TESTING AND UNDERSTANDING IMPULSE PHYSICS --------------
+
     Vector2 velocity;
     Vector2 normal;
     Vector2 temp;
+    // --------------------------------------------------------------------------------------
 
     TestObject player;
 
-    // --------------------------------------------------------------------------------------
 
     public void create() {
+
+        //---------------------------------------ORBITING OBJECT TESTING------------------------------------------
 
         player = new TestObject();
         player.getSprite().setColor(Color.GREEN);
         player.getSprite().setSize(75, 75);
         listOfObjects = new ArrayList<>();
-        velocity = new Vector2();
-        normal = new Vector2();
-        temp = new Vector2();
+
 
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-//        followCam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        x = 0;
-        y = 0;
-        distance = 0;
+        distanceOfRotatingObject = 0;
         positionToRotateDx = 0;
         positionToRotateDy = 0;
 
         VelocityOfPositionToRotateAround = new Vector2(positionToRotateDx, positionToRotateDy);
 
-        projectilePositionDx = 0;
-        projectilePositionDy = 0;
         VelocityOfRotatingObject = new Vector2(projectilePositionDx, projectilePositionDy);
 
         batch = new SpriteBatch();
@@ -173,24 +177,46 @@ public class hack_and_slash extends ApplicationAdapter {
         positionToRotateAround = new Vector2(0, 0);
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
         SpriteOfPositionToRotate.setSize(50, 50);
-//        SpriteOfPositionToRotate.scale(1);
-        positionToRotateDx = 0;
-        positionToRotateDy = 0;
-
         projectileImg = new Texture("circle.png");
         projectileSprite = new Sprite(projectileImg);
         projectilePosition = new Vector2(positionToRotateAround.x + 100, positionToRotateAround.y + 100);
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
-//        projectileSprite.scale(1);
         projectileSprite.setSize(50, 50);
-        projectilePositionDx = 0;
-        projectilePositionDy = 0;
 
-        for (int i = 0; i < 20; i++) {
+        //---------------------------------------------------------------------------
+
+
+        //---------------------------- CAMERA TESTING --------------------------------
+        for (int i = 0; i < 100; i++) {
             listOfObjects.add(new TestObject());
         }
+        //----------------------------------------------------------------------------
 
+
+        //  --------------------------- SUB ORBITING PROJECTILE TESTING -----------------------------------------
+
+        orbitingSubProjectilePosition = new Vector2(projectilePosition.x + 100, projectilePosition.y + 100);
+        orbitingSubProjectileDx = 0;
+        orbitingSubProjectileDy = 0;
+        orbitingSubProjectileVelocity = new Vector2(orbitingSubProjectileDx, orbitingSubProjectileDy);
+        orbitingSubProjectileImg = new Texture("circle.png");
+        orbitingSubProjectileSprite = new Sprite(orbitingSubProjectileImg);
+        orbitingSubProjectileSprite.setPosition(orbitingSubProjectilePosition.x, orbitingSubProjectilePosition.y);
+        orbitingSubProjectileSprite.setSize(projectileSprite.getWidth() / 2, projectileSprite.getHeight() / 2);
+        orbitingSubProjectileSprite.setColor(new Color(Color.ORANGE));
+
+
+        //  -----------------------------------------------------------------------------------------------------
+
+        //---------------------------------------------------------------------------------
+
+        //---------------------------IMPULSE PHYSICS TESTING-------------------------------
+        velocity = new Vector2();
+        normal = new Vector2();
+        temp = new Vector2();
         listOfObjects.get(0).getSprite().setColor(new Color(Color.BLUE));
+
+        //---------------------------------------------------------------------------------
 
 
     }
@@ -205,8 +231,7 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-        IMPULSE_PHYSICS_COLLISION();
+        ORBIT_AROUND_OBJECT();
 
 
     }
@@ -246,77 +271,77 @@ public class hack_and_slash extends ApplicationAdapter {
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
     }
 
-    public void IMPULSE_PHYSICS_COLLISION() {
-
-        batch.begin();
-
-        for (int i = 0; i < listOfObjects.size(); i++) {
-            listOfObjects.get(i).draw(batch);
-        }
-
-
-        player.getSprite().draw(batch);
-        batch.end();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.velocity.x = 1;
-            player.velocity.y = 1;
-            player.speed = 1000;
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            player.velocity.x = -1;
-
-            player.speed = 1000;
-            player.velocity.y = -1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
-
-            player.speed = 1000;
-            player.velocity.x = -1;
-            player.velocity.y = 1;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            player.velocity.x = 1;
-            player.speed = 1000;
-            player.velocity.y = -1;
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.velocity.x = -1;
-            player.speed = 1000;
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            player.velocity.y = 1;
-            player.speed = 1000;
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            player.velocity.y = -1;
-            player.speed = 1000;
-
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.velocity.x = 1;
-            player.speed = 1000;
-        } else {
-            player.speed = 0;
-            player.velocity.x = 0;
-            player.velocity.y = 0;
-        }
-
-        player.position.x = player.position.x + player.velocity.x * player.speed * deltaTime;
-        player.position.y = player.position.y + player.velocity.y * player.speed * deltaTime;
-        player.getSprite().setPosition(player.position.x, player.position.y);
-
-
-        checkForCollision();
-        listOfObjects.get(0).getSprite().setPosition
-                (
-
-                        listOfObjects.get(0).getTestObjectPosition().x + listOfObjects.get(0).getTestObjectVelocity().x,
-                        listOfObjects.get(0).getTestObjectPosition().y + listOfObjects.get(0).getTestObjectVelocity().y
-
-                );
-
+//    public void IMPULSE_PHYSICS_COLLISION() {
 //
-
-
-    }
+//        batch.begin();
+//
+//        for (int i = 0; i < listOfObjects.size(); i++) {
+//            listOfObjects.get(i).draw(batch);
+//        }
+//
+//
+//        player.getSprite().draw(batch);
+//        batch.end();
+//
+//        if (Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+//            player.velocity.x = 1;
+//            player.velocity.y = 1;
+//            player.speed = 1000;
+//
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//            player.velocity.x = -1;
+//
+//            player.speed = 1000;
+//            player.velocity.y = -1;
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && Gdx.input.isKeyPressed(Input.Keys.UP)) {
+//
+//            player.speed = 1000;
+//            player.velocity.x = -1;
+//            player.velocity.y = 1;
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//            player.velocity.x = 1;
+//            player.speed = 1000;
+//            player.velocity.y = -1;
+//
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+//            player.velocity.x = -1;
+//            player.speed = 1000;
+//
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+//            player.velocity.y = 1;
+//            player.speed = 1000;
+//
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//            player.velocity.y = -1;
+//            player.speed = 1000;
+//
+//        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+//            player.velocity.x = 1;
+//            player.speed = 1000;
+//        } else {
+//            player.speed = 0;
+//            player.velocity.x = 0;
+//            player.velocity.y = 0;
+//        }
+//
+//        player.position.x = player.position.x + player.velocity.x * player.speed * deltaTime;
+//        player.position.y = player.position.y + player.velocity.y * player.speed * deltaTime;
+//        player.getSprite().setPosition(player.position.x, player.position.y);
+//
+//
+//        checkForCollision();
+//        listOfObjects.get(0).getSprite().setPosition
+//                (
+//
+//                        listOfObjects.get(0).getTestObjectPosition().x + listOfObjects.get(0).getTestObjectVelocity().x,
+//                        listOfObjects.get(0).getTestObjectPosition().y + listOfObjects.get(0).getTestObjectVelocity().y
+//
+//                );
+//
+////
+//
+//
+//    }
 
     /**
      * CALL THIS FUNCTION TO TEST ORBITTING AN OBJECT AROUND ANOTHER OBJECT
@@ -340,26 +365,32 @@ public class hack_and_slash extends ApplicationAdapter {
             listOfObjects.get(0).getTestObjectPosition().sub(temp);
 
             velocity.set(player.getTestObjectVelocity()).sub(listOfObjects.get(0).getTestObjectVelocity());
-            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
-                    (normal.dot(normal) * (1 / 0.5f) + (1 / 0.5f));
-            temp.set(normal).scl(impulse / 0.5f);
+            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) / (normal.dot(normal) * (1 / .025f) + (1 / .025f));
+            temp.set(normal).scl(impulse / .025f);
             player.getTestObjectVelocity().add(temp);
-            temp.set(normal).scl(impulse / 0.5f);
+            temp.set(normal).scl(impulse / .025f);
             listOfObjects.get(0).getTestObjectVelocity().sub(temp);
         }
 
     }
 
     public void ORBIT_AROUND_OBJECT() {
+
+        // we are sharing 1 batch with a set of sprites so we just need to set 1 batch to the camera's projetion matrix.
         batch.setProjectionMatrix(followCam.combined);
+
         //draw sprites
         batch.begin();
         SpriteOfPositionToRotate.draw(batch);
 
+        //draw test sprites to test camera
+        for (TestObject obj : listOfObjects) {
+            obj.getSprite().draw(batch);
+        }
 
         projectileSprite.draw(batch);
+        orbitingSubProjectileSprite.draw(batch);
 
-        //draw test sprites for collision detection
 
         batch.end();
 
@@ -375,8 +406,8 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
 
-        distance = projectilePosition.dst(positionToRotateAround);
-        distance = MathUtils.round(distance);
+        distanceOfRotatingObject = projectilePosition.dst(positionToRotateAround);
+        distanceOfRotatingObject = MathUtils.round(distance);
 
 
         movePlayer();
@@ -408,26 +439,6 @@ public class hack_and_slash extends ApplicationAdapter {
         followCam.position.set(position);
         followCam.update();
     }
-//    public void checkForCollision(TestObject obj, Vector2 pos, Vector2 vel) {
-//        normal.set(obj.getTestObjectPosition().sub(pos));
-//        float distance = normal.len();
-//        float impactDist = (obj.getSize() + 50) / 3f;
-//        normal.nor();
-//
-//        if (distance < impactDist) {
-//            temp.set(normal).scl((impactDist - distance) / 2);
-//            obj.getTestObjectPosition().add(temp);
-//            temp.set(normal).scl((impactDist - distance) / 2);
-//            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) / (normal.dot(normal) * (1 / 1.0f + 1 / 1.0f));
-//
-//            temp.set(normal).scl(impulse/ 1.0f);
-//            obj.getTestObjectVelocity().add(temp);
-//            temp.set(normal).scl(impulse/1.0f);
-//
-//        }
-//
-//
-//    }
 
 
 }
