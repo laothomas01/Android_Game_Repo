@@ -98,20 +98,22 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     //----------------------------- SUB ORBITING PROJECTILE TESTING --------------------------------
-    Vector2 orbitingSubProjectilePosition;
-    Vector2 orbitingSubProjectileVelocity;
-    float orbitingSubProjectileDx;
-    float orbitingSubProjectileDy;
-    Sprite orbitingSubProjectileSprite;
-    Texture orbitingSubProjectileImg;
-    // -----------------------------------------------------------------------------------------------
+    Vector2 subOrbitingProjectilePosition;
+    Vector2 subOrbitingProjectileVelocity;
+    float subOrbitingProjectileDx;
+    float subOrbitingProjectileDy;
+    Sprite subOrbitingProjectileSprite;
+    Texture subOrbitingProjectileImg;
+    float subOrbitingProjectileRadians;
+    float subOrbitingProjectileDistance;
+    // --------------------------------------------------TESTING ORBITING PROJECTILE ---------------------------------------------
 
     float positionToRotateDx;
     float positionToRotateDy;
 
 
     Vector2 VelocityOfPositionToRotateAround;
-    Vector2 VelocityOfRotatingObject;
+    Vector2 VelocityOfOrbitingObject;
 
     //direction of orbiting object
     float projectilePositionDx;
@@ -127,14 +129,8 @@ public class hack_and_slash extends ApplicationAdapter {
 
     SpriteBatch batch;
 
-    float radius;
     float radians;
-
-
-    float distanceOfRotatingObject;
-
-    float x;
-    float y;
+    float distanceOfOrbitingObject;
 
     ArrayList<TestObject> listOfObjects;
 
@@ -153,21 +149,22 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //---------------------------------------ORBITING OBJECT TESTING------------------------------------------
 
+        radians = 0;
         player = new TestObject();
         player.getSprite().setColor(Color.GREEN);
         player.getSprite().setSize(75, 75);
-        listOfObjects = new ArrayList<>();
+//        listOfObjects = new ArrayList<>();
 
 
         followCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        distanceOfRotatingObject = 0;
+
         positionToRotateDx = 0;
         positionToRotateDy = 0;
 
         VelocityOfPositionToRotateAround = new Vector2(positionToRotateDx, positionToRotateDy);
 
-        VelocityOfRotatingObject = new Vector2(projectilePositionDx, projectilePositionDy);
+        VelocityOfOrbitingObject = new Vector2(projectilePositionDx, projectilePositionDy);
 
         batch = new SpriteBatch();
 
@@ -187,23 +184,25 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         //---------------------------- CAMERA TESTING --------------------------------
-        for (int i = 0; i < 100; i++) {
-            listOfObjects.add(new TestObject());
-        }
+//        for (int i = 0; i < 100; i++) {
+//            listOfObjects.add(new TestObject());
+//        }
         //----------------------------------------------------------------------------
 
 
         //  --------------------------- SUB ORBITING PROJECTILE TESTING -----------------------------------------
 
-        orbitingSubProjectilePosition = new Vector2(projectilePosition.x + 100, projectilePosition.y + 100);
-        orbitingSubProjectileDx = 0;
-        orbitingSubProjectileDy = 0;
-        orbitingSubProjectileVelocity = new Vector2(orbitingSubProjectileDx, orbitingSubProjectileDy);
-        orbitingSubProjectileImg = new Texture("circle.png");
-        orbitingSubProjectileSprite = new Sprite(orbitingSubProjectileImg);
-        orbitingSubProjectileSprite.setPosition(orbitingSubProjectilePosition.x, orbitingSubProjectilePosition.y);
-        orbitingSubProjectileSprite.setSize(projectileSprite.getWidth() / 2, projectileSprite.getHeight() / 2);
-        orbitingSubProjectileSprite.setColor(new Color(Color.ORANGE));
+        subOrbitingProjectilePosition = new Vector2(projectilePosition.x + 100, projectilePosition.y + 100);
+        subOrbitingProjectileDx = 0;
+        subOrbitingProjectileDy = 0;
+        subOrbitingProjectileVelocity = new Vector2(subOrbitingProjectileDx, subOrbitingProjectileDy);
+        subOrbitingProjectileImg = new Texture("circle.png");
+        subOrbitingProjectileSprite = new Sprite(subOrbitingProjectileImg);
+        subOrbitingProjectileSprite.setPosition(subOrbitingProjectilePosition.x, subOrbitingProjectilePosition.y);
+        subOrbitingProjectileSprite.setSize(projectileSprite.getWidth() / 2, projectileSprite.getHeight() / 2);
+        subOrbitingProjectileSprite.setColor(new Color(Color.ORANGE));
+        distanceOfOrbitingObject = 0;
+        subOrbitingProjectileRadians = 0;
 
 
         //  -----------------------------------------------------------------------------------------------------
@@ -214,7 +213,7 @@ public class hack_and_slash extends ApplicationAdapter {
         velocity = new Vector2();
         normal = new Vector2();
         temp = new Vector2();
-        listOfObjects.get(0).getSprite().setColor(new Color(Color.BLUE));
+//        listOfObjects.get(0).getSprite().setColor(new Color(Color.BLUE));
 
         //---------------------------------------------------------------------------------
 
@@ -266,6 +265,7 @@ public class hack_and_slash extends ApplicationAdapter {
     }
 
     public void movePlayer() {
+
         VelocityOfPositionToRotateAround.set(positionToRotateDx, positionToRotateDy);
         positionToRotateAround.set(positionToRotateAround.x + VelocityOfPositionToRotateAround.x * 500 * deltaTime, positionToRotateAround.y + VelocityOfPositionToRotateAround.y * 500 * deltaTime);
         SpriteOfPositionToRotate.setPosition(positionToRotateAround.x, positionToRotateAround.y);
@@ -384,12 +384,12 @@ public class hack_and_slash extends ApplicationAdapter {
         SpriteOfPositionToRotate.draw(batch);
 
         //draw test sprites to test camera
-        for (TestObject obj : listOfObjects) {
-            obj.getSprite().draw(batch);
-        }
+//        for (TestObject obj : listOfObjects) {
+//            obj.getSprite().draw(batch);
+//        }
 
         projectileSprite.draw(batch);
-        orbitingSubProjectileSprite.draw(batch);
+        subOrbitingProjectileSprite.draw(batch);
 
 
         batch.end();
@@ -398,33 +398,70 @@ public class hack_and_slash extends ApplicationAdapter {
         handleUserInput();
 
 
-        // in radians, check when radians = 6.28 radians OR (360 degrees).
-        if (radians < MathUtils.PI * 2) {
+//         in radians, check when radians = 6.28 radians OR (360 degrees).
+
+
+        if (radians < (MathUtils.PI * 2)) {
             radians += .05f;
         } else {
             radians = 0;
         }
 
 
-        distanceOfRotatingObject = projectilePosition.dst(positionToRotateAround);
-        distanceOfRotatingObject = MathUtils.round(distance);
+        //lets take this idea and apply it to our sub projectile.
+//        if (radians > 0) {
+//            radians -= .05f;
+//        } else {
+//            radians = 360;
+//        }
+
+
+        distanceOfOrbitingObject = projectilePosition.dst(positionToRotateAround);
+
+        //lets keep the distance as discrete
+        distanceOfOrbitingObject = MathUtils.round(distanceOfOrbitingObject);
 
 
         movePlayer();
 
 
-        //calculate x and y direction of rotating object using polar coordinates
+        //calculate x and y direction of Orbiting object using polar coordinates
         //x = distance * cos(radians)
         //y = distance * sin(radians)
-        VelocityOfRotatingObject.set(MathUtils.cos(radians) * distance, MathUtils.sin(radians) * distance);
+
+        //orbiting distance
+        VelocityOfOrbitingObject.set(MathUtils.cos(radians) * distanceOfOrbitingObject, MathUtils.sin(radians) * distanceOfOrbitingObject);
 
         projectilePosition.set(
-                //player position       +     rotating object direction = rotating object moving in direction of player
-                positionToRotateAround.x + VelocityOfRotatingObject.x, positionToRotateAround.y + VelocityOfRotatingObject.y);
+
+                //UPDATE:
+                //  set position to rotate around as the origin of the projectile position
+                //  add  (orbit distance * rotation of current object)
+                //player position       +     Orbiting distance = Orbiting object moving in direction of player
+                positionToRotateAround.x + VelocityOfOrbitingObject.x, positionToRotateAround.y + VelocityOfOrbitingObject.y);
 
 
         projectileSprite.setPosition(projectilePosition.x, projectilePosition.y);
 
+
+        //----------------------------------- SETTING POSITIONS, DISTANCE, ANGLES(in randians), DIRECTIONS FOR SUB ORBITING PROJECTILE ----------------------------
+
+
+        if (subOrbitingProjectileRadians < (MathUtils.PI * 2)) {
+            subOrbitingProjectileRadians += .05f;
+        } else {
+            subOrbitingProjectileRadians = 0;
+        }
+////        subOrbitingProjectilePosition.set(projectilePosition.x + (MathUtils.cos(subOrbitingProjectileRadians) *), projectilePosition.y + (subOrbitingProjectileRadians));
+//        subOrbitingProjectilePosition.set(projectilePosition.x, projectilePosition.y);
+//
+//
+//        subOrbitingProjectileDistance = subOrbitingProjectilePosition.dst(projectilePosition);
+////        System.out.println(subOrbitingProjectileDistance);
+//        System.out.println(MathUtils.round(subOrbitingProjectileDistance));
+
+        subOrbitingProjectileSprite.setPosition(subOrbitingProjectilePosition.x, subOrbitingProjectilePosition.y);
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------
 
         //linear interpolate the following camera's position
         Vector3 position = followCam.position;
