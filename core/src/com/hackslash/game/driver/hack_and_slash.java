@@ -105,6 +105,8 @@ public class hack_and_slash extends ApplicationAdapter {
         float damage;
         float width;
         float height;
+
+        float orbitSpeed;
         //-----------------------GAME GRAPHICS----------------------
         Sprite sprite;
         Texture texture;
@@ -114,16 +116,19 @@ public class hack_and_slash extends ApplicationAdapter {
             position = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
             acceleration = new Vector2(0, 0);
+            angularVelocity = new Vector2(0, 0);
             radians = 0;
             distance = 0;
             health = 0;
             damage = 0;
             width = 0;
             height = 0;
+            orbitSpeed = 0;
             texture = new Texture("circle.png");
             sprite = new Sprite(texture);
             sprite.setPosition(position.x, position.y);
             batch = new SpriteBatch();
+
         }
 
         public void update() {
@@ -133,23 +138,29 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
         //------------------PHYSICS SYSTEM-------------------------
+
+
+        //speed up rotation
         public void increaseOrbitAngle() {
             if (this.radians < (MathUtils.PI * 2)) {
-                this.radians += .05f;
+                this.radians += orbitSpeed;
             } else {
                 this.radians = 0;
             }
         }
 
 
-        public void orbitAround(gameObject parent) {
-            this.increaseOrbitAngle();
-            this.distance = this.position.dst(parent.position);
+//        public Vector2 calculateAngularVelocity(float )
 
-//            this.distance = MathUtils.round(this.distance);
-//            this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
-//            this.velocity.set(this.distance * this.angularVelocity.x, this.distance * this.angularVelocity.y);
-//            this.position.set(this.position.x + this.velocity.x, this.position.y + this.velocity.y);
+        //orbit a projectile around another object
+        public void orbitAround(gameObject parent) {
+
+            this.increaseOrbitAngle();
+
+//            this.distance = this.position.dst(parent.position);
+            this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
+            this.velocity.set(this.distance * this.angularVelocity.x, this.distance * this.angularVelocity.y);
+            this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
         }
 
         //-----------------------------------------------------------
@@ -164,6 +175,9 @@ public class hack_and_slash extends ApplicationAdapter {
     private gameObject player;
     private gameObject projectile;
 
+    private gameObject projectile2;
+
+
     public void create() {
         font = new BitmapFont();
         fontSpriteBatch = new SpriteBatch();
@@ -172,33 +186,55 @@ public class hack_and_slash extends ApplicationAdapter {
         player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         player.texture = new Texture("square.png");
 
+
         projectile = new gameObject();
-        projectile.position.set(player.position.x + 100, player.position.y + 100);
+        //distance basically an offset from the object you are following
+        projectile.distance = 100;
+        projectile.position.set(player.position.x + projectile.distance, player.position.y + projectile.distance);
         projectile.texture = new Texture("circle.png");
+        projectile.orbitSpeed = .02f;
+
+        projectile2 = new gameObject();
+        projectile2.distance = 50;
+        projectile2.position.set(projectile.position.x + projectile2.distance, projectile.position.y + projectile2.distance);
+        projectile2.texture = new Texture("circle.png");
+        projectile2.sprite.setColor(Color.BLUE);
+        projectile2.orbitSpeed = 0.06f;
     }
 
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        //checking game data
         fontSpriteBatch.begin();
         font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
         font.draw(fontSpriteBatch, "Upper left, DISTANCE=" + projectile.distance, 0, Gdx.graphics.getHeight() - 50);
         font.draw(fontSpriteBatch, "Upper left, RADIANS=" + projectile.radians, 0, Gdx.graphics.getHeight() - 100);
         font.draw(fontSpriteBatch, "Upper left, ANGULAR VELOCITY=" + "(" + MathUtils.cos(projectile.radians) + "        " + MathUtils.sin(projectile.radians) + ")", 0, Gdx.graphics.getHeight() - 150);
-
-
+        font.draw(fontSpriteBatch, "Upper left, POSITION=" + "(" + MathUtils.round(projectile.position.x) + "    ,   " + MathUtils.round(projectile.position.y) + ")", 0, Gdx.graphics.getHeight() - 200);
         fontSpriteBatch.end();
+
+
         player.batch.begin();
         player.sprite.draw(player.batch);
         projectile.sprite.draw(player.batch);
+        projectile2.sprite.draw(player.batch);
         player.batch.end();
 
         projectile.orbitAround(player);
+        projectile2.orbitAround(projectile);
 
+//        player.position.x += 1;
+//
+//        //just checking player boundaries
+        if (player.position.x > Gdx.graphics.getWidth()) {
+            player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        }
 
         player.update();
         projectile.update();
-
+        projectile2.update();
 
     }
 }
