@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.utils.Array;
 import com.hackslash.game.controller.BulletController;
 import com.hackslash.game.controller.EnemyController;
 import com.hackslash.game.controller.PlayerController;
@@ -37,61 +38,19 @@ import java.util.ArrayList;
  * [x] testing out linear interpolation
  * [] bouncy sprite collision
  */
-//class TestObject {
-////    Vector2 position;
-////    Vector2 velocity;
-////    float size;
-////    Texture img;
-////    Sprite sprite;
-////    float speed;
-////
-////    public TestObject() {
-////
-////        speed = 500;
-////        size = 10;
-////        velocity = new Vector2();
-////        position = new Vector2(MathUtils.random(0, Gdx.graphics.getWidth()), MathUtils.random(0, Gdx.graphics.getHeight()));
-////        img = new Texture("circle.png");
-////        sprite = new Sprite(img);
-////        sprite.setPosition(position.x, position.y);
-////        sprite.setSize(size, size);
-////    }
-////
-////    public void draw(SpriteBatch batch) {
-////        getSprite().draw(batch);
-////    }
-////
-////    public Sprite getSprite() {
-////        return sprite;
-////    }
-////
-////    public Vector2 getTestObjectVelocity() {
-////        return velocity;
-////    }
-////
-////    public Vector2 getTestObjectPosition() {
-////        return position;
-////    }
-////
-////    public float getSize() {
-////        return size;
-////    }
-////
-////    public void setPosition(Vector2 pos) {
-////        this.position = pos;
-////    }
-////
-////    public void setPosition(float x, float y) {
-////        this.position = new Vector2(x, y);
-////    }
-//
-//}
 
 public class hack_and_slash extends ApplicationAdapter {
 
 
-    //impulse for giving collisons the slight bounce
     float COLLISION_COEF = 1.0f;
+    float deltaTime;
+
+    Vector2 normal;
+    Vector2 temp;
+    Vector2 newVelocity;
+    Array<gameObject> collectionOfBullets;
+
+    //BULLETS
 
     class gameObject {
 
@@ -101,9 +60,7 @@ public class hack_and_slash extends ApplicationAdapter {
         Vector2 velocity;
         Vector2 acceleration;
         Vector2 angularVelocity;
-        Vector2 normal = new Vector2();
-        Vector2 temp = new Vector2();
-        Vector2 newVelocity = new Vector2();
+
         float radians;
         float orbitDistance;
         float health;
@@ -118,7 +75,16 @@ public class hack_and_slash extends ApplicationAdapter {
 
         float mass;
 
-        //--------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
+
+        //----------------------------MISC ATTRIBUTES FOR GAME OBJECTS-------------------
+
+
+        float maxCoolDown;
+        float coolDown;
+
+
+        //
 
         //-----------------------GAME GRAPHICS----------------------
         Sprite sprite;
@@ -126,7 +92,10 @@ public class hack_and_slash extends ApplicationAdapter {
         SpriteBatch batch;
 
         //------------------------------------------------------------
+
+        //---------------------GAME OBJECT CONSTRUCTOR----------------
         public gameObject() {
+
             position = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
             acceleration = new Vector2(0, 0);
@@ -144,23 +113,27 @@ public class hack_and_slash extends ApplicationAdapter {
             batch = new SpriteBatch();
             mass = 1.0f;
             moveSpeed = 0;
-        }
+            coolDown = 0f;
+            maxCoolDown = 1f;
+            coolDown = maxCoolDown;
+//            collectionOfBullets = new Array<>();
 
-        //update game object with new data every second
+        }
+        //--------------------------------------------------------------
+
+        //Update our game objects with new data every 60 frames
         public void update() {
             this.position.set(this.position.x, this.position.y);
             this.sprite.setPosition(this.position.x, this.position.y);
             this.sprite.setTexture(this.texture);
         }
 
-        //------------------PHYSICS FUNCTIONS-------------------------//
+        //------------------PHYSICS FUNCTIONS-------------------------
         public void checkCollision(gameObject object) {
             normal.set(this.position).sub(object.position);
             float distance = normal.len();
             float impactDistance = (this.sprite.getWidth() + object.sprite.getWidth()) / 1.7f;
             normal.nor();
-
-
             //when we collided, we should check the type of object we are colliding with
             if (distance < impactDistance) {
                 //let's give an object impulse during collision
@@ -171,7 +144,7 @@ public class hack_and_slash extends ApplicationAdapter {
                 object.position.sub(temp);
 
                 //Let's implement newton's law of impact
-                //convert thw two velocities into a single reference frame
+                //convert the two velocities into a single reference frame
                 newVelocity.set(this.velocity.sub(object.velocity));
 
                 // Compute the impulse (see Essential Math for Game Programmers)
@@ -181,12 +154,10 @@ public class hack_and_slash extends ApplicationAdapter {
                 this.velocity.add(temp);
                 temp.set(normal).scl(impulse / object.mass);
                 object.velocity.sub(temp);
-
             }
         }
 
-
-        // calculate number of orbits per second
+        // calculate number of orbits per second(note: this calculation for rotation speed is not accurate)
         public void increaseRotationAngle() {
             if (this.radians < (MathUtils.PI * 2)) {
                 this.radians += rotationSpeed;
@@ -202,13 +173,71 @@ public class hack_and_slash extends ApplicationAdapter {
             this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
             this.velocity.set(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
             this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
+
         }
 
-        public void moveTowards(gameObject parent) {
+        //follow a target
+        public void moveTowards(gameObject parent, float dt) {
             this.radians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
             this.velocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
-            this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * Gdx.graphics.getDeltaTime())));
+            this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * dt)));
         }
+
+        public void move(float dt) {
+            this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * dt)));
+        }
+
+        //----------------------------------------------------------------------
+
+
+        //--------------------------NON-PHYSICS-RELATED-FUNCTIONS--------------------------------
+
+
+        public void shoot(gameObject object, float dt) {
+            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            System.out.println("RADIANS:" + radians);
+            Vector2 newVelocity = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+            if (coolDown <= 0) {
+                if (collectionOfBullets.size < 1) {
+                    gameObject bullet = new gameObject();
+                    System.out.println("POSITION:" + this.position);
+                    bullet.position.set(this.position);
+                    System.out.println("BULLET POSITION:" + bullet.position);
+                    bullet.sprite.setColor(Color.GREEN);
+                    System.out.println("VELOCITY:" + newVelocity);
+                    bullet.velocity.set(newVelocity);
+                    System.out.println("BULLET VELOCITY:" + bullet.velocity.toString());
+                    bullet.moveSpeed = 200f;
+                    collectionOfBullets.add(bullet);
+                }
+            } else {
+                coolDown -= dt;
+            }
+        }
+//        public void shoot(gameObject object, float dt) {
+//
+//            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+//            Vector2 newVelocity = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+//
+//            if (coolDown <= 0) {
+//
+//                //do not do nested if's. change this later
+//                if (this.collectionOfBullets.size < 1) {
+//
+////                    gameObject bullet1 = new gameObject();
+////                    bullet1.sprite.setSize(10, 10);
+////                    bullet1.sprite.setColor(Color.RED);
+////                    bullet1.texture = bulletImg;
+////                    bullet1.position = this.position;
+////                    bullet1.velocity = newVelocity;
+////                    bullet1.moveSpeed = 200f;
+////                    this.collectionOfBullets.add(bullet1);
+//                }
+//                coolDown = maxCoolDown;
+//            } else {
+//                coolDown -= dt;
+//            }
+//        }
 
 
         //-----------------------------------------------------------
@@ -228,17 +257,24 @@ public class hack_and_slash extends ApplicationAdapter {
 
     private gameObject enemy;
 
+
     public void create() {
+        collectionOfBullets = new Array<>();
+        //initialize....
+        normal = new Vector2();
+        temp = new Vector2();
+        newVelocity = new Vector2();
+
         font = new BitmapFont();
         fontSpriteBatch = new SpriteBatch();
 
-        //test player object
+        //-----------------------test player object-------------------------
         player = new gameObject();
         player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         player.texture = new Texture("square.png");
+        //------------------------------------------------------------------
 
-
-        //testing first rotating projectile
+        //-----------------------testing first rotating projectile---------------
         projectile = new gameObject();
         //distance basically an offset from the object you are following
         projectile.orbitDistance = 100;
@@ -247,9 +283,10 @@ public class hack_and_slash extends ApplicationAdapter {
         //orbit speed needs more accurate calculations
         projectile.rotationSpeed = .03f;
         projectile.sprite.setSize(projectile.sprite.getRegionWidth(), projectile.sprite.getRegionHeight());
+        //------------------------------------------------------------------------
 
 
-        //testing second rotating projectile
+        //-----------------------testing second rotating projectile----------
         projectile2 = new gameObject();
         projectile2.orbitDistance = 50;
         projectile2.position.set(projectile.position.x + projectile2.orbitDistance, projectile.position.y + projectile2.orbitDistance);
@@ -257,47 +294,70 @@ public class hack_and_slash extends ApplicationAdapter {
         projectile2.sprite.setColor(Color.BLUE);
         projectile2.rotationSpeed = 0.07f;
         projectile2.sprite.setSize(projectile2.sprite.getRegionWidth() / 2, projectile2.sprite.getRegionHeight() / 2);
+        //--------------------------------------------------------------------
 
-
-        //test enemy object
+        //------------------------test enemy object-------------------------------
         enemy = new gameObject();
         enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
         enemy.texture = new Texture("circle.png");
         enemy.sprite.setColor(Color.RED);
-        enemy.moveSpeed = 150;
+        enemy.moveSpeed = 500;
+        //--------------------------------------------------------------------------------
 
+        //---------------------testing shooting mechanic----------------------------------
+//        bulletImg = new Texture("circle.png");
+
+        collectionOfBullets = new Array<>();
 
     }
 
     public void render() {
+        deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //checking game data
-        fontSpriteBatch.begin();
+
+        //-----------------------------draw game objects-----------------------
+
+        player.shoot(enemy, deltaTime);
 
 
-        //draw game objects
         player.batch.begin();
         player.sprite.draw(player.batch);
         projectile.sprite.draw(player.batch);
         projectile2.sprite.draw(player.batch);
         enemy.sprite.draw(player.batch);
-        player.batch.end();
+        if (!collectionOfBullets.isEmpty()) {
+            collectionOfBullets.get(0).sprite.draw(player.batch);
+        }
 
 
-        //test object rotations
+//        System.out.println("BULLETS:" + player.collectionOfBullets);
+//        for (gameObject b : player.collectionOfBullets) {
+//            b.sprite.draw(player.batch);
+//        }
+
+
+        //----------------------------------------------------------------------
+
+        //-----------------------------test object rotation functions------------------
         projectile.rotateAround(player);
         projectile2.rotateAround(projectile);
+        //------------------------------------------------------------------------------
 
+        fontSpriteBatch.begin();
 
-        //used to check data being tested or frames
+        //----------------------- DISPLAY TEXT ON SCREEN ---------------------------------
+
         font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
         font.draw(fontSpriteBatch, "Upper left, ENEMY DISTANCE=" + enemy.position.dst(player.position), 0, Gdx.graphics.getHeight() - 50);
 //        font.draw(fontSpriteBatch, "Upper left, RADIANS=" + projectile.radians, 0, Gdx.graphics.getHeight() - 100);
 //        font.draw(fontSpriteBatch, "Upper left, ANGULAR VELOCITY=" + "(" + MathUtils.cos(projectile.radians) + "        " + MathUtils.sin(projectile.radians) + ")", 0, Gdx.graphics.getHeight() - 150);
 //        font.draw(fontSpriteBatch, "Upper left, POSITION=" + "(" + MathUtils.round(projectile.position.x) + "    ,   " + MathUtils.round(projectile.position.y) + ")", 0, Gdx.graphics.getHeight() - 200);
         fontSpriteBatch.end();
+
+        // ---------------------------------------------------------------------------------
+
 
         //check if player moves out of screen boundaries
         if (player.position.x > Gdx.graphics.getWidth()) {
@@ -307,10 +367,20 @@ public class hack_and_slash extends ApplicationAdapter {
             player.position.set(Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
         }
 
-        //-----------------TESTING DISTANCE BETWEEN ENEMY AND PLAYER-------------------------------
 
-        enemy.checkCollision(player);
-        enemy.moveTowards(player);
+        //TESTING FUNCTIONS
+//        enemy.checkCollision(player);
+//        enemy.moveTowards(player, deltaTime);
+
+
+        //TESTING PLAYER SHOOT FUNCTION
+//        player.batch.begin();
+//        player.collectionOfBullets.get(0).sprite.draw(player.batch);
+//        player.batch.end();
+
+//        for (gameObject b : player.collectionOfBullets) {
+//            b.position.set(b.position.add(, 1));
+//        }
 
 
         //update all objects
@@ -318,6 +388,19 @@ public class hack_and_slash extends ApplicationAdapter {
         projectile.update();
         projectile2.update();
         enemy.update();
+        for (gameObject b : collectionOfBullets) {
+            b.update();
+        }
+
+
+        player.batch.end();
+
+//        //update every bullet in the player
+//        for (gameObject b : player.collectionOfBullets) {
+//            b.position.add(1, 1);
+//            b.update();
+//        }
+
 
     }
 }
