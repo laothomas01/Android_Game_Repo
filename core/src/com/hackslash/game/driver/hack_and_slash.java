@@ -90,78 +90,121 @@ import java.util.ArrayList;
 public class hack_and_slash extends ApplicationAdapter {
 
 
+    //impulse for giving collisons the slight bounce
+    float COLLISION_COEF = 1.0f;
+
     class gameObject {
 
 
-        //PHYSICS SYSTEM
+        //-------------------------------PHYSICS ATTRIBUTES----------------------
         Vector2 position;
         Vector2 velocity;
         Vector2 acceleration;
-
         Vector2 angularVelocity;
+        Vector2 normal = new Vector2();
+        Vector2 temp = new Vector2();
+        Vector2 newVelocity = new Vector2();
         float radians;
-        float distance;
+        float orbitDistance;
         float health;
         float damage;
+
+        float moveSpeed;
+
+
         float width;
         float height;
+        float rotationSpeed;
 
-        float orbitSpeed;
+        float mass;
+
+        //--------------------------------------------------------------------------
+
         //-----------------------GAME GRAPHICS----------------------
         Sprite sprite;
         Texture texture;
         SpriteBatch batch;
 
+        //------------------------------------------------------------
         public gameObject() {
             position = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
             acceleration = new Vector2(0, 0);
             angularVelocity = new Vector2(0, 0);
             radians = 0;
-            distance = 0;
+            orbitDistance = 0;
             health = 0;
             damage = 0;
             width = 0;
             height = 0;
-            orbitSpeed = 0;
+            rotationSpeed = 0;
             texture = new Texture("circle.png");
             sprite = new Sprite(texture);
             sprite.setPosition(position.x, position.y);
             batch = new SpriteBatch();
-
+            mass = 1.0f;
+            moveSpeed = 0;
         }
 
+        //update game object with new data every second
         public void update() {
             this.position.set(this.position.x, this.position.y);
             this.sprite.setPosition(this.position.x, this.position.y);
             this.sprite.setTexture(this.texture);
         }
 
-        //------------------PHYSICS SYSTEM-------------------------
+        //------------------PHYSICS FUNCTIONS-------------------------//
+        public void checkCollision(gameObject object) {
+            normal.set(this.position).sub(object.position);
+            float distance = normal.len();
+            float impactDistance = (this.sprite.getWidth() + object.sprite.getWidth()) / 1.7f;
+            normal.nor();
 
 
-        //speed up rotation
-        public void increaseOrbitAngle() {
+            //when we collided, we should check the type of object we are colliding with
+            if (distance < impactDistance) {
+                //let's give an object impulse during collision
+                //we use temp because the method would change the contents of normal!
+                temp.set(normal).scl((impactDistance - distance) / 2);
+                this.position.add(temp);
+                temp.set(normal).scl((impactDistance - distance) / 2);
+                object.position.sub(temp);
+
+                //Let's implement newton's law of impact
+                //convert thw two velocities into a single reference frame
+                newVelocity.set(this.velocity.sub(object.velocity));
+
+                // Compute the impulse (see Essential Math for Game Programmers)
+                float impulse = (-(1 + COLLISION_COEF) * normal.dot(newVelocity)) /
+                        (normal.dot(normal) * (1 / this.mass + 1 / object.mass));
+                //Change velocity of two object using this impulse
+                temp.set(normal).scl(impulse / this.mass);
+                this.velocity.add(temp);
+                temp.set(normal).scl(impulse / object.mass);
+                object.velocity.sub(temp);
+
+            }
+        }
+
+
+        // calculate number of orbits per second
+        public void increaseRotationAngle() {
             if (this.radians < (MathUtils.PI * 2)) {
-                this.radians += orbitSpeed;
+                this.radians += rotationSpeed;
             } else {
                 this.radians = 0;
             }
         }
 
 
-//        public Vector2 calculateAngularVelocity(float )
-
-        //orbit a projectile around another object
-        public void orbitAround(gameObject parent) {
-
-            this.increaseOrbitAngle();
-
-//            this.distance = this.position.dst(parent.position);
+        //perform basic circular motion around the parameterized object
+        public void rotateAround(gameObject parent) {
+            this.increaseRotationAngle();
             this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
-            this.velocity.set(this.distance * this.angularVelocity.x, this.distance * this.angularVelocity.y);
+            this.velocity.set(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
             this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
         }
+
 
         //-----------------------------------------------------------
 
@@ -172,34 +215,53 @@ public class hack_and_slash extends ApplicationAdapter {
     private SpriteBatch fontSpriteBatch;
     private BitmapFont font;
 
+
     private gameObject player;
     private gameObject projectile;
 
     private gameObject projectile2;
 
+    private gameObject enemy;
 
     public void create() {
         font = new BitmapFont();
         fontSpriteBatch = new SpriteBatch();
 
+        //test player object
         player = new gameObject();
         player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         player.texture = new Texture("square.png");
 
 
+        //testing first rotating projectile
         projectile = new gameObject();
         //distance basically an offset from the object you are following
-        projectile.distance = 100;
-        projectile.position.set(player.position.x + projectile.distance, player.position.y + projectile.distance);
+        projectile.orbitDistance = 100;
+        projectile.position.set(player.position.x + projectile.orbitDistance, player.position.y + projectile.orbitDistance);
         projectile.texture = new Texture("circle.png");
-        projectile.orbitSpeed = .02f;
+        //orbit speed needs more accurate calculations
+        projectile.rotationSpeed = .03f;
+        projectile.sprite.setSize(projectile.sprite.getRegionWidth(), projectile.sprite.getRegionHeight());
 
+
+        //testing second rotating projectile
         projectile2 = new gameObject();
-        projectile2.distance = 50;
-        projectile2.position.set(projectile.position.x + projectile2.distance, projectile.position.y + projectile2.distance);
+        projectile2.orbitDistance = 50;
+        projectile2.position.set(projectile.position.x + projectile2.orbitDistance, projectile.position.y + projectile2.orbitDistance);
         projectile2.texture = new Texture("circle.png");
         projectile2.sprite.setColor(Color.BLUE);
-        projectile2.orbitSpeed = 0.06f;
+        projectile2.rotationSpeed = 0.07f;
+        projectile2.sprite.setSize(projectile2.sprite.getRegionWidth() / 2, projectile2.sprite.getRegionHeight() / 2);
+
+
+        //test enemy object
+        enemy = new gameObject();
+        enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
+        enemy.texture = new Texture("circle.png");
+        enemy.sprite.setColor(Color.RED);
+        enemy.moveSpeed = 150;
+
+
     }
 
     public void render() {
@@ -208,33 +270,49 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //checking game data
         fontSpriteBatch.begin();
-        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
-        font.draw(fontSpriteBatch, "Upper left, DISTANCE=" + projectile.distance, 0, Gdx.graphics.getHeight() - 50);
-        font.draw(fontSpriteBatch, "Upper left, RADIANS=" + projectile.radians, 0, Gdx.graphics.getHeight() - 100);
-        font.draw(fontSpriteBatch, "Upper left, ANGULAR VELOCITY=" + "(" + MathUtils.cos(projectile.radians) + "        " + MathUtils.sin(projectile.radians) + ")", 0, Gdx.graphics.getHeight() - 150);
-        font.draw(fontSpriteBatch, "Upper left, POSITION=" + "(" + MathUtils.round(projectile.position.x) + "    ,   " + MathUtils.round(projectile.position.y) + ")", 0, Gdx.graphics.getHeight() - 200);
-        fontSpriteBatch.end();
 
 
+        //draw game objects
         player.batch.begin();
         player.sprite.draw(player.batch);
         projectile.sprite.draw(player.batch);
         projectile2.sprite.draw(player.batch);
+        enemy.sprite.draw(player.batch);
         player.batch.end();
 
-        projectile.orbitAround(player);
-        projectile2.orbitAround(projectile);
 
-//        player.position.x += 1;
-//
-//        //just checking player boundaries
+        //test object rotations
+        projectile.rotateAround(player);
+        projectile2.rotateAround(projectile);
+
+
+        //used to check data being tested or frames
+        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
+        font.draw(fontSpriteBatch, "Upper left, ENEMY DISTANCE=" + enemy.position.dst(player.position), 0, Gdx.graphics.getHeight() - 50);
+//        font.draw(fontSpriteBatch, "Upper left, RADIANS=" + projectile.radians, 0, Gdx.graphics.getHeight() - 100);
+//        font.draw(fontSpriteBatch, "Upper left, ANGULAR VELOCITY=" + "(" + MathUtils.cos(projectile.radians) + "        " + MathUtils.sin(projectile.radians) + ")", 0, Gdx.graphics.getHeight() - 150);
+//        font.draw(fontSpriteBatch, "Upper left, POSITION=" + "(" + MathUtils.round(projectile.position.x) + "    ,   " + MathUtils.round(projectile.position.y) + ")", 0, Gdx.graphics.getHeight() - 200);
+        fontSpriteBatch.end();
+
+        //check if player moves out of screen boundaries
         if (player.position.x > Gdx.graphics.getWidth()) {
-            player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+            player.position.set(Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
         }
 
+        //-----------------TESTING DISTANCE BETWEEN ENEMY AND PLAYER-------------------------------
+        enemy.radians = MathUtils.atan2(player.position.y - enemy.position.y, player.position.x - enemy.position.x);
+        enemy.velocity.set(MathUtils.cos(enemy.radians), MathUtils.sin(enemy.radians));
+        enemy.position.set(enemy.position.add(enemy.velocity.scl(enemy.moveSpeed * Gdx.graphics.getDeltaTime())));
+
+
+        enemy.checkCollision(player);
+
+
+        //update all objects
         player.update();
         projectile.update();
         projectile2.update();
+        enemy.update();
 
     }
 }
@@ -505,30 +583,7 @@ public class hack_and_slash extends ApplicationAdapter {
 //     * MAKE SURE TO COMMENT THIS FUNCTION OUT IF YOU ARE TESTING PLAYER INPUT CONTROLS WITH ANOTHER OBJECT!
 //     */
 //
-//    public void checkForCollision() {
-//        //impulse collision physics
-//        normal.set(player.getTestObjectPosition()).sub(listOfObjects.get(0).getTestObjectPosition());
-//        float distance = normal.len();
-//        float impactDistance = (player.getSize() + listOfObjects.get(0).getSize()) / 1f;
-//        normal.nor();
-//
-//
-//        if (distance < impactDistance) {
-//            // here is where the impulse physics occursy -1
-//            temp.set(normal).scl((impactDistance - distance) / 2);
-//            player.getTestObjectPosition().add(temp);
-//            temp.set(normal).scl((impactDistance - distance) / 2);
-//            listOfObjects.get(0).getTestObjectPosition().sub(temp);
-//
-//            velocity.set(player.getTestObjectVelocity()).sub(listOfObjects.get(0).getTestObjectVelocity());
-//            float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) / (normal.dot(normal) * (1 / .025f) + (1 / .025f));
-//            temp.set(normal).scl(impulse / .025f);
-//            player.getTestObjectVelocity().add(temp);
-//            temp.set(normal).scl(impulse / .025f);
-//            listOfObjects.get(0).getTestObjectVelocity().sub(temp);
-//        }
-//
-//    }
+
 //
 //    public void ORBIT_AROUND_OBJECT() {
 //
