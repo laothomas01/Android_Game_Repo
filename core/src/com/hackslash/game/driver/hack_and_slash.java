@@ -53,9 +53,9 @@ public class hack_and_slash extends ApplicationAdapter {
     //---------------------------------------------------------------
 
     //BULLETS
-    float radians2 = 0.0174533f;
-    float radians3 = 0.0174533f;
-    float radians4 = 0.0174533f;
+//    float radians2 = 0.0174533f;
+//    float radians3 = 0.0174533f;
+//    float radians4 = 0.0174533f;
 
 
     gameStateManager manager = new gameStateManager();
@@ -133,7 +133,8 @@ public class hack_and_slash extends ApplicationAdapter {
         Vector2 acceleration;
         Vector2 angularVelocity;
 
-        float radians;
+        float rotateRadians;
+        float shootRadians;
         float orbitDistance;
         float health;
         float damage;
@@ -179,7 +180,8 @@ public class hack_and_slash extends ApplicationAdapter {
             velocity = new Vector2(0, 0);
             acceleration = new Vector2(0, 0);
             angularVelocity = new Vector2(0, 0);
-            radians = 0;
+            rotateRadians = 0;
+            shootRadians = 0.261799f;
             orbitDistance = 0;
             health = 0;
             damage = 0;
@@ -194,7 +196,7 @@ public class hack_and_slash extends ApplicationAdapter {
             moveSpeed = 0;
             maxCoolDown = 0.25f;
             coolDown = maxCoolDown;
-            maxLifeSpan = 2.0f;
+            maxLifeSpan = 1f;
             skillMaxCoolDown = 2.0f;
             skillCoolDown = skillMaxCoolDown;
             lifeSpan = maxLifeSpan;
@@ -249,10 +251,10 @@ public class hack_and_slash extends ApplicationAdapter {
 
         // calculate number of orbits per second(note: this calculation for rotation speed is not accurate)
         public void increaseRotationAngle() {
-            if (this.radians < (MathUtils.PI * 2)) {
-                this.radians += rotationSpeed;
+            if (this.rotateRadians < (MathUtils.PI * 2)) {
+                this.rotateRadians += rotationSpeed;
             } else {
-                this.radians = 0;
+                this.rotateRadians = 0;
             }
         }
 
@@ -260,15 +262,15 @@ public class hack_and_slash extends ApplicationAdapter {
         //perform basic circular motion around the parameterized object
         public void rotateAround(gameObject parent) {
             this.increaseRotationAngle();
-            this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
+            this.angularVelocity.set(MathUtils.cos(this.rotateRadians), MathUtils.sin(this.rotateRadians));
             this.velocity.set(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
             this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
         }
 
         //follow a target
         public void moveTowards(gameObject parent, float dt) {
-            this.radians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
-            this.velocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
+            this.rotateRadians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
+            this.velocity.set(MathUtils.cos(this.rotateRadians), MathUtils.sin(this.rotateRadians));
             this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * dt)));
         }
 
@@ -287,9 +289,11 @@ public class hack_and_slash extends ApplicationAdapter {
 
 //            constantVelocityShoot(object, dt);
 
-
+            constantVelocityShoot(object, dt);
             //SKILL #2
             fanShot(object, dt);
+            System.out.println("SHOOT RADIANS:" + shootRadians);
+
 
             //handling cases for bullets
             manager.manageBullets();
@@ -322,49 +326,58 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
         public void fanShot(gameObject object, float dt) {
-            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-            Vector2 vel1 = new Vector2(MathUtils.cos(radians + 0.785398f), MathUtils.sin(radians + 0.785398f));
-            Vector2 vel2 = new Vector2(vel1.x + 0.785398f, vel1.y + 0.785398f);
-            Vector2 vel3 = new Vector2(vel2.x + 0.785398f, vel2.y + 0.785398f);
-            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
-            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x, (vel2.y * 50) + this.position.y);
-            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x, (vel3.y * 50) + this.position.y);
-            if (coolDown <= 0) {
-                if (manager.getCollectionOfBullets().size < 3) {
-                    //SKILL #2
-                    //Fan Shot
-                    gameObject bullet1 = new gameObject();
-                    gameObject bullet2 = new gameObject();
-                    gameObject bullet3 = new gameObject();
-                    bullet1.sprite.setColor(Color.GREEN);
-                    bullet1.velocity.set(vel1);
-                    bullet1.position.set(offsetPosition1);
-                    bullet1.moveSpeed = 300f;
-                    bullet1.update();
-                    manager.getCollectionOfBullets().add(bullet1);
 
-
-                    bullet2.sprite.setColor(Color.GREEN);
-                    bullet2.velocity.set(vel2);
-                    bullet2.position.set(offsetPosition2);
-                    bullet2.moveSpeed = 300f;
-                    bullet2.update();
-                    manager.getCollectionOfBullets().add(bullet2);
-
-
-                    bullet3.sprite.setColor(Color.GREEN);
-                    bullet3.velocity.set(vel3);
-                    bullet3.position.set(offsetPosition3);
-                    bullet3.moveSpeed = 300f;
-                    bullet3.update();
-                    manager.getCollectionOfBullets().add(bullet3);
-
-
-                }
-
+            if (this.shootRadians < (MathUtils.PI * 2)) {
+                this.shootRadians += 0.0174533f;
             } else {
-                coolDown -= dt;
+                this.shootRadians = 0.261799f;
             }
+
+//            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            Vector2 vel1 = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
+            Vector2 vel2 = new Vector2(MathUtils.cos(shootRadians * 2), MathUtils.sin(shootRadians * 2));
+            Vector2 vel3 = new Vector2(MathUtils.cos(shootRadians * 3), MathUtils.sin(shootRadians * 3));
+            Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
+            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
+            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
+//            if (coolDown <= 0) {
+            if (manager.getCollectionOfBullets().size < 3) {
+                //SKILL #2
+                //Fan Shot
+                gameObject bullet1 = new gameObject();
+                bullet1.maxLifeSpan = 1.5f;
+                bullet1.sprite.setColor(Color.GREEN);
+                bullet1.velocity.set(vel1);
+                bullet1.position.set(offsetPosition1);
+                bullet1.moveSpeed = 300f;
+                bullet1.update();
+                manager.getCollectionOfBullets().add(bullet1);
+
+                gameObject bullet2 = new gameObject();
+                bullet2.maxLifeSpan = 1.5f;
+                bullet2.sprite.setColor(Color.GREEN);
+                bullet2.velocity.set(vel2);
+                bullet2.position.set(offsetPosition2);
+                bullet2.moveSpeed = 300f;
+                bullet2.update();
+                manager.getCollectionOfBullets().add(bullet2);
+
+                gameObject bullet3 = new gameObject();
+                bullet3.maxLifeSpan = 1.5f;
+                bullet3.sprite.setColor(Color.GREEN);
+                bullet3.velocity.set(vel3);
+                bullet3.position.set(offsetPosition3);
+                bullet3.moveSpeed = 300f;
+                bullet3.update();
+                manager.getCollectionOfBullets().add(bullet3);
+
+
+//                }
+
+            }
+//                else {
+//                coolDown -= dt;
+//            }
 
         }
 
