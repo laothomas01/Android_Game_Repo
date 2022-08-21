@@ -49,6 +49,9 @@ public class hack_and_slash extends ApplicationAdapter {
     Vector2 temp;
     Vector2 newVelocity;
     //BULLETS
+    float radians2 = 0.0174533f;
+    float radians3 = 2.61799f;
+    float radians4 = 1.5708f;
     gameStateManager manager = new gameStateManager();
 
     class gameStateManager {
@@ -97,6 +100,7 @@ public class hack_and_slash extends ApplicationAdapter {
         float rotationSpeed;
 
         float mass;
+
 
         //------------------------------------------------------------------------------
 
@@ -241,11 +245,6 @@ public class hack_and_slash extends ApplicationAdapter {
             Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
 
 
-            float radians2 = 0.785398f;
-            float radians3 = 2.61799f;
-            float radians4 = 1.5708f;
-
-
             Vector2 vel2 = new Vector2(MathUtils.cos(radians2), MathUtils.sin(radians2));
             Vector2 vel3 = new Vector2(MathUtils.cos(radians3), MathUtils.sin(radians3));
             Vector2 vel4 = new Vector2(MathUtils.cos(radians4), MathUtils.sin(radians4));
@@ -387,6 +386,10 @@ public class hack_and_slash extends ApplicationAdapter {
         //---------------------testing shooting mechanic----------------------------------
 
         player.shoot(enemy, deltaTime);
+
+//        radians2 += 1;
+//        radians3 += 0.0174533f;
+//        radians4 += 0.0174533f;
 
         //-----------------------------draw game objects-----------------------
 
