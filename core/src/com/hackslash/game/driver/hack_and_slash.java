@@ -142,7 +142,7 @@ public class hack_and_slash extends ApplicationAdapter {
             mass = 1.0f;
             moveSpeed = 0;
             coolDown = 0f;
-            maxCoolDown = 1f;
+            maxCoolDown = 0.5f;
             coolDown = maxCoolDown;
             lifeSpan = 0;
             maxLifeSpan = 2.0f;
@@ -224,7 +224,7 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
         public void move(float dt) {
-            this.position.add(this.velocity);
+            this.position.add(this.velocity.x * this.moveSpeed * dt, this.velocity.y * this.moveSpeed * dt);
         }
 
         //----------------------------------------------------------------------
@@ -236,9 +236,14 @@ public class hack_and_slash extends ApplicationAdapter {
         public void shoot(gameObject object, float dt) {
 
 
-
+            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+            Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
+            System.out.println("OLD POSITION:" + this.position);
+            System.out.println("OFFSET:" + offsetPosition);
 
 //            System.out.println("OLD:" + this.position);
+
 //            Vector2 normal = new Vector2();
 //            normal.set(object.position.x - this.position.x, object.position.y - this.position.y);
 //            System.out.println("NORMAL:" + normal);
@@ -256,10 +261,16 @@ public class hack_and_slash extends ApplicationAdapter {
                 if (manager.getCollectionOfBullets().size < 1) {
                     gameObject bullet = new gameObject();
                     bullet.sprite.setColor(Color.GREEN);
+                    bullet.velocity.set(vel);
+                    bullet.position.set(offsetPosition);
+                    bullet.moveSpeed = 500f;
+//                    bullet.velocity.set(newVelocity);
+//                    bullet.position.set(offsetPosition);
+
 //                    bullet.velocity.set(unit);
 //                    bullet.position.set(newPosition);
-//                    bullet.update();
-//                    manager.getCollectionOfBullets().add(bullet);
+                    bullet.update();
+                    manager.getCollectionOfBullets().add(bullet);
                 }
             } else {
                 coolDown -= dt;
@@ -428,6 +439,11 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //TESTING FUNCTIONS
         enemy.performImpulseCollision(player);
+        enemy.position.y += 1;
+
+        if (enemy.position.y > Gdx.graphics.getHeight()) {
+            enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
+        }
 //        enemy.moveTowards(player, deltaTime);
 
 
@@ -441,6 +457,13 @@ public class hack_and_slash extends ApplicationAdapter {
         for (gameObject b : manager.getCollectionOfBullets()) {
             if (b.hasCollided(enemy)) {
                 manager.getCollectionOfRemovedBullets().add(b);
+            }
+            System.out.println("LIFESPAN:" + b.lifeSpan);
+            if (b.lifeSpan <= 0) {
+                b.lifeSpan = b.maxLifeSpan;
+                manager.getCollectionOfRemovedBullets().add(b);
+            } else {
+                b.lifeSpan -= deltaTime;
             }
 
             b.move(deltaTime);
