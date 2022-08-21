@@ -42,18 +42,35 @@ import java.util.ArrayList;
 public class hack_and_slash extends ApplicationAdapter {
 
 
+    //used to add a slight bounce to colliding objects
     float COLLISION_COEF = 1.0f;
     float deltaTime;
 
+    //-----------------------IMPULSE COLLISION VECTORS---------------
     Vector2 normal;
     Vector2 temp;
     Vector2 newVelocity;
+    //---------------------------------------------------------------
+
     //BULLETS
     float radians2 = 0.0174533f;
-    float radians3 = 2.61799f;
-    float radians4 = 1.5708f;
+    float radians3 = 0.0174533f;
+    float radians4 = 0.0174533f;
+
+
     gameStateManager manager = new gameStateManager();
 
+
+    /*
+     *
+     * Class for handling game events:
+     * What is a game state?
+     * -collision?
+     * -detection?
+     * -removing objects?
+     * -adding objects?
+     * -loading output, saving input?
+     * */
     class gameStateManager {
         Array<gameObject> collectionOfBullets;
         Array<gameObject> collectionOfRemovedBullets;
@@ -75,9 +92,38 @@ public class hack_and_slash extends ApplicationAdapter {
             return collectionOfBullets.removeAll(collectionOfRemovedBullets, false);
         }
 
+        public void manageBullets() {
+            for (gameObject b : manager.getCollectionOfBullets()) {
+                if (b.hasCollided(enemy)) {
+                    manager.getCollectionOfRemovedBullets().add(b);
+                }
+                System.out.println("LIFESPAN:" + b.lifeSpan);
+                if (b.lifeSpan <= 0) {
+                    b.lifeSpan = b.maxLifeSpan;
+                    manager.getCollectionOfRemovedBullets().add(b);
+                } else {
+                    b.lifeSpan -= deltaTime;
+                }
+
+                b.move(deltaTime);
+                b.update();
+            }
+            manager.removeBullets();
+        }
+
 
     }
 
+
+    /*
+     *
+     * Any in-game entity that can be destroyed,created or interacted with
+     *   -exp drops
+     *   -the player
+     *   -enemies
+     *   -bullets
+     *
+     * */
     class gameObject {
 
 
@@ -100,8 +146,6 @@ public class hack_and_slash extends ApplicationAdapter {
         float rotationSpeed;
 
         float mass;
-
-
         //------------------------------------------------------------------------------
 
         //----------------------------MISC ATTRIBUTES FOR GAME OBJECTS-------------------
@@ -110,13 +154,16 @@ public class hack_and_slash extends ApplicationAdapter {
         float maxCoolDown;
         float coolDown;
 
+        float skillMaxCoolDown;
+        float skillCoolDown;
+
         float lifeSpan;
         float maxLifeSpan;
 
         float distance;
         float impactDistance;
 
-        //
+        //----------------------------------------------------------
 
         //-----------------------GAME GRAPHICS----------------------
         Sprite sprite;
@@ -145,13 +192,12 @@ public class hack_and_slash extends ApplicationAdapter {
             batch = new SpriteBatch();
             mass = 1.0f;
             moveSpeed = 0;
-            coolDown = 0f;
             maxCoolDown = 0.25f;
             coolDown = maxCoolDown;
-            lifeSpan = 0;
             maxLifeSpan = 2.0f;
+            skillMaxCoolDown = 2.0f;
+            skillCoolDown = skillMaxCoolDown;
             lifeSpan = maxLifeSpan;
-
         }
         //--------------------------------------------------------------
 
@@ -217,7 +263,6 @@ public class hack_and_slash extends ApplicationAdapter {
             this.angularVelocity.set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
             this.velocity.set(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
             this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
-
         }
 
         //follow a target
@@ -237,57 +282,83 @@ public class hack_and_slash extends ApplicationAdapter {
         //--------------------------NON-PHYSICS-RELATED-FUNCTIONS--------------------------------
 
 
+        //this should handle all ranged attacks??????
         public void shoot(gameObject object, float dt) {
 
+//            constantVelocityShoot(object, dt);
+
+
+            //SKILL #2
+            fanShot(object, dt);
+
+            //handling cases for bullets
+            manager.manageBullets();
+
+        }
+
+        public void constantVelocityShoot(gameObject object, float dt) {
             //shooting a bullet with linear motion but offset from player's position
             float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
             Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
             Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
 
 
-            Vector2 vel2 = new Vector2(MathUtils.cos(radians2), MathUtils.sin(radians2));
-            Vector2 vel3 = new Vector2(MathUtils.cos(radians3), MathUtils.sin(radians3));
-            Vector2 vel4 = new Vector2(MathUtils.cos(radians4), MathUtils.sin(radians4));
-
-
             if (coolDown <= 0) {
-                if (manager.getCollectionOfBullets().size < 2) {
+                if (manager.getCollectionOfBullets().size < 1) {
                     //SKILL #1
                     //Instantiate a bullet with constant velocity
-//                    gameObject bullet = new gameObject();
-//                    bullet.sprite.setColor(Color.GREEN);
-//                    bullet.velocity.set(vel);
-//                    bullet.position.set(offsetPosition);
-//                    bullet.moveSpeed = 500f;
-//                    bullet.update();
-//                    manager.getCollectionOfBullets().add(bullet);
+                    gameObject bullet = new gameObject();
+                    bullet.sprite.setColor(Color.GREEN);
+                    bullet.velocity.set(vel);
+                    bullet.position.set(offsetPosition);
+                    bullet.moveSpeed = 500f;
+                    bullet.update();
+                    manager.getCollectionOfBullets().add(bullet);
+                }
 
+            } else {
+                coolDown -= dt;
+            }
+        }
 
+        public void fanShot(gameObject object, float dt) {
+            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            Vector2 vel1 = new Vector2(MathUtils.cos(radians + 0.785398f), MathUtils.sin(radians + 0.785398f));
+            Vector2 vel2 = new Vector2(vel1.x + 0.785398f, vel1.y + 0.785398f);
+            Vector2 vel3 = new Vector2(vel2.x + 0.785398f, vel2.y + 0.785398f);
+            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
+            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x, (vel2.y * 50) + this.position.y);
+            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x, (vel3.y * 50) + this.position.y);
+            if (coolDown <= 0) {
+                if (manager.getCollectionOfBullets().size < 3) {
                     //SKILL #2
+                    //Fan Shot
+                    gameObject bullet1 = new gameObject();
                     gameObject bullet2 = new gameObject();
+                    gameObject bullet3 = new gameObject();
+                    bullet1.sprite.setColor(Color.GREEN);
+                    bullet1.velocity.set(vel1);
+                    bullet1.position.set(offsetPosition1);
+                    bullet1.moveSpeed = 300f;
+                    bullet1.update();
+                    manager.getCollectionOfBullets().add(bullet1);
+
+
                     bullet2.sprite.setColor(Color.GREEN);
                     bullet2.velocity.set(vel2);
-                    bullet2.position.set(this.position);
-                    bullet2.moveSpeed = 200f;
+                    bullet2.position.set(offsetPosition2);
+                    bullet2.moveSpeed = 300f;
                     bullet2.update();
                     manager.getCollectionOfBullets().add(bullet2);
 
 
-                    gameObject bullet3 = new gameObject();
                     bullet3.sprite.setColor(Color.GREEN);
                     bullet3.velocity.set(vel3);
-                    bullet3.position.set(this.position);
-                    bullet3.moveSpeed = 200f;
+                    bullet3.position.set(offsetPosition3);
+                    bullet3.moveSpeed = 300f;
                     bullet3.update();
                     manager.getCollectionOfBullets().add(bullet3);
 
-                    gameObject bullet4 = new gameObject();
-                    bullet4.sprite.setColor(Color.GREEN);
-                    bullet4.velocity.set(vel4);
-                    bullet4.position.set(this.position);
-                    bullet4.moveSpeed = 200f;
-                    bullet4.update();
-                    manager.getCollectionOfBullets().add(bullet4);
 
                 }
 
@@ -295,25 +366,8 @@ public class hack_and_slash extends ApplicationAdapter {
                 coolDown -= dt;
             }
 
-
-            //handling cases for bullets
-            for (gameObject b : manager.getCollectionOfBullets()) {
-                if (b.hasCollided(enemy)) {
-                    manager.getCollectionOfRemovedBullets().add(b);
-                }
-                System.out.println("LIFESPAN:" + b.lifeSpan);
-                if (b.lifeSpan <= 0) {
-                    b.lifeSpan = b.maxLifeSpan;
-                    manager.getCollectionOfRemovedBullets().add(b);
-                } else {
-                    b.lifeSpan -= deltaTime;
-                }
-
-                b.move(deltaTime);
-                b.update();
-            }
-            manager.removeBullets();
         }
+
     }
 
 
@@ -382,14 +436,9 @@ public class hack_and_slash extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         //---------------------testing shooting mechanic----------------------------------
 
         player.shoot(enemy, deltaTime);
-
-//        radians2 += 1;
-//        radians3 += 0.0174533f;
-//        radians4 += 0.0174533f;
 
         //-----------------------------draw game objects-----------------------
 
