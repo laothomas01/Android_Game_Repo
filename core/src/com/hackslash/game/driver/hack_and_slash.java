@@ -97,7 +97,6 @@ public class hack_and_slash extends ApplicationAdapter {
                 if (b.hasCollided(enemy)) {
                     manager.getCollectionOfRemovedBullets().add(b);
                 }
-                System.out.println("LIFESPAN:" + b.lifeSpan);
                 if (b.lifeSpan <= 0) {
                     b.lifeSpan = b.maxLifeSpan;
                     manager.getCollectionOfRemovedBullets().add(b);
@@ -158,8 +157,8 @@ public class hack_and_slash extends ApplicationAdapter {
         float skillMaxCoolDown;
         float skillCoolDown;
 
-        float lifeSpan;
-        float maxLifeSpan;
+        private float lifeSpan;
+        private float maxLifeSpan;
 
         float distance;
         float impactDistance;
@@ -196,10 +195,12 @@ public class hack_and_slash extends ApplicationAdapter {
             moveSpeed = 0;
             maxCoolDown = 0.25f;
             coolDown = maxCoolDown;
-            maxLifeSpan = 1f;
+
+            maxLifeSpan = 1.5f;
+            lifeSpan = maxLifeSpan;
+
             skillMaxCoolDown = 2.0f;
             skillCoolDown = skillMaxCoolDown;
-            lifeSpan = maxLifeSpan;
         }
         //--------------------------------------------------------------
 
@@ -208,6 +209,11 @@ public class hack_and_slash extends ApplicationAdapter {
 //            this.position.set(this.possition.x, this.position.y);
             this.sprite.setPosition(this.position.x, this.position.y);
             this.sprite.setTexture(this.texture);
+            this.maxLifeSpan = 1.5f;
+        }
+
+        public void setMaxLifeSpan(float max) {
+            this.maxLifeSpan = max;
         }
 
         //------------------PHYSICS FUNCTIONS-------------------------
@@ -287,12 +293,22 @@ public class hack_and_slash extends ApplicationAdapter {
         //this should handle all ranged attacks??????
         public void shoot(gameObject object, float dt) {
 
-//            constantVelocityShoot(object, dt);
+            SingleShot(object, dt);
 
-            constantVelocityShoot(object, dt);
+//            constantVelocityShoot(object, dt);
             //SKILL #2
-            fanShot(object, dt);
-            System.out.println("SHOOT RADIANS:" + shootRadians);
+//            TriShot(object, dt);
+
+
+            //SKILL #3
+
+            SurroundShot(object, dt);
+
+
+            //SKILL #4
+
+            //WORK IN PROGRESS
+//            PitchForkShot(object, dt);
 
 
             //handling cases for bullets
@@ -300,13 +316,12 @@ public class hack_and_slash extends ApplicationAdapter {
 
         }
 
-        public void constantVelocityShoot(gameObject object, float dt) {
+        // BASE SHOOT ATTACK
+        public void SingleShot(gameObject object, float dt) {
             //shooting a bullet with linear motion but offset from player's position
             float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
             Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
             Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
-
-
             if (coolDown <= 0) {
                 if (manager.getCollectionOfBullets().size < 1) {
                     //SKILL #1
@@ -325,27 +340,59 @@ public class hack_and_slash extends ApplicationAdapter {
             }
         }
 
-        public void fanShot(gameObject object, float dt) {
-
-            if (this.shootRadians < (MathUtils.PI * 2)) {
-                this.shootRadians += 0.0174533f;
-            } else {
-                this.shootRadians = 0.261799f;
-            }
-
+        public void PitchForkShot(gameObject object, float dt) {
 //            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-            Vector2 vel1 = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
-            Vector2 vel2 = new Vector2(MathUtils.cos(shootRadians * 2), MathUtils.sin(shootRadians * 2));
-            Vector2 vel3 = new Vector2(MathUtils.cos(shootRadians * 3), MathUtils.sin(shootRadians * 3));
+//            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+//            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 0.785398f), MathUtils.sin(radians + 0.785398f));
+//            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.785398f), MathUtils.sin(radians - 0.785398f));
+//
+//            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
+//            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x - 40, (vel2.y * 50) + this.position.y - 40);
+//            Vector2 offsetPosition3 = new Vector2((vel2.x * 50) + this.position.x + 40, (vel2.y * 50) + this.position.y - 40);
+//
+//            if (manager.getCollectionOfBullets().size < 1) {
+//                //PITCH FORK SHOT
+//                gameObject bullet1 = new gameObject();
+//                bullet1.sprite.setColor(Color.GREEN);
+//                bullet1.velocity.set(vel1);
+//                bullet1.position.set(offsetPosition1);
+//                bullet1.moveSpeed = 300f;
+//                bullet1.update();
+//                manager.getCollectionOfBullets().add(bullet1);
+//
+//                gameObject bullet2 = new gameObject();
+//                bullet2.sprite.setColor(Color.GREEN);
+//                bullet2.velocity.set(vel2);
+//                bullet2.position.set(offsetPosition2);
+//                bullet2.moveSpeed = 300f;
+//                bullet2.update();
+//                manager.getCollectionOfBullets().add(bullet2);
+//
+//                gameObject bullet3 = new gameObject();
+//                bullet3.sprite.setColor(Color.GREEN);
+//                bullet3.velocity.set(vel3);
+//                bullet3.position.set(offsetPosition3);
+//                bullet3.moveSpeed = 300f;
+//                bullet3.update();
+//                manager.getCollectionOfBullets().add(bullet3);
+//            }
+
+        }
+
+
+        public void SurroundShot(gameObject object, float dt) {
+            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin((radians)));
+            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 1.5708f), MathUtils.sin((radians + 1.5708f)));
+            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 1.5708f), MathUtils.sin((radians - 1.5708f)));
             Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
             Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
             Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
-//            if (coolDown <= 0) {
+
             if (manager.getCollectionOfBullets().size < 3) {
                 //SKILL #2
                 //Fan Shot
                 gameObject bullet1 = new gameObject();
-                bullet1.maxLifeSpan = 1.5f;
                 bullet1.sprite.setColor(Color.GREEN);
                 bullet1.velocity.set(vel1);
                 bullet1.position.set(offsetPosition1);
@@ -354,7 +401,7 @@ public class hack_and_slash extends ApplicationAdapter {
                 manager.getCollectionOfBullets().add(bullet1);
 
                 gameObject bullet2 = new gameObject();
-                bullet2.maxLifeSpan = 1.5f;
+                System.out.println("MAX:" + bullet1.maxLifeSpan);
                 bullet2.sprite.setColor(Color.GREEN);
                 bullet2.velocity.set(vel2);
                 bullet2.position.set(offsetPosition2);
@@ -363,7 +410,53 @@ public class hack_and_slash extends ApplicationAdapter {
                 manager.getCollectionOfBullets().add(bullet2);
 
                 gameObject bullet3 = new gameObject();
-                bullet3.maxLifeSpan = 1.5f;
+                bullet3.sprite.setColor(Color.GREEN);
+                bullet3.velocity.set(vel3);
+                bullet3.position.set(offsetPosition3);
+                bullet3.moveSpeed = 300f;
+                bullet3.update();
+                manager.getCollectionOfBullets().add(bullet3);
+
+
+//                }
+
+            }
+        }
+
+        //BUG: bullet max life span is bugged! currently, the value is baked in
+        // SKILL 2
+        public void TriShot(gameObject object, float dt) {
+
+
+            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin((radians)));
+            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 0.261799f), MathUtils.sin((radians + 0.261799f)));
+            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.261799f), MathUtils.sin((radians - 0.261799f)));
+            Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
+            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
+            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
+//            if (coolDown <= 0) {
+            if (manager.getCollectionOfBullets().size < 3) {
+                //SKILL #2
+                //Fan Shot
+                gameObject bullet1 = new gameObject();
+                bullet1.sprite.setColor(Color.GREEN);
+                bullet1.velocity.set(vel1);
+                bullet1.position.set(offsetPosition1);
+                bullet1.moveSpeed = 300f;
+                bullet1.update();
+                manager.getCollectionOfBullets().add(bullet1);
+
+                gameObject bullet2 = new gameObject();
+                System.out.println("MAX:" + bullet1.maxLifeSpan);
+                bullet2.sprite.setColor(Color.GREEN);
+                bullet2.velocity.set(vel2);
+                bullet2.position.set(offsetPosition2);
+                bullet2.moveSpeed = 300f;
+                bullet2.update();
+                manager.getCollectionOfBullets().add(bullet2);
+
+                gameObject bullet3 = new gameObject();
                 bullet3.sprite.setColor(Color.GREEN);
                 bullet3.velocity.set(vel3);
                 bullet3.position.set(offsetPosition3);
@@ -378,6 +471,10 @@ public class hack_and_slash extends ApplicationAdapter {
 //                else {
 //                coolDown -= dt;
 //            }
+
+        }
+
+        public void parallelShot() {
 
         }
 
@@ -495,6 +592,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //TESTING FUNCTIONS
         enemy.performImpulseCollision(player);
+        enemy.position.x += 1;
 
 
         if (enemy.position.y > Gdx.graphics.getWidth()) {
