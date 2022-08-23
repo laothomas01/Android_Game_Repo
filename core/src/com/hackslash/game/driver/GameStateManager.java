@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 
 /*
  *
@@ -168,35 +169,55 @@ class gameObject {
 }
 
 class Player extends gameObject {
+    SkillManager skillManager;
+
     Player() {
+        skillManager = new SkillManager();
         this.getTransform().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         this.setTexture("circle.png");
         this.getTransform().setSize(10f, 10f);
         this.setColor(Color.BLUE);
+    }
 
+    public SkillManager getSkillManager() {
+        return skillManager;
     }
 
     public String toString() {
-        return "    POSITION:   "
-                + this.getTransform().getPosition()
-                + "  TEXTURE: "
-                + this.getTexture().toString() +
-                "   SIZE:    " +
-                this.getTransform().getWidth() +
-                ","
-                + this.getTransform().getHeight();
+        return "    POSITION:   " + this.getTransform().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getTransform().getWidth() + "," + this.getTransform().getHeight();
     }
 }
 
 
-//
-class skill {
+/*
+ *
+ * A skill is an upgradable action that cna be performed by the player
+ *
+ */
+class Skill {
+    String name;
+    float coolDown;
+    String behavior;
+    int level;
 
+    public Skill() {
+
+    }
 }
 
 
-//
-class skillManager {
+/*
+ * ACCESSES AND MODIFIED SKILLS
+ *
+ * */
+class SkillManager {
+    ArrayMap<Skill, String> skills;
+
+    public SkillManager() {
+        skills = new ArrayMap<>();
+        skills.ordered = true;
+    }
+
 
 }
 
