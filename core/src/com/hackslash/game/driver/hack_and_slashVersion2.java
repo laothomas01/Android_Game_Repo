@@ -2,60 +2,28 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.hackslash.game.controller.BulletController;
-import com.hackslash.game.controller.EnemyController;
-import com.hackslash.game.controller.PlayerController;
-import com.hackslash.game.model.Bullet;
-import com.hackslash.game.model.Enemy;
-import com.hackslash.game.model.GameObject;
-import com.hackslash.game.model.Player;
-import com.hackslash.game.view.*;
-import jdk.nashorn.internal.runtime.Debug;
-import org.graalvm.compiler.loop.MathUtil;
-import org.graalvm.compiler.replacements.Log;
 
-import java.util.ArrayList;
 
-/**
- * SUMMARY
- * ________
- * THIS IS A BRANCH I WILL USE TO TEST NEW FEATURES AND WILL INTEGRATE MY WORK BACK INTO THE MAIN BRANCH
- * <p>
- * CONSIDER THIS A PLAYGROUND OF SORTS
- * [x] following camera
- * [x] orbiting sprite around another sprite
- * [x] testing out linear interpolation
- * [] bouncy sprite collision
- */
-
-public class hack_and_slash extends ApplicationAdapter {
+public class hack_and_slashVersion2 extends ApplicationAdapter {
 
 
     //used to add a slight bounce to colliding objects
     float COLLISION_COEF = 1.0f;
     float deltaTime;
-
     //-----------------------IMPULSE COLLISION VECTORS---------------
     Vector2 normal;
     Vector2 temp;
     Vector2 newVelocity;
     //---------------------------------------------------------------
-
-    //BULLETS
-//    float radians2 = 0.0174533f;
-//    float radians3 = 0.0174533f;
-//    float radians4 = 0.0174533f;
 
 
     gameStateManager manager = new gameStateManager();
@@ -72,12 +40,16 @@ public class hack_and_slash extends ApplicationAdapter {
      * -adding objects?
      * -loading output, saving input?
      * */
+
+
+    //what is a game state manager???
     class gameStateManager {
         Array<gameObject> collectionOfBullets;
         Array<gameObject> collectionOfRemovedBullets;
 
         public gameStateManager() {
             collectionOfBullets = new Array<>();
+            collectionOfBullets.setSize(1);
             collectionOfRemovedBullets = new Array<>();
         }
 
@@ -93,23 +65,30 @@ public class hack_and_slash extends ApplicationAdapter {
             return collectionOfBullets.removeAll(collectionOfRemovedBullets, false);
         }
 
+        public void setCollectionSize(int size) {
+
+            collectionOfBullets.setSize(size);
+        }
+
         public void manageBullets() {
-            for (gameObject b : manager.getCollectionOfBullets()) {
-                if (b.hasCollided(enemy)) {
-                    manager.getCollectionOfRemovedBullets().add(b);
+            if (!manager.getCollectionOfBullets().isEmpty()) {
+                for (gameObject b : manager.getCollectionOfBullets()) {
+                    if (b.hasCollided(enemy)) {
+                        manager.getCollectionOfRemovedBullets().add(b);
+                    }
+                    System.out.println("LIFE SPAN:" + b.getLifeSpan());
+                    System.out.println("MAX LIFE SPAN:" + b.getMaxLifeSpan());
+
+                    if (b.lifeSpan <= 0) {
+                        b.setLifeSpan(b.getMaxLifeSpan());
+                        manager.getCollectionOfRemovedBullets().add(b);
+                    } else {
+                        b.lifeSpan -= deltaTime;
+                    }
+
+                    b.move(deltaTime);
+                    b.update();
                 }
-//                System.out.println("LIFE SPAN:" + );
-//                System.out.println("MAX LIFE SPAN:" + b.getMaxLifeSpan());
-
-//                if (b.lifeSpan <= 0) {
-//                    b.setLifeSpan(b.getMaxLifeSpan());
-//                    manager.getCollectionOfRemovedBullets().add(b);
-//                } else {
-//                    b.lifeSpan -= deltaTime;
-//                }
-
-                b.move(deltaTime);
-                b.update();
             }
             manager.removeBullets();
         }
@@ -203,6 +182,9 @@ public class hack_and_slash extends ApplicationAdapter {
         //--------------------------------------------------------------
 
         //Update our game objects with new data every 60 frames
+
+
+        //update what???
         public void update() {
 //            this.position.set(this.possition.x, this.position.y);
             this.sprite.setPosition(this.position.x, this.position.y);
@@ -219,6 +201,10 @@ public class hack_and_slash extends ApplicationAdapter {
 
         public void setLifeSpan(float span) {
             this.lifeSpan = span;
+        }
+
+        public float getLifeSpan() {
+            return this.lifeSpan;
         }
 
         //------------------PHYSICS FUNCTIONS-------------------------
@@ -322,30 +308,76 @@ public class hack_and_slash extends ApplicationAdapter {
 
         }
 
-        // BASE SHOOT ATTACK
-        public void SingleShot(gameObject object, float dt) {
-            //shooting a bullet with linear motion but offset from player's position
-            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-            Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
-            if (coolDown <= 0) {
-                if (manager.getCollectionOfBullets().size < 1) {
-                    //SKILL #1
-                    //Instantiate a bullet with constant velocity
-                    gameObject bullet = new gameObject();
-                    bullet.sprite.setColor(Color.GREEN);
-                    bullet.velocity.set(vel);
-                    bullet.position.set(offsetPosition);
-                    bullet.moveSpeed = 500f;
-                    bullet.setMaxLifeSpan(1.5f);
-                    bullet.setLifeSpan(bullet.getMaxLifeSpan());
-                    bullet.update();
-                    manager.getCollectionOfBullets().add(bullet);
-                }
+        // BASE SHOOT ATTACk
+        /*
+         *
+         * How can we generalize the equations or components found in this function?
+         * */
+        public void SingleShot(gameObject target, float dt) {
 
-            } else {
-                coolDown -= dt;
+            /*
+             *
+             * Generalized equations for shooting:
+             *
+             *  velocity <- radians
+             *
+             * offset <- velocity , offset distance , shooter's position
+             *
+             * equation: bullet final position = shooter's current position + (velocity * 50) * speed * deltaTime
+             *
+             * */
+
+            //find angle between current object and target
+            float radians = MathUtils.atan2(target.position.y - this.position.y, target.position.x - this.position.x);
+
+            //direction of the projectile
+            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+
+
+            //offset the projectile position from the calling object's position
+            Vector2 offsetPosition = new Vector2(
+
+
+                    //  X direction
+                    (vel.x *
+                            //offset distance
+                            50) +
+                            //current Xposition of calling object
+                            this.position.x,
+                    // Y direction
+                    (vel.y *
+                            //offset distance
+                            50) +
+                            //current Yposition of calling object
+                            this.position.y);
+
+//            {
+
+
+//                if (
+//                    //limit to collection size.
+//                    // why? we are rendering at 60 frames per bullet and using an arraylist for a datastructure
+//                    //
+//                        manager.getCollectionOfBullets().size < 1
+//
+//
+//                )
+
+
+            {
+
+                gameObject bullet = new gameObject();
+                bullet.sprite.setColor(Color.GREEN);
+                bullet.velocity.set(vel);
+                bullet.position.set(offsetPosition);
+                bullet.moveSpeed = 500f;
+                bullet.setMaxLifeSpan(0.5f);
+                bullet.setLifeSpan(bullet.getMaxLifeSpan());
+                bullet.update();
+                manager.getCollectionOfBullets().add(bullet);
             }
+
+//            }
         }
 
         public void PitchForkShot(gameObject object, float dt) {
@@ -478,12 +510,7 @@ public class hack_and_slash extends ApplicationAdapter {
                 manager.getCollectionOfBullets().add(bullet3);
 
 
-//                }
-
             }
-//                else {
-//                coolDown -= dt;
-//            }
 
         }
 
@@ -506,6 +533,8 @@ public class hack_and_slash extends ApplicationAdapter {
     private gameObject enemy;
 
 
+    //  Called when the Application is first created.
+    //intialization game state
     public void create() {
 
         //initialize....
@@ -554,12 +583,12 @@ public class hack_and_slash extends ApplicationAdapter {
 
     }
 
+    //updating game state
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        System.out.println("HELLO WORLD!");
         //---------------------testing shooting mechanic----------------------------------
 
         player.shoot(enemy, deltaTime);
@@ -622,6 +651,40 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
     }
+
+    @Override
+    public void resize(int width, int height) {
+    }
+
+
+    /*
+     *
+     * Android Platform:
+     *
+     *
+     * Called when the Application is paused.
+     *
+     * */
+    public void pause() {
+    }
+
+
+    //called when the Application is resumed from a paused state.
+    //when the application starts again
+    @Override
+    public void resume() {
+    }
+
+    /*
+     *
+     * Android Platform:
+     * when the application has been completely closed, destroyed.
+     *
+     * */
+    @Override
+    public void dispose() {
+    }
+
 }
 
 
