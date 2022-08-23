@@ -125,6 +125,7 @@ class gameObject {
     Sprite sprite;
     Texture texture;
 
+
     Color color;
 
     public gameObject() {
@@ -165,6 +166,9 @@ class gameObject {
         this.getSprite().setColor(this.getColor());
     }
 
+    public void attack() {
+
+    }
 
 }
 
@@ -174,7 +178,7 @@ class Player extends gameObject {
     Player() {
         skillManager = new SkillManager();
         this.getTransform().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        this.setTexture("circle.png");
+        this.setTexture("square.png");
         this.getTransform().setSize(10f, 10f);
         this.setColor(Color.BLUE);
     }
@@ -185,6 +189,11 @@ class Player extends gameObject {
 
     public String toString() {
         return "    POSITION:   " + this.getTransform().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getTransform().getWidth() + "," + this.getTransform().getHeight();
+    }
+
+    @Override
+    public void attack() {
+
     }
 }
 
@@ -202,6 +211,10 @@ class Skill {
 
     public Skill() {
 
+    }
+
+    public String toString() {
+        return "";
     }
 }
 
