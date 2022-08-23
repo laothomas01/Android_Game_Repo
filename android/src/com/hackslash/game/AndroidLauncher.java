@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.hackslash.game.driver.hack_and_slashVersion2;
+import com.hackslash.game.driver.GameStateManager;
 
 
 public class AndroidLauncher extends AndroidApplication {
@@ -14,7 +14,7 @@ public class AndroidLauncher extends AndroidApplication {
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;
         config.useCompass = false;
-        initialize(new hack_and_slashVersion2(), config);
+        initialize(new GameStateManager(), config);
 
 
     }
