@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.hackslash.game.model.GameObject;
 
 /*
@@ -226,7 +227,10 @@ class gameObject {
 
 class Bullet extends gameObject {
     Bullet() {
-        this.getPhysics().setSize(2f, 2f);
+        this.getPhysics().setPosition(100f, 0f);
+        this.setTexture("circle.png");
+        this.getPhysics().setSize(10f, 10f);
+        this.setColor(Color.GREEN);
     }
 }
 
@@ -257,7 +261,9 @@ class Player extends gameObject {
 
     @Override
     public void shoot() {
-        
+        for (ObjectMap.Entry<Skill, String> skill : skillManager.getSkills()) {
+            System.out.println(skill.key.getProjectileCount());
+        }
     }
 }
 
@@ -280,12 +286,18 @@ class Enemy extends gameObject {
  * A skill is an upgradable action that cna be performed by the player
  *
  * // we will make this less universal for more specific types of skills later on
+ *
+ * // consider if we want to swap out skills for a different type of skill
+ *
+ * //consider that we need to persist the levels of the currently leveled up skill
+ *
+ *
  */
 class Skill {
     String skillName;
     float coolDown;
     int level;
-
+    String attackType;
     float projectileCount;
 
     public Skill() {
@@ -293,10 +305,11 @@ class Skill {
         coolDown = 1.5f;
         level = 1;
         projectileCount = 0f;
+        attackType = "";
     }
 
     public String toString() {
-        return "";
+        return "    NAME:   " + skillName + "   COOL DOWN   " + coolDown + "    LEVEL   " + level + "   PROJECTILE COUNT    " + projectileCount;
     }
 
     public float getProjectileCount() {
@@ -323,6 +336,14 @@ class SkillManager {
     public SkillManager() {
         skills = new ArrayMap<>();
         skills.ordered = true;
+    }
+
+    public ArrayMap<Skill, String> getSkills() {
+        return skills;
+    }
+
+    public void addSkill(Skill skill, String str) {
+        skills.put(skill, str);
     }
 
 
@@ -859,6 +880,8 @@ public class GameStateManager extends ApplicationAdapter {
     Player player;
     Enemy enemy;
 
+    Bullet b;
+
     public void create() {
 //        //initialize....
 //        normal = new Vector2();
@@ -904,7 +927,14 @@ public class GameStateManager extends ApplicationAdapter {
 //        //--------------------------------------------------------------------------------
         gameObjectBatch = new SpriteBatch();
         player = new Player();
+        player.getSkillManager().addSkill(new Skill(), "test5");
+        player.getSkillManager().addSkill(new Skill(), "test6");
+        player.getSkillManager().addSkill(new Skill(), "test7");
+        player.getSkillManager().addSkill(new Skill(), "test8");
+        player.getSkillManager().addSkill(new Skill(), "test9");
+        player.getSkillManager().addSkill(new Skill(), "test10");
         enemy = new Enemy();
+        b = new Bullet();
     }
 
     //updating game state
@@ -912,11 +942,11 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        player.getPhysics().hasCollided(player, enemy);
+        player.shoot();
         this.drawGameSprites();
         player.update();
         enemy.update();
+        b.update();
 //        //---------------------testing shooting mechanic----------------------------------
 //
 //        player.shoot(enemy, deltaTime);
@@ -1015,6 +1045,7 @@ public class GameStateManager extends ApplicationAdapter {
         getGameObjectBatch().begin();
         player.getSprite().draw(getGameObjectBatch());
         enemy.getSprite().draw(getGameObjectBatch());
+        b.getSprite().draw(getGameObjectBatch());
         getGameObjectBatch().end();
     }
 
