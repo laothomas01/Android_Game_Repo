@@ -32,6 +32,14 @@ import com.hackslash.game.model.GameObject;
 
 /*
  *
+ * PROGRESS REMINDER:
+ *
+ *
+ *
+ * */
+
+/*
+ *
  * game states:
  *
  * //initialize phase
@@ -54,6 +62,10 @@ import com.hackslash.game.model.GameObject;
  * */
 
 
+/*
+ * Class to hold all the basic physic data
+ *
+ * */
 class Physics2D {
 
     float COLLISION_COEF;
@@ -91,6 +103,30 @@ class Physics2D {
         angularSpeed = 0f;
         distanceFrom = 0f;
         impactDistance = 0f;
+    }
+
+    public void setNormal(Vector2 normal) {
+        this.normal = normal;
+    }
+
+    public Vector2 getTemp() {
+        return temp;
+    }
+
+    public void setTemp(Vector2 temp) {
+        this.temp = temp;
+    }
+
+    public Vector2 getNewVelocity() {
+        return newVelocity;
+    }
+
+    public void setNewVelocity(Vector2 newVelocity) {
+        this.newVelocity = newVelocity;
+    }
+
+    public Vector2 getNormal() {
+        return normal;
     }
 
     public Vector2 getPosition() {
@@ -139,20 +175,91 @@ class Physics2D {
         return this.height;
     }
 
-    public void hasCollided(gameObject obj1, gameObject obj2) {
-
+    public float getSpeed() {
+        return this.moveSpeed;
     }
 
-    public void move(gameObject obj1, float dt) {
-        obj1.getPhysics().getPosition().add(obj1.getPhysics().getVelocity());
+    public void setSpeed(float spd) {
+        this.moveSpeed = spd;
     }
+
+    public float getDistanceFrom() {
+        return distanceFrom;
+    }
+
+    public void setDistanceFrom(float dst) {
+        this.distanceFrom = dst;
+    }
+
+    public float getImpactDistance() {
+        return this.impactDistance;
+    }
+
+    public void setImpactDistance(float impct) {
+        this.impactDistance = impct;
+    }
+
+    //---------------------------------------------NOTE------------------------------------------
+
+    //think about in between events called Collided. check if i already hit something before and if i have not hit something, that means I CAN hit something.
+
+    //this is a one hit situation
+
+    //this is a one time event.
+
+    //when the projectile hits something and a knockback is applied and i can only collide once and knock something back.
+
+    //think about what happens during the previous and the next frame
+
+    //think about how you are applying collision
+
+    //one hit instance. hit one object dont hit another object.
+
+    //understand game states.
+
+    //----------------------------------------------------------------------------------------------
+
+
+//    public boolean hasCollided(gameObject obj1, gameObject obj2) {
+//        obj1.getPhysics().getNormal().set(obj1.getPhysics().getPosition()).sub(obj2.getPhysics().getPosition());
+//        obj1.getPhysics().setDistanceFrom(obj1.getPhysics().getNormal().len());
+//        obj1.getPhysics().setImpactDistance((obj1.getSprite().getWidth() + obj2.getSprite().getWidth()) / 1.7f);
+//        if (obj1.getPhysics().getDistanceFrom() < obj1.physics.impactDistance) {
+//            return true;
+//        }
+//        return false;
+//
+//    }
+
+//    public void move(gameObject obj1, float dt) {
+////        this.getPhysics().getPosition().add(this.getPhysics().getVelocity());
+//        obj1.getPhysics().getPosition().add(obj1.getPhysics().getVelocity());
+//    }
 
 
 }
 
+
+//-----------------------------------------------GAME OBJECTS---------------------------------------------------------------
+
+
+//game objects will do all the more specific physics calculations:
+/*
+ * movement, collisions, shooting.
+ *
+ * why am i doing this?
+ *
+ * in Unity, you have an object which has a "component" attached to the objet. then you call the "get component" to get the component you need.
+ *
+ * here it is different and for the sake of readibility, i would like my code to say: player.move(whatever speed)
+ *
+ *
+ * */
+
+
 /*
 
-PERFORMS CRUD OPERATIONS ON GAME OBJECTS
+ PERFORMS CRUD OPERATIONS ON GAME OBJECTS
 
 -loading bullets
 -inventory systems
@@ -160,7 +267,7 @@ PERFORMS CRUD OPERATIONS ON GAME OBJECTS
  */
 class GameObjectManager {
     Array<Bullet> bullets;
-
+    Array<Bullet> removeAllBullets;
 
     public GameObjectManager() {
         bullets = new Array<>();
@@ -170,9 +277,30 @@ class GameObjectManager {
         return bullets;
     }
 
+    public void addBullets(Bullet b) {
+        bullets.add(b);
+    }
+
+    public Array<Bullet> getRemoveAllBullets() {
+        return removeAllBullets;
+    }
+
+    public String getBulletsToString() {
+        return bullets.toString();
+    }
+
+    public void addBulletsToRemove(Bullet b) {
+        removeAllBullets.add(b);
+    }
+
+
 }
 
+
 class gameObject {
+
+
+    //give game objects a physics component
     Physics2D physics;
     Sprite sprite;
     Texture texture;
@@ -181,6 +309,7 @@ class gameObject {
     Color color;
 
     public gameObject() {
+        //give your game objects a physics2D component
         physics = new Physics2D();
         texture = new Texture("circle.png");
         sprite = new Sprite(texture);
@@ -218,7 +347,18 @@ class gameObject {
         this.getSprite().setColor(this.getColor());
     }
 
-    public void shoot() {
+
+    public void move() {
+        this.getPhysics().getPosition().add(this.getPhysics().getVelocity());
+    }
+
+    //universal shoot function
+
+
+    public void shoot(gameObject target, float dt) {
+
+
+        //check for cooldown and flag for being in cooldown
 
     }
 
@@ -231,25 +371,34 @@ class Bullet extends gameObject {
         this.setTexture("circle.png");
         this.getPhysics().setSize(10f, 10f);
         this.setColor(Color.GREEN);
+        this.getPhysics().setSpeed(200f);
+        this.getPhysics().setVelocity(1, 1);
     }
 }
 
 class Player extends gameObject {
-    SkillManager skillManager;
     GameObjectManager gameObjectManager;
 
+
+    Array<Skill> skills;
+
+
     Player() {
-        skillManager = new SkillManager();
+
+        skills = new Array<>();
+//        skillManager = new SkillManager();
         gameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         this.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
+        this.getPhysics().setVelocity(1, 1);
         this.setColor(Color.BLUE);
     }
 
-    public SkillManager getSkillManager() {
-        return skillManager;
-    }
+    //---------------------------------------------------------------------------------
+//    public SkillManager getSkillManager() {
+//        return skillManager;
+//    }
 
     public GameObjectManager getGameObjectManager() {
         return gameObjectManager;
@@ -259,17 +408,65 @@ class Player extends gameObject {
         return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
     }
 
-    @Override
-    public void shoot() {
-        for (ObjectMap.Entry<Skill, String> skill : skillManager.getSkills()) {
-            System.out.println(skill.key.getProjectileCount());
-        }
+
+    /*
+     *
+     *
+     * Note: key notes to keep in mind: production of projectiles is contingent upon skills being off cooldown, collision, maybe lifespan.
+     * -we do not want an overlap of skills hapenning at the same time and inteference between the current and next skill
+     * -skills should be variant to collision, lifespan or whatever state the current skill and its set of objects.
+     * -production of projectiles should not be affected by the state of the cooldown
+     *
+     *
+     *
+     * -have a projectile cleanup
+     * -have a projectile producer
+     *
+     *
+     * */
+    public void shoot(gameObject target, float dt) {
+        System.out.println("SHOOT!");
     }
+
+    //    @Override
+//    public void shoot(gameObject target, float dt) {
+//        for (ObjectMap.Entry<Skill, String> skill : skillManager.getSkills()) {
+//
+////            float offsetDistance = 50f;
+////            float projectileCount = skill.key.projectileCount;
+////            float skillCoolDown = skill.key.coolDown;
+////            float radians = MathUtils.atan2(this.getPhysics().getPosition().y - target.getPhysics().getPosition().y, this.getPhysics().getPosition().x - target.getPhysics().getPosition().x);
+////            Vector2 bulletDir = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+////            Vector2 offsetPosition = new Vector2(bulletDir.x * offsetDistance, bulletDir.y * offsetDistance);
+////
+////            if (skillCoolDown < 0) {
+////                System.out.println("HELLO WORLD!");
+////            } else {
+////                System.out.println("COOLDOWN!" + skillCoolDown);
+////                skillCoolDown -= dt;
+////            }
+//
+////            if (skillCoolDown <= 0) {
+////                if (getGameObjectManager().getBullets().size < projectileCount) {
+////                    Bullet bullet = new Bullet();
+////                    bullet.getPhysics().setVelocity(bulletDir);
+////                    bullet.getPhysics().position.set(offsetPosition);
+////                    bullet.update();
+////                    this.getGameObjectManager().addBullets(bullet);
+////                }
+////            } else {
+////                skillCoolDown -= dt;
+////            }
+//
+//        }
+////
+//    }
 }
 
 class Enemy extends gameObject {
     public Enemy() {
         this.getPhysics().setPosition(1, 0);
+        this.getPhysics().setVelocity(1, 1);
         this.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
         this.setColor(Color.RED);
@@ -291,9 +488,16 @@ class Enemy extends gameObject {
  *
  * //consider that we need to persist the levels of the currently leveled up skill
  *
+ * //we will have a gui or some kind of console interaction to check on how skills are created.
+ *
+ * //basically, based on the skill selected, its data will be parsed and put into a skill class.
+ *
+ * //we will use that data generated from a skill object to determine the number of objects the player can shoot.
+ *
  *
  */
 class Skill {
+    boolean onCoolDown;
     String skillName;
     float coolDown;
     int level;
@@ -301,11 +505,12 @@ class Skill {
     float projectileCount;
 
     public Skill() {
-        skillName = "";
+        onCoolDown = false;
+        skillName = "BasicShot";
         coolDown = 1.5f;
         level = 1;
-        projectileCount = 0f;
-        attackType = "";
+        projectileCount = 1f;
+        attackType = "Ranged";
     }
 
     public String toString() {
@@ -330,24 +535,24 @@ class Skill {
  * ACCESSES AND MODIFY SKILLS
  *
  * */
-class SkillManager {
-    ArrayMap<Skill, String> skills;
-
-    public SkillManager() {
-        skills = new ArrayMap<>();
-        skills.ordered = true;
-    }
-
-    public ArrayMap<Skill, String> getSkills() {
-        return skills;
-    }
-
-    public void addSkill(Skill skill, String str) {
-        skills.put(skill, str);
-    }
-
-
-}
+//class SkillManager {
+//    ArrayMap<Skill, String> skills;
+//
+//    public SkillManager() {
+//        skills = new ArrayMap<>();
+//        skills.ordered = true;
+//    }
+//
+//    public ArrayMap<Skill, String> getSkills() {
+//        return skills;
+//    }
+//
+//    public void addSkill(Skill skill, String str) {
+//        skills.put(skill, str);
+//    }
+//
+//
+//}
 
 
 public class GameStateManager extends ApplicationAdapter {
@@ -880,7 +1085,10 @@ public class GameStateManager extends ApplicationAdapter {
     Player player;
     Enemy enemy;
 
-    Bullet b;
+    Bullet bullet;
+
+    float tempCount = 2.0f;
+
 
     public void create() {
 //        //initialize....
@@ -925,16 +1133,13 @@ public class GameStateManager extends ApplicationAdapter {
 //        enemy.sprite.setColor(Color.RED);
 //        enemy.moveSpeed = 500;
 //        //--------------------------------------------------------------------------------
+
         gameObjectBatch = new SpriteBatch();
         player = new Player();
-        player.getSkillManager().addSkill(new Skill(), "test5");
-        player.getSkillManager().addSkill(new Skill(), "test6");
-        player.getSkillManager().addSkill(new Skill(), "test7");
-        player.getSkillManager().addSkill(new Skill(), "test8");
-        player.getSkillManager().addSkill(new Skill(), "test9");
-        player.getSkillManager().addSkill(new Skill(), "test10");
+
+//        player.getSkillManager().addSkill(new Skill(), "Basic Shot");
         enemy = new Enemy();
-        b = new Bullet();
+
     }
 
     //updating game state
@@ -942,11 +1147,22 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        player.shoot();
         this.drawGameSprites();
+
+        player.shoot(enemy, deltaTime);
         player.update();
         enemy.update();
-        b.update();
+
+
+//        for (Bullet b : player.getGameObjectManager().getBullets()) {
+//            b.getPhysics().move(b, deltaTime);
+//            b.update();
+//        }
+
+
+//        System.out.println(player.getGameObjectManager().getBulletsToString());
+
+
 //        //---------------------testing shooting mechanic----------------------------------
 //
 //        player.shoot(enemy, deltaTime);
@@ -1043,10 +1259,15 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void drawGameSprites() {
         getGameObjectBatch().begin();
+
+
         player.getSprite().draw(getGameObjectBatch());
         enemy.getSprite().draw(getGameObjectBatch());
-        b.getSprite().draw(getGameObjectBatch());
+
+
         getGameObjectBatch().end();
+
+
     }
 
 
