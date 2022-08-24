@@ -15,70 +15,51 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.hackslash.game.model.GameObject;
 
-/*
- *
- * CLASSES:
- *
- * -game object
- * -entity state manager
- * -skills( let's handle skill creation like Dota2's skill customization)
- * -skills manager
- * -game state manager
- * -physics2D(put this in later)
- *
- *
- * */
-
-
-/*
- *
- * PROGRESS REMINDER:
- *
- *
- *
- * */
-
-/*
- *
- * game states:
- *
- * //initialize phase
- * create
- *
- * //updates
- * render
- *
- *
- *
- * pause
- *
- * resume
- *
- * dispose
- *
- *
- *
- *
- * */
-
-
-/*
- * Class to hold all the basic physic data
- *
- * */
-
+//TODO: migrate all graphic related functions and variables to this class
+//maintain all usages for graphics
 class Graphics2D {
+    Sprite sprite;
+    Texture texture;
+    Color color;
+
+    public Graphics2D() {
+        texture = new Texture("circle.png");
+        sprite = new Sprite(texture);
+        color = new Color();
+    }
+
+    public Sprite getSprite() {
+        return this.sprite;
+    }
+
+    public Texture getTexture() {
+        return this.texture;
+    }
+
+    public void setTexture(String fileName) {
+        this.texture = new Texture(fileName);
+    }
+
+    public void setColor(Color c) {
+        this.color = c;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void drawObject(SpriteBatch batch) {
+        this.getSprite().draw(batch);
+    }
 
 }
 
+//maintain all current physics calculation
 class Physics2D {
 
     float COLLISION_COEF;
-    Vector2 normal;
-    Vector2 temp;
-    Vector2 newVelocity;
     Vector2 position;
-    Vector2 velocity;
+    Vector2 directionVector;
     Vector2 acceleration;
     Vector2 angularVelocity;
     float radians;
@@ -90,16 +71,19 @@ class Physics2D {
     float distanceFrom;
     float impactDistance;
 
+    boolean isCollided;
+
+    Vector2 normalVector;
 
     public Physics2D() {
+
+
         COLLISION_COEF = 1.0f;
-        normal = new Vector2();
-        temp = new Vector2();
-        newVelocity = new Vector2();
         position = new Vector2(0, 0);
-        velocity = new Vector2(0, 0);
+        directionVector = new Vector2(0, 0);
         acceleration = new Vector2(0, 0);
         angularVelocity = new Vector2(0, 0);
+        normalVector = new Vector2();
         width = 0;
         height = 0;
         mass = 1.0f;
@@ -108,6 +92,7 @@ class Physics2D {
         angularSpeed = 0f;
         distanceFrom = 0f;
         impactDistance = 0f;
+        isCollided = false;
     }
 
     public float getMoveSpeed() {
@@ -118,31 +103,6 @@ class Physics2D {
         this.moveSpeed = spd;
     }
 
-    public void setNormal(Vector2 normal) {
-        this.normal = normal;
-    }
-
-
-    public Vector2 getTemp() {
-        return temp;
-    }
-
-    public void setTemp(Vector2 temp) {
-        this.temp = temp;
-    }
-
-    public Vector2 getNewVelocity() {
-        return newVelocity;
-    }
-
-    public void setNewVelocity(Vector2 newVelocity) {
-        this.newVelocity = newVelocity;
-    }
-
-    public Vector2 getNormal() {
-        return normal;
-    }
-
     public Vector2 getPosition() {
         return position;
     }
@@ -151,21 +111,21 @@ class Physics2D {
         this.position = pos;
     }
 
+    public Vector2 getDirectionVector() {
+        return directionVector;
+    }
+
+    public void setDirectionVector(Vector2 headingVector) {
+        this.directionVector = headingVector;
+    }
+
+    public void setDirectionVector(float x, float y) {
+        setDirectionVector(new Vector2(x, y));
+    }
+
+
     public void setPosition(float x, float y) {
         setPosition(new Vector2(x, y));
-    }
-
-
-    public void setVelocity(Vector2 vel) {
-        this.velocity = vel;
-    }
-
-    public void setVelocity(float x, float y) {
-        setVelocity(new Vector2(x, y));
-    }
-
-    public Vector2 directionVector() {
-        return velocity;
     }
 
 
@@ -198,23 +158,62 @@ class Physics2D {
         this.moveSpeed = spd;
     }
 
-    public float getDistanceFrom() {
+    public float getDistanceBetween() {
         return distanceFrom;
     }
 
-    public void setDistanceFrom(float dst) {
-        this.distanceFrom = dst;
+    public void setDistanceBetween(float distance) {
+        this.distanceFrom = distance;
     }
 
     public float getImpactDistance() {
         return this.impactDistance;
     }
 
-    public void setImpactDistance(float impct) {
-        this.impactDistance = impct;
+    public void setImpactDistance(float impact) {
+        this.impactDistance = impact;
     }
 
+    public void setNormalVector(Vector2 normal) {
+        this.normalVector = normal;
+    }
 
+    public Vector2 getNormalVector() {
+        return this.normalVector;
+    }
+
+    public void move(float dt) {
+        this.getPosition().add(this.getDirectionVector().scl(this.getMoveSpeed() * dt));
+    }
+
+    //TODO: fix the naming convention or parameter
+    //returns an arc tangent of y/x in radians
+    public float getAngleBetweenTwoVectors(gameObject target) {
+        return MathUtils.atan2(this.getPosition().y - target.getPhysics().getPosition().y, this.getPosition().x - target.getPhysics().getPosition().x);
+    }
+
+    public boolean checkIsCollided() {
+        return isCollided;
+    }
+
+    public void setIsCollided(boolean collided) {
+        this.isCollided = collided;
+    }
+
+    //TODO: migrate more physics functions from other classes to physics2D
+
+    public boolean hasCollided(gameObject target) {
+        this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
+        this.setDistanceBetween(getNormalVector().len());
+        this.setImpactDistance((this.getWidth() + target.getPhysics().getWidth()) / 1.7f);
+        //if you have less than or no distance between an object's collision distance, you crashed
+        if (this.getDistanceBetween() < this.getImpactDistance()) {
+            this.setIsCollided(true);
+            return true;
+        }
+        return false;
+
+    }
     //---------------------------------------------NOTES------------------------------------------
 
     //think about in between events called Collided. check if i already hit something before and if i have not hit something, that means I CAN hit something.
@@ -244,9 +243,9 @@ class Physics2D {
 
 //    public boolean hasCollided(gameObject obj1, gameObject obj2) {
 //        obj1.getPhysics().getNormal().set(obj1.getPhysics().getPosition()).sub(obj2.getPhysics().getPosition());
-//        obj1.getPhysics().setDistanceFrom(obj1.getPhysics().getNormal().len());
+//        obj1.getPhysics().setDistanceBetween(obj1.getPhysics().getNormal().len());
 //        obj1.getPhysics().setImpactDistance((obj1.getSprite().getWidth() + obj2.getSprite().getWidth()) / 1.7f);
-//        if (obj1.getPhysics().getDistanceFrom() < obj1.physics.impactDistance) {
+//        if (obj1.getPhysics().getDistanceBetween() < obj1.physics.impactDistance) {
 //            return true;
 //        }
 //        return false;
@@ -285,6 +284,7 @@ class Physics2D {
 
 -loading bullets
 -inventory systems
+-removing objects
 
  */
 class GameObjectManager {
@@ -324,43 +324,25 @@ class gameObject {
 
     //give game objects a physics component
     Physics2D physics;
-    Sprite sprite;
-    Texture texture;
+    Graphics2D graphics;
 
-
-    Color color;
 
     public gameObject() {
         //give your game objects a physics2D component
         physics = new Physics2D();
-        texture = new Texture("circle.png");
-        sprite = new Sprite(texture);
-        color = new Color();
+        graphics = new Graphics2D();
+
     }
 
-    public Sprite getSprite() {
-        return this.sprite;
-    }
 
-    public Texture getTexture() {
-        return this.texture;
+    public Graphics2D getGraphics() {
+        return this.graphics;
     }
 
     public Physics2D getPhysics() {
         return this.physics;
     }
 
-    public void setTexture(String fileName) {
-        this.texture = new Texture(fileName);
-    }
-
-    public void setColor(Color c) {
-        this.color = c;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
 
     //handles all changes to the game objects
 
@@ -372,45 +354,32 @@ class gameObject {
      *
      * */
     public void update(float dt) {
-        this.getSprite().setSize(this.getPhysics().getWidth(), this.getPhysics().getHeight());
-        this.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
-        this.getSprite().setTexture(this.getTexture());
-        this.getSprite().setColor(this.getColor());
-        move(dt);
+        graphics.getSprite().setSize(this.getPhysics().getWidth(), this.getPhysics().getHeight());
+        graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
+        graphics.getSprite().setTexture(graphics.getTexture());
+        graphics.getSprite().setColor(graphics.getColor());
+
+
+//        this.getPhysics().move(dt);
     }
 
 
-    public void move(float dt) {
-        //rename velocity as direction vector because velocity can mean many things but is bad naming conventions.
-
-        //describe it as literal as it can be! FFS!
-
-        //be explicit on naming conventions!
-
-
-        this.getPhysics().getPosition().add(this.getPhysics().directionVector().scl(this.getPhysics().getMoveSpeed() * dt));
-    }
-
-
+    //let's override this function because dfferent game objects will behave different when "shooting".
     public void shoot(gameObject target, float dt) {
 
-
-        //check for cooldown and flag for being in cooldown
-
-
     }
 
-
 }
+
 
 class Bullet extends gameObject {
     Bullet() {
         this.getPhysics().setPosition(100f, 0f);
-        this.setTexture("circle.png");
-        this.getPhysics().setSize(10f, 10f);
-        this.setColor(Color.GREEN);
+//        graphics.setTexture()("circle.png");
+//        this.getPhysics().setSize(10f, 10f);
+//        graphics.setColor(Color.GREEN);
         this.getPhysics().setSpeed(200f);
-        this.getPhysics().setVelocity(1, 1);
+        this.getPhysics().setDirectionVector(1, 1);
     }
 }
 
@@ -418,21 +387,19 @@ class Bullet extends gameObject {
 //have an API to update attributes. toggle this, set that, get something.
 class Player extends gameObject {
     GameObjectManager gameObjectManager;
-
-
     Array<Skill> skills;
 
 
     Player() {
 
         skills = new Array<>();
-//        skillManager = new SkillManager();
         gameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        this.setTexture("square.png");
+        graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
-//        this.getPhysics().setVelocity(1, 1);
-        this.setColor(Color.BLUE);
+        this.getPhysics().setDirectionVector(1, 1);
+        this.getPhysics().setMoveSpeed(500);
+        graphics.setColor(Color.BLUE);
     }
 
     //---------------------------------------------------------------------------------
@@ -445,15 +412,21 @@ class Player extends gameObject {
     }
 
     public String toString() {
-        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
+        return "    POSITION:   " + this.getPhysics().getPosition() + " DIRECTION VECTOR " + this.getPhysics().getDirectionVector() + " MOVE SPEED " + this.getPhysics().getMoveSpeed();
     }
 
 
+    //shoot will be a trigger for using the player skills
+    @Override
+    public void shoot(gameObject target, float dt) {
+
+
+    }
     /*
      *
      *
      * Note: key notes to keep in mind: production of projectiles is contingent upon skills being off cooldown, collision, maybe lifespan.
-     * -we do not want an overlap of skills hapenning at the same time and inteference between the current and next skill
+     * -we do not want an overlap of sklls hapenning at the same time and inteference between the current and next skill
      * -skills should be variant to collision, lifespan or whatever state the current skill and its set of objects.
      * -production of projectiles should not be affected by the state of the cooldown
      *
@@ -464,9 +437,6 @@ class Player extends gameObject {
      *
      *
      * */
-    public void shoot(gameObject target, float dt) {
-        System.out.println("SHOOT!");
-    }
 
     //    @Override
 //    public void shoot(gameObject target, float dt) {
@@ -489,7 +459,7 @@ class Player extends gameObject {
 ////            if (skillCoolDown <= 0) {
 ////                if (getGameObjectManager().getBullets().size < projectileCount) {
 ////                    Bullet bullet = new Bullet();
-////                    bullet.getPhysics().setVelocity(bulletDir);
+////                    bullet.getPhysics().setDirectonVector(bulletDir);
 ////                    bullet.getPhysics().position.set(offsetPosition);
 ////                    bullet.update();
 ////                    this.getGameObjectManager().addBullets(bullet);
@@ -506,15 +476,14 @@ class Player extends gameObject {
 class Enemy extends gameObject {
     public Enemy() {
         this.getPhysics().setPosition(1, 0);
-        this.getPhysics().setVelocity(1, 1);
-        this.setTexture("square.png");
+        graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
-        this.setColor(Color.RED);
+        graphics.setColor(Color.RED);
     }
 
-    public String toString() {
-        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
-    }
+//    public String toString() {
+////        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + graphics.getTexture()toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
+//    }
 }
 
 
@@ -571,6 +540,7 @@ class Skill {
 }
 
 
+
 /*
  * ACCESSES AND MODIFY SKILLS
  *
@@ -597,7 +567,7 @@ class Skill {
 
 public class GameStateManager extends ApplicationAdapter {
 
-    SpriteBatch gameObjectBatch;
+//    SpriteBatch gameObjectBatch;
 
 
 //    //used to add a slight bounce to colliding objects
@@ -606,7 +576,7 @@ public class GameStateManager extends ApplicationAdapter {
 //    //-----------------------IMPULSE COLLISION VECTORS---------------
 //    Vector2 normal;
 //    Vector2 temp;
-//    Vector2 newVelocity;
+//    Vector2 newDirectionVector;
     //---------------------------------------------------------------
 
 
@@ -819,10 +789,10 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //                //Let's implement newton's law of impact
 //                //convert the two velocities into a single reference frame
-//                newVelocity.set(this.velocity.sub(object.velocity));
+//                newDirectionVector.set(this.velocity.sub(object.velocity));
 //
 //                // Compute the impulse (see Essential Math for Game Programmers)
-//                float impulse = (-(1 + COLLISION_COEF) * normal.dot(newVelocity)) / (normal.dot(normal) * (1 / this.mass + 1 / object.mass));
+//                float impulse = (-(1 + COLLISION_COEF) * normal.dot(newDirectionVector)) / (normal.dot(normal) * (1 / this.mass + 1 / object.mass));
 //                //Change velocity of two object using this impulse
 //                temp.set(normal).scl(impulse / this.mass);
 //                this.velocity.add(temp);
@@ -1134,7 +1104,7 @@ public class GameStateManager extends ApplicationAdapter {
 //        //initialize....
 //        normal = new Vector2();
 //        temp = new Vector2();
-//        newVelocity = new Vector2();
+//        newDirectionVector = new Vector2();
 //
 //        font = new BitmapFont();
 //        fontSpriteBatch = new SpriteBatch();
@@ -1173,8 +1143,7 @@ public class GameStateManager extends ApplicationAdapter {
 //        enemy.sprite.setColor(Color.RED);
 //        enemy.moveSpeed = 500;
 //        //--------------------------------------------------------------------------------
-
-        gameObjectBatch = new SpriteBatch();
+//        gameObjectBatch = new SpriteBatch();
         player = new Player();
 
 //        player.getSkillManager().addSkill(new Skill(), "Basic Shot");
@@ -1187,11 +1156,12 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        this.drawGameSprites();
+//        this.drawGameSprites();
 
-        player.shoot(enemy, deltaTime);
-        player.update();
-        enemy.update();
+//        player.shoot(enemy, deltaTime);
+        System.out.println(player.toString());
+        player.update(deltaTime);
+        enemy.update(deltaTime);
 
 
 //        for (Bullet b : player.getGameObjectManager().getBullets()) {
@@ -1293,22 +1263,22 @@ public class GameStateManager extends ApplicationAdapter {
      * FUNCTIONS TO DRAW OBJECTS DURING RUN TIME
      *
      * */
-    public SpriteBatch getGameObjectBatch() {
-        return gameObjectBatch;
-    }
+//    public SpriteBatch getGameObjectBatch() {
+//        return gameObjectBatch;
+//    }
 
-    public void drawGameSprites() {
-        getGameObjectBatch().begin();
-
-
-        player.getSprite().draw(getGameObjectBatch());
-        enemy.getSprite().draw(getGameObjectBatch());
-
-
-        getGameObjectBatch().end();
-
-
-    }
+//    public void drawGameSprites() {
+////        getGameObjectBatch().begin();
+////
+//////
+//////        player.getSprite().draw(getGameObjectBatch());
+//////        enemy.getSprite().draw(getGameObjectBatch());
+////
+////
+////        getGameObjectBatch().end();
+//
+//
+//    }
 
 
 }
