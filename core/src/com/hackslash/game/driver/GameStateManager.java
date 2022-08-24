@@ -66,6 +66,11 @@ import com.hackslash.game.model.GameObject;
  * Class to hold all the basic physic data
  *
  * */
+
+class Graphics2D {
+
+}
+
 class Physics2D {
 
     float COLLISION_COEF;
@@ -105,9 +110,18 @@ class Physics2D {
         impactDistance = 0f;
     }
 
+    public float getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(float spd) {
+        this.moveSpeed = spd;
+    }
+
     public void setNormal(Vector2 normal) {
         this.normal = normal;
     }
+
 
     public Vector2 getTemp() {
         return temp;
@@ -141,6 +155,7 @@ class Physics2D {
         setPosition(new Vector2(x, y));
     }
 
+
     public void setVelocity(Vector2 vel) {
         this.velocity = vel;
     }
@@ -149,7 +164,7 @@ class Physics2D {
         setVelocity(new Vector2(x, y));
     }
 
-    public Vector2 getVelocity() {
+    public Vector2 directionVector() {
         return velocity;
     }
 
@@ -199,7 +214,8 @@ class Physics2D {
         this.impactDistance = impct;
     }
 
-    //---------------------------------------------NOTE------------------------------------------
+
+    //---------------------------------------------NOTES------------------------------------------
 
     //think about in between events called Collided. check if i already hit something before and if i have not hit something, that means I CAN hit something.
 
@@ -220,6 +236,12 @@ class Physics2D {
     //----------------------------------------------------------------------------------------------
 
 
+    //---------------------------------------------NOTES---------------------------------------------
+
+    //graphics
+
+    //-----------------------------------------------------------------------------------------------
+
 //    public boolean hasCollided(gameObject obj1, gameObject obj2) {
 //        obj1.getPhysics().getNormal().set(obj1.getPhysics().getPosition()).sub(obj2.getPhysics().getPosition());
 //        obj1.getPhysics().setDistanceFrom(obj1.getPhysics().getNormal().len());
@@ -232,8 +254,8 @@ class Physics2D {
 //    }
 
 //    public void move(gameObject obj1, float dt) {
-////        this.getPhysics().getPosition().add(this.getPhysics().getVelocity());
-//        obj1.getPhysics().getPosition().add(obj1.getPhysics().getVelocity());
+////        this.getPhysics().getPosition().add(this.getPhysics().directionVector());
+//        obj1.getPhysics().getPosition().add(obj1.getPhysics().directionVector());
 //    }
 
 
@@ -254,7 +276,7 @@ class Physics2D {
  * here it is different and for the sake of readibility, i would like my code to say: player.move(whatever speed)
  *
  *
- * */
+ */
 
 
 /*
@@ -340,25 +362,41 @@ class gameObject {
         return this.color;
     }
 
-    public void update() {
+    //handles all changes to the game objects
+
+    /*
+     *
+     * changes to velocity
+     * changes to position
+     * changes to sprite attributes
+     *
+     * */
+    public void update(float dt) {
         this.getSprite().setSize(this.getPhysics().getWidth(), this.getPhysics().getHeight());
         this.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         this.getSprite().setTexture(this.getTexture());
         this.getSprite().setColor(this.getColor());
+        move(dt);
     }
 
 
-    public void move() {
-        this.getPhysics().getPosition().add(this.getPhysics().getVelocity());
-    }
+    public void move(float dt) {
+        //rename velocity as direction vector because velocity can mean many things but is bad naming conventions.
 
-    //universal shoot function
+        //describe it as literal as it can be! FFS!
+
+        //be explicit on naming conventions!
+
+
+        this.getPhysics().getPosition().add(this.getPhysics().directionVector().scl(this.getPhysics().getMoveSpeed() * dt));
+    }
 
 
     public void shoot(gameObject target, float dt) {
 
 
         //check for cooldown and flag for being in cooldown
+
 
     }
 
@@ -376,6 +414,8 @@ class Bullet extends gameObject {
     }
 }
 
+
+//have an API to update attributes. toggle this, set that, get something.
 class Player extends gameObject {
     GameObjectManager gameObjectManager;
 
@@ -391,7 +431,7 @@ class Player extends gameObject {
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         this.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
-        this.getPhysics().setVelocity(1, 1);
+//        this.getPhysics().setVelocity(1, 1);
         this.setColor(Color.BLUE);
     }
 
