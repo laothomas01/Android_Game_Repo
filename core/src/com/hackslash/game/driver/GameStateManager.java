@@ -22,10 +22,15 @@ class Graphics2D {
     Texture texture;
     Color color;
 
+    //we will draw all objects using one universal spritebatch
+    SpriteBatch spriteBatch;
+
     public Graphics2D() {
         texture = new Texture("circle.png");
         sprite = new Sprite(texture);
         color = new Color();
+        spriteBatch = new SpriteBatch();
+
     }
 
     public Sprite getSprite() {
@@ -48,9 +53,16 @@ class Graphics2D {
         return this.color;
     }
 
-    public void drawObject(SpriteBatch batch) {
-        this.getSprite().draw(batch);
+    public SpriteBatch getSpriteBatch() {
+        return this.spriteBatch;
     }
+
+    public void drawSprite() {
+        this.getSpriteBatch().begin();
+        this.getSprite().draw(this.getSpriteBatch());
+        this.getSpriteBatch().end();
+    }
+
 
 }
 
@@ -1088,7 +1100,6 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //    private gameObject enemy;
 
-
     //  Called when the Application is first created.
     //intialization game state
     float deltaTime;
@@ -1156,10 +1167,7 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        this.drawGameSprites();
-
-//        player.shoot(enemy, deltaTime);
-        System.out.println(player.toString());
+        player.getGraphics().drawSprite();
         player.update(deltaTime);
         enemy.update(deltaTime);
 
