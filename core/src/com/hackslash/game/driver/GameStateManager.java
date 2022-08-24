@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
+import com.hackslash.game.model.GameObject;
 
 /*
  *
@@ -63,17 +64,20 @@ class Physics2D {
     Vector2 acceleration;
     Vector2 angularVelocity;
     float radians;
-    float speed;
-    float rotateSpeed;
+    float moveSpeed;
+    float angularSpeed;
     float width;
     float height;
     float mass;
-    float distance;
+    float distanceFrom;
     float impactDistance;
 
 
     public Physics2D() {
         COLLISION_COEF = 1.0f;
+        normal = new Vector2();
+        temp = new Vector2();
+        newVelocity = new Vector2();
         position = new Vector2(0, 0);
         velocity = new Vector2(0, 0);
         acceleration = new Vector2(0, 0);
@@ -82,6 +86,10 @@ class Physics2D {
         height = 0;
         mass = 1.0f;
         radians = 0f;
+        moveSpeed = 0f;
+        angularSpeed = 0f;
+        distanceFrom = 0f;
+        impactDistance = 0f;
     }
 
     public Vector2 getPosition() {
@@ -95,6 +103,19 @@ class Physics2D {
     public void setPosition(float x, float y) {
         setPosition(new Vector2(x, y));
     }
+
+    public void setVelocity(Vector2 vel) {
+        this.velocity = vel;
+    }
+
+    public void setVelocity(float x, float y) {
+        setVelocity(new Vector2(x, y));
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
 
     public void setWidth(float wdth) {
         this.width = wdth;
@@ -117,11 +138,41 @@ class Physics2D {
         return this.height;
     }
 
+    public void hasCollided(gameObject obj1, gameObject obj2) {
+
+    }
+
+    public void move(gameObject obj1, float dt) {
+        obj1.getPhysics().getPosition().add(obj1.getPhysics().getVelocity());
+    }
+
+
+}
+
+/*
+
+PERFORMS CRUD OPERATIONS ON GAME OBJECTS
+
+-loading bullets
+-inventory systems
+
+ */
+class GameObjectManager {
+    Array<Bullet> bullets;
+
+
+    public GameObjectManager() {
+        bullets = new Array<>();
+    }
+
+    public Array<Bullet> getBullets() {
+        return bullets;
+    }
 
 }
 
 class gameObject {
-    Physics2D transform;
+    Physics2D physics;
     Sprite sprite;
     Texture texture;
 
@@ -129,7 +180,7 @@ class gameObject {
     Color color;
 
     public gameObject() {
-        transform = new Physics2D();
+        physics = new Physics2D();
         texture = new Texture("circle.png");
         sprite = new Sprite(texture);
         color = new Color();
@@ -143,8 +194,8 @@ class gameObject {
         return this.texture;
     }
 
-    public Physics2D getTransform() {
-        return this.transform;
+    public Physics2D getPhysics() {
+        return this.physics;
     }
 
     public void setTexture(String fileName) {
@@ -160,26 +211,35 @@ class gameObject {
     }
 
     public void update() {
-        this.getSprite().setSize(this.getTransform().getWidth(), this.getTransform().getHeight());
-        this.getSprite().setPosition(this.getTransform().getPosition().x, this.getTransform().getPosition().y);
+        this.getSprite().setSize(this.getPhysics().getWidth(), this.getPhysics().getHeight());
+        this.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         this.getSprite().setTexture(this.getTexture());
         this.getSprite().setColor(this.getColor());
     }
 
-    public void attack() {
+    public void shoot() {
 
     }
 
+
+}
+
+class Bullet extends gameObject {
+    Bullet() {
+        this.getPhysics().setSize(2f, 2f);
+    }
 }
 
 class Player extends gameObject {
     SkillManager skillManager;
+    GameObjectManager gameObjectManager;
 
     Player() {
         skillManager = new SkillManager();
-        this.getTransform().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        gameObjectManager = new GameObjectManager();
+        this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         this.setTexture("square.png");
-        this.getTransform().setSize(10f, 10f);
+        this.getPhysics().setSize(10f, 10f);
         this.setColor(Color.BLUE);
     }
 
@@ -187,13 +247,30 @@ class Player extends gameObject {
         return skillManager;
     }
 
+    public GameObjectManager getGameObjectManager() {
+        return gameObjectManager;
+    }
+
     public String toString() {
-        return "    POSITION:   " + this.getTransform().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getTransform().getWidth() + "," + this.getTransform().getHeight();
+        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
     }
 
     @Override
-    public void attack() {
+    public void shoot() {
+        
+    }
+}
 
+class Enemy extends gameObject {
+    public Enemy() {
+        this.getPhysics().setPosition(1, 0);
+        this.setTexture("square.png");
+        this.getPhysics().setSize(10f, 10f);
+        this.setColor(Color.RED);
+    }
+
+    public String toString() {
+        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + this.getTexture().toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
     }
 }
 
@@ -202,25 +279,42 @@ class Player extends gameObject {
  *
  * A skill is an upgradable action that cna be performed by the player
  *
+ * // we will make this less universal for more specific types of skills later on
  */
 class Skill {
-    String name;
+    String skillName;
     float coolDown;
-    String behavior;
     int level;
 
-    public Skill() {
+    float projectileCount;
 
+    public Skill() {
+        skillName = "";
+        coolDown = 1.5f;
+        level = 1;
+        projectileCount = 0f;
     }
 
     public String toString() {
         return "";
     }
+
+    public float getProjectileCount() {
+        return projectileCount;
+    }
+
+    public String getName() {
+        return skillName;
+    }
+
+    public void setProjectileCount(float count) {
+        projectileCount = count;
+    }
 }
 
 
 /*
- * ACCESSES AND MODIFIED SKILLS
+ * ACCESSES AND MODIFY SKILLS
  *
  * */
 class SkillManager {
@@ -763,7 +857,7 @@ public class GameStateManager extends ApplicationAdapter {
     //intialization game state
     float deltaTime;
     Player player;
-
+    Enemy enemy;
 
     public void create() {
 //        //initialize....
@@ -810,7 +904,7 @@ public class GameStateManager extends ApplicationAdapter {
 //        //--------------------------------------------------------------------------------
         gameObjectBatch = new SpriteBatch();
         player = new Player();
-
+        enemy = new Enemy();
     }
 
     //updating game state
@@ -818,13 +912,11 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        System.out.println("PLAYER:" + player.toString());
 
-
+        player.getPhysics().hasCollided(player, enemy);
         this.drawGameSprites();
-
         player.update();
-
+        enemy.update();
 //        //---------------------testing shooting mechanic----------------------------------
 //
 //        player.shoot(enemy, deltaTime);
@@ -922,6 +1014,7 @@ public class GameStateManager extends ApplicationAdapter {
     public void drawGameSprites() {
         getGameObjectBatch().begin();
         player.getSprite().draw(getGameObjectBatch());
+        enemy.getSprite().draw(getGameObjectBatch());
         getGameObjectBatch().end();
     }
 
