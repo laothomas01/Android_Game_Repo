@@ -280,7 +280,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
         //follow a target
         public void moveTowards(gameObject parent, float dt) {
-            this.rotateRadians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
+//            this.rotateRadians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
             this.velocity.set(MathUtils.cos(this.rotateRadians), MathUtils.sin(this.rotateRadians));
             this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * dt)));
         }
@@ -299,7 +299,7 @@ public class hack_and_slash extends ApplicationAdapter {
         //this should handle all ranged attacks??????
         public void shoot(gameObject object, float dt) {
 
-            SingleShot(object, dt);
+//            SingleShot(object, dt);
 
 //            constantVelocityShoot(object, dt);
             //SKILL #2
@@ -322,75 +322,96 @@ public class hack_and_slash extends ApplicationAdapter {
 
         }
 
+        /*
+        *
+        * What do these abilities have in common???
+        *
+        * SingleShot:
+        * 1 angle
+        * 1 direction
+        * 1 offsetPosition
+        * 1 cooldown
+        * 1 bullet
+        *
+        * Surround Shot:
+        * 1 angle
+        * 2 angle offsets
+        * 3 directions
+        * 
+        *
+        * */
         // BASE SHOOT ATTACK
-        public void SingleShot(gameObject object, float dt) {
-            //shooting a bullet with linear motion but offset from player's position
-            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-            Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
-            if (coolDown <= 0) {
-                if (manager.getCollectionOfBullets().size < 1) {
-                    //SKILL #1
-                    //Instantiate a bullet with constant velocity
-                    gameObject bullet = new gameObject();
-                    bullet.sprite.setColor(Color.GREEN);
-                    bullet.velocity.set(vel);
-                    bullet.position.set(offsetPosition);
-                    bullet.moveSpeed = 500f;
-                    bullet.setMaxLifeSpan(1.5f);
-                    bullet.setLifeSpan(bullet.getMaxLifeSpan());
-                    bullet.update();
-                    manager.getCollectionOfBullets().add(bullet);
-                }
-
-            } else {
-                coolDown -= dt;
-            }
-        }
-
-        public void PitchForkShot(gameObject object, float dt) {
+//        public void SingleShot(gameObject object, float dt) {
+//            //shooting a bullet with linear motion but offset from player's position
+//
+//            //how can i break this up into smaller components for multiple skills??????
+//
 //            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-            Vector2 vel1 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-
-            Vector2 vel2 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-
-            Vector2 vel3 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-//            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.785398f), MathUtils.sin(radians - 0.785398f));
+//            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+//            Vector2 offsetPosition = new Vector2((vel.x * 50) + this.position.x, (vel.y * 50) + this.position.y);
+//            if (coolDown <= 0) {
+//                if (manager.getCollectionOfBullets().size < 1) {
+//                    //SKILL #1
+//                    //Instantiate a bullet with constant velocity
+//                    gameObject bullet = new gameObject();
+//                    bullet.sprite.setColor(Color.GREEN);
+//                    bullet.velocity.set(vel);
+//                    bullet.position.set(offsetPosition);
+//                    bullet.moveSpeed = 500f;
+//                    bullet.setMaxLifeSpan(1.5f);
+//                    bullet.setLifeSpan(bullet.getMaxLifeSpan());
+//                    bullet.update();
+//                    manager.getCollectionOfBullets().add(bullet);
+//                }
 //
-            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
-            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x - 40, (vel2.y * 50) + this.position.y);
-            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x + 40, (vel3.y * 50) + this.position.y);
+//            } else {
+//                coolDown -= dt;
+//            }
+//        }
+
+//        public void PitchForkShot(gameObject object, float dt) {
+////            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
+//            Vector2 vel1 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
 //
-            if (manager.getCollectionOfBullets().size < 3) {
-
-//                //PITCH FORK SHOT
-                gameObject bullet1 = new gameObject();
-                bullet1.sprite.setColor(Color.GREEN);
-                bullet1.velocity.set(vel1);
-                bullet1.position.set(offsetPosition1);
-                bullet1.moveSpeed = 300f;
-                bullet1.update();
-                manager.getCollectionOfBullets().add(bullet1);
-
-                gameObject bullet2 = new gameObject();
-                bullet2.sprite.setColor(Color.GREEN);
-                bullet2.velocity.set(vel2);
-                bullet2.position.set(offsetPosition2);
-                bullet2.moveSpeed = 300f;
-                bullet2.update();
-                manager.getCollectionOfBullets().add(bullet2);
-
-
-                gameObject bullet3 = new gameObject();
-                bullet3.sprite.setColor(Color.GREEN);
-                bullet3.velocity.set(vel3);
-                bullet3.position.set(offsetPosition3);
-                bullet3.moveSpeed = 300f;
-                bullet3.update();
-                manager.getCollectionOfBullets().add(bullet3);
-            }
-
-        }
+//            Vector2 vel2 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
+//
+//            Vector2 vel3 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
+////            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.785398f), MathUtils.sin(radians - 0.785398f));
+////
+//            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
+//            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x - 40, (vel2.y * 50) + this.position.y);
+//            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x + 40, (vel3.y * 50) + this.position.y);
+////
+//            if (manager.getCollectionOfBullets().size < 3) {
+//
+////                //PITCH FORK SHOT
+//                gameObject bullet1 = new gameObject();
+//                bullet1.sprite.setColor(Color.GREEN);
+//                bullet1.velocity.set(vel1);
+//                bullet1.position.set(offsetPosition1);
+//                bullet1.moveSpeed = 300f;
+//                bullet1.update();
+//                manager.getCollectionOfBullets().add(bullet1);
+//
+//                gameObject bullet2 = new gameObject();
+//                bullet2.sprite.setColor(Color.GREEN);
+//                bullet2.velocity.set(vel2);
+//                bullet2.position.set(offsetPosition2);
+//                bullet2.moveSpeed = 300f;
+//                bullet2.update();
+//                manager.getCollectionOfBullets().add(bullet2);
+//
+//
+//                gameObject bullet3 = new gameObject();
+//                bullet3.sprite.setColor(Color.GREEN);
+//                bullet3.velocity.set(vel3);
+//                bullet3.position.set(offsetPosition3);
+//                bullet3.moveSpeed = 300f;
+//                bullet3.update();
+//                manager.getCollectionOfBullets().add(bullet3);
+//            }
+//
+//        }
 
 
         public void SurroundShot(gameObject object, float dt) {

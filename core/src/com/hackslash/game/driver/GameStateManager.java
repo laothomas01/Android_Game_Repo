@@ -162,13 +162,6 @@ class Physics2D {
         return this.height;
     }
 
-    public float getSpeed() {
-        return this.moveSpeed;
-    }
-
-    public void setSpeed(float spd) {
-        this.moveSpeed = spd;
-    }
 
     public float getDistanceBetween() {
         return distanceFrom;
@@ -198,13 +191,24 @@ class Physics2D {
         this.getPosition().add(this.getDirectionVector().scl(this.getMoveSpeed() * dt));
     }
 
+    public void moveTowards(gameObject target, float dt) {
+        float radians = getAngleBetweenTwoVectors(target);
+
+//        float radians = getAngleBetweenTwoVectors(target);
+        this.setDirectionVector(MathUtils.cos(radians), MathUtils.sin(radians));
+//        System.out.println("RADIANS:" + radians);
+        move(dt);
+    }
+
     //TODO: fix the naming convention or parameter
     //returns an arc tangent of y/x in radians
     public float getAngleBetweenTwoVectors(gameObject target) {
-        return MathUtils.atan2(this.getPosition().y - target.getPhysics().getPosition().y, this.getPosition().x - target.getPhysics().getPosition().x);
+        //destination                       source
+
+        return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
     }
 
-    public boolean checkIsCollided() {
+    public boolean checkIfCollided() {
         return isCollided;
     }
 
@@ -217,7 +221,7 @@ class Physics2D {
     public boolean hasCollided(gameObject target) {
         this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
         this.setDistanceBetween(getNormalVector().len());
-        this.setImpactDistance((this.getWidth() + target.getPhysics().getWidth()) / 1.7f);
+        this.setImpactDistance((this.getWidth() + target.getPhysics().getWidth()) / 1.8f);
         //if you have less than or no distance between an object's collision distance, you crashed
         if (this.getDistanceBetween() < this.getImpactDistance()) {
             this.setIsCollided(true);
@@ -226,6 +230,7 @@ class Physics2D {
         return false;
 
     }
+
     //---------------------------------------------NOTES------------------------------------------
 
     //think about in between events called Collided. check if i already hit something before and if i have not hit something, that means I CAN hit something.
@@ -294,37 +299,37 @@ class Physics2D {
 
  PERFORMS CRUD OPERATIONS ON GAME OBJECTS
 
--loading bullets
+-loading Projectiles
 -inventory systems
 -removing objects
 
  */
 class GameObjectManager {
-    Array<Bullet> bullets;
-    Array<Bullet> removeAllBullets;
+    Array<Projectile> Projectiles;
+    Array<Projectile> removeAllProjectiles;
 
     public GameObjectManager() {
-        bullets = new Array<>();
+        Projectiles = new Array<>();
     }
 
-    public Array<Bullet> getBullets() {
-        return bullets;
+    public Array<Projectile> getProjectiles() {
+        return Projectiles;
     }
 
-    public void addBullets(Bullet b) {
-        bullets.add(b);
+    public void addProjectiles(Projectile b) {
+        Projectiles.add(b);
     }
 
-    public Array<Bullet> getRemoveAllBullets() {
-        return removeAllBullets;
+    public Array<Projectile> getRemoveAllProjectiles() {
+        return removeAllProjectiles;
     }
 
-    public String getBulletsToString() {
-        return bullets.toString();
+    public String getProjectilesToString() {
+        return Projectiles.toString();
     }
 
-    public void addBulletsToRemove(Bullet b) {
-        removeAllBullets.add(b);
+    public void addProjectilesToRemove(Projectile b) {
+        removeAllProjectiles.add(b);
     }
 
 
@@ -370,8 +375,6 @@ class gameObject {
         graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         graphics.getSprite().setTexture(graphics.getTexture());
         graphics.getSprite().setColor(graphics.getColor());
-
-
 //        this.getPhysics().move(dt);
     }
 
@@ -384,15 +387,16 @@ class gameObject {
 }
 
 
-class Bullet extends gameObject {
-    Bullet() {
-        this.getPhysics().setPosition(100f, 0f);
-//        graphics.setTexture()("circle.png");
-//        this.getPhysics().setSize(10f, 10f);
-//        graphics.setColor(Color.GREEN);
-        this.getPhysics().setSpeed(200f);
-        this.getPhysics().setDirectionVector(1, 1);
+class Projectile extends gameObject {
+
+    Projectile() {
+        this.getPhysics().setSize(3f, 3f);
+        this.getPhysics().setMoveSpeed(250f);
+        this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        graphics.setColor(Color.GREEN);
     }
+
+
 }
 
 
@@ -409,15 +413,15 @@ class Player extends gameObject {
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
-        this.getPhysics().setDirectionVector(1, 1);
-        this.getPhysics().setMoveSpeed(500);
+        this.getPhysics().setMoveSpeed(250f);
         graphics.setColor(Color.BLUE);
     }
 
+    public Array<Skill> getSkills() {
+        return skills;
+    }
+
     //---------------------------------------------------------------------------------
-//    public SkillManager getSkillManager() {
-//        return skillManager;
-//    }
 
     public GameObjectManager getGameObjectManager() {
         return gameObjectManager;
@@ -431,7 +435,9 @@ class Player extends gameObject {
     //shoot will be a trigger for using the player skills
     @Override
     public void shoot(gameObject target, float dt) {
-
+        float radians = this.getPhysics().getAngleBetweenTwoVectors(target);
+        Vector2 newHeadingVector = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+        Vector2 offsetPosition = new Vector2((newHeadingVector.x * 50) + this.getPhysics().position.x, (newHeadingVector.y * 50) + this.getPhysics().position.y);
 
     }
     /*
@@ -458,8 +464,8 @@ class Player extends gameObject {
 ////            float projectileCount = skill.key.projectileCount;
 ////            float skillCoolDown = skill.key.coolDown;
 ////            float radians = MathUtils.atan2(this.getPhysics().getPosition().y - target.getPhysics().getPosition().y, this.getPhysics().getPosition().x - target.getPhysics().getPosition().x);
-////            Vector2 bulletDir = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-////            Vector2 offsetPosition = new Vector2(bulletDir.x * offsetDistance, bulletDir.y * offsetDistance);
+////            Vector2 ProjectileDir = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+////            Vector2 offsetPosition = new Vector2(ProjectileDir.x * offsetDistance, ProjectileDir.y * offsetDistance);
 ////
 ////            if (skillCoolDown < 0) {
 ////                System.out.println("HELLO WORLD!");
@@ -469,12 +475,12 @@ class Player extends gameObject {
 ////            }
 //
 ////            if (skillCoolDown <= 0) {
-////                if (getGameObjectManager().getBullets().size < projectileCount) {
-////                    Bullet bullet = new Bullet();
-////                    bullet.getPhysics().setDirectonVector(bulletDir);
-////                    bullet.getPhysics().position.set(offsetPosition);
-////                    bullet.update();
-////                    this.getGameObjectManager().addBullets(bullet);
+////                if (getGameObjectManager().getProjectiles().size < projectileCount) {
+////                    Projectile Projectile = new Projectile();
+////                    Projectile.getPhysics().setDirectonVector(ProjectileDir);
+////                    Projectile.getPhysics().position.set(offsetPosition);
+////                    Projectile.update();
+////                    this.getGameObjectManager().addProjectiles(Projectile);
 ////                }
 ////            } else {
 ////                skillCoolDown -= dt;
@@ -518,38 +524,89 @@ class Enemy extends gameObject {
  *
  */
 class Skill {
-    boolean onCoolDown;
-    String skillName;
-    float coolDown;
-    int level;
-    String attackType;
+
     float projectileCount;
+    float directionCount;
+    float coolDown;
+    boolean isOnCoolDown;
+    String name;
+    String type;
+    int level;
+
+    String behavior;
+
 
     public Skill() {
-        onCoolDown = false;
-        skillName = "BasicShot";
-        coolDown = 1.5f;
+        coolDown = 0f;
+        isOnCoolDown = false;
+        name = "";
+        type = "";
         level = 1;
-        projectileCount = 1f;
-        attackType = "Ranged";
+        behavior = "";
     }
 
-    public String toString() {
-        return "    NAME:   " + skillName + "   COOL DOWN   " + coolDown + "    LEVEL   " + level + "   PROJECTILE COUNT    " + projectileCount;
+    public float getCoolDown() {
+        return coolDown;
     }
 
-    public float getProjectileCount() {
-        return projectileCount;
+    public void setCoolDown(float coolDown) {
+        this.coolDown = coolDown;
+    }
+
+    public boolean isOnCoolDown() {
+        return isOnCoolDown;
+    }
+
+    public void setOnCoolDown(boolean onCoolDown) {
+        isOnCoolDown = onCoolDown;
     }
 
     public String getName() {
-        return skillName;
+        return name;
     }
 
-    public void setProjectileCount(float count) {
-        projectileCount = count;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getBehavior() {
+        return behavior;
+    }
+
+    public void setBehavior(String behavior) {
+        this.behavior = behavior;
+    }
+
+
 }
+
+//failing fast so i can learn quicker
+//let's try to realize the importance of scalability
+//let's also realize why OOP Design Pattern "Composition Over Inheritance" may prove useful
+//class SingleShotSkill extends Skill {
+//
+//    public SingleShotSkill() {
+//
+//    }
+//}
+
+
 
 
 
@@ -608,48 +665,48 @@ public class GameStateManager extends ApplicationAdapter {
 
 
 //    class entityStateManager {
-//        Array<gameObject> collectionOfBullets;
-//        Array<gameObject> collectionOfRemovedBullets;
+//        Array<gameObject> collectionOfProjectiles;
+//        Array<gameObject> collectionOfRemovedProjectiles;
 //
 //        public entityStateManager() {
-//            collectionOfBullets = new Array<>();
-//            collectionOfRemovedBullets = new Array<>();
+//            collectionOfProjectiles = new Array<>();
+//            collectionOfRemovedProjectiles = new Array<>();
 //        }
 //
-//        public Array<gameObject> getCollectionOfBullets() {
-//            return collectionOfBullets;
+//        public Array<gameObject> getCollectionOfProjectiles() {
+//            return collectionOfProjectiles;
 //        }
 //
-//        public Array<gameObject> getCollectionOfRemovedBullets() {
-//            return collectionOfRemovedBullets;
+//        public Array<gameObject> getCollectionOfRemovedProjectiles() {
+//            return collectionOfRemovedProjectiles;
 //        }
 //
-//        public boolean removeBullets() {
-//            return collectionOfBullets.removeAll(collectionOfRemovedBullets, false);
+//        public boolean removeProjectiles() {
+//            return collectionOfProjectiles.removeAll(collectionOfRemovedProjectiles, false);
 //        }
 //
 //        public void setCollectionSize(int size) {
-//            collectionOfBullets.setSize(size);
+//            collectionOfProjectiles.setSize(size);
 //        }
 
-//        public void manageBullets() {
-//            if (!getCollectionOfBullets().isEmpty()) {
+//        public void manageProjectiles() {
+//            if (!getCollectionOfProjectiles().isEmpty()) {
 //
 //            }
 //        }
 
-//        public void manageBullets() {
-//            if (!manager.getCollectionOfBullets().isEmpty()) {
-//                for (gameObject b : manager.getCollectionOfBullets()) {
+//        public void manageProjectiles() {
+//            if (!manager.getCollectionOfProjectiles().isEmpty()) {
+//                for (gameObject b : manager.getCollectionOfProjectiles()) {
 //                    if (b.hasCollided(enemy)) {
-//                        manager.getCollectionOfRemovedBullets().add(b);
+//                        manager.getCollectionOfRemovedProjectiles().add(b);
 //                    }
 //                    System.out.println("LIFE SPAN:" + b.getLifeSpan());
 //                    System.out.println("MAX LIFE SPAN:" + b.getMaxLifeSpan());
 //
 //                    if (b.lifeSpan <= 0) {
 //                        b.setLifeSpan(b.getMaxLifeSpan());
-//                        manager.getCollectionOfRemovedBullets().add(b);
+//                        manager.getCollectionOfRemovedProjectiles().add(b);
 //                    } else {
 //                        b.lifeSpan -= deltaTime;
 //                    }
@@ -658,7 +715,7 @@ public class GameStateManager extends ApplicationAdapter {
 //                    b.update();
 //                }
 //            }
-//            manager.removeBullets();
+//            manager.removeProjectiles();
 //        }
 
 
@@ -671,7 +728,7 @@ public class GameStateManager extends ApplicationAdapter {
      *   -exp drops
      *   -the player
      *   -enemies
-     *   -bullets
+     *   -Projectiles
      *
      * */
 //    class gameObject {
@@ -871,8 +928,8 @@ public class GameStateManager extends ApplicationAdapter {
 ////            PitchForkShot(object, dt);
 //
 //
-//            //handling cases for bullets
-//            manager.manageBullets();
+//            //handling cases for Projectiles
+//            manager.manageProjectiles();
 //
 //        }
 
@@ -891,7 +948,7 @@ public class GameStateManager extends ApplicationAdapter {
 //             *
 //             * offset <- velocity , offset distance , shooter's position
 //             *
-//             * equation: bullet final position = shooter's current position + (velocity * 50) * speed * deltaTime
+//             * equation: Projectile final position = shooter's current position + (velocity * 50) * speed * deltaTime
 //             *
 //             * */
 //
@@ -924,9 +981,9 @@ public class GameStateManager extends ApplicationAdapter {
 //
 ////                if (
 ////                    //limit to collection size.
-////                    // why? we are rendering at 60 frames per bullet and using an arraylist for a datastructure
+////                    // why? we are rendering at 60 frames per Projectile and using an arraylist for a datastructure
 ////                    //
-////                        manager.getCollectionOfBullets().size < 1
+////                        manager.getCollectionOfProjectiles().size < 1
 ////
 ////
 ////                )
@@ -934,15 +991,15 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //            {
 //
-//                gameObject bullet = new gameObject();
-//                bullet.sprite.setColor(Color.GREEN);
-//                bullet.velocity.set(vel);
-//                bullet.position.set(offsetPosition);
-//                bullet.moveSpeed = 500f;
-//                bullet.setMaxLifeSpan(0.5f);
-//                bullet.setLifeSpan(bullet.getMaxLifeSpan());
-//                bullet.update();
-//                manager.getCollectionOfBullets().add(bullet);
+//                gameObject Projectile = new gameObject();
+//                Projectile.sprite.setColor(Color.GREEN);
+//                Projectile.velocity.set(vel);
+//                Projectile.position.set(offsetPosition);
+//                Projectile.moveSpeed = 500f;
+//                Projectile.setMaxLifeSpan(0.5f);
+//                Projectile.setLifeSpan(Projectile.getMaxLifeSpan());
+//                Projectile.update();
+//                manager.getCollectionOfProjectiles().add(Projectile);
 //            }
 //
 ////            }
@@ -961,33 +1018,33 @@ public class GameStateManager extends ApplicationAdapter {
 //            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x - 40, (vel2.y * 50) + this.position.y);
 //            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x + 40, (vel3.y * 50) + this.position.y);
 ////
-//            if (manager.getCollectionOfBullets().size < 3) {
+//            if (manager.getCollectionOfProjectiles().size < 3) {
 //
 ////                //PITCH FORK SHOT
-//                gameObject bullet1 = new gameObject();
-//                bullet1.sprite.setColor(Color.GREEN);
-//                bullet1.velocity.set(vel1);
-//                bullet1.position.set(offsetPosition1);
-//                bullet1.moveSpeed = 300f;
-//                bullet1.update();
-//                manager.getCollectionOfBullets().add(bullet1);
+//                gameObject Projectile1 = new gameObject();
+//                Projectile1.sprite.setColor(Color.GREEN);
+//                Projectile1.velocity.set(vel1);
+//                Projectile1.position.set(offsetPosition1);
+//                Projectile1.moveSpeed = 300f;
+//                Projectile1.update();
+//                manager.getCollectionOfProjectiles().add(Projectile1);
 //
-//                gameObject bullet2 = new gameObject();
-//                bullet2.sprite.setColor(Color.GREEN);
-//                bullet2.velocity.set(vel2);
-//                bullet2.position.set(offsetPosition2);
-//                bullet2.moveSpeed = 300f;
-//                bullet2.update();
-//                manager.getCollectionOfBullets().add(bullet2);
+//                gameObject Projectile2 = new gameObject();
+//                Projectile2.sprite.setColor(Color.GREEN);
+//                Projectile2.velocity.set(vel2);
+//                Projectile2.position.set(offsetPosition2);
+//                Projectile2.moveSpeed = 300f;
+//                Projectile2.update();
+//                manager.getCollectionOfProjectiles().add(Projectile2);
 //
 //
-//                gameObject bullet3 = new gameObject();
-//                bullet3.sprite.setColor(Color.GREEN);
-//                bullet3.velocity.set(vel3);
-//                bullet3.position.set(offsetPosition3);
-//                bullet3.moveSpeed = 300f;
-//                bullet3.update();
-//                manager.getCollectionOfBullets().add(bullet3);
+//                gameObject Projectile3 = new gameObject();
+//                Projectile3.sprite.setColor(Color.GREEN);
+//                Projectile3.velocity.set(vel3);
+//                Projectile3.position.set(offsetPosition3);
+//                Projectile3.moveSpeed = 300f;
+//                Projectile3.update();
+//                manager.getCollectionOfProjectiles().add(Projectile3);
 //            }
 //
 //        }
@@ -1002,33 +1059,33 @@ public class GameStateManager extends ApplicationAdapter {
 //            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
 //            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
 //
-//            if (manager.getCollectionOfBullets().size < 3) {
+//            if (manager.getCollectionOfProjectiles().size < 3) {
 //                //SKILL #2
 //                //Fan Shot
-//                gameObject bullet1 = new gameObject();
-//                bullet1.sprite.setColor(Color.GREEN);
-//                bullet1.velocity.set(vel1);
-//                bullet1.position.set(offsetPosition1);
-//                bullet1.moveSpeed = 300f;
-//                bullet1.update();
-//                manager.getCollectionOfBullets().add(bullet1);
+//                gameObject Projectile1 = new gameObject();
+//                Projectile1.sprite.setColor(Color.GREEN);
+//                Projectile1.velocity.set(vel1);
+//                Projectile1.position.set(offsetPosition1);
+//                Projectile1.moveSpeed = 300f;
+//                Projectile1.update();
+//                manager.getCollectionOfProjectiles().add(Projectile1);
 //
-//                gameObject bullet2 = new gameObject();
-//                System.out.println("MAX:" + bullet1.maxLifeSpan);
-//                bullet2.sprite.setColor(Color.GREEN);
-//                bullet2.velocity.set(vel2);
-//                bullet2.position.set(offsetPosition2);
-//                bullet2.moveSpeed = 300f;
-//                bullet2.update();
-//                manager.getCollectionOfBullets().add(bullet2);
+//                gameObject Projectile2 = new gameObject();
+//                System.out.println("MAX:" + Projectile1.maxLifeSpan);
+//                Projectile2.sprite.setColor(Color.GREEN);
+//                Projectile2.velocity.set(vel2);
+//                Projectile2.position.set(offsetPosition2);
+//                Projectile2.moveSpeed = 300f;
+//                Projectile2.update();
+//                manager.getCollectionOfProjectiles().add(Projectile2);
 //
-//                gameObject bullet3 = new gameObject();
-//                bullet3.sprite.setColor(Color.GREEN);
-//                bullet3.velocity.set(vel3);
-//                bullet3.position.set(offsetPosition3);
-//                bullet3.moveSpeed = 300f;
-//                bullet3.update();
-//                manager.getCollectionOfBullets().add(bullet3);
+//                gameObject Projectile3 = new gameObject();
+//                Projectile3.sprite.setColor(Color.GREEN);
+//                Projectile3.velocity.set(vel3);
+//                Projectile3.position.set(offsetPosition3);
+//                Projectile3.moveSpeed = 300f;
+//                Projectile3.update();
+//                manager.getCollectionOfProjectiles().add(Projectile3);
 //
 //
 ////                }
@@ -1036,7 +1093,7 @@ public class GameStateManager extends ApplicationAdapter {
 //            }
 //        }
 
-    //BUG: bullet max life span is bugged! currently, the value is baked in
+    //BUG: Projectile max life span is bugged! currently, the value is baked in
     // SKILL 2
 //        public void TriShot(gameObject object, float dt) {
 //
@@ -1049,33 +1106,33 @@ public class GameStateManager extends ApplicationAdapter {
 //            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
 //            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
 ////            if (coolDown <= 0) {
-//            if (manager.getCollectionOfBullets().size < 3) {
+//            if (manager.getCollectionOfProjectiles().size < 3) {
 //                //SKILL #2
 //                //Fan Shot
-//                gameObject bullet1 = new gameObject();
-//                bullet1.sprite.setColor(Color.GREEN);
-//                bullet1.velocity.set(vel1);
-//                bullet1.position.set(offsetPosition1);
-//                bullet1.moveSpeed = 300f;
-//                bullet1.update();
-//                manager.getCollectionOfBullets().add(bullet1);
+//                gameObject Projectile1 = new gameObject();
+//                Projectile1.sprite.setColor(Color.GREEN);
+//                Projectile1.velocity.set(vel1);
+//                Projectile1.position.set(offsetPosition1);
+//                Projectile1.moveSpeed = 300f;
+//                Projectile1.update();
+//                manager.getCollectionOfProjectiles().add(Projectile1);
 //
-//                gameObject bullet2 = new gameObject();
-//                System.out.println("MAX:" + bullet1.maxLifeSpan);
-//                bullet2.sprite.setColor(Color.GREEN);
-//                bullet2.velocity.set(vel2);
-//                bullet2.position.set(offsetPosition2);
-//                bullet2.moveSpeed = 300f;
-//                bullet2.update();
-//                manager.getCollectionOfBullets().add(bullet2);
+//                gameObject Projectile2 = new gameObject();
+//                System.out.println("MAX:" + Projectile1.maxLifeSpan);
+//                Projectile2.sprite.setColor(Color.GREEN);
+//                Projectile2.velocity.set(vel2);
+//                Projectile2.position.set(offsetPosition2);
+//                Projectile2.moveSpeed = 300f;
+//                Projectile2.update();
+//                manager.getCollectionOfProjectiles().add(Projectile2);
 //
-//                gameObject bullet3 = new gameObject();
-//                bullet3.sprite.setColor(Color.GREEN);
-//                bullet3.velocity.set(vel3);
-//                bullet3.position.set(offsetPosition3);
-//                bullet3.moveSpeed = 300f;
-//                bullet3.update();
-//                manager.getCollectionOfBullets().add(bullet3);
+//                gameObject Projectile3 = new gameObject();
+//                Projectile3.sprite.setColor(Color.GREEN);
+//                Projectile3.velocity.set(vel3);
+//                Projectile3.position.set(offsetPosition3);
+//                Projectile3.moveSpeed = 300f;
+//                Projectile3.update();
+//                manager.getCollectionOfProjectiles().add(Projectile3);
 //
 //
 //            }
@@ -1106,7 +1163,7 @@ public class GameStateManager extends ApplicationAdapter {
     Player player;
     Enemy enemy;
 
-    Bullet bullet;
+    Projectile Projectile;
 
     float tempCount = 2.0f;
 
@@ -1154,31 +1211,38 @@ public class GameStateManager extends ApplicationAdapter {
 //        enemy.sprite.setColor(Color.RED);
 //        enemy.moveSpeed = 500;
 //        //--------------------------------------------------------------------------------
-//        gameObjectBatch = new SpriteBatch();
         player = new Player();
 
-//        player.getSkillManager().addSkill(new Skill(), "Basic Shot");
         enemy = new Enemy();
+
+        Projectile = new Projectile();
 
     }
 
     //updating game state
     public void render() {
+
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         player.getGraphics().drawSprite();
+        enemy.getGraphics().drawSprite();
+
+//        player.getPhysics().moveTowards(enemy, deltaTime);
+//        System.out.println(player.toString());
+//        if (player.getPhysics().hasCollided(enemy)) {
+//            player.getPhysics().setMoveSpeed(0f);
+//        }
+
         player.update(deltaTime);
         enemy.update(deltaTime);
-
-
-//        for (Bullet b : player.getGameObjectManager().getBullets()) {
+//        for (Projectile b : player.getGameObjectManager().getProjectiles()) {
 //            b.getPhysics().move(b, deltaTime);
 //            b.update();
 //        }
 
 
-//        System.out.println(player.getGameObjectManager().getBulletsToString());
+//        System.out.println(player.getGameObjectManager().getProjectilesToString());
 
 
 //        //---------------------testing shooting mechanic----------------------------------
@@ -1193,7 +1257,7 @@ public class GameStateManager extends ApplicationAdapter {
 //        projectile2.sprite.draw(player.batch);
 //        enemy.sprite.draw(player.batch);
 //
-//        for (gameObject b : manager.getCollectionOfBullets()) {
+//        for (gameObject b : manager.getCollectionOfProjectiles()) {
 //            b.sprite.draw(player.batch);
 //        }
 //        player.batch.end();
@@ -1245,6 +1309,7 @@ public class GameStateManager extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
+
     }
 
 
@@ -1257,6 +1322,10 @@ public class GameStateManager extends ApplicationAdapter {
      *
      * */
     public void pause() {
+
+        //pause when player levels up and has to choose an upgrade
+
+        //pause when player swaps the application window but has not closed the project
     }
 
 
@@ -1264,6 +1333,8 @@ public class GameStateManager extends ApplicationAdapter {
     //when the application starts again
     @Override
     public void resume() {
+
+
     }
 
 
