@@ -107,6 +107,7 @@ class Physics2D {
         isCollided = false;
     }
 
+
     public float getMoveSpeed() {
         return moveSpeed;
     }
@@ -188,7 +189,8 @@ class Physics2D {
     }
 
     public void move(float dt) {
-        this.getPosition().add(this.getDirectionVector().scl(this.getMoveSpeed() * dt));
+        this.getPosition().add(this.getDirectionVector().x * this.getMoveSpeed() * dt, this.getDirectionVector().y * this.getMoveSpeed() * dt);
+
     }
 
     public void moveTowards(gameObject target, float dt) {
@@ -207,6 +209,34 @@ class Physics2D {
 
         return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
     }
+
+
+    public float getRadians() {
+        return radians;
+    }
+
+    public void setRadians(float rad) {
+        this.radians = rad;
+    }
+
+    // calculate number of orbits per second(note: this calculation for rotation speed is not accurate)
+    public void increaseRotationAngle() {
+        if (this.getRadians() < (MathUtils.PI * 2)) {
+            this.setRadians(this.getRadians() + .05f);
+        } else {
+            this.setRadians(0f);
+        }
+    }
+
+
+    //perform basic circular motion around the parameterized object
+//    public void rotateAround(hack_and_slash.gameObject parent) {
+//        this.increaseRotationAngle();
+//        this.angularVelocity.set(MathUtils.cos(this.getRadians()), MathUtils.sin(this.getRadians()));
+//        this.d(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
+//        this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
+//    }
+
 
     public boolean checkIfCollided() {
         return isCollided;
@@ -390,10 +420,15 @@ class gameObject {
 class Projectile extends gameObject {
 
     Projectile() {
-        this.getPhysics().setSize(3f, 3f);
-        this.getPhysics().setMoveSpeed(250f);
+        this.getPhysics().setSize(10f, 10f);
+        this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        this.getPhysics().setMoveSpeed(100f);
         graphics.setColor(Color.GREEN);
+    }
+
+    public String toString() {
+        return "    POSITION:   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getDirectionVector() + "   SPEED              " + this.getPhysics().getMoveSpeed();
     }
 
 
@@ -413,7 +448,7 @@ class Player extends gameObject {
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
-        this.getPhysics().setMoveSpeed(250f);
+        this.getPhysics().setMoveSpeed(100f);
         graphics.setColor(Color.BLUE);
     }
 
@@ -433,13 +468,13 @@ class Player extends gameObject {
 
 
     //shoot will be a trigger for using the player skills
-    @Override
-    public void shoot(gameObject target, float dt) {
-        float radians = this.getPhysics().getAngleBetweenTwoVectors(target);
-        Vector2 newHeadingVector = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-        Vector2 offsetPosition = new Vector2((newHeadingVector.x * 50) + this.getPhysics().position.x, (newHeadingVector.y * 50) + this.getPhysics().position.y);
-
-    }
+//    @Override
+//    public void shoot(gameObject target, float dt) {
+//        float radians = this.getPhysics().getAngleBetweenTwoVectors(target);
+//        Vector2 newHeadingVector = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
+//        Vector2 offsetPosition = new Vector2((newHeadingVector.x * 50) + this.getPhysics().position.x, (newHeadingVector.y * 50) + this.getPhysics().position.y);
+//
+//    }
     /*
      *
      *
@@ -1163,12 +1198,21 @@ public class GameStateManager extends ApplicationAdapter {
     Player player;
     Enemy enemy;
 
-    Projectile Projectile;
+    Projectile p1;
+    Projectile p2;
+    Projectile p3;
 
     float tempCount = 2.0f;
 
 
+    float perpAngle;
+
+    float rotateAngle;
+
+    Vector2 currDirection;
+
     public void create() {
+
 //        //initialize....
 //        normal = new Vector2();
 //        temp = new Vector2();
@@ -1215,8 +1259,31 @@ public class GameStateManager extends ApplicationAdapter {
 
         enemy = new Enemy();
 
-        Projectile = new Projectile();
+        p1 = new Projectile();
 
+        currDirection = new Vector2(MathUtils.cos(perpAngle + rotateAngle), MathUtils.sin(perpAngle + rotateAngle));
+
+        p1.getPhysics().setDirectionVector(currDirection);
+
+        System.out.println("PROJECTILE:" + p1.toString());
+
+        /*
+         *
+         *
+         * Let's just do a test:
+         *
+         *
+         * we will initialze the following:
+         *
+         * some bullets
+         *
+         * bullets offsetted by some value: 100
+         *
+         * a heading vector provided by the first projectile.
+         *
+         * every other projectile will follow the center projectile's heading vector
+         *
+         * */
     }
 
     //updating game state
@@ -1225,17 +1292,24 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        player.getGraphics().drawSprite();
-        enemy.getGraphics().drawSprite();
 
-//        player.getPhysics().moveTowards(enemy, deltaTime);
-//        System.out.println(player.toString());
-//        if (player.getPhysics().hasCollided(enemy)) {
-//            player.getPhysics().setMoveSpeed(0f);
-//        }
+//        player.getGraphics().drawSprite();
+//        enemy.getGraphics().drawSprite();
+        p1.getGraphics().drawSprite();
 
-        player.update(deltaTime);
-        enemy.update(deltaTime);
+        p1.getPhysics().move(deltaTime);
+
+        if (p1.getPhysics().getPosition().x > Gdx.graphics.getWidth()
+                || p1.getPhysics().getPosition().x < 0
+                || p1.getPhysics().getPosition().y > Gdx.graphics.getHeight()
+                || p1.getPhysics().getPosition().y < 0) {
+            p1.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        }
+
+        p1.update(deltaTime);
+//        player.update(deltaTime);
+//        enemy.update(deltaTime);
+
 //        for (Projectile b : player.getGameObjectManager().getProjectiles()) {
 //            b.getPhysics().move(b, deltaTime);
 //            b.update();
