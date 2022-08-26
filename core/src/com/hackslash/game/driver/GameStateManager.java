@@ -423,7 +423,7 @@ class Projectile extends gameObject {
         this.getPhysics().setSize(10f, 10f);
         this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        this.getPhysics().setMoveSpeed(100f);
+        this.getPhysics().setMoveSpeed(50f);
         graphics.setColor(Color.GREEN);
     }
 
@@ -1211,10 +1211,16 @@ public class GameStateManager extends ApplicationAdapter {
 
     Vector2 currDirection;
 
+    Vector2 perp1;
+    Vector2 perp2;
+
+
+    Vector2 newVel1, newVel2, newVel3;
+
     public void create() {
 
 //        //initialize....
-//        normal = new Vector2();
+//        normal = new` Vector2();
 //        temp = new Vector2();
 //        newDirectionVector = new Vector2();
 //
@@ -1255,17 +1261,60 @@ public class GameStateManager extends ApplicationAdapter {
 //        enemy.sprite.setColor(Color.RED);
 //        enemy.moveSpeed = 500;
 //        //--------------------------------------------------------------------------------
+
+        // REFERENCE LINK: https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
+
+
         player = new Player();
 
         enemy = new Enemy();
 
         p1 = new Projectile();
+        p2 = new Projectile();
+        p3 = new Projectile();
 
-        currDirection = new Vector2(MathUtils.cos(perpAngle + rotateAngle), MathUtils.sin(perpAngle + rotateAngle));
+        //p2 and p3 SHOULD move in the same direciton as p1
+//        p2.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
+//        p3.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
 
-        p1.getPhysics().setDirectionVector(currDirection);
 
-        System.out.println("PROJECTILE:" + p1.toString());
+//        p2.getPhysics().getPosition().add(-100, 100);
+//        p3.getPhysics().getPosition().add(100, -100);
+
+        perp1 = new Vector2();
+
+
+        perp1 = new Vector2(-p1.getPhysics().getDirectionVector().y, p1.getPhysics().getDirectionVector().x);
+
+//        p2.getPhysics().setPosition(
+//                p2.getPhysics().getPosition().x + 5.0f * perp1.x,
+//                p2.getPhysics().getPosition().y + 5.0f * perp1.y
+//        );
+//        p3.getPhysics().setPosition(
+//                p3.getPhysics().getPosition().x - 5.0f * perp1.x,
+//                p3.getPhysics().getPosition().y - 5.0f * perp1.y
+//        );
+
+
+//        p2.getPhysics().getPosition().set(per1)
+
+
+        p2.getPhysics().getPosition().add(50.0f * perp1.x, 50.0f * perp1.y);
+        p3.getPhysics().getPosition().sub(50.0f * perp1.x, 50.0f * perp1.y);
+
+
+//        perp2 = new Vector2(p1.getPhysics().getPosition().y, -p1.getPhysics().getPosition().x);
+
+
+//
+//        p2.getPhysics().getPosition().add(perp1.scl(5));
+//        p3.getPhysics().getPosition().add(perp2).scl(5);
+
+        System.out.println(p2.getPhysics().getPosition().toString());
+        System.out.println(p3.getPhysics().getPosition().toString());
+
+
+
 
         /*
          *
@@ -1293,91 +1342,39 @@ public class GameStateManager extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-//        player.getGraphics().drawSprite();
-//        enemy.getGraphics().drawSprite();
+
         p1.getGraphics().drawSprite();
+        p2.getGraphics().drawSprite();
+        p3.getGraphics().drawSprite();
 
         p1.getPhysics().move(deltaTime);
+//        p2.getPhysics().getPosition().set(5.0f * perp1.x, 5.0f * perp1.y);
+//        p3.getPhysics().getPosition().set(5.0f * perp2.x, 5.0f * perp2.y);
+//        perp1 = new Vector2(-p1.getPhysics(), p1.getPhysics().);
 
-        if (p1.getPhysics().getPosition().x > Gdx.graphics.getWidth()
-                || p1.getPhysics().getPosition().x < 0
-                || p1.getPhysics().getPosition().y > Gdx.graphics.getHeight()
-                || p1.getPhysics().getPosition().y < 0) {
-            p1.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        }
+
+        /*
+         * Ingredients:
+         * p1.headingVector = center bullet, main direction other bullets traverse in, current direction
+         *
+         *
+         *
+         * */
+//        p2.getPhysics().getDirectionVector().set(5.0f * perp.x, 5.0f * perp.y);
+//        p3.getPhysics().getDirectionVector().set(-5.0f * perp.x, -5.0f * perp.y);
+
+//
+//        if (p1.getPhysics().getPosition().x > Gdx.graphics.getWidth() || p1.getPhysics().getPosition().x < 0 || p1.getPhysics().getPosition().y > Gdx.graphics.getHeight() || p1.getPhysics().getPosition().y < 0) {
+//            p1.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+//        }
+
+
+        p2.getPhysics().move(deltaTime);
+        p3.getPhysics().move(deltaTime);
 
         p1.update(deltaTime);
-//        player.update(deltaTime);
-//        enemy.update(deltaTime);
-
-//        for (Projectile b : player.getGameObjectManager().getProjectiles()) {
-//            b.getPhysics().move(b, deltaTime);
-//            b.update();
-//        }
-
-
-//        System.out.println(player.getGameObjectManager().getProjectilesToString());
-
-
-//        //---------------------testing shooting mechanic----------------------------------
-//
-//        player.shoot(enemy, deltaTime);
-//
-//        //-----------------------------draw game objects-----------------------
-//
-//        player.batch.begin();
-//        player.sprite.draw(player.batch);
-//        projectile.sprite.draw(player.batch);
-//        projectile2.sprite.draw(player.batch);
-//        enemy.sprite.draw(player.batch);
-//
-//        for (gameObject b : manager.getCollectionOfProjectiles()) {
-//            b.sprite.draw(player.batch);
-//        }
-//        player.batch.end();
-//        //----------------------------------------------------------------------
-//
-//
-//        //-----------------------------test object rotation functions------------------
-//        projectile.rotateAround(player);
-//        projectile2.rotateAround(projectile);
-//        //------------------------------------------------------------------------------
-//
-//        fontSpriteBatch.begin();
-//
-//        //----------------------- DISPLAY TEXT ON SCREEN ---------------------------------
-//
-//        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
-//        font.draw(fontSpriteBatch, "Upper Fleft, ENEMY DISTANCE=" + enemy.position.dst(player.position), 0, Gdx.graphics.getHeight() - 50);
-//        fontSpriteBatch.end();
-//
-//        // ---------------------------------------------------------------------------------
-//
-//
-//        //check if player moves out of screen boundaries
-//        if (player.position.x > Gdx.graphics.getWidth()) {
-//            player.position.set(Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
-//        }
-//        if (player.position.x < 0) {
-//            player.position.set(Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() / 2);
-//        }
-//
-//
-//        //TESTING FUNCTIONS
-//        enemy.performImpulseCollision(player);
-//        enemy.position.x += 1;
-//
-//
-//        if (enemy.position.y > Gdx.graphics.getWidth()) {
-//            enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
-//        }
-//
-//
-//        //update all objects
-//        player.update();
-//        projectile.update();
-//        projectile2.update();
-//        enemy.update();
+        p2.update(deltaTime);
+        p3.update(deltaTime);
 
     }
 
