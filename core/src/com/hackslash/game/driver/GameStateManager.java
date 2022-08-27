@@ -340,6 +340,7 @@ class GameObjectManager {
 
     public GameObjectManager() {
         Projectiles = new Array<>();
+        removeAllProjectiles = new Array<>();
     }
 
     public Array<Projectile> getProjectiles() {
@@ -516,7 +517,7 @@ class Player extends gameObject {
                 if (this.getSkills().get(i).getProjectileCount() == 1) {
                     Vector2 newHeadVector = new Vector2(MathUtils.cos(shootAngle), MathUtils.sin(shootAngle));
                     Vector2 offsetPosition = new Vector2((newHeadVector.x * 50) + this.getPhysics().getPosition().x, (newHeadVector.y * 50) + this.getPhysics().getPosition().y);
-                    Projectile bullet = new Projectile(offsetPosition, newHeadVector, 50f, 10f, 10f);
+                    Projectile bullet = new Projectile(offsetPosition, newHeadVector, 250f, 10f, 10f);
                     bullet.update(dt);
                     this.getGameObjectManager().addProjectiles(bullet);
                 }
@@ -599,6 +600,7 @@ class Enemy extends gameObject {
         graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
         graphics.setColor(Color.RED);
+        this.getPhysics().setMoveSpeed(10f);
     }
 
 //    public String toString() {
@@ -1308,6 +1310,11 @@ public class GameStateManager extends ApplicationAdapter {
 
     Vector2 newVel1, newVel2, newVel3;
 
+
+    private SpriteBatch fontSpriteBatch;
+    private BitmapFont font;
+
+
     public void create() {
 
 //        //initialize....
@@ -1359,9 +1366,13 @@ public class GameStateManager extends ApplicationAdapter {
         player = new Player();
 
         enemy = new Enemy();
+        enemy.getPhysics().setDirectionVector(0, 1);
+
 //        skill = new Skill("Basic Shoot", 1.5f, false, 1);
 
-
+        //drawing on screen info
+        font = new BitmapFont();
+        fontSpriteBatch = new SpriteBatch();
 
 
 
@@ -1407,7 +1418,7 @@ public class GameStateManager extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
+        //TESTING SKILL MANAGER
         player.shoot(enemy, deltaTime);
 
         /*
@@ -1416,8 +1427,14 @@ public class GameStateManager extends ApplicationAdapter {
          *
          * */
 
+        fontSpriteBatch.begin();
 
-        System.out.println(player.getGameObjectManager().getProjectiles().toString());
+        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
+
+        fontSpriteBatch.end();
+
+
+//        System.out.println(player.getGameObjectManager().getProjectiles().toString());
 
 //        System.out.println(player.getSkills().toString());
 
@@ -1446,14 +1463,43 @@ public class GameStateManager extends ApplicationAdapter {
         player.getGraphics().drawSprite();
         enemy.getGraphics().drawSprite();
 
+        enemy.getPhysics().move(deltaTime);
+
         player.update(deltaTime);
         enemy.update(deltaTime);
+
 
         for (Projectile p : player.getGameObjectManager().getProjectiles()) {
             p.getGraphics().drawSprite();
             p.getPhysics().move(deltaTime);
             p.update(deltaTime);
+
+
         }
+
+        //----------------------------------------------------------------------------------------
+        /*
+         *
+         * WRITING AUTOMATED TESTS!
+         *
+         * [X] GOOD?
+         * COLLISION CHECKING
+         *
+         * BOUNDARY CHECKING
+         * */
+        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
+            if (p.getPhysics().hasCollided(enemy) || p.getPhysics().getPosition().x < 0 || p.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
+                player.getGameObjectManager().addProjectilesToRemove(p);
+            }
+        }
+
+        if (enemy.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
+            enemy.getPhysics().setPosition(0, 0);
+        }
+
+        //----------------------------------------------------------------------------------------
+        System.out.println("BULLETS:" + player.getGameObjectManager().getProjectiles().toString());
+        player.getGameObjectManager().getProjectiles().removeAll(player.getGameObjectManager().getRemoveAllProjectiles(), false);
 
 
     }
