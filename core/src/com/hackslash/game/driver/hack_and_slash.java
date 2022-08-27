@@ -323,23 +323,23 @@ public class hack_and_slash extends ApplicationAdapter {
         }
 
         /*
-        *
-        * What do these abilities have in common???
-        *
-        * SingleShot:
-        * 1 angle
-        * 1 direction
-        * 1 offsetPosition
-        * 1 cooldown
-        * 1 bullet
-        *
-        * Surround Shot:
-        * 1 angle
-        * 2 angle offsets
-        * 3 directions
-        * 
-        *
-        * */
+         *
+         * What do these abilities have in common???
+         *
+         * SingleShot:
+         * 1 angle
+         * 1 direction
+         * 1 offsetPosition
+         * 1 cooldown
+         * 1 bullet
+         *
+         * Surround Shot:
+         * 1 angle
+         * 2 angle offsets
+         * 3 directions
+         *
+         *
+         * */
         // BASE SHOOT ATTACK
 //        public void SingleShot(gameObject object, float dt) {
 //            //shooting a bullet with linear motion but offset from player's position
