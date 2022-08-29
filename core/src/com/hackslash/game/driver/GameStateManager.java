@@ -467,7 +467,8 @@ class Player extends gameObject {
     Player() {
         skills = new Array<>();
         skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1));
-        skills.add(new Skill("Parallel Shoot", 2.0f, false, 3, 1));
+//        skills.add(new Skill("Parallel Shoot", 2.0f, false, 3, 1));
+        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1));
 //        skills.add(new Skill("Chain Lightning", 5f, false, 1));
 //        skills.add(new Skill("Electrical Field", 1.0f, false, 1));
 //        skills.add(new Skill("Parallel Shot", 3f, false, 1));
@@ -501,13 +502,14 @@ class Player extends gameObject {
     public void shoot(gameObject target, float dt) {
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
         Vector2 newHeadVector = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
-        Vector2 offsetPosition = new Vector2((newHeadVector.x * 50) + this.getPhysics().getPosition().x, (newHeadVector.y * 50) + this.getPhysics().getPosition().y);
-        Vector2 perpendicularVector = new Vector2(-newHeadVector.y, newHeadVector.x);
-        float shootAngle = shootRadians * 180 / MathUtils.PI;
-        if (shootAngle < 0) {
-            shootAngle = shootAngle + 360;
-        }
-        System.out.println(shootAngle);
+
+        //        Vector2 offsetPosition = new Vector2((newHeadVector.x * offset_distance) + this.getPhysics().getPosition().x, (newHeadVector.y * offset_distance) + this.getPhysics().getPosition().y);
+
+        // (direction * offset distance) + current spawn position
+        Vector2 offsetFromPlayerPosition = new Vector2((newHeadVector.x) + this.getPhysics().getPosition().x, (newHeadVector.y) + this.getPhysics().getPosition().y);
+
+        //we need to consider N number of perpendicular vectors based on the shoot direction
+        Vector2 perpendicularVector = new Vector2(-newHeadVector.y * 50, newHeadVector.x * 50);
 //        System.out.println(shootRadians);
 
         //        /*
@@ -577,10 +579,10 @@ class Player extends gameObject {
 //        // position = initial_position - translate_distance * perpendicular vector position
 //        p3.getPhysics().getPosition().sub(50.0f * perp1.x, 50.0f * perp1.y);
 
-
+//TODO: compress this skill check algorithm down
                 //single shot
                 if (this.getSkills().get(i).getSkillName().equals("Basic Shoot")) {
-                    Projectile bullet = new Projectile(offsetPosition, newHeadVector, 250f, 10f, 10f);
+                    Projectile bullet = new Projectile(offsetFromPlayerPosition, newHeadVector, 250f, 10f, 10f);
                     bullet.getPhysics().setSize(10f, 10f);
                     bullet.update(dt);
                     this.getGameObjectManager().addProjectiles(bullet);
@@ -590,34 +592,34 @@ class Player extends gameObject {
                 //PARALLEL SHOOT
 
                 else if (this.getSkills().get(i).getSkillName().equals("Parallel Shoot")) {
-                    Projectile bullet = new Projectile(offsetPosition, newHeadVector, 250f, 10f, 10f);
+                    //0th element projectile for parallel shoot
+                    Projectile bullet = new Projectile(offsetFromPlayerPosition, newHeadVector, 250f, 10f, 10f);
                     bullet.getGraphics().setColor(Color.RED);
                     bullet.getPhysics().setSize(10f, 10f);
-                    bullet.update(dt);
-//                    bullet.getGraphics().getSprite().setRotation();
                     this.getGameObjectManager().addProjectiles(bullet);
+
                     for (int j = 1; j < this.getSkills().get(i).getProjectileCount(); j++) {
                         if (j % 2 == 1) {
-//                            Projectile bullet2 = new Projectile(this newHeadVector, 250f, 10f, 10f);
-//                            ;bullet2.getPhysics().getPosition().add(50.0f * perpendicularVector.x, 50.0f * perpendicularVector.y)
+
+                            //left bullet
                             Projectile bullet2 = new Projectile();
                             bullet2.getPhysics().setMoveSpeed(250f);
+                            System.out.println("SPEED:" + bullet2.getPhysics().getMoveSpeed());
                             bullet2.getPhysics().setSize(10f, 10f);
                             bullet2.getPhysics().setDirectionVector(newHeadVector);
                             bullet2.getGraphics().setColor(Color.RED);
-                            bullet2.getPhysics().getPosition().add(50.0f * perpendicularVector.x, 50.0f * perpendicularVector.y);
-                            bullet2.update(dt);
+                            bullet2.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
                             this.getGameObjectManager().addProjectiles(bullet2);
                         }
                         if (j % 2 == 0) {
-//                            Projectile bullet3 = new Projectile(offsetPosition, newHeadVector, 250f, 10f, 10f);
+
+                            //right bullet
                             Projectile bullet3 = new Projectile();
-                            bullet3.getPhysics().setSize(10f, 10f);
                             bullet3.getPhysics().setMoveSpeed(250f);
+                            bullet3.getPhysics().setSize(10f, 10f);
                             bullet3.getGraphics().setColor(Color.RED);
                             bullet3.getPhysics().setDirectionVector(newHeadVector);
-                            bullet3.getPhysics().getPosition().sub(50.0f * perpendicularVector.x, 50.0f * perpendicularVector.y);
-                            bullet3.update(dt);
+                            bullet3.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
                             this.getGameObjectManager().addProjectiles(bullet3);
                         }
                     }
@@ -1568,11 +1570,11 @@ public class GameStateManager extends ApplicationAdapter {
         player.update(deltaTime);
         enemy.update(deltaTime);
 
-
+        // integrate by propagating time
         for (Projectile p : player.getGameObjectManager().getProjectiles()) {
+            p.update(deltaTime);
             p.getGraphics().drawSprite();
             p.getPhysics().move(deltaTime);
-            p.update(deltaTime);
         }
 
         //----------------------------------------------------------------------------------------
