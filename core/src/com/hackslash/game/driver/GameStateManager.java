@@ -423,9 +423,26 @@ class Player extends gameObject {
 
     Player() {
         skills = new Array<>();
+
+        /**
+         * Leveling up Basic Shoot Skill:
+         *
+         */
         skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
+
+        /**
+         * Leveling up Parallel Shoot Skill
+         */
+        //this only takes care of even numbers of projectiles
         skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
+
+        /**
+         * Leveling up the fan shoot skill
+         */
+        //this only accounts for odd number of projectiles right now
         skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
+
+
         gameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
@@ -438,6 +455,8 @@ class Player extends gameObject {
         return skills;
     }
 
+
+    //we will use this when players collect skill
     public void addSkill(Skill skill) {
         skills.add(skill);
     }
@@ -483,7 +502,7 @@ class Player extends gameObject {
                 this.getSkill(i).update(this.getSkill(i).getMaxCoolDownTimer(), false);
 
 
-                //Odd Numbered Fan Shot Production Rule
+                //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
                 if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1 && this.getSkill(i).getProjectileCount() % 2 == 1) {
 
                     //delta angle converted to radians
@@ -520,123 +539,49 @@ class Player extends gameObject {
 
                 }
 
+                //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
 
-                //
+
+                //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
                 else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
+
+                    //this will be used to shrink the gap distance between the bullets and their "center"
                     deltaMultiplier = 0.5f;
-                    //we will have to put this into a function that can be applied to any kind of skill we want to create!
 
-                    /*
-                     *
-                     * Bullet similarities:
-                     * -color
-                     * -headvector(sort of)
-                     * -adding the bullet to the collection
-                     *
-                     *
-                     * Differences: factors that changes. ex: position, angle, head vector
 
-                     * */
                     for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
                         Projectile bullet = new Projectile();
-                        //---------------------------PRODUCTION RULE!---------------------------
-
-                        //move(deltaTime) => final_position = current_position + (directionVector) * speed * deltaTime;
-
-                        //set the direction vector
                         bullet.getPhysics().setDirectionVector(newHeadVector);
                         bullet.getGraphics().setColor(Color.RED);
+                        /*
+                         * EQUATION:
+                         *
+                         * symbols:
+                         * Pf = final position
+                         * Pc = current position
+                         *
+                         *
+                         *
+                         * */
                         if (j % 2 == 1) {
-                            //set the position of the projectiles
                             bullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
                         } else {
-                            //we dont have to subtract. we can ALSO add but add a negative.
                             bullet.getPhysics().getPosition().add(-perpendicularVector.x * deltaMultiplier, -perpendicularVector.y * deltaMultiplier);
                             deltaMultiplier += 1;
                         }
                         this.getGameObjectManager().addProjectiles(bullet);
 
-                        //------------------------------------------------------------------------
 
                     }
 
 
-//                    for (int j = 1; j < this.getSkill(i).getProjectileCount(); j++) {
-//                        if (j % 2 == 1) {
-//
-//                            //left bullet
-//                            Projectile bullet = new Projectile();
-//                            bullet.getPhysics().setMoveSpeed(250f);
-//                            System.out.println("SPEED:" + bullet.getPhysics().getMoveSpeed());
-//                            bullet.getPhysics().setSize(10f, 10f);
-//                            bullet.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet.getGraphics().setColor(Color.RED);
-//                            bullet.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet);
-//                        }
-//                        if (j % 2 == 0) {
-//
-//                            //right bullet
-//                            Projectile bullet = new Projectile();
-//                            bullet.getPhysics().setMoveSpeed(250f);
-//                            bullet.getPhysics().setSize(10f, 10f);
-//                            bullet.getGraphics().setColor(Color.RED);
-//                            bullet.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet);
-//                        }
-//                    }
+                }
+                //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
 
-                } else {
+                else {
                     this.getGameObjectManager().addProjectiles(new Projectile(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), newHeadVector, 250f, 10f, 10f));
                 }
 
-
-                //single shot
-
-//                if (this.getSkill(i).getSkillName().equals("Basic Shoot")) {
-//                    Projectile bullet = new Projectile(offsetFromPlayerPosition, newHeadVector, 250f, 10f, 10f);
-//                    bullet.getPhysics().setSize(10f, 10f);
-//                    bullet.update(dt);
-//                    this.getGameObjectManager().addProjectiles(bullet);
-//                }
-//
-//
-//                //PARALLEL SHOOT
-//
-//                else if (this.getSkill(i).getSkillName().equals("Parallel Shoot")) {
-//                    //0th element projectile for parallel shoot
-//                    Projectile bullet = new Projectile(offsetFromPlayerPosition, newHeadVector, 250f, 10f, 10f);
-//                    bullet.getGraphics().setColor(Color.RED);
-//                    bullet.getPhysics().setSize(10f, 10f);
-//                    this.getGameObjectManager().addProjectiles(bullet);
-//
-//                    for (int j = 1; j < this.getSkill(i).getProjectileCount(); j++) {
-//                        if (j % 2 == 1) {
-//
-//                            //left bullet
-//                            Projectile bullet = new Projectile();
-//                            bullet.getPhysics().setMoveSpeed(250f);
-//                            System.out.println("SPEED:" + bullet.getPhysics().getMoveSpeed());
-//                            bullet.getPhysics().setSize(10f, 10f);
-//                            bullet.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet.getGraphics().setColor(Color.RED);
-//                            bullet.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet);
-//                        }
-//                        if (j % 2 == 0) {
-//
-//                            //right bullet
-//                            Projectile bullet = new Projectile();
-//                            bullet.getPhysics().setMoveSpeed(250f);
-//                            bullet.getPhysics().setSize(10f, 10f);
-//                            bullet.getGraphics().setColor(Color.RED);
-//                            bullet.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet);
-//                        }
-//                    }
-//                }
             } else {
                 this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
             }
@@ -644,14 +589,8 @@ class Player extends gameObject {
         }
 
     }
-//shoot will be a trigger for using the player skills
-//    @Override
-//    public void shoot(gameObject target, float dt) {
-//        float radians = this.getPhysics().getAngleBetweenTwoVectors(target);
-//        Vector2 newHeadingVector = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-//        Vector2 offsetPosition = new Vector2((newHeadingVector.x * 50) + this.getPhysics().position.x, (newHeadingVector.y * 50) + this.getPhysics().position.y);
-//
-//    }
+
+
     /*
      *
      *
@@ -668,39 +607,6 @@ class Player extends gameObject {
      *
      * */
 
-//    @Override
-//    public void shoot(gameObject target, float dt) {
-//        for (ObjectMap.Entry<Skill, String> skill : skillManager.getSkills()) {
-//
-////            float offsetDistance = 50f;
-////            float projectileCount = skill.key.projectileCount;
-////            float skillCoolDown = skill.key.coolDownTimer;
-////            float radians = MathUtils.atan2(this.getPhysics().getPosition().y - target.getPhysics().getPosition().y, this.getPhysics().getPosition().x - target.getPhysics().getPosition().x);
-////            Vector2 ProjectileDir = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-////            Vector2 offsetPosition = new Vector2(ProjectileDir.x * offsetDistance, ProjectileDir.y * offsetDistance);
-////
-////            if (skillCoolDown < 0) {
-////                System.out.println("HELLO WORLD!");
-////            } else {
-////                System.out.println("COOLDOWN!" + skillCoolDown);
-////                skillCoolDown -= dt;
-////            }
-//
-////            if (skillCoolDown <= 0) {
-////                if (getGameObjectManager().getProjectiles().size < projectileCount) {
-////                    Projectile Projectile = new Projectile();
-////                    Projectile.getPhysics().setDirectonVector(ProjectileDir);
-////                    Projectile.getPhysics().position.set(offsetPosition);
-////                    Projectile.update();
-////                    this.getGameObjectManager().addProjectiles(Projectile);
-////                }
-////            } else {
-////                skillCoolDown -= dt;
-////            }
-//
-//        }
-////
-//    }
 }
 
 class Enemy extends gameObject {
@@ -712,9 +618,6 @@ class Enemy extends gameObject {
         this.getPhysics().setMoveSpeed(40f);
     }
 
-//    public String toString() {
-////        return "    POSITION:   " + this.getPhysics().getPosition() + "  TEXTURE: " + graphics.getTexture()toString() + "   SIZE:    " + this.getPhysics().getWidth() + "," + this.getPhysics().getHeight();
-//    }
 }
 
 
@@ -865,569 +768,9 @@ class Skill {
 
 }
 
-//failing fast so i can learn quicker
-//let's try to realize the importance of scalability
-//let's also realize why OOP Design Pattern "Composition Over Inheritance" may prove useful
-//class SingleShotSkill extends Skill {
-//
-//    public SingleShotSkill() {
-//
-//    }
-//}
-
-
-
-
-
-/*
- * ACCESSES AND MODIFY SKILLS
- *
- * */
-//class SkillManager {
-//    ArrayMap<Skill, String> skills;
-//
-//    public SkillManager() {
-//        skills = new ArrayMap<>();
-//        skills.ordered = true;
-//    }
-//
-//    public ArrayMap<Skill, String> getSkills() {
-//        return skills;
-//    }
-//
-//    public void addSkill(Skill skill, String str) {
-//        skills.put(skill, str);
-//    }
-//
-//
-//}
-
 
 public class GameStateManager extends ApplicationAdapter {
 
-//    SpriteBatch gameObjectBatch;
-
-
-//    //used to add a slight bounce to colliding objects
-//    float COLLISION_COEF = 1.0f;
-//    float deltaTime;
-//    //-----------------------IMPULSE COLLISION VECTORS---------------
-//    Vector2 normal;
-//    Vector2 temp;
-//    Vector2 newDirectionVector;
-    //---------------------------------------------------------------
-
-
-//    entityStateManager manager = new entityStateManager();
-
-
-    //what is an entity state manager?
-
-    /*
-//     *
-     * entity state manager should handle what happens to an entity:
-     *  -destroyed
-     *  -stored
-     *
-     *
-     * */
-
-
-//    class entityStateManager {
-//        Array<gameObject> collectionOfProjectiles;
-//        Array<gameObject> collectionOfRemovedProjectiles;
-//
-//        public entityStateManager() {
-//            collectionOfProjectiles = new Array<>();
-//            collectionOfRemovedProjectiles = new Array<>();
-//        }
-//
-//        public Array<gameObject> getCollectionOfProjectiles() {
-//            return collectionOfProjectiles;
-//        }
-//
-//        public Array<gameObject> getCollectionOfRemovedProjectiles() {
-//            return collectionOfRemovedProjectiles;
-//        }
-//
-//        public boolean removeProjectiles() {
-//            return collectionOfProjectiles.removeAll(collectionOfRemovedProjectiles, false);
-//        }
-//
-//        public void setCollectionSize(int size) {
-//            collectionOfProjectiles.setSize(size);
-//        }
-
-//        public void manageProjectiles() {
-//            if (!getCollectionOfProjectiles().isEmpty()) {
-//
-//            }
-//        }
-
-//        public void manageProjectiles() {
-//            if (!manager.getCollectionOfProjectiles().isEmpty()) {
-//                for (gameObject b : manager.getCollectionOfProjectiles()) {
-//                    if (b.hasCollided(enemy)) {
-//                        manager.getCollectionOfRemovedProjectiles().add(b);
-//                    }
-//                    System.out.println("LIFE SPAN:" + b.getLifeSpan());
-//                    System.out.println("MAX LIFE SPAN:" + b.getMaxLifeSpan());
-//
-//                    if (b.lifeSpan <= 0) {
-//                        b.setLifeSpan(b.getMaxLifeSpan());
-//                        manager.getCollectionOfRemovedProjectiles().add(b);
-//                    } else {
-//                        b.lifeSpan -= deltaTime;
-//                    }
-//
-//                    b.move(deltaTime);
-//                    b.update();
-//                }
-//            }
-//            manager.removeProjectiles();
-//        }
-
-
-//}
-
-
-    /*
-     *
-     * Any in-game entity that can be destroyed,created or interacted with
-     *   -exp drops
-     *   -the player
-     *   -enemies
-     *   -Projectiles
-     *
-     * */
-//    class gameObject {
-//
-//
-//        //-------------------------------PHYSICS ATTRIBUTES----------------------
-//        Vector2 position;
-//        Vector2 velocity;
-//        Vector2 acceleration;
-//        Vector2 angularVelocity;
-//
-//        float rotateRadians;
-//        float shootRadians;
-//        float orbitDistance
-//        float health;
-//        float damage;
-//
-//        float moveSpeed;
-//
-//
-//        float width;
-//        float height;
-//        float rotationSpeed;
-//
-//        float mass;
-//        //------------------------------------------------------------------------------
-//
-//
-//        //----------------------------MISC ATTRIBUTES FOR GAME OBJECTS-------------------
-//        float MaxCoolDownTimer;
-//        float coolDownTimer;
-//
-//        float skillMaxCoolDownTimer;
-//        float skillCoolDown;
-//        float lifeSpan;
-//        float maxLifeSpan;
-//        float distance;
-//        float impactDistance;
-//        //----------------------------------------------------------
-//
-//        //-----------------------GAME GRAPHICS----------------------
-//        Sprite sprite;
-//        Texture texture;
-//        SpriteBatch batch;
-//
-//        //------------------------------------------------------------
-//
-//        //---------------------GAME OBJECT CONSTRUCTOR----------------
-//        public gameObject() {
-//
-//            position = new Vector2(0, 0);
-//            velocity = new Vector2(0, 0);
-//            acceleration = new Vector2(0, 0);
-//            angularVelocity = new Vector2(0, 0);
-//            rotateRadians = 0;
-//            shootRadians = 0.261799f;
-//            orbitDistance = 0;
-//            health = 0;
-//            damage = 0;
-//            width = 0;
-//            height = 0;
-//            rotationSpeed = 0;
-//            texture = new Texture("circle.png");
-//            sprite = new Sprite(texture);
-//            sprite.setPosition(position.x, position.y);
-//            batch = new SpriteBatch();
-//            mass = 1.0f;
-//            moveSpeed = 0;
-//            MaxCoolDownTimer = 0.25f;
-//            coolDownTimer = MaxCoolDownTimer;
-//            maxLifeSpan = 0.0f;
-//            lifeSpan = 0.0f;
-//            skillMaxCoolDownTimer = 2.0f;
-//            skillCoolDown = skillMaxCoolDownTimer;
-//        }
-//        //--------------------------------------------------------------
-
-    //Update our game objects with new data every 60 frames
-
-
-    //update what???
-//        public void update() {
-////            this.position.set(this.possition.x, this.position.y);
-//            this.sprite.setPosition(this.position.x, this.position.y);
-//            this.sprite.setTexture(this.texture);
-//        }
-//
-//        public void setMaxLifeSpan(float max) {
-//            this.maxLifeSpan = max;
-//        }
-//
-//        public float getMaxLifeSpan() {
-//            return this.maxLifeSpan;
-//        }
-//
-//        public void setLifeSpan(float span) {
-//            this.lifeSpan = span;
-//        }
-//
-//        public float getLifeSpan() {
-//            return this.lifeSpan;
-//        }
-//
-//        //------------------PHYSICS FUNCTIONS-------------------------
-//
-//        public boolean hasCollided(gameObject object) {
-//            normal.set(this.position).sub(object.position);
-//            distance = normal.len();
-//            impactDistance = (this.sprite.getWidth() + object.sprite.getWidth()) / 1.7f;
-//            normal.nor();
-//            //when we collided, we should check the type of object we are colliding with
-//            if (distance < impactDistance) {
-//                return true;
-//            }
-//            return false;
-//        }
-//
-//        public void performImpulseCollision(gameObject object) {
-//
-//            if (hasCollided(object)) {
-//                //let's give an object impulse during collision
-//                //we use temp because the method would change the contents of normal!
-//                temp.set(normal).scl((impactDistance - distance) / 2);
-//                this.position.add(temp);
-//                temp.set(normal).scl((impactDistance - distance) / 2);
-//                object.position.sub(temp);
-//
-//                //Let's implement newton's law of impact
-//                //convert the two velocities into a single reference frame
-//                newDirectionVector.set(this.velocity.sub(object.velocity));
-//
-//                // Compute the impulse (see Essential Math for Game Programmers)
-//                float impulse = (-(1 + COLLISION_COEF) * normal.dot(newDirectionVector)) / (normal.dot(normal) * (1 / this.mass + 1 / object.mass));
-//                //Change velocity of two object using this impulse
-//                temp.set(normal).scl(impulse / this.mass);
-//                this.velocity.add(temp);
-//                temp.set(normal).scl(impulse / object.mass);
-//                object.velocity.sub(temp);
-//            }
-//
-//        }
-//
-//        // calculate number of orbits per second(note: this calculation for rotation speed is not accurate)
-//        public void increaseRotationAngle() {
-//            if (this.rotateRadians < (MathUtils.PI * 2)) {
-//                this.rotateRadians += rotationSpeed;
-//            } else {
-//                this.rotateRadians = 0;
-//            }
-//        }
-//
-//
-//        //perform basic circular motion around the parameterized object
-//        public void rotateAround(gameObject parent) {
-//            this.increaseRotationAngle();
-//            this.angularVelocity.set(MathUtils.cos(this.rotateRadians), MathUtils.sin(this.rotateRadians));
-//            this.velocity.set(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
-//            this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
-//        }
-//
-//        //follow a target
-//        public void moveTowards(gameObject parent, float dt) {
-//            this.rotateRadians = MathUtils.atan2(parent.position.y - this.position.y, parent.position.x - this.position.x);
-//            this.velocity.set(MathUtils.cos(this.rotateRadians), MathUtils.sin(this.rotateRadians));
-//            this.position.set(this.position.add(this.velocity.scl(this.moveSpeed * dt)));
-//        }
-//
-//        public void move(float dt) {
-//            this.position.add(this.velocity.x * this.moveSpeed * dt, this.velocity.y * this.moveSpeed * dt);
-//        }
-//
-//
-//        //----------------------------------------------------------------------
-//
-//
-//        //--------------------------NON-PHYSICS-RELATED-FUNCTIONS--------------------------------
-//
-//
-//        //this should handle all ranged attacks??????
-//        public void shoot(gameObject object, float dt) {
-//
-//            SingleShot(object, dt);
-//
-////            constantVelocityShoot(object, dt);
-//            //SKILL #2
-////            TriShot(object, dt);
-//
-//
-//            //SKILL #3
-//
-////            SurroundShot(object, dt);
-//
-//
-//            //SKILL #4
-//
-//            //WORK IN PROGRESS
-////            PitchForkShot(object, dt);
-//
-//
-//            //handling cases for Projectiles
-//            manager.manageProjectiles();
-//
-//        }
-
-    // BASE SHOOT ATTACk
-    /*
-     *
-     * How can we generalize the equations or components found in this function?
-     * */
-//        public void SingleShot(gameObject target, float dt) {
-//
-//            /*
-//             *
-//             * Generalized equations for shooting:
-//             *
-//             *  velocity <- radians
-//             *
-//             * offset <- velocity , offset distance , shooter's position
-//             *
-//             * equation: Projectile final position = shooter's current position + (velocity * 50) * speed * deltaTime
-//             *
-//             * */
-//
-//            //find angle between current object and target
-//            float radians = MathUtils.atan2(target.position.y - this.position.y, target.position.x - this.position.x);
-//
-//            //direction of the projectile
-//            Vector2 vel = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
-//
-//
-//            //offset the projectile position from the calling object's position
-//            Vector2 offsetPosition = new Vector2(
-//
-//
-//                    //  X direction
-//                    (vel.x *
-//                            //offset distance
-//                            50) +
-//                            //current Xposition of calling object
-//                            this.position.x,
-//                    // Y direction
-//                    (vel.y *
-//                            //offset distance
-//                            50) +
-//                            //current Yposition of calling object
-//                            this.position.y);
-//
-////            {
-//
-//
-////                if (
-////                    //limit to collection size.
-////                    // why? we are rendering at 60 frames per Projectile and using an arraylist for a datastructure
-////                    //
-////                        manager.getCollectionOfProjectiles().size < 1
-////
-////
-////                )
-//
-//
-//            {
-//
-//                gameObject Projectile = new gameObject();
-//                Projectile.sprite.setColor(Color.GREEN);
-//                Projectile.velocity.set(vel);
-//                Projectile.position.set(offsetPosition);
-//                Projectile.moveSpeed = 500f;
-//                Projectile.setMaxLifeSpan(0.5f);
-//                Projectile.setLifeSpan(Projectile.getMaxLifeSpan());
-//                Projectile.update();
-//                manager.getCollectionOfProjectiles().add(Projectile);
-//            }
-//
-////            }
-//        }
-
-//        public void PitchForkShot(gameObject object, float dt) {
-////            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-//            Vector2 vel1 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-//
-//            Vector2 vel2 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-//
-//            Vector2 vel3 = new Vector2(MathUtils.cos(1.5708f), MathUtils.sin(1.5708f));
-////            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.785398f), MathUtils.sin(radians - 0.785398f));
-////
-//            Vector2 offsetPosition1 = new Vector2((vel1.x * 50) + this.position.x, (vel1.y * 50) + this.position.y);
-//            Vector2 offsetPosition2 = new Vector2((vel2.x * 50) + this.position.x - 40, (vel2.y * 50) + this.position.y);
-//            Vector2 offsetPosition3 = new Vector2((vel3.x * 50) + this.position.x + 40, (vel3.y * 50) + this.position.y);
-////
-//            if (manager.getCollectionOfProjectiles().size < 3) {
-//
-////                //PITCH FORK SHOT
-//                gameObject bullet = new gameObject();
-//                bullet.sprite.setColor(Color.GREEN);
-//                bullet.velocity.set(vel1);
-//                bullet.position.set(offsetPosition1);
-//                bullet.moveSpeed = 300f;
-//                bullet.update();
-//                manager.getCollectionOfProjectiles().add(bullet);
-//
-//                gameObject Projectile2 = new gameObject();
-//                Projectile2.sprite.setColor(Color.GREEN);
-//                Projectile2.velocity.set(vel2);
-//                Projectile2.position.set(offsetPosition2);
-//                Projectile2.moveSpeed = 300f;
-//                Projectile2.update();
-//                manager.getCollectionOfProjectiles().add(Projectile2);
-//
-//
-//                gameObject Projectile3 = new gameObject();
-//                Projectile3.sprite.setColor(Color.GREEN);
-//                Projectile3.velocity.set(vel3);
-//                Projectile3.position.set(offsetPosition3);
-//                Projectile3.moveSpeed = 300f;
-//                Projectile3.update();
-//                manager.getCollectionOfProjectiles().add(Projectile3);
-//            }
-//
-//        }
-
-
-//        public void SurroundShot(gameObject object, float dt) {
-//            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-//            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin((radians)));
-//            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 1.5708f), MathUtils.sin((radians + 1.5708f)));
-//            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 1.5708f), MathUtils.sin((radians - 1.5708f)));
-//            Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
-//            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
-//            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
-//
-//            if (manager.getCollectionOfProjectiles().size < 3) {
-//                //SKILL #2
-//                //Fan Shot
-//                gameObject bullet = new gameObject();
-//                bullet.sprite.setColor(Color.GREEN);
-//                bullet.velocity.set(vel1);
-//                bullet.position.set(offsetPosition1);
-//                bullet.moveSpeed = 300f;
-//                bullet.update();
-//                manager.getCollectionOfProjectiles().add(bullet);
-//
-//                gameObject Projectile2 = new gameObject();
-//                System.out.println("MAX:" + bullet.maxLifeSpan);
-//                Projectile2.sprite.setColor(Color.GREEN);
-//                Projectile2.velocity.set(vel2);
-//                Projectile2.position.set(offsetPosition2);
-//                Projectile2.moveSpeed = 300f;
-//                Projectile2.update();
-//                manager.getCollectionOfProjectiles().add(Projectile2);
-//
-//                gameObject Projectile3 = new gameObject();
-//                Projectile3.sprite.setColor(Color.GREEN);
-//                Projectile3.velocity.set(vel3);
-//                Projectile3.position.set(offsetPosition3);
-//                Projectile3.moveSpeed = 300f;
-//                Projectile3.update();
-//                manager.getCollectionOfProjectiles().add(Projectile3);
-//
-//
-////                }
-//
-//            }
-//        }
-
-    //BUG: Projectile max life span is bugged! currently, the value is baked in
-    // SKILL 2
-//        public void TriShot(gameObject object, float dt) {
-//
-//
-//            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-//            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin((radians)));
-//            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 0.261799f), MathUtils.sin((radians + 0.261799f)));
-//            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.261799f), MathUtils.sin((radians - 0.261799f)));
-//            Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
-//            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
-//            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
-////            if (coolDownTimer <= 0) {
-//            if (manager.getCollectionOfProjectiles().size < 3) {
-//                //SKILL #2
-//                //Fan Shot
-//                gameObject bullet = new gameObject();
-//                bullet.sprite.setColor(Color.GREEN);
-//                bullet.velocity.set(vel1);
-//                bullet.position.set(offsetPosition1);
-//                bullet.moveSpeed = 300f;
-//                bullet.update();
-//                manager.getCollectionOfProjectiles().add(bullet);
-//
-//                gameObject Projectile2 = new gameObject();
-//                System.out.println("MAX:" + bullet.maxLifeSpan);
-//                Projectile2.sprite.setColor(Color.GREEN);
-//                Projectile2.velocity.set(vel2);
-//                Projectile2.position.set(offsetPosition2);
-//                Projectile2.moveSpeed = 300f;
-//                Projectile2.update();
-//                manager.getCollectionOfProjectiles().add(Projectile2);
-//
-//                gameObject Projectile3 = new gameObject();
-//                Projectile3.sprite.setColor(Color.GREEN);
-//                Projectile3.velocity.set(vel3);
-//                Projectile3.position.set(offsetPosition3);
-//                Projectile3.moveSpeed = 300f;
-//                Projectile3.update();
-//                manager.getCollectionOfProjectiles().add(Projectile3);
-//
-//
-//            }
-//
-//        }
-//
-//        public void parallelShot() {
-//
-//        }
-
-//    }
-
-
-//    private SpriteBatch fontSpriteBatch;
-//    private BitmapFont font;
-//
-//
-//    private gameObject player;
-//    private gameObject projectile;
-//
-//    private gameObject projectile2;
-//
-//    private gameObject enemy;
-
-    //  Called when the Application is first created.
-    //intialization game state
     float deltaTime;
     Player player;
     Enemy enemy;
@@ -1437,49 +780,8 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
 
-//        //initialize....
-//        normal = new` Vector2();
-//        temp = new Vector2();
-//        newDirectionVector = new Vector2();
-//
-//        font = new BitmapFont();
-//        fontSpriteBatch = new SpriteBatch();
-//        //-----------------------test player object-------------------------
-//        player = new gameObject();
-//        player.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-//        player.texture = new Texture("square.png");
-//        //------------------------------------------------------------------
-//
-//        //-----------------------testing first rotating projectile---------------
-//        projectile = new gameObject();
-//        //distance basically an offset from the object you are following
-//        projectile.orbitDistance = 100;
-//        projectile.position.set(player.position.x + projectile.orbitDistance, player.position.y + projectile.orbitDistance);
-//        projectile.texture = new Texture("circle.png");
-//        //orbit speed needs more accurate calculations
-//        projectile.rotationSpeed = .03f;
-//        projectile.sprite.setSize(projectile.sprite.getRegionWidth(), projectile.sprite.getRegionHeight());
-//        //------------------------------------------------------------------------
-//
-//
-//        //-----------------------testing second rotating projectile----------
-//        projectile2 = new gameObject();
-//        projectile2.orbitDistance = 50;
-//        projectile2.position.set(projectile.position.x + projectile2.orbitDistance, projectile.position.y + projectile2.orbitDistance);
-//        projectile2.texture = new Texture("circle.png");
-//        projectile2.sprite.setColor(Color.BLUE);
-//        projectile2.rotationSpeed = 0.07f;
-//        projectile2.sprite.setSize(projectile2.sprite.getRegionWidth() / 2, projectile2.sprite.getRegionHeight() / 2);
-//        //--------------------------------------------------------------------
-//
-//        //------------------------test enemy object-------------------------------
-//        enemy = new gameObject();
-//        enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
-//        enemy.texture = new Texture("circle.png");
-//        enemy.sprite.setColor(Color.RED);
-//        enemy.moveSpeed = 500;
-//        //--------------------------------------------------------------------------------
 
+        //getting a perpendicular vector to set the position of the offset perpendicular objects
         // REFERENCE LINK: https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
 
 
@@ -1487,53 +789,13 @@ public class GameStateManager extends ApplicationAdapter {
 
         enemy = new Enemy();
         enemy.getPhysics().setDirectionVector(0, 1);
-
-//        skill = new Skill("Basic Shoot", 1.5f, false, 1);
-
-        //drawing on screen info
         font = new BitmapFont();
-        fontSpriteBatch = new SpriteBatch();
 
-//        p1 = new Projectile();
-//        p2 = new Projectile();
-//        p3 = new Projectile();
-//        /*
-//         *
-//         *
-//         *
-//         * */
-//
-//
-//////        //p2 and p3 SHOULD move in the same direciton as p1
-//        p2.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
-//        p3.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
-//////
-//////
-//        perp1 = new Vector2(-p1.getPhysics().getDirectionVector().y, p1.getPhysics().getDirectionVector().x);
-//
-//
-//        System.out.println("P1:" + p1.getPhysics().getPosition().toString() + "P2:" + p2.getPhysics().getPosition().toString() + "P3:" + p3.getPhysics().getPosition().toString());
-//////
-////////
-////////        /*
-////////         *  PARALLEL SHOOTING SKILL
-////////         *
-////////         * TRY UNDERSTAND THIS AGAIN.
-////////         *
-////////         * */
-////////
-////////        //symmetry property
-////////        perp1 = new Vector2(-p1.getPhysics().getDirectionVector().y, p1.getPhysics().getDirectionVector().x);
-////////        // position = initial_position + translated_distance * perpendicular vector position
-//        p2.getPhysics().getPosition().add(50.0f * perp1.x, 50.0f * perp1.y);
-////        System.out.println(p2.getPhysics().getPosition().toString());
-//////        // position = initial_position - translate_distance * perpendicular vector position
-//        p3.getPhysics().getPosition().sub(50.0f * perp1.x, 50.0f * perp1.y);
+        fontSpriteBatch = new SpriteBatch();
 
 
     }
 
-    //updating game state
     public void render() {
 
         deltaTime = Gdx.graphics.getDeltaTime();
@@ -1543,11 +805,6 @@ public class GameStateManager extends ApplicationAdapter {
         //TESTING SKILL MANAGER
         player.shoot(enemy, deltaTime);
 
-        /*
-         *
-         * I am expecting an error because thetre is no handling of empty array
-         *
-         * */
 
         fontSpriteBatch.begin();
 
@@ -1555,36 +812,9 @@ public class GameStateManager extends ApplicationAdapter {
 
         fontSpriteBatch.end();
 
-//
-//        p1.getGraphics().drawSprite();
-//        p2.getGraphics().drawSprite();
-//        p3.getGraphics().drawSprite();
-
-
-//        System.out.println(player.getGameObjectManager().getProjectiles().toString());
-
-//        System.out.println(player.getSkills().toString());
-
-//        System.out.println("SKILL COOL DOWN:" + skill.getCoolDown());
-//        if (skill.getCoolDown() <= 0) {
-//            skill.setCoolDown(skill.getMaxCoolDownTimer());
-//            System.out.println("STORM EARTH AND FIRE HEED MY CALL! *THUNDER CRACK AND GUITAR RIFF");
-//        } else {
-//            skill.setCoolDown(skill.getCoolDown() - deltaTime);
-//        }
-
-//
-
-//        p1.getPhysics().move(deltaTime);
-//        p2.getPhysics().move(deltaTime);
-//        p3.getPhysics().move(deltaTime);
-
 
         player.getGraphics().drawSprite();
         enemy.getGraphics().drawSprite();
-//
-//        enemy.getPhysics().move(deltaTime);
-
         player.update(deltaTime);
         enemy.update(deltaTime);
 
@@ -1592,7 +822,6 @@ public class GameStateManager extends ApplicationAdapter {
         for (Projectile p : player.getGameObjectManager().getProjectiles()) {
             p.update(deltaTime);
             p.getGraphics().drawSprite();
-//            p.getPhysics().move(deltaTime);
         }
 
         //----------------------------------------------------------------------------------------
@@ -1615,13 +844,8 @@ public class GameStateManager extends ApplicationAdapter {
             enemy.getPhysics().setPosition(0, 0);
         }
 
-        //----------------------------------------------------------------------------------------
-//        System.out.println("BULLETS:" + player.getGameObjectManager().getProjectiles().toString());
         player.getGameObjectManager().getProjectiles().removeAll(player.getGameObjectManager().getRemoveAllProjectiles(), false);
 
-//        p1.update(deltaTime);
-//        p2.update(deltaTime);
-//        p3.update(deltaTime);
     }
 
     @Override
