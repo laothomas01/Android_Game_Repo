@@ -396,7 +396,7 @@ class Projectile extends gameObject {
         this.getPhysics().setSize(10f, 10f);
         this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        this.getPhysics().setMoveSpeed(50f);
+        this.getPhysics().setMoveSpeed(250f);
         graphics.setColor(Color.GREEN);
     }
 
@@ -407,6 +407,7 @@ class Projectile extends gameObject {
         this.getPhysics().setSize(newWidth, newHeight);
         graphics.setColor(Color.GREEN);
     }
+
 
     public String toString() {
         return "    POSITION:   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getDirectionVector() + "   SPEED              " + this.getPhysics().getMoveSpeed();
@@ -422,8 +423,8 @@ class Player extends gameObject {
 
     Player() {
         skills = new Array<>();
-        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1));
-        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1));
+        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
         gameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
@@ -456,14 +457,22 @@ class Player extends gameObject {
 
 
     public void shoot(gameObject target, float dt) {
+
         //angle(in radians) used to find the direction for shooting at target
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
+
         //shoot direction
         Vector2 newHeadVector = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
-        //offset your object from its current position and maintaining the direciton it is facing.
-        Vector2 offsetFromPlayerPosition = new Vector2((newHeadVector.x) + this.getPhysics().getPosition().x, (newHeadVector.y) + this.getPhysics().getPosition().y);
+
+
+        // new position = your current position + (offset distance * direction you are facing) * speed * deltaTime
+        Vector2 offsetFromCurrentPosition = new Vector2((newHeadVector.x) + this.getPhysics().getPosition().x, (newHeadVector.y) + this.getPhysics().getPosition().y);
         //used for maintaining parallel bullet formation
-        Vector2 perpendicularVector = new Vector2(-newHeadVector.y * 50, newHeadVector.x * 50);
+        float perpendicularOffsetDistance = 10.0f;
+        //will be used to scale offset perpendicular distances
+        float deltaMultiplier = 0.5f;
+        Vector2 perpendicularVector = new Vector2(-newHeadVector.y * perpendicularOffsetDistance, newHeadVector.x * perpendicularOffsetDistance);
+
 //        System.out.println(shootRadians);
 
         //        /*
@@ -502,27 +511,96 @@ class Player extends gameObject {
 //        Vector2 perpendicularVector = new Vector2(-newHeadVector.y, newHeadVector.x);
 
 //        for (Skill s : this.getSkills()) {
-//            if (s.isOncoolDownTimer && s.getcoolDownTimer() <= 0) {
-//                //if coolDownTimer done, do something
-//                s.setIsOncoolDownTimer(false);
-//                s.setcoolDownTimer(s.getCoolDownTimer());
+//            if (s.isOnCoolDown && s.getCoolDown() <= 0) {
+//                //if cooldown done, do something
+//                s.setIsOnCoolDown(false);
+//                s.setCoolDown(s.getMaxCoolDownTimer());
 //            } else {
-//                s.setIsOncoolDownTimer(true);
-//                s.setcoolDownTimer(s.getcoolDownTimer() - dt);
+//                s.setIsOnCoolDown(true);
+//                s.setCoolDown(s.getCoolDown() - dt);
 //
-//                //if coolDownTimer not done, do something
+//                //if cooldown not done, do something
 //
 //
 //            }
 //        }
+
         for (int i = 0; i < this.getSkills().size; i++) {
-            if (this.getSkill(i).hasFinishedcoolDownTimer()) {
-                //refresh coolDownTimerTimer
-                this.getSkill(i).update(this.getSkill(i).getCoolDownTimer(), false);
+            if (this.getSkill(i).hasFinishedCoolDown()) {
+                this.getSkill(i).update(this.getSkill(i).getMaxCoolDownTimer(), false);
+                if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1) {
+                    //fan shoot
+                    System.out.println("FAN SHOOT!");
+                }
 
-//TODO: compress this skill check algorithm down
+                // Even numbered parallel shooting
 
-                //
+                if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
+                    for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
+
+                        if (j % 2 == 1) {
+
+                            Projectile rightBullet = new Projectile();
+                            rightBullet.getPhysics().setDirectionVector(newHeadVector);
+                            rightBullet.getGraphics().setColor(Color.RED);
+                            rightBullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
+                            this.getGameObjectManager().addProjectiles(rightBullet);
+                        } else {
+                            Projectile leftBullet = new Projectile();
+                            leftBullet.getGraphics().setColor(Color.RED);
+                            leftBullet.getPhysics().setDirectionVector(newHeadVector);
+                            leftBullet.getPhysics().getPosition().sub(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
+                            this.getGameObjectManager().addProjectiles(leftBullet);
+                            deltaMultiplier += 1;
+                        }
+//                        if (j % 2 == 0) {
+//                            Projectile rightBullet = new Projectile();
+//                            rightBullet.getGraphics().setColor(Color.RED);
+//                            rightBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            rightBullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
+//                            this.gameObjectManager.addProjectiles(rightBullet);
+//                        }
+//                        //if j % 2 == 1
+//                        else {
+//                            Projectile leftBullet = new Projectile();
+//                            leftBullet.getGraphics().setColor(Color.RED);
+//                            leftBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            leftBullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
+//                            this.gameObjectManager.addProjectiles(leftBullet);
+//                        }
+
+                    }
+
+
+//                    for (int j = 1; j < this.getSkill(i).getProjectileCount(); j++) {
+//                        if (j % 2 == 1) {
+//
+//                            //left bullet
+//                            Projectile rightBullet = new Projectile();
+//                            rightBullet.getPhysics().setMoveSpeed(250f);
+//                            System.out.println("SPEED:" + rightBullet.getPhysics().getMoveSpeed());
+//                            rightBullet.getPhysics().setSize(10f, 10f);
+//                            rightBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            rightBullet.getGraphics().setColor(Color.RED);
+//                            rightBullet.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
+//                            this.getGameObjectManager().addProjectiles(rightBullet);
+//                        }
+//                        if (j % 2 == 0) {
+//
+//                            //right bullet
+//                            Projectile leftBullet = new Projectile();
+//                            leftBullet.getPhysics().setMoveSpeed(250f);
+//                            leftBullet.getPhysics().setSize(10f, 10f);
+//                            leftBullet.getGraphics().setColor(Color.RED);
+//                            leftBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            leftBullet.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
+//                            this.getGameObjectManager().addProjectiles(leftBullet);
+//                        }
+//                    }
+
+                } else {
+                    this.getGameObjectManager().addProjectiles(new Projectile(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), newHeadVector, 250f, 10f, 10f));
+                }
 
 
                 //single shot
@@ -548,42 +626,32 @@ class Player extends gameObject {
 //                        if (j % 2 == 1) {
 //
 //                            //left bullet
-//                            Projectile bullet2 = new Projectile();
-//                            bullet2.getPhysics().setMoveSpeed(250f);
-//                            System.out.println("SPEED:" + bullet2.getPhysics().getMoveSpeed());
-//                            bullet2.getPhysics().setSize(10f, 10f);
-//                            bullet2.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet2.getGraphics().setColor(Color.RED);
-//                            bullet2.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet2);
+//                            Projectile rightBullet = new Projectile();
+//                            rightBullet.getPhysics().setMoveSpeed(250f);
+//                            System.out.println("SPEED:" + rightBullet.getPhysics().getMoveSpeed());
+//                            rightBullet.getPhysics().setSize(10f, 10f);
+//                            rightBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            rightBullet.getGraphics().setColor(Color.RED);
+//                            rightBullet.getPhysics().getPosition().add(perpendicularVector.x, perpendicularVector.y);
+//                            this.getGameObjectManager().addProjectiles(rightBullet);
 //                        }
 //                        if (j % 2 == 0) {
 //
 //                            //right bullet
-//                            Projectile bullet3 = new Projectile();
-//                            bullet3.getPhysics().setMoveSpeed(250f);
-//                            bullet3.getPhysics().setSize(10f, 10f);
-//                            bullet3.getGraphics().setColor(Color.RED);
-//                            bullet3.getPhysics().setDirectionVector(newHeadVector);
-//                            bullet3.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
-//                            this.getGameObjectManager().addProjectiles(bullet3);
+//                            Projectile leftBullet = new Projectile();
+//                            leftBullet.getPhysics().setMoveSpeed(250f);
+//                            leftBullet.getPhysics().setSize(10f, 10f);
+//                            leftBullet.getGraphics().setColor(Color.RED);
+//                            leftBullet.getPhysics().setDirectionVector(newHeadVector);
+//                            leftBullet.getPhysics().getPosition().sub(perpendicularVector.x, perpendicularVector.y);
+//                            this.getGameObjectManager().addProjectiles(leftBullet);
 //                        }
 //                    }
 //                }
-
             } else {
-                this.getSkill(i).update(this.getSkill(i).getcoolDownTimer() - dt, true);
-//                this.getSkill(i).setIsOncoolDownTimer(true);
-//                this.getSkill(i).setcoolDownTimer(this.getSkill(i).getcoolDownTimer() - dt);
-
-                //while the skill is on cool down via during the 60 Frames Per Second rendering, we skip the skill
+                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
             }
 
-            //if the skill is on coolDownTimer, skip it
-//            if (this.getSkill(i).getIsOncoolDownTimer()) {
-//                System.out.println("SKIPPING" + this.getSkill(i).getSkillName());
-//                i++;
-//            }
         }
 
     }
@@ -598,10 +666,10 @@ class Player extends gameObject {
     /*
      *
      *
-     * Note: key notes to keep in mind: production of projectiles is contingent upon skills being off coolDownTimer, collision, maybe lifespan.
+     * Note: key notes to keep in mind: production of projectiles is contingent upon skills being off cooldown, collision, maybe lifespan.
      * -we do not want an overlap of sklls hapenning at the same time and inteference between the current and next skill
      * -skills should be variant to collision, lifespan or whatever state the current skill and its set of objects.
-     * -production of projectiles should not be affected by the state of the coolDownTimer
+     * -production of projectiles should not be affected by the state of the cooldown
      *
      *
      *
@@ -617,19 +685,19 @@ class Player extends gameObject {
 //
 ////            float offsetDistance = 50f;
 ////            float projectileCount = skill.key.projectileCount;
-////            float skillcoolDownTimer = skill.key.coolDownTimer;
+////            float skillCoolDown = skill.key.coolDownTimer;
 ////            float radians = MathUtils.atan2(this.getPhysics().getPosition().y - target.getPhysics().getPosition().y, this.getPhysics().getPosition().x - target.getPhysics().getPosition().x);
 ////            Vector2 ProjectileDir = new Vector2(MathUtils.cos(radians), MathUtils.sin(radians));
 ////            Vector2 offsetPosition = new Vector2(ProjectileDir.x * offsetDistance, ProjectileDir.y * offsetDistance);
 ////
-////            if (skillcoolDownTimer < 0) {
+////            if (skillCoolDown < 0) {
 ////                System.out.println("HELLO WORLD!");
 ////            } else {
-////                System.out.println("coolDownTimer!" + skillcoolDownTimer);
-////                skillcoolDownTimer -= dt;
+////                System.out.println("COOLDOWN!" + skillCoolDown);
+////                skillCoolDown -= dt;
 ////            }
 //
-////            if (skillcoolDownTimer <= 0) {
+////            if (skillCoolDown <= 0) {
 ////                if (getGameObjectManager().getProjectiles().size < projectileCount) {
 ////                    Projectile Projectile = new Projectile();
 ////                    Projectile.getPhysics().setDirectonVector(ProjectileDir);
@@ -638,7 +706,7 @@ class Player extends gameObject {
 ////                    this.getGameObjectManager().addProjectiles(Projectile);
 ////                }
 ////            } else {
-////                skillcoolDownTimer -= dt;
+////                skillCoolDown -= dt;
 ////            }
 //
 //        }
@@ -682,56 +750,75 @@ class Enemy extends gameObject {
 class Skill {
 
     float projectileCount;
-    float directionCount;
     float coolDownTimer;
-    float CoolDownTimer;
-    boolean isOncoolDownTimer;
+    float MaxCoolDownTimer;
+    boolean isOnCoolDown;
     String skillName;
-    String skillType;
     int level;
 
-    String behavior;
+    float deltaRadian;
+    float deltaPosition;
 
 
     public Skill() {
+        deltaPosition = 0;
+        deltaRadian = 0;
         projectileCount = 0f;
-        CoolDownTimer = 0f;
-        coolDownTimer = CoolDownTimer;
-        isOncoolDownTimer = false;
+        MaxCoolDownTimer = 0f;
+        coolDownTimer = MaxCoolDownTimer;
+        isOnCoolDown = false;
         skillName = "";
         level = 1;
     }
 
-    public Skill(String name, float CoolDownTimer, boolean isOncoolDownTimer, float prjctileCount, int lvl) {
+    public Skill(String name, float MaxCoolDownTimer, boolean isOnCoolDown, float prjctileCount, int lvl, float angle, float pos) {
         this.setSkillName(name);
-        this.setCoolDownTimer(CoolDownTimer);
-        this.setcoolDownTimer(CoolDownTimer);
-        this.setIsOncoolDownTimer(isOncoolDownTimer);
+        this.setMaxCoolDownTimer(MaxCoolDownTimer);
+        this.setCoolDown(MaxCoolDownTimer);
+        this.setIsOnCoolDown(isOnCoolDown);
         this.setLevel(lvl);
         this.setProjectileCount(prjctileCount);
+        this.setDeltaAngle(angle);
+        this.setDeltaPosition(pos);
     }
 
     public String toString() {
-        return "        SKILL NAME:     " + this.getSkillName() + "     coolDownTimer:       " + this.getcoolDownTimer() + "      IS_ON_coolDownTimer      " + this.getIsOncoolDownTimer() + "      LEVEL       " + this.getLevel();
+        return "        SKILL NAME:     " + this.getSkillName() + "     COOLDOWN:       " + this.getCoolDown() + "      IS_ON_COOLDOWN      " + this.getIsOnCoolDown() + "      LEVEL       " + this.getLevel();
     }
 
-    public void update(String name, float CoolDownTimer, boolean isOncoolDownTimer, float projectileCount, int level) {
+    public void update(String name, float MaxCoolDownTimer, boolean isOnCoolDown, float projectileCount, int level) {
         this.setSkillName(name);
-        this.setCoolDownTimer(CoolDownTimer);
-        this.setcoolDownTimer(CoolDownTimer);
-        this.setIsOncoolDownTimer(isOncoolDownTimer);
+        this.setMaxCoolDownTimer(MaxCoolDownTimer);
+        this.setCoolDown(MaxCoolDownTimer);
+        this.setIsOnCoolDown(isOnCoolDown);
         this.setLevel(level);
         this.setProjectileCount(projectileCount);
     }
 
-    public void update(float coolDownTimer, boolean isOncoolDownTimer) {
-        this.setcoolDownTimer(coolDownTimer);
-        this.setIsOncoolDownTimer(isOncoolDownTimer);
+    public void update(float coolDownTimer, boolean isOnCoolDown) {
+        this.setCoolDown(coolDownTimer);
+        this.setIsOnCoolDown(isOnCoolDown);
+    }
+
+    public float getDeltaPosition() {
+        return deltaPosition;
+    }
+
+    public float getDeltaAngle() {
+        return deltaRadian;
+    }
+
+    public void setDeltaAngle(float rad) {
+        this.deltaRadian = rad;
+    }
+
+    public void setDeltaPosition(float pos) {
+        this.deltaPosition = pos;
     }
 
 
-    public boolean hasFinishedcoolDownTimer() {
-        if (this.getIsOncoolDownTimer() && this.getcoolDownTimer() <= 0) {
+    public boolean hasFinishedCoolDown() {
+        if (this.getIsOnCoolDown() && this.getCoolDown() <= 0) {
             return true;
         }
         return false;
@@ -754,28 +841,28 @@ class Skill {
         this.skillName = name;
     }
 
-    public void setCoolDownTimer(float max) {
-        this.CoolDownTimer = max;
+    public void setMaxCoolDownTimer(float max) {
+        this.MaxCoolDownTimer = max;
     }
 
-    public float getCoolDownTimer() {
-        return this.CoolDownTimer;
+    public float getMaxCoolDownTimer() {
+        return this.MaxCoolDownTimer;
     }
 
-    public float getcoolDownTimer() {
+    public float getCoolDown() {
         return coolDownTimer;
     }
 
-    public void setcoolDownTimer(float coolDownTimer) {
+    public void setCoolDown(float coolDownTimer) {
         this.coolDownTimer = coolDownTimer;
     }
 
-    public boolean getIsOncoolDownTimer() {
-        return isOncoolDownTimer;
+    public boolean getIsOnCoolDown() {
+        return isOnCoolDown;
     }
 
-    public void setIsOncoolDownTimer(boolean oncoolDownTimer) {
-        isOncoolDownTimer = oncoolDownTimer;
+    public void setIsOnCoolDown(boolean onCoolDown) {
+        isOnCoolDown = onCoolDown;
     }
 
     public int getLevel() {
@@ -951,11 +1038,11 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //
 //        //----------------------------MISC ATTRIBUTES FOR GAME OBJECTS-------------------
-//        float CoolDownTimer;
+//        float MaxCoolDownTimer;
 //        float coolDownTimer;
 //
-//        float skillCoolDownTimer;
-//        float skillcoolDownTimer;
+//        float skillMaxCoolDownTimer;
+//        float skillCoolDown;
 //        float lifeSpan;
 //        float maxLifeSpan;
 //        float distance;
@@ -990,12 +1077,12 @@ public class GameStateManager extends ApplicationAdapter {
 //            batch = new SpriteBatch();
 //            mass = 1.0f;
 //            moveSpeed = 0;
-//            CoolDownTimer = 0.25f;
-//            coolDownTimer = CoolDownTimer;
+//            MaxCoolDownTimer = 0.25f;
+//            coolDownTimer = MaxCoolDownTimer;
 //            maxLifeSpan = 0.0f;
 //            lifeSpan = 0.0f;
-//            skillCoolDownTimer = 2.0f;
-//            skillcoolDownTimer = skillCoolDownTimer;
+//            skillMaxCoolDownTimer = 2.0f;
+//            skillCoolDown = skillMaxCoolDownTimer;
 //        }
 //        //--------------------------------------------------------------
 
@@ -1489,12 +1576,12 @@ public class GameStateManager extends ApplicationAdapter {
 
 //        System.out.println(player.getSkills().toString());
 
-//        System.out.println("SKILL COOL DOWN:" + skill.getcoolDownTimer());
-//        if (skill.getcoolDownTimer() <= 0) {
-//            skill.setcoolDownTimer(skill.getCoolDownTimer());
+//        System.out.println("SKILL COOL DOWN:" + skill.getCoolDown());
+//        if (skill.getCoolDown() <= 0) {
+//            skill.setCoolDown(skill.getMaxCoolDownTimer());
 //            System.out.println("STORM EARTH AND FIRE HEED MY CALL! *THUNDER CRACK AND GUITAR RIFF");
 //        } else {
-//            skill.setcoolDownTimer(skill.getcoolDownTimer() - deltaTime);
+//            skill.setCoolDown(skill.getCoolDown() - deltaTime);
 //        }
 
 //
