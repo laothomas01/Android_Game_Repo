@@ -425,7 +425,7 @@ class Player extends gameObject {
         skills = new Array<>();
         skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
         skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
-        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 45, 0));
+        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
         gameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
@@ -462,217 +462,68 @@ class Player extends gameObject {
         //angle(in radians) used to find the direction for shooting at target
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
 
-        //shoot direction
+        //new shoot direction
         Vector2 newHeadVector = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
 
 
-        // new position = your current position + (offset distance * direction you are facing) * speed * deltaTime
-        Vector2 offsetFromCurrentPosition = new Vector2((newHeadVector.x) + this.getPhysics().getPosition().x, (newHeadVector.y) + this.getPhysics().getPosition().y);
-        //used for maintaining parallel bullet formation
-        float perpendicularOffsetDistance = 10.0f;
         //will be used to scale offset perpendicular distances
+        //can be used to expand or shrink the distance between the projectiles and the center
+        float deltaMultiplier = 0.0f;
 
-        //used to shrink the distance gap between the projectiles and the center
-        float deltaMultiplier = 0.5f;
+        // (this needs to be initialized inside the skill class)
+        float perpendicularOffsetDistance = 10.0f;
         Vector2 perpendicularVector = new Vector2(-newHeadVector.y * perpendicularOffsetDistance, newHeadVector.x * perpendicularOffsetDistance);
-
-//        System.out.println(shootRadians);
-
-        //        /*
-//         *
-//         *
-//         *
-//         * */
-//
-//
-//////        //p2 and p3 SHOULD move in the same direciton as p1
-//        p2.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
-//        p3.getPhysics().getDirectionVector().set(p1.getPhysics().getDirectionVector());
-//////
-//////
-//        perp1 = new Vector2(-p1.getPhysics().getDirectionVector().y, p1.getPhysics().getDirectionVector().x);
-//
-//
-//        System.out.println("P1:" + p1.getPhysics().getPosition().toString() + "P2:" + p2.getPhysics().getPosition().toString() + "P3:" + p3.getPhysics().getPosition().toString());
-//////
-////////
-////////        /*
-////////         *  PARALLEL SHOOTING SKILL
-////////         *
-////////         * TRY UNDERSTAND THIS AGAIN.
-////////         *
-////////         * */
-////////
-////////        //symmetry property
-////////        perp1 = new Vector2(-p1.getPhysics().getDirectionVector().y, p1.getPhysics().getDirectionVector().x);
-////////        // position = initial_position + translated_distance * perpendicular vector position
-//        p2.getPhysics().getPosition().add(50.0f * perp1.x, 50.0f * perp1.y);
-////        System.out.println(p2.getPhysics().getPosition().toString());
-//////        // position = initial_position - translate_distance * perpendicular vector position
-//        p3.getPhysics().getPosition().sub(50.0f * perp1.x, 50.0f * perp1.y);
-
-//        Vector2 perpendicularVector = new Vector2(-newHeadVector.y, newHeadVector.x);
-
-//        for (Skill s : this.getSkills()) {
-//            if (s.isOnCoolDown && s.getCoolDown() <= 0) {
-//                //if cooldown done, do something
-//                s.setIsOnCoolDown(false);
-//                s.setCoolDown(s.getMaxCoolDownTimer());
-//            } else {
-//                s.setIsOnCoolDown(true);
-//                s.setCoolDown(s.getCoolDown() - dt);
-//
-//                //if cooldown not done, do something
-//
-//
-//            }
-//        }
-
-
-        //BUG: Projectile max life span is bugged! currently, the value is baked in
-        // SKILL 2
-//        public void TriShot(gameObject object, float dt) {
-//
-//
-//            float radians = MathUtils.atan2(object.position.y - this.position.y, object.position.x - this.position.x);
-//            Vector2 vel1 = new Vector2(MathUtils.cos(radians), MathUtils.sin((radians)));
-//            Vector2 vel2 = new Vector2(MathUtils.cos(radians + 0.261799f), MathUtils.sin((radians + 0.261799f)));
-//            Vector2 vel3 = new Vector2(MathUtils.cos(radians - 0.261799f), MathUtils.sin((radians - 0.261799f)));
-//            Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
-//            Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
-//            Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
-////            if (coolDownTimer <= 0) {
-//            if (manager.getCollectionOfProjectiles().size < 3) {
-//                //SKILL #2
-//                //Fan Shot
-//                gameObject Projectile1 = new gameObject();
-//                Projectile1.sprite.setColor(Color.GREEN);
-//                Projectile1.velocity.set(vel1);
-//                Projectile1.position.set(offsetPosition1);
-//                Projectile1.moveSpeed = 300f;
-//                Projectile1.update();
-//                manager.getCollectionOfProjectiles().add(Projectile1);
-//
-//                gameObject Projectile2 = new gameObject();
-//                System.out.println("MAX:" + Projectile1.maxLifeSpan);
-//                Projectile2.sprite.setColor(Color.GREEN);
-//                Projectile2.velocity.set(vel2);
-//                Projectile2.position.set(offsetPosition2);
-//                Projectile2.moveSpeed = 300f;
-//                Projectile2.update();
-//                manager.getCollectionOfProjectiles().add(Projectile2);
-//
-//                gameObject Projectile3 = new gameObject();
-//                Projectile3.sprite.setColor(Color.GREEN);
-//                Projectile3.velocity.set(vel3);
-//                Projectile3.position.set(offsetPosition3);
-//                Projectile3.moveSpeed = 300f;
-//                Projectile3.update();
-//                manager.getCollectionOfProjectiles().add(Projectile3);
-//
-//
 
 
         for (int i = 0; i < this.getSkills().size; i++) {
+            //if the cool down flag has been set and cool down timer has finished resetting
             if (this.getSkill(i).hasFinishedCoolDown()) {
+
+                //reset the skill's cooldown timer , set the cooldown flag to false
                 this.getSkill(i).update(this.getSkill(i).getMaxCoolDownTimer(), false);
-                //odd numbered fanning
+
+
+                //Odd Numbered Fan Shot Production Rule
                 if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1 && this.getSkill(i).getProjectileCount() % 2 == 1) {
 
-                    //compress this into a production rule
-                    //fan shoot
-                    Projectile Projectile1 = new Projectile();
-                    Projectile Projectile2 = new Projectile();
-                    Projectile Projectile3 = new Projectile();
+                    //delta angle converted to radians
+                    float offsetRadians = this.getSkill(i).getDeltaAngle() * MathUtils.PI / 180;
+
+                    //offset angle multiplier
+                    deltaMultiplier = 1;
+
+                    //create bullets based on number of projectiles
+                    for (int j = 0; j < this.getSkill(i).getProjectileCount(); j++) {
+
+                        //general unchanged bullet used during production
+                        Projectile bullet = new Projectile();
+                        //set bullet move direction
+                        bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
+                        bullet.getGraphics().setColor(Color.PINK);
+                        bullet.getPhysics().setMoveSpeed(100f);
+
+                        //if bullet index = odd
+                        if (j >= 1 && j % 2 == 1) {
+                            bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians + (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians + (offsetRadians * deltaMultiplier))));
+                        } else if (j >= 1 && j % 2 == 0) {
 
 
-                    Vector2 vel1 = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin((shootRadians)));
-                    Vector2 vel2 = new Vector2(MathUtils.cos(shootRadians + 0.261799f), MathUtils.sin((shootRadians + 0.261799f)));
-                    Vector2 vel3 = new Vector2(MathUtils.cos(shootRadians - 0.261799f), MathUtils.sin((shootRadians - 0.261799f)));
-                    Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + Projectile1.getPhysics().getPosition().x, (vel1.y * 20) + Projectile1.getPhysics().getPosition().y);
-                    Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + Projectile2.getPhysics().getPosition().x, (vel2.y * 20) + Projectile2.getPhysics().getPosition().y);
-                    Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + Projectile3.getPhysics().getPosition().x, (vel3.y * 20) + Projectile3.getPhysics().getPosition().y);
+                            //if bullet index = even
+                            bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians - (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians - (offsetRadians * deltaMultiplier))));
+                            //ever even bullet, once we set the current bullet direction vector, we increment the deltaMultiplier
+                            deltaMultiplier += 1;
+                        }
 
-                    Projectile1.getGraphics().setColor(Color.PINK);
-                    Projectile1.getPhysics().setDirectionVector(vel1);
-                    Projectile1.getPhysics().getPosition().set(offsetPosition1);
-                    Projectile1.getPhysics().setMoveSpeed(300f);
-
-                    Projectile2.getGraphics().setColor(Color.PINK);
-                    Projectile2.getPhysics().setDirectionVector(vel2);
-                    Projectile2.getPhysics().setPosition(offsetPosition2);
-
-                    Projectile2.getPhysics().setMoveSpeed(300f);
-                    Projectile3.getGraphics().setColor(Color.PINK);
-                    Projectile3.getPhysics().setDirectionVector(vel3);
-                    Projectile3.getPhysics().setPosition(offsetPosition3);
-                    Projectile3.getPhysics().setMoveSpeed(300f);
-
-                    this.getGameObjectManager().addProjectiles(Projectile1);
-                    this.getGameObjectManager().addProjectiles(Projectile2);
-                    this.getGameObjectManager().addProjectiles(Projectile3);
-
-//            if (coolDownTimer <= 0) {
-                    //SKILL #2
-                    //Fan Shot
+                        this.getGameObjectManager().addProjectiles(bullet);
+                    }
 
 
-//
-
-
-//                    Vector2 offsetPosition1 = new Vector2((vel1.x * 20) + this.position.x, (vel1.y * 20) + this.position.y);
-//                    Vector2 offsetPosition2 = new Vector2((vel2.x * 20) + this.position.x, (vel2.y * 20) + this.position.y);
-//                    Vector2 offsetPosition3 = new Vector2((vel3.x * 20) + this.position.x, (vel3.y * 20) + this.position.y);
-
-//                    for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
-//
-//                        Projectile bullet = new Projectile();
-//
-//                        Projectile bullet2 = new Projectile();
-//                        bullet.getGraphics().setColor(Color.PINK);
-//                        bullet2.getGraphics().setColor(Color.YELLOW);
-//                        this.getGameObjectManager().addProjectiles(bullet);
-//                        this.getGameObjectManager().addProjectiles(bullet2);
-//
-//
-////                        Projectile bullet = new Projectile();
-////                        //---------------------------PRODUCTION RULE---------------------------
-////                        bullet.getPhysics().setDirectionVector(newHeadVector);
-////                        bullet.getGraphics().setColor(Color.PINK);
-////                        /*
-////                         * Production Rule:
-////                         *
-////                         * odd number of bullets
-////                         * ______________________
-////                         * - 1st bullet movies in direction of target
-////                         *
-////                         * //even and > 1
-////                         * - 2nd bullet moves in direction of target but is offset by a radian(positive)
-////                         *
-////                         * // odd and > 1
-////                         * - 3rd bullet moves in direction of target but is offset by a radian(negative)
-////                         *
-////                         *
-////                         *
-////                         *
-////                         * */
-////                        if (j > 1 && j % 2 == 0) {
-////                            bullet.getPhysics().getDirectionVector().set(MathUtils.cos(0.261799f), MathUtils.sin(0.261799f));
-////                            bullet.getPhysics().getPosition().add(bullet.getPhysics().getDirectionVector());
-////                        } else if (j > 1) {
-////                            bullet.getPhysics().getDirectionVector().set(MathUtils.cos(-0.261799f), MathUtils.sin(-0.261799f));
-////                            bullet.getPhysics().getPosition().add(bullet.getPhysics().getDirectionVector());
-////                        }
-////
-////                        gameObjectManager.addProjectiles(bullet);
-////
-////                        //---------------------------------------------------------------------------------
-//                    }
                 }
 
-                // Even numbered parallel shooting
 
+                //
                 else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
+                    deltaMultiplier = 0.5f;
                     //we will have to put this into a function that can be applied to any kind of skill we want to create!
 
                     /*
@@ -689,9 +540,14 @@ class Player extends gameObject {
                     for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
                         Projectile bullet = new Projectile();
                         //---------------------------PRODUCTION RULE!---------------------------
+
+                        //move(deltaTime) => final_position = current_position + (directionVector) * speed * deltaTime;
+
+                        //set the direction vector
                         bullet.getPhysics().setDirectionVector(newHeadVector);
                         bullet.getGraphics().setColor(Color.RED);
                         if (j % 2 == 1) {
+                            //set the position of the projectiles
                             bullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
                         } else {
                             //we dont have to subtract. we can ALSO add but add a negative.
@@ -1434,13 +1290,13 @@ public class GameStateManager extends ApplicationAdapter {
 //            if (manager.getCollectionOfProjectiles().size < 3) {
 //
 ////                //PITCH FORK SHOT
-//                gameObject Projectile1 = new gameObject();
-//                Projectile1.sprite.setColor(Color.GREEN);
-//                Projectile1.velocity.set(vel1);
-//                Projectile1.position.set(offsetPosition1);
-//                Projectile1.moveSpeed = 300f;
-//                Projectile1.update();
-//                manager.getCollectionOfProjectiles().add(Projectile1);
+//                gameObject bullet = new gameObject();
+//                bullet.sprite.setColor(Color.GREEN);
+//                bullet.velocity.set(vel1);
+//                bullet.position.set(offsetPosition1);
+//                bullet.moveSpeed = 300f;
+//                bullet.update();
+//                manager.getCollectionOfProjectiles().add(bullet);
 //
 //                gameObject Projectile2 = new gameObject();
 //                Projectile2.sprite.setColor(Color.GREEN);
@@ -1475,16 +1331,16 @@ public class GameStateManager extends ApplicationAdapter {
 //            if (manager.getCollectionOfProjectiles().size < 3) {
 //                //SKILL #2
 //                //Fan Shot
-//                gameObject Projectile1 = new gameObject();
-//                Projectile1.sprite.setColor(Color.GREEN);
-//                Projectile1.velocity.set(vel1);
-//                Projectile1.position.set(offsetPosition1);
-//                Projectile1.moveSpeed = 300f;
-//                Projectile1.update();
-//                manager.getCollectionOfProjectiles().add(Projectile1);
+//                gameObject bullet = new gameObject();
+//                bullet.sprite.setColor(Color.GREEN);
+//                bullet.velocity.set(vel1);
+//                bullet.position.set(offsetPosition1);
+//                bullet.moveSpeed = 300f;
+//                bullet.update();
+//                manager.getCollectionOfProjectiles().add(bullet);
 //
 //                gameObject Projectile2 = new gameObject();
-//                System.out.println("MAX:" + Projectile1.maxLifeSpan);
+//                System.out.println("MAX:" + bullet.maxLifeSpan);
 //                Projectile2.sprite.setColor(Color.GREEN);
 //                Projectile2.velocity.set(vel2);
 //                Projectile2.position.set(offsetPosition2);
@@ -1522,16 +1378,16 @@ public class GameStateManager extends ApplicationAdapter {
 //            if (manager.getCollectionOfProjectiles().size < 3) {
 //                //SKILL #2
 //                //Fan Shot
-//                gameObject Projectile1 = new gameObject();
-//                Projectile1.sprite.setColor(Color.GREEN);
-//                Projectile1.velocity.set(vel1);
-//                Projectile1.position.set(offsetPosition1);
-//                Projectile1.moveSpeed = 300f;
-//                Projectile1.update();
-//                manager.getCollectionOfProjectiles().add(Projectile1);
+//                gameObject bullet = new gameObject();
+//                bullet.sprite.setColor(Color.GREEN);
+//                bullet.velocity.set(vel1);
+//                bullet.position.set(offsetPosition1);
+//                bullet.moveSpeed = 300f;
+//                bullet.update();
+//                manager.getCollectionOfProjectiles().add(bullet);
 //
 //                gameObject Projectile2 = new gameObject();
-//                System.out.println("MAX:" + Projectile1.maxLifeSpan);
+//                System.out.println("MAX:" + bullet.maxLifeSpan);
 //                Projectile2.sprite.setColor(Color.GREEN);
 //                Projectile2.velocity.set(vel2);
 //                Projectile2.position.set(offsetPosition2);
