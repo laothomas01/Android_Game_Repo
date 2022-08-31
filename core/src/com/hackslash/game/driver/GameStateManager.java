@@ -2,6 +2,7 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +16,9 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.hackslash.game.model.GameObject;
 import jdk.nashorn.internal.ir.PropertyKey;
+
+import java.io.File;
+import java.io.IOException;
 
 class Graphics2D {
     Sprite sprite;
@@ -360,7 +364,6 @@ class gameObject {
         //give your game objects a physics2D component
         physics = new Physics2D();
         graphics = new Graphics2D();
-
     }
 
 
@@ -423,6 +426,11 @@ class Player extends gameObject {
 
     Player() {
         skills = new Array<>();
+        /**
+         * @TODO          * BUG:
+         *
+         *
+         */
 
         /**
          * Leveling up Basic Shoot Skill:
@@ -472,7 +480,9 @@ class Player extends gameObject {
     }
 
     public String toString() {
-        return "        POSITION:       " + this.getPhysics().getPosition() + "     DIRECTION VECTOR        " + this.getPhysics().getDirectionVector() + "      MOVE SPEED      " + this.getPhysics().getMoveSpeed();
+        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition() +
+                "\nDIRECTION VECTOR" + this.getPhysics().getDirectionVector() +
+                "\nMOVE SPEED" + this.getPhysics().getMoveSpeed();
     }
 
 
@@ -504,7 +514,7 @@ class Player extends gameObject {
 
                 //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
                 if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1 && this.getSkill(i).getProjectileCount() % 2 == 1) {
-
+                    System.out.println("FAN SHOOT!");
                     //delta angle converted to radians
                     float offsetRadians = this.getSkill(i).getDeltaAngle() * MathUtils.PI / 180;
 
@@ -544,7 +554,10 @@ class Player extends gameObject {
 
                 //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
                 else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
-
+                    //---------------Bug testing---------------
+                    System.out.println(this.getSkill(i).getProjectileCount());
+                    System.out.println("PARALLEL SHOOT!");
+                    //----------------------------------------
                     //this will be used to shrink the gap distance between the bullets and their "center"
                     deltaMultiplier = 0.5f;
 
@@ -616,6 +629,12 @@ class Enemy extends gameObject {
         this.getPhysics().setSize(10f, 10f);
         graphics.setColor(Color.RED);
         this.getPhysics().setMoveSpeed(40f);
+    }
+
+    public String toString() {
+        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() +
+                "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() +
+                "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed();
     }
 
 }
@@ -786,12 +805,30 @@ public class GameStateManager extends ApplicationAdapter {
 
 
         player = new Player();
-
         enemy = new Enemy();
         enemy.getPhysics().setDirectionVector(0, 1);
         font = new BitmapFont();
 
         fontSpriteBatch = new SpriteBatch();
+
+        String fileName = "helloworld.txt";
+        boolean testFileExists = Gdx.files.local(fileName).exists();
+
+        if (testFileExists) {
+            //load data into game objects
+            FileHandle fh = new FileHandle(fileName);
+            String[] enemy_coords = fh.readString().split("[(,)]");
+
+            enemy.getPhysics().setPosition(Float.parseFloat(enemy_coords[1]), Float.parseFloat(enemy_coords[2]));
+
+            if (enemy.getPhysics().getPosition().x == Float.parseFloat(enemy_coords[1]) && enemy.getPhysics().getPosition().y == Float.parseFloat(enemy_coords[2])) {
+                System.out.println("SUCCESS!");
+            } else {
+                System.out.println("FAILED ASSERTION!");
+            }
+        } else {
+            System.out.println("-------------------FILE DOES NOT EXIST!----------------");
+        }
 
 
     }
@@ -867,13 +904,42 @@ public class GameStateManager extends ApplicationAdapter {
         //pause when player levels up and has to choose an upgrade
 
         //pause when player swaps the application window but has not closed the project
+
+        //called first when dispose() is called
     }
 
 
     //called when the Application is resumed from a paused state.
-    //when the application starts again
+    //transition from pause() -> resume()
     @Override
     public void resume() {
+
+
+    }
+
+    public void dispose() {
+
+        /**
+         * WIll BE WRITING DATA TO FILE HERE
+         */
+
+
+        //note: pause() will be called when dispose exits. take advantage of this.
+        //file created during exit time of game
+        File test = new File("helloworld.txt");
+        try {
+            if (test.createNewFile()) {
+                System.out.println("File Created: " + test.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occured!");
+            throw new RuntimeException(e);
+        }
+        FileHandle testhandle = new FileHandle(test);
+        System.out.println(enemy.getPhysics().getPosition().toString());
+        testhandle.writeString(enemy.getPhysics().getPosition().toString(), false);
 
 
     }
