@@ -519,7 +519,7 @@ class Player extends InGameObject {
                         bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
                         bullet.getGraphics().setColor(Color.PINK);
                         bullet.getPhysics().setMoveSpeed(100f);
-
+                        bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
                         //if bullet index = odd
                         if (j >= 1 && j % 2 == 1) {
                             bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians + (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians + (offsetRadians * deltaMultiplier))));
@@ -973,29 +973,31 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void handleKeyBoardInput() {
-        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
 
-//            System.out.println("UP RIGHT!");
-        } else if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.A))) {
-//            System.out.println("UP LEFT!");
-        }
-        if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.D))) {
-//            System.out.println("DOWN RIGHT!");
-        }
-        if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.A))) {
-//            System.out.println("DOWN LEFT!");
-        }
+        if ((GameKeys.isDown(GameKeys.UP) || (GameKeys.isDown(GameKeys.W)))) {
+            if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+                player.getPhysics().setDirectionVector(1, 1);
 
-//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
-//            System.out.println("UP LEFT!");
-//        }
-//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
-//            System.out.println("UP LEFT!");
-//        }
-//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
-//            System.out.println("UP LEFT!");
-//        }
-
+            } else if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.A))) {
+                player.getPhysics().setDirectionVector(-1, 1);
+            } else {
+                player.getPhysics().setDirectionVector(0, 1);
+            }
+        } else if ((GameKeys.isDown(GameKeys.DOWN) || (GameKeys.isDown(GameKeys.S)))) {
+            if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.D))) {
+                player.getPhysics().setDirectionVector(1, -1);
+            } else if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.A))) {
+                player.getPhysics().setDirectionVector(-1, -1);
+            } else {
+                player.getPhysics().setDirectionVector(0, -1);
+            }
+        } else if (GameKeys.isDown(GameKeys.LEFT) || GameKeys.isDown(GameKeys.A)) {
+            player.getPhysics().setDirectionVector(-1, 0);
+        } else if (GameKeys.isDown(GameKeys.RIGHT) || GameKeys.isDown(GameKeys.D)) {
+            player.getPhysics().setDirectionVector(1, 0);
+        } else {
+            player.getPhysics().setDirectionVector(0, 0);
+        }
 
         GameKeys.update();
     }
