@@ -1,8 +1,6 @@
 package com.hackslash.game.driver;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -17,35 +15,28 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.hackslash.game.model.GameObject;
 import jdk.nashorn.internal.ir.PropertyKey;
+import com.badlogic.gdx.Input.Keys;
 
 import java.io.File;
 import java.io.IOException;
+/**
+ * REFERENCE LINKS:
+ * <p>
+ * getting a perpendicular vector to set the position of the offset perpendicular objects
+ * https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
+ */
 
 /**
- * Notes:
  * App Manager:
- * - handles loading and saving of game data
- * - autosave game currently(no extra save files)
- * - manages the states of game objects: position,velocity,
+ * -Handles game states
+ * -Handles loading/saving game states
  * <p>
- * SAVE ALL VALUES THAT ARE CHANGING:
- * Player:
- * -posit
- * Enemy:
- * <p>
- * Bullet:
- * <p>
- * <p>
- * <p>
- * How to increase efficiency of game:
- * -instantiate enemies, but do not render enemies until they are within camera view!
- * -off camera enemies are not drawn
+ * -Load and Save player data( dont care about spawned enemies for this game. keep it simple)
  */
 class Graphics2D {
     Sprite sprite;
     Texture texture;
     Color color;
-
     SpriteBatch spriteBatch;
 
     public Graphics2D() {
@@ -53,7 +44,6 @@ class Graphics2D {
         sprite = new Sprite(texture);
         color = new Color();
         spriteBatch = new SpriteBatch();
-
     }
 
     public Sprite getSprite() {
@@ -219,14 +209,14 @@ class Physics2D {
 
 
     //change object direction based on target position
-    public void moveTowards(gameObject target, float dt) {
+    public void moveTowards(InGameObject target, float dt) {
         float radians = getAngleBetweenTwoVectors(target);
         this.setDirectionVector(MathUtils.cos(radians), MathUtils.sin(radians));
         move(dt);
     }
 
     //get angle between target position and calling game object's position
-    public float getAngleBetweenTwoVectors(gameObject target) {
+    public float getAngleBetweenTwoVectors(InGameObject target) {
         //destination                       source
 
         return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
@@ -251,7 +241,7 @@ class Physics2D {
 
 
     //perform basic circular motion around the parameterized object
-//    public void rotateAround(hack_and_slash.gameObject parent) {
+//    public void rotateAround(hack_and_slash.InGameObject parent) {
 //        this.increaseRotationAngle();
 //        this.angularVelocity.set(MathUtils.cos(this.getRadians()), MathUtils.sin(this.getRadians()));
 //        this.d(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
@@ -268,7 +258,7 @@ class Physics2D {
     }
 
 
-    public boolean hasCollided(gameObject target) {
+    public boolean hasCollided(InGameObject target) {
         this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
         this.setDistanceBetween(getNormalVector().len());
         this.setImpactDistance((this.getWidth() + target.getPhysics().getWidth()) / 1.8f);
@@ -312,23 +302,6 @@ class Physics2D {
 }
 
 
-//-----------------------------------------------GAME OBJECTS---------------------------------------------------------------
-
-
-//game objects will do all the more specific physics calculations:
-/*
- * movement, collisions, shooting.
- *
- * why am i doing this?
- *
- * in Unity, you have an object which has a "component" attached to the objet. then you call the "get component" to get the component you need.
- *
- * here it is different and for the sake of readibility, i would like my code to say: player.move(whatever speed)
- *
- *
- */
-
-
 /*
 
  PERFORMS CRUD OPERATIONS ON GAME OBJECTS
@@ -338,6 +311,7 @@ class Physics2D {
 -removing objects
 
  */
+
 class GameObjectManager {
     Array<Projectile> Projectiles;
     Array<Projectile> removeAllProjectiles;
@@ -371,9 +345,7 @@ class GameObjectManager {
 }
 
 
-class gameObject {
-
-
+class InGameObject {
     //physics2D manager
     Physics2D physics;
 
@@ -381,12 +353,11 @@ class gameObject {
     Graphics2D graphics;
 
 
-    public gameObject() {
+    public InGameObject() {
         //give your game objects a physics2D component
         physics = new Physics2D();
         graphics = new Graphics2D();
     }
-
 
     public Graphics2D getGraphics() {
         return this.graphics;
@@ -397,7 +368,6 @@ class gameObject {
     }
 
 
-    //
     public void update(float dt) {
         graphics.getSprite().setSize(this.getPhysics().getWidth(), this.getPhysics().getHeight());
         graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
@@ -407,14 +377,14 @@ class gameObject {
     }
 
 
-    public void shoot(gameObject target, float dt) {
+    public void shoot(InGameObject target, float dt) {
 
     }
 
 }
 
 
-class Projectile extends gameObject {
+class Projectile extends InGameObject {
 
     Projectile() {
         this.getPhysics().setSize(10f, 10f);
@@ -434,15 +404,15 @@ class Projectile extends gameObject {
 
 
     public String toString() {
-        return "    POSITION:   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getDirectionVector() + "   SPEED              " + this.getPhysics().getMoveSpeed();
+        return "    POSITION:   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getDirectionVector();
     }
 
 
 }
 
 
-class Player extends gameObject {
-    GameObjectManager gameObjectManager;
+class Player extends InGameObject {
+    GameObjectManager InGameObjectManager;
     Array<Skill> skills;
 
     Player() {
@@ -469,10 +439,10 @@ class Player extends gameObject {
          * Leveling up the fan shoot skill
          */
         //this only accounts for odd number of projectiles right now
-        skills.add(new Skill("Fan Shoot", 1.5f, false, 10, 1, 15, 0));
+        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
 
 
-        gameObjectManager = new GameObjectManager();
+        InGameObjectManager = new GameObjectManager();
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSize(10f, 10f);
@@ -497,17 +467,15 @@ class Player extends gameObject {
     //---------------------------------------------------------------------------------
 
     public GameObjectManager getGameObjectManager() {
-        return gameObjectManager;
+        return InGameObjectManager;
     }
 
     public String toString() {
-        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition() +
-                "\nDIRECTION VECTOR" + this.getPhysics().getDirectionVector() +
-                "\nMOVE SPEED" + this.getPhysics().getMoveSpeed();
+        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR" + this.getPhysics().getDirectionVector();
     }
 
 
-    public void shoot(gameObject target, float dt) {
+    public void shoot(InGameObject target, float dt) {
 
         //angle(in radians) used to find the direction for shooting at target
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
@@ -643,7 +611,7 @@ class Player extends gameObject {
 
 }
 
-class Enemy extends gameObject {
+class Enemy extends InGameObject {
     public Enemy() {
         this.getPhysics().setPosition(1, 0);
         graphics.setTexture("square.png");
@@ -653,9 +621,7 @@ class Enemy extends gameObject {
     }
 
     public String toString() {
-        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() +
-                "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() +
-                "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed();
+        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed();
     }
 
 }
@@ -809,6 +775,145 @@ class Skill {
 }
 
 
+class AppManager {
+    Preferences prefs;
+
+    public AppManager() {
+        prefs = Gdx.app.getPreferences("Settings");
+    }
+
+    public Preferences getPreferences() {
+        return prefs;
+    }
+
+}
+
+/**
+ * This will be for desktop platform
+ */
+//Handles when gameplay begins, pauses and ends
+class GameInputProcessor extends InputAdapter {
+    public boolean keyDown(int k) {
+        if (k == Keys.UP) {
+            GameKeys.setKey(GameKeys.UP, true);
+        }
+        if (k == Keys.LEFT) {
+            GameKeys.setKey(GameKeys.LEFT, true);
+        }
+        if (k == Keys.DOWN) {
+            GameKeys.setKey(GameKeys.DOWN, true);
+        }
+        if (k == Keys.RIGHT) {
+            GameKeys.setKey(GameKeys.RIGHT, true);
+        }
+        if (k == Keys.ENTER) {
+            GameKeys.setKey(GameKeys.ENTER, true);
+        }
+        if (k == Keys.ESCAPE) {
+            GameKeys.setKey(GameKeys.ESC, true);
+        }
+
+        if (k == Keys.W) {
+            GameKeys.setKey(GameKeys.W, true);
+        }
+        if (k == Keys.A) {
+            GameKeys.setKey(GameKeys.A, true);
+        }
+        if (k == Keys.S) {
+            GameKeys.setKey(GameKeys.S, true);
+        }
+        if (k == Keys.D) {
+            GameKeys.setKey(GameKeys.D, true);
+        }
+
+        return true;
+    }
+
+    public boolean keyUp(int k) {
+        if (k == Keys.UP) {
+            GameKeys.setKey(GameKeys.UP, false);
+        }
+        if (k == Keys.LEFT) {
+            GameKeys.setKey(GameKeys.LEFT, false);
+        }
+        if (k == Keys.DOWN) {
+            GameKeys.setKey(GameKeys.DOWN, false);
+        }
+        if (k == Keys.RIGHT) {
+            GameKeys.setKey(GameKeys.RIGHT, false);
+        }
+        if (k == Keys.ENTER) {
+            GameKeys.setKey(GameKeys.ENTER, false);
+        }
+        if (k == Keys.ESCAPE) {
+            GameKeys.setKey(GameKeys.ESC, false);
+        }
+        if (k == Keys.W) {
+            GameKeys.setKey(GameKeys.W, false);
+        }
+        if (k == Keys.A) {
+            GameKeys.setKey(GameKeys.A, false);
+        }
+        if (k == Keys.S) {
+            GameKeys.setKey(GameKeys.S, false);
+        }
+        if (k == Keys.D) {
+            GameKeys.setKey(GameKeys.D, false);
+        }
+
+        return true;
+    }
+}
+
+/**
+ * This will be for desktop platform
+ */
+class GameKeys {
+    //if false, key is released. if true, key is pressed
+    private static boolean[] keys;
+    //previous state of keys
+    private static boolean[] pkeys;
+
+    private static final int NUM_KEYS = 10;
+
+    public static final int UP = 0;
+    public static final int DOWN = 1;
+    public static final int LEFT = 2;
+    public static final int RIGHT = 3;
+    public static final int ESC = 4;
+    public static final int ENTER = 5;
+    public static final int W = 6;
+    public static final int A = 7;
+    public static final int S = 8;
+    public static final int D = 9;
+
+
+    static {
+        keys = new boolean[NUM_KEYS];
+        pkeys = new boolean[NUM_KEYS];
+    }
+
+    public static void update() {
+        for (int i = 0; i < NUM_KEYS; i++) {
+            pkeys[i] = keys[i];
+        }
+    }
+
+    public static void setKey(int k, boolean b) {
+        keys[k] = b;
+    }
+
+    public static boolean isDown(int k) {
+        return keys[k];
+    }
+
+    public static boolean isPressed(int k) {
+        return keys[k] && !pkeys[k];
+    }
+
+}
+
+//Should really be a gameplay manager
 public class GameStateManager extends ApplicationAdapter {
 
     float deltaTime;
@@ -816,12 +921,24 @@ public class GameStateManager extends ApplicationAdapter {
     Enemy enemy;
     private SpriteBatch fontSpriteBatch;
     private BitmapFont font;
+    Preferences prefs;
 
 
+    //    enum InputKeys { FORWARD,BACKWARD,LEFT,RIGHT,FORWARD_RIGHT,FORWARD_LEFT,BACKWARD_RIGHT,BACKWARD_LEFT}
     public void create() {
-
-        //getting a perpendicular vector to set the position of the offset perpendicular objects
-        // REFERENCE LINK: https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
+//This will get your preferences from storage
+        prefs = Gdx.app.getPreferences("SaveData");
+////If the preference key is empty, create it by putting a value into it
+//        if (!prefs.contains("key")) prefs.putInteger("key", 1337);
+//
+////Get value from a preference key "key" (must not be empty)
+//        int val = prefs.getInteger("key");
+////Do something with your value and put it back to the preference
+//        val += 1;
+//        prefs.putInteger("key", val);
+//
+////This will finally save the changes to storage
+//        prefs.flush();
 
 
         player = new Player();
@@ -830,6 +947,8 @@ public class GameStateManager extends ApplicationAdapter {
         font = new BitmapFont();
 
         fontSpriteBatch = new SpriteBatch();
+
+        Gdx.input.setInputProcessor(new GameInputProcessor());
 
 //        String fileName = "helloworld.txt";
 ////        boolean testFileExists = Gdx.files.local(fileName).exists();
@@ -853,12 +972,42 @@ public class GameStateManager extends ApplicationAdapter {
 
     }
 
+    public void handleKeyBoardInput() {
+        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+
+//            System.out.println("UP RIGHT!");
+        } else if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.A))) {
+//            System.out.println("UP LEFT!");
+        }
+        if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.D))) {
+//            System.out.println("DOWN RIGHT!");
+        }
+        if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.A))) {
+//            System.out.println("DOWN LEFT!");
+        }
+
+//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+//            System.out.println("UP LEFT!");
+//        }
+//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+//            System.out.println("UP LEFT!");
+//        }
+//        if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+//            System.out.println("UP LEFT!");
+//        }
+
+
+        GameKeys.update();
+    }
+
     public void render() {
 
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //test game keys
+        handleKeyBoardInput();
         //TESTING SKILL MANAGER
         player.shoot(enemy, deltaTime);
 
@@ -911,14 +1060,6 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
-    /*
-     *
-     * Android Platform:
-     *
-     *
-     * Called when the Application is paused.
-     *
-     * */
     public void pause() {
 
         //pause when player levels up and has to choose an upgrade
@@ -942,9 +1083,11 @@ public class GameStateManager extends ApplicationAdapter {
         /**
          * WIll BE WRITING DATA TO FILE HERE
          */
+//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
 
-        Preferences pref = Gdx.app.getPreferences("My Preferences");
-        pref.putString("name", "Donald Duck");
+        //update preferences
+//        prefs.flush();
+
         //note: pause() will be called when dispose exits. take advantage of this.
         //file created during exit time of game
 //        File test = new File("helloworld.txt");
