@@ -2,6 +2,7 @@ package com.hackslash.game.driver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,6 +21,26 @@ import jdk.nashorn.internal.ir.PropertyKey;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Notes:
+ * App Manager:
+ * - handles loading and saving of game data
+ * - autosave game currently(no extra save files)
+ * - manages the states of game objects: position,velocity,
+ * <p>
+ * SAVE ALL VALUES THAT ARE CHANGING:
+ * Player:
+ * -posit
+ * Enemy:
+ * <p>
+ * Bullet:
+ * <p>
+ * <p>
+ * <p>
+ * How to increase efficiency of game:
+ * -instantiate enemies, but do not render enemies until they are within camera view!
+ * -off camera enemies are not drawn
+ */
 class Graphics2D {
     Sprite sprite;
     Texture texture;
@@ -427,8 +448,8 @@ class Player extends gameObject {
     Player() {
         skills = new Array<>();
         /**
-         * @TODO          * BUG:
-         *
+         * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.
+         * @TODO improper projectile counts will cause data leakage into other skills.
          *
          */
 
@@ -448,7 +469,7 @@ class Player extends gameObject {
          * Leveling up the fan shoot skill
          */
         //this only accounts for odd number of projectiles right now
-        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
+        skills.add(new Skill("Fan Shoot", 1.5f, false, 10, 1, 15, 0));
 
 
         gameObjectManager = new GameObjectManager();
@@ -799,7 +820,6 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
 
-
         //getting a perpendicular vector to set the position of the offset perpendicular objects
         // REFERENCE LINK: https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
 
@@ -811,24 +831,24 @@ public class GameStateManager extends ApplicationAdapter {
 
         fontSpriteBatch = new SpriteBatch();
 
-        String fileName = "helloworld.txt";
-        boolean testFileExists = Gdx.files.local(fileName).exists();
-
-        if (testFileExists) {
-            //load data into game objects
-            FileHandle fh = new FileHandle(fileName);
-            String[] enemy_coords = fh.readString().split("[(,)]");
-
-            enemy.getPhysics().setPosition(Float.parseFloat(enemy_coords[1]), Float.parseFloat(enemy_coords[2]));
-
-            if (enemy.getPhysics().getPosition().x == Float.parseFloat(enemy_coords[1]) && enemy.getPhysics().getPosition().y == Float.parseFloat(enemy_coords[2])) {
-                System.out.println("SUCCESS!");
-            } else {
-                System.out.println("FAILED ASSERTION!");
-            }
-        } else {
-            System.out.println("-------------------FILE DOES NOT EXIST!----------------");
-        }
+//        String fileName = "helloworld.txt";
+////        boolean testFileExists = Gdx.files.local(fileName).exists();
+////
+////        if (testFileExists) {
+////            //load data into game objects
+////            FileHandle fh = new FileHandle(fileName);
+////            String[] enemy_coords = fh.readString().split("[(,)]");
+////
+////            enemy.getPhysics().setPosition(Float.parseFloat(enemy_coords[1]), Float.parseFloat(enemy_coords[2]));
+////
+////            if (enemy.getPhysics().getPosition().x == Float.parseFloat(enemy_coords[1]) && enemy.getPhysics().getPosition().y == Float.parseFloat(enemy_coords[2])) {
+////                System.out.println("SUCCESS!");
+////            } else {
+////                System.out.println("FAILED ASSERTION!");
+////            }
+////        } else {
+////            System.out.println("-------------------FILE DOES NOT EXIST!----------------");
+////        }
 
 
     }
@@ -923,23 +943,24 @@ public class GameStateManager extends ApplicationAdapter {
          * WIll BE WRITING DATA TO FILE HERE
          */
 
-
+        Preferences pref = Gdx.app.getPreferences("My Preferences");
+        pref.putString("name", "Donald Duck");
         //note: pause() will be called when dispose exits. take advantage of this.
         //file created during exit time of game
-        File test = new File("helloworld.txt");
-        try {
-            if (test.createNewFile()) {
-                System.out.println("File Created: " + test.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occured!");
-            throw new RuntimeException(e);
-        }
-        FileHandle testhandle = new FileHandle(test);
-        System.out.println(enemy.getPhysics().getPosition().toString());
-        testhandle.writeString(enemy.getPhysics().getPosition().toString(), false);
+//        File test = new File("helloworld.txt");
+//        try {
+//            if (test.createNewFile()) {
+//                System.out.println("File Created: " + test.getName());
+//            } else {
+//                System.out.println("File already exists.");
+//            }
+//        } catch (IOException e) {
+//            System.out.println("An error occured!");
+//            throw new RuntimeException(e);
+//        }
+//        FileHandle testhandle = new FileHandle(test);
+//        System.out.println(enemy.getPhysics().getPosition().toString());
+//        testhandle.writeString(enemy.getPhysics().getPosition().toString(), false);
 
 
     }
