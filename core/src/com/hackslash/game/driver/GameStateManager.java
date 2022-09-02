@@ -32,6 +32,14 @@ import java.io.IOException;
  * -Handles loading/saving game states
  * <p>
  * -Load and Save player data( dont care about spawned enemies for this game. keep it simple)
+ * <p>
+ * []@TODO: implement spawn points
+ * []@TODO: implement following camera
+ * []@TODO: implement auto-target enemy function
+ * []@TODO: implement health bars
+ * []@TODO: fix skill bugs
+ * []@TODO: migrate skill components to a CSV file
+ * []@TODO: create settings file
  */
 class Graphics2D {
     Sprite sprite;
@@ -88,6 +96,9 @@ class Physics2D {
     Vector2 directionVector;
     Vector2 acceleration;
     Vector2 angularVelocity;
+    Vector2 normalVector;
+    Vector2 tempNormalVector;
+    Vector2 tempNewDirectionVector;
     float radians;
     float moveSpeed;
     float angularSpeed;
@@ -99,17 +110,18 @@ class Physics2D {
 
     boolean isCollided;
 
-    Vector2 normalVector;
 
     public Physics2D() {
 
 
         COLLISION_COEF = 1.0f;
-        position = new Vector2(0, 0);
-        directionVector = new Vector2(0, 0);
-        acceleration = new Vector2(0, 0);
-        angularVelocity = new Vector2(0, 0);
+        tempNormalVector = new Vector2();
+        position = new Vector2();
+        directionVector = new Vector2();
+        acceleration = new Vector2();
+        angularVelocity = new Vector2();
         normalVector = new Vector2();
+        tempNewDirectionVector = new Vector2();
         width = 0;
         height = 0;
         mass = 1.0f;
@@ -121,6 +133,13 @@ class Physics2D {
         isCollided = false;
     }
 
+    public Vector2 getTempNewDirectionVector() {
+        return tempNewDirectionVector;
+    }
+
+    public Vector2 getTempNormalVector() {
+        return tempNormalVector;
+    }
 
     public float getMoveSpeed() {
         return moveSpeed;
@@ -202,9 +221,23 @@ class Physics2D {
         return this.normalVector;
     }
 
+    public float getMass() {
+        return this.mass;
+    }
+
+//    public boolean hasCollided(InGameObject obj) {
+//        setNormalVector(this.getPosition().sub(obj.getPhysics().getPosition()));
+//        this.setDistanceBetween(this.getNormalVector().len());
+//        this.setImpactDistance(this.getWidth() + obj.getPhysics().getWidth());
+//        this.getNormalVector().nor();
+//        if (this.getDistanceBetween() < this.getImpactDistance()) {
+//            return true;
+//        }
+//        return false;
+//    }
+
     public void move(float dt) {
         this.getPosition().add(this.getDirectionVector().x * this.getMoveSpeed() * dt, this.getDirectionVector().y * this.getMoveSpeed() * dt);
-
     }
 
 
@@ -248,7 +281,11 @@ class Physics2D {
 //        this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
 //    }
 
-
+    /**
+     * COLLISION PHYSICS!
+     *
+     * @return
+     */
     public boolean checkIfCollided() {
         return isCollided;
     }
@@ -269,6 +306,37 @@ class Physics2D {
         }
         return false;
 
+    }
+
+    public void performImpulseCollision(InGameObject object) {
+
+        if (hasCollided(object)) {
+
+
+            //temporary normal vector to hold values used for changing normal vector
+            getTempNormalVector().set(getNormalVector().scl(getImpactDistance() - getDistanceBetween() / 2));
+
+            getPosition().add(getTempNormalVector());
+
+            getTempNormalVector().set(getNormalVector().scl(getImpactDistance() - getDistanceBetween() / 2));
+
+
+            object.getPhysics().getPosition().sub(getTempNormalVector());
+
+            //setting direction of colliding objects based on impulse force
+            getTempNewDirectionVector().set(getDirectionVector().sub(object.getPhysics().getDirectionVector()));
+
+            //Newton's Law of Impact
+            float impulse = (-(1 + COLLISION_COEF) * (getNormalVector().dot(getTempNewDirectionVector()))) / (getNormalVector().dot(getNormalVector()) * (1 / getMass() + 1 / object.getPhysics().getMass()));
+
+            //Change velocity of colliding objects using impulse
+            getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
+            getDirectionVector().add(tempNormalVector);
+            getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
+
+            object.getPhysics().getDirectionVector().sub(getTempNormalVector());
+
+        }
     }
 
     //---------------------------------------------NOTES------------------------------------------
@@ -313,32 +381,42 @@ class Physics2D {
  */
 
 class GameObjectManager {
-    Array<Projectile> Projectiles;
-    Array<Projectile> removeAllProjectiles;
+    int spawnRandomizer;
+    Array<Enemy> enemies;
+    Array<Projectile> projectiles;
+
+    //handle remove of all game objects
+    Array<Projectile> garbageCollection;
 
     public GameObjectManager() {
-        Projectiles = new Array<>();
-        removeAllProjectiles = new Array<>();
+        spawnRandomizer = MathUtils.random(1, 4);
+        projectiles = new Array<>();
+        enemies = new Array<>();
+        garbageCollection = new Array<>();
+    }
+
+    public Array<Enemy> getEnemies() {
+        return enemies;
     }
 
     public Array<Projectile> getProjectiles() {
-        return Projectiles;
+        return projectiles;
     }
 
     public void addProjectiles(Projectile b) {
-        Projectiles.add(b);
+        projectiles.add(b);
     }
 
-    public Array<Projectile> getRemoveAllProjectiles() {
-        return removeAllProjectiles;
+    public Array<Projectile> getGarbageCollection() {
+        return garbageCollection;
     }
 
     public String getProjectilesToString() {
-        return Projectiles.toString();
+        return projectiles.toString();
     }
 
-    public void addProjectilesToRemove(Projectile b) {
-        removeAllProjectiles.add(b);
+    public void addInGameObjectsToRemove(Projectile b) {
+        garbageCollection.add(b);
     }
 
 
@@ -471,7 +549,7 @@ class Player extends InGameObject {
     }
 
     public String toString() {
-        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR" + this.getPhysics().getDirectionVector();
+        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition();
     }
 
 
@@ -503,23 +581,33 @@ class Player extends InGameObject {
 
                 //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
                 if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1 && this.getSkill(i).getProjectileCount() % 2 == 1) {
-                    System.out.println("FAN SHOOT!");
+
                     //delta angle converted to radians
                     float offsetRadians = this.getSkill(i).getDeltaAngle() * MathUtils.PI / 180;
 
                     //offset angle multiplier
                     deltaMultiplier = 1;
+                    //general unchanged bullet used during production
 
                     //create bullets based on number of projectiles
                     for (int j = 0; j < this.getSkill(i).getProjectileCount(); j++) {
-
-                        //general unchanged bullet used during production
                         Projectile bullet = new Projectile();
                         //set bullet move direction
                         bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
                         bullet.getGraphics().setColor(Color.PINK);
-                        bullet.getPhysics().setMoveSpeed(100f);
+                        bullet.getPhysics().setMoveSpeed(250f);
                         bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
+                        System.out.println("FAN SHOOT!");
+                        /**
+                         * If any object collides within the boundaries of the distance between the center and left or right bullet, kill the enemy.
+                         */
+//                        //general unchanged bullet used during production
+//                        Projectile bullet = new Projectile();
+//                        //set bullet move direction
+//                        bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
+//                        bullet.getGraphics().setColor(Color.PINK);
+//                        bullet.getPhysics().setMoveSpeed(100f);
+//                        bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
                         //if bullet index = odd
                         if (j >= 1 && j % 2 == 1) {
                             bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians + (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians + (offsetRadians * deltaMultiplier))));
@@ -542,46 +630,49 @@ class Player extends InGameObject {
 
 
                 //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
-                else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
-                    //---------------Bug testing---------------
-                    System.out.println(this.getSkill(i).getProjectileCount());
-                    System.out.println("PARALLEL SHOOT!");
-                    //----------------------------------------
-                    //this will be used to shrink the gap distance between the bullets and their "center"
-                    deltaMultiplier = 0.5f;
-
-
-                    for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
-                        Projectile bullet = new Projectile();
-                        bullet.getPhysics().setDirectionVector(newHeadVector);
-                        bullet.getGraphics().setColor(Color.RED);
-                        /*
-                         * EQUATION:
-                         *
-                         * symbols:
-                         * Pf = final position
-                         * Pc = current position
-                         *
-                         *
-                         *
-                         * */
-                        if (j % 2 == 1) {
-                            bullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
-                        } else {
-                            bullet.getPhysics().getPosition().add(-perpendicularVector.x * deltaMultiplier, -perpendicularVector.y * deltaMultiplier);
-                            deltaMultiplier += 1;
-                        }
-                        this.getGameObjectManager().addProjectiles(bullet);
-
-
-                    }
-
-
-                }
+//                else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
+//                    //---------------Bug testing---------------
+//                    System.out.println(this.getSkill(i).getProjectileCount());
+//                    System.out.println("PARALLEL SHOOT!");
+//                    //----------------------------------------
+//                    //this will be used to shrink the gap distance between the bullets and their "center"
+//                    deltaMultiplier = 0.5f;
+//
+//
+//                    for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
+////                        Projectile bullet = new Projectile();
+////                        bullet.getPhysics().setDirectionVector(newHeadVector);
+//                        bullet.getGraphics().setColor(Color.RED);
+//                        /*
+//                         * EQUATION:
+//                         *
+//                         * symbols:
+//                         * Pf = final position
+//                         * Pc = current position
+//                         *
+//                         *
+//                         *
+//                         * */
+//                        if (j % 2 == 1) {
+//                            bullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
+//                        } else {
+//                            bullet.getPhysics().getPosition().add(-perpendicularVector.x * deltaMultiplier, -perpendicularVector.y * deltaMultiplier);
+//                            deltaMultiplier += 1;
+//                        }
+//                        this.getGameObjectManager().addProjectiles(bullet);
+//
+//
+//                    }
+//
+//
+//                }
                 //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
 
                 else {
-                    this.getGameObjectManager().addProjectiles(new Projectile(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2), newHeadVector, 250f, 10f, 10f));
+                    Projectile bullet = new Projectile();
+                    bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
+                    bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
+                    this.getGameObjectManager().addProjectiles(bullet);
                 }
 
             } else {
@@ -926,8 +1017,9 @@ public class GameStateManager extends ApplicationAdapter {
 
     //    enum InputKeys { FORWARD,BACKWARD,LEFT,RIGHT,FORWARD_RIGHT,FORWARD_LEFT,BACKWARD_RIGHT,BACKWARD_LEFT}
     public void create() {
-//This will get your preferences from storage
-        prefs = Gdx.app.getPreferences("SaveData");
+
+        //This will get your preferences from storage
+
 ////If the preference key is empty, create it by putting a value into it
 //        if (!prefs.contains("key")) prefs.putInteger("key", 1337);
 //
@@ -940,15 +1032,20 @@ public class GameStateManager extends ApplicationAdapter {
 ////This will finally save the changes to storage
 //        prefs.flush();
 
-
+        //-------------------------------------------------
+/**
+ * @TODO Implement Save and Load feature
+ */
+        prefs = Gdx.app.getPreferences("SaveData");
+        //---------------------------------------------------
         player = new Player();
         enemy = new Enemy();
         enemy.getPhysics().setDirectionVector(0, 1);
         font = new BitmapFont();
-
         fontSpriteBatch = new SpriteBatch();
-
+        //Input Manager
         Gdx.input.setInputProcessor(new GameInputProcessor());
+
 
 //        String fileName = "helloworld.txt";
 ////        boolean testFileExists = Gdx.files.local(fileName).exists();
@@ -1029,8 +1126,13 @@ public class GameStateManager extends ApplicationAdapter {
         // integrate by propagating time
         for (Projectile p : player.getGameObjectManager().getProjectiles()) {
             p.update(deltaTime);
+
+
+            //if projectile in camera view: draw
+            //if not in camera view, do not draw
             p.getGraphics().drawSprite();
         }
+
 
         //----------------------------------------------------------------------------------------
         /*
@@ -1044,15 +1146,16 @@ public class GameStateManager extends ApplicationAdapter {
          * */
         for (Projectile p : player.getGameObjectManager().getProjectiles()) {
             if (p.getPhysics().hasCollided(enemy) || p.getPhysics().getPosition().x < 0 || p.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
-                player.getGameObjectManager().addProjectilesToRemove(p);
+                player.getGameObjectManager().addInGameObjectsToRemove(p);
             }
+
         }
 
         if (enemy.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
             enemy.getPhysics().setPosition(0, 0);
         }
 
-        player.getGameObjectManager().getProjectiles().removeAll(player.getGameObjectManager().getRemoveAllProjectiles(), false);
+        player.getGameObjectManager().getProjectiles().removeAll(player.getGameObjectManager().getGarbageCollection(), false);
 
     }
 
@@ -1085,6 +1188,9 @@ public class GameStateManager extends ApplicationAdapter {
         /**
          * WIll BE WRITING DATA TO FILE HERE
          */
+
+//        prefs.putString("PlayerPosition:", player.getPhysics().getPosition().toString());
+//        prefs.flush();
 //        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
 
         //update preferences

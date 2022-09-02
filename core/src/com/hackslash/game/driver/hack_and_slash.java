@@ -250,7 +250,11 @@ public class hack_and_slash extends ApplicationAdapter {
                 newVelocity.set(this.velocity.sub(object.velocity));
 
                 // Compute the impulse (see Essential Math for Game Programmers)
-                float impulse = (-(1 + COLLISION_COEF) * normal.dot(newVelocity)) / (normal.dot(normal) * (1 / this.mass + 1 / object.mass));
+                float impulse = (
+                        -(1 + COLLISION_COEF) * normal.dot(newVelocity))
+                        /
+                        (normal.dot(normal) * (1 / this.mass + 1 / object.mass)
+                        );
                 //Change velocity of two object using this impulse
                 temp.set(normal).scl(impulse / this.mass);
                 this.velocity.add(temp);
@@ -591,7 +595,7 @@ public class hack_and_slash extends ApplicationAdapter {
         player.sprite.draw(player.batch);
         projectile.sprite.draw(player.batch);
         projectile2.sprite.draw(player.batch);
-        enemy.sprite.draw(player.batch);
+//        enemy.sprite.draw(player.batch);
 
         for (gameObject b : manager.getCollectionOfBullets()) {
             b.sprite.draw(player.batch);
@@ -626,13 +630,13 @@ public class hack_and_slash extends ApplicationAdapter {
 
 
         //TESTING FUNCTIONS
-        enemy.performImpulseCollision(player);
-        enemy.position.x += 1;
-
-
-        if (enemy.position.y > Gdx.graphics.getWidth()) {
-            enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
-        }
+//        enemy.performImpulseCollision(player);
+//        enemy.position.x += 1;
+//
+//
+//        if (enemy.position.y > Gdx.graphics.getWidth()) {
+//            enemy.position.set(Gdx.graphics.getWidth() / 16, Gdx.graphics.getHeight() / 16);
+//        }
 
 
         //update all objects
