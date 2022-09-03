@@ -120,7 +120,7 @@ public class hack_and_slash extends ApplicationAdapter {
 
     /*
      *
-     * Any in-game entity that can be destroyed,created or interacted with
+     * Any in-game entity that` can be destroyed,created or interacted with
      *   -exp drops
      *   -the player
      *   -enemies

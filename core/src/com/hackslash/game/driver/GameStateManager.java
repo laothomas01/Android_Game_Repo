@@ -99,7 +99,7 @@ class Graphics2D {
 class Physics2D {
 
     //adds a slight bounce to a colliding object with impulse
-    float COLLISION_COEF;
+    float COLLISION_COEF = 1.0f;
     Vector2 position;
     Vector2 directionVector;
     Vector2 acceleration;
@@ -107,22 +107,21 @@ class Physics2D {
     Vector2 normalVector;
     Vector2 tempNormalVector;
     Vector2 tempNewDirectionVector;
-    float radians;
-    float moveSpeed;
+    float radians = 0f;
+    float moveSpeed = 0f;
     float angularSpeed;
-    float width;
-    float height;
-    float mass;
+    float width = 0;
+    float height = 0;
+    float mass = 1.0f;
     float distanceFrom;
     float impactDistance;
 
+    float orbitDistance;
     boolean isCollided;
 
 
     public Physics2D() {
 
-
-        COLLISION_COEF = 1.0f;
         tempNormalVector = new Vector2();
         position = new Vector2();
         directionVector = new Vector2();
@@ -130,14 +129,10 @@ class Physics2D {
         angularVelocity = new Vector2();
         normalVector = new Vector2();
         tempNewDirectionVector = new Vector2();
-        width = 0;
-        height = 0;
-        mass = 1.0f;
-        radians = 0f;
-        moveSpeed = 0f;
         angularSpeed = 0f;
         distanceFrom = 0f;
         impactDistance = 0f;
+        orbitDistance = 0f;
         isCollided = false;
     }
 
@@ -233,16 +228,6 @@ class Physics2D {
         return this.mass;
     }
 
-//    public boolean hasCollided(InGameObject obj) {
-//        setNormalVector(this.getPosition().sub(obj.getPhysics().getPosition()));
-//        this.setDistanceBetween(this.getNormalVector().len());
-//        this.setImpactDistance(this.getWidth() + obj.getPhysics().getWidth());
-//        this.getNormalVector().nor();
-//        if (this.getDistanceBetween() < this.getImpactDistance()) {
-//            return true;
-//        }
-//        return false;
-//    }
 
     public void move(float dt) {
         this.getPosition().add(this.getDirectionVector().x * this.getMoveSpeed() * dt, this.getDirectionVector().y * this.getMoveSpeed() * dt);
@@ -262,6 +247,7 @@ class Physics2D {
         return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
     }
 
+    // ------------------------ ROTATIONS ----------------------
     public float getRadians() {
         return radians;
     }
@@ -279,6 +265,26 @@ class Physics2D {
         }
     }
 
+    public Vector2 getAngularVelocity() {
+        return this.angularVelocity;
+    }
+
+    public void setOrbitDistance(float dist) {
+        this.orbitDistance = dist;
+    }
+
+    public void rotateAround(Entity target) {
+        this.increaseRotationAngle();
+        getAngularVelocity().set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
+        this.getDirectionVector().set(orbitDistance * getAngularVelocity().x, orbitDistance * getAngularVelocity().y);
+        getPosition().set(
+                target.getPhysics().getPosition().x + getDirectionVector().x,
+                target.getPhysics().getPosition().y + getDirectionVector().y
+        );
+
+    }
+
+    // ---------------------------------------------------------------
 
     //perform basic circular motion around the parameterized object
 //    public void rotateAround(hack_and_slash.InGameObject parent) {
@@ -319,7 +325,6 @@ class Physics2D {
 
         if (hasCollided(object)) {
 
-
             //temporary normal vector to hold values used for changing normal vector
             getTempNormalVector().set(getNormalVector().scl(getImpactDistance() - getDistanceBetween() / 2));
 
@@ -340,7 +345,6 @@ class Physics2D {
             getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
             getDirectionVector().add(tempNormalVector);
             getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
-
             object.getPhysics().getDirectionVector().sub(getTempNormalVector());
 
         }
@@ -389,6 +393,25 @@ class GameObjectManager {
     Array<Projectile> projectiles;
     //handle removal of all game objects
     Array<Entity> garbageCollection;
+//    Vector2 centerOfRotation = new Vector2(AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2);
+//    float orbitDistance = 100;
+//    float rotationSpeed = .03f;
+//
+//    public void increaseSpawnRotation()
+//    {
+//
+//    }
+//    int SOUTH_SPAWN_MAX = -1;
+//    int SOUTH_SPAWN_MIN = -800;
+//
+//    int NORTH_SPAWN_MIN = 801;
+//    int NORTH_SPAWN_MAX = 1000;
+//
+//    int WEST_SPAWN_MIN = -600;
+//    int WEST_SPAWN_MAX = -1;
+//
+//    int EAST_SPAWN_MIN = 601;
+//    int EAST_SPAWN_MAX
 
     public GameObjectManager() {
         projectiles = new Array<>();
@@ -435,23 +458,57 @@ class GameObjectManager {
 
 
     public void spawnEnemies(float dt, Entity target) {
-        int randomSpawner = MathUtils.random(1, 4);
+
         /**
          * @TODO need to regulate how fast spawning will be with a timer
          * @TODO fix spawn positions
          */
 
-        if (getEnemies().size < getMAX_ENEMIES()) {
-            if (randomSpawner == 4) {
-                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-            } else if (randomSpawner == 3) {
-                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-            } else if (randomSpawner == 2) {
-                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-            } else {
-                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-            }
+        /**
+         * These will be fixed spawn positions.
+         */
+        for (int i = 0; i < MAX_ENEMIES; i++) {
+            Enemy e = new Enemy();
+
+
+//            switch () {
+//                case 8:
+//                    e.getPhysics().setPosition(, );
+//                    break;
+//                case 7:
+//                    e.getPhysics().setPosition(, );
+//                    break;
+//                case 6:
+//                    e.getPhysics().setPosition(, );
+//                    break;
+//                case 5:
+//
+//                    break;
+//                case 4:
+//                    break;
+//                case 3:
+//                    break;
+//                case 2:
+//                    break;
+//                case 1:
+//                    break;
+//                default:
+//                    break;
+//
+//            }
         }
+//            if (randomSpawner == 8) {
+//                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+//            } else if (randomSpawner == 7) {
+//                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+//            } else if (randomSpawner == 6) {
+//                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+//            }
+//
+//            else {
+//                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+//            }
+//        }
 
 
         for (Enemy e : getEnemies()) {
@@ -852,8 +909,8 @@ public class GameStateManager extends ApplicationAdapter {
 
     float deltaTime;
     Player player;
-    Graphics2D settings;
-    GameObjectManager objectSpawner;
+    Projectile test;
+    Graphics2D systemInfo;
 
     //    Enemy enemy;
     //    enum InputKeys { FORWARD,BACKWARD,LEFT,RIGHT,FORWARD_RIGHT,FORWARD_LEFT,BACKWARD_RIGHT,BACKWARD_LEFT}
@@ -875,14 +932,19 @@ public class GameStateManager extends ApplicationAdapter {
 
         //-------------------------------------------------
         //---------------------------------------------------
-        settings = new Graphics2D();
+        systemInfo = new Graphics2D();
         player = new Player();
 //        enemy = new Enemy();
 //        enemy.getPhysics().setDirectionVector(0, 1);
 
         //Input Manager
+        test = new Projectile();
+        test.getPhysics().setOrbitDistance(100);
+        test.getPhysics().setPosition(player.getPhysics().getPosition().x + test.getPhysics().orbitDistance, player.getPhysics().getPosition().y + test.getPhysics().orbitDistance);
+        test.getGraphics().setColor(Color.RED);
+        test.update(deltaTime);
         Gdx.input.setInputProcessor(new GameInputProcessor());
-        objectSpawner = new GameObjectManager();
+//        objectSpawner = new GameObjectManager();
 
 //        String fileName = "helloworld.txt";
 ////        boolean testFileExists = Gdx.files.local(fileName).exists();
@@ -947,11 +1009,15 @@ public class GameStateManager extends ApplicationAdapter {
         //TESTING SKILL MANAGER
 //        player.shoot(enemy, deltaTime);
 
-        settings.drawFontSprite();
+        systemInfo.drawFontSprite();
         player.getGraphics().drawSprite();
 //        enemy.getGraphics().drawSprite();
         player.update(deltaTime);
-        objectSpawner.spawnEnemies(deltaTime, player);
+
+
+        test.getGraphics().drawSprite();
+
+//        objectSpawner.spawnEnemies(deltaTime, player);
 //        if (!objectSpawner.getEnemies().isEmpty()) {
 //            for (Enemy e : objectSpawner.getEnemies()) {
 //                e.update(deltaTime);
