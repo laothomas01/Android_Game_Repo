@@ -1,7 +1,6 @@
 package com.hackslash.game.driver;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,14 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.hackslash.game.model.GameObject;
-import jdk.nashorn.internal.ir.PropertyKey;
 import com.badlogic.gdx.Input.Keys;
-
-import java.io.File;
-import java.io.IOException;
 /**
  * REFERENCE LINKS:
  * <p>
@@ -100,6 +92,10 @@ class Graphics2D {
 }
 
 //maintain all current physics calculation
+
+/**
+ * PHYSICS 2D ENGINE
+ */
 class Physics2D {
 
     //adds a slight bounce to a colliding object with impulse
@@ -254,13 +250,13 @@ class Physics2D {
 
 
     //change object direction based on target position
-    public void moveTowards(InGameObject target, float dt) {
+    public void moveTowards(Entity target, float dt) {
         float radians = getAngleBetweenTwoVectors(target);
         this.setDirectionVector(MathUtils.cos(radians), MathUtils.sin(radians));
     }
 
     //get angle between target position and calling game object's position
-    public float getAngleBetweenTwoVectors(InGameObject target) {
+    public float getAngleBetweenTwoVectors(Entity target) {
         //destination                       source
 
         return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
@@ -306,7 +302,7 @@ class Physics2D {
     }
 
 
-    public boolean hasCollided(InGameObject target) {
+    public boolean hasCollided(Entity target) {
         this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
         this.setDistanceBetween(getNormalVector().len());
         this.setImpactDistance((this.getWidth() + target.getPhysics().getWidth()) / 1.8f);
@@ -319,7 +315,7 @@ class Physics2D {
 
     }
 
-    public void performImpulseCollision(InGameObject object) {
+    public void performImpulseCollision(Entity object) {
 
         if (hasCollided(object)) {
 
@@ -390,9 +386,8 @@ class GameObjectManager {
     //a chosen number range from 1->4(inclusively) will determine the spawn position of an enemy object
     Array<Enemy> enemies;
     Array<Projectile> projectiles;
-
     //handle removal of all game objects
-    Array<InGameObject> garbageCollection;
+    Array<Entity> garbageCollection;
 
     public GameObjectManager() {
         projectiles = new Array<>();
@@ -420,7 +415,7 @@ class GameObjectManager {
         projectiles.add(b);
     }
 
-    public Array<InGameObject> getGarbageCollection() {
+    public Array<Entity> getGarbageCollection() {
         return garbageCollection;
     }
 
@@ -428,22 +423,18 @@ class GameObjectManager {
         return projectiles.toString();
     }
 
-    public void addInGameObjectsToRemove(InGameObject b) {
+    public void addInGameObjectsToRemove(Entity b) {
         garbageCollection.add(b);
     }
 
-//    public int getSpawnRandomizer() {
-//        return this.enemySpawnRandomizer;
-//    }
 
-
-    public void spawnEnemies(float dt, InGameObject target) {
+    public void spawnEnemies(float dt, Entity target) {
         int randomSpawner = MathUtils.random(1, 4);
         /**
          * @TODO need to regulate how fast spawning will be with a timer
+         * @TODO fix spawn positions
          */
 
-        //fix these spawn positions
         if (randomSpawner == 4) {
             addEnemies(new Enemy(AppManager.getScreenWidth() / 2, -AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
         } else if (randomSpawner == 3) {
@@ -454,11 +445,10 @@ class GameObjectManager {
             addEnemies(new Enemy(AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
         }
 
-//        System.out.println(this.getEnemies().toString());
 
         for (Enemy e : getEnemies()) {
 
-            //
+            //if an enemy entity is outside the viewport, do not render the object
             if (
                 //if position > (800,600)
                     (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight())
@@ -471,9 +461,13 @@ class GameObjectManager {
                             //if position.x < 0
                             e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0
                             ||
-                            //if positon < (0,0)
+                            //if position < (0,0)
                             e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0
             ) {
+                /**
+                 * if enemy not in viewport, dont render
+                 */
+
                 e.update(dt);
                 e.getPhysics().moveTowards(target, dt);
             } else {
@@ -481,39 +475,28 @@ class GameObjectManager {
                 e.getGraphics().drawSprite();
                 e.getPhysics().moveTowards(target, dt);
             }
-//            if (e != null) {
-            /**
-             * if enemy not in camera view or game screen, dont render
-             */
         }
-//        }
-//        }
 
     }
 
     public void spawnBullets(float dt) {
         for (Projectile p : projectiles) {
-
             p.update(dt);
-
         }
-        //if projectile not in camera view, do not draw it and destroy the object
-
-        //else, render the object
     }
 
 }
 
-
-class InGameObject {
+/**
+ * An Entity is an object that can be transformed, scaled, or rotated
+ */
+class Entity {
     //physics2D manager
     Physics2D physics;
-
     //graphics2D manager
     Graphics2D graphics;
 
-
-    public InGameObject() {
+    public Entity() {
         //give your game objects a physics2D component
         physics = new Physics2D();
         graphics = new Graphics2D();
@@ -536,15 +519,14 @@ class InGameObject {
         this.getPhysics().move(dt);
     }
 
-
-    public void shoot(InGameObject target, float dt) {
+    public void shoot(Entity target, float dt) {
 
     }
 
 }
 
 
-class Projectile extends InGameObject {
+class Projectile extends Entity {
 
     Projectile() {
         this.getPhysics().setSize(10f, 10f);
@@ -571,7 +553,7 @@ class Projectile extends InGameObject {
 }
 
 
-class Enemy extends InGameObject {
+class Enemy extends Entity {
     public Enemy() {
         this.getPhysics().setPosition(1, 0);
         this.getPhysics().setDirectionVector(1, 1);
@@ -603,24 +585,6 @@ class Enemy extends InGameObject {
 }
 
 
-/*
- *
- * A skill is an upgradable action that cna be performed by the player
- *
- * // we will make this less universal for more specific types of skills later on
- *
- * // consider if we want to swap out skills for a different type of skill
- *
- * //consider that we need to persist the levels of the currently leveled up skill
- *
- * //we will have a gui or some kind of console interaction to check on how skills are created.
- *
- * //basically, based on the skill selected, its data will be parsed and put into a skill class.
- *
- * //we will use that data generated from a skill object to determine the number of objects the player can shoot.
- *
- *
- */
 class Skill {
 
     float projectileCount;

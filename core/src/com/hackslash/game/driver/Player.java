@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-public class Player extends InGameObject {
+public class Player extends Entity {
     GameObjectManager InGameObjectManager;
     Array<Skill> skills;
 
@@ -70,7 +70,7 @@ public class Player extends InGameObject {
     }
 
 
-    public void shoot(InGameObject target, float dt) {
+    public void shoot(Entity target, float dt) {
 
         //angle(in radians) used to find the direction for shooting at target
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
