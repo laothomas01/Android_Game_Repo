@@ -385,6 +385,7 @@ class GameObjectManager {
 
     //a chosen number range from 1->4(inclusively) will determine the spawn position of an enemy object
     Array<Enemy> enemies;
+    int MAX_ENEMIES = 10;
     Array<Projectile> projectiles;
     //handle removal of all game objects
     Array<Entity> garbageCollection;
@@ -392,6 +393,7 @@ class GameObjectManager {
     public GameObjectManager() {
         projectiles = new Array<>();
         enemies = new Array<>();
+
         garbageCollection = new Array<>();
     }
 
@@ -427,6 +429,10 @@ class GameObjectManager {
         garbageCollection.add(b);
     }
 
+    public int getMAX_ENEMIES() {
+        return MAX_ENEMIES;
+    }
+
 
     public void spawnEnemies(float dt, Entity target) {
         int randomSpawner = MathUtils.random(1, 4);
@@ -435,46 +441,42 @@ class GameObjectManager {
          * @TODO fix spawn positions
          */
 
-        if (randomSpawner == 4) {
-            addEnemies(new Enemy(AppManager.getScreenWidth() / 2, -AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
-        } else if (randomSpawner == 3) {
-            addEnemies(new Enemy(-AppManager.getScreenWidth() / 2, -AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
-        } else if (randomSpawner == 2) {
-            addEnemies(new Enemy(-AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
-        } else {
-            addEnemies(new Enemy(AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
+        if (getEnemies().size < getMAX_ENEMIES()) {
+            if (randomSpawner == 4) {
+                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+            } else if (randomSpawner == 3) {
+                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+            } else if (randomSpawner == 2) {
+                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+            } else {
+                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+            }
         }
 
 
         for (Enemy e : getEnemies()) {
-
             //if an enemy entity is outside the viewport, do not render the object
+            e.update(dt);
             if (
                 //if position > (800,600)
-                    (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight())
-                            ||
+                    (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight()) ||
                             //if position > (0,800)
                             //if position.x < 0
-                            e.getPhysics().getPosition().y > AppManager.getScreenHeight() || e.getPhysics().getPosition().y < 0
-                            ||
+                            e.getPhysics().getPosition().y > AppManager.getScreenHeight() || e.getPhysics().getPosition().y < 0 ||
                             //if position > (0,600)
                             //if position.x < 0
-                            e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0
-                            ||
+                            e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0 ||
                             //if position < (0,0)
-                            e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0
-            ) {
+                            e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0) {
                 /**
                  * if enemy not in viewport, dont render
                  */
-
-                e.update(dt);
                 e.getPhysics().moveTowards(target, dt);
             } else {
-                e.update(dt);
                 e.getGraphics().drawSprite();
                 e.getPhysics().moveTowards(target, dt);
             }
+
         }
 
     }
