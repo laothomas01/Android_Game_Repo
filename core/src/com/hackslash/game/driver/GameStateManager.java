@@ -46,8 +46,12 @@ class Graphics2D {
     Texture texture;
     Color color;
     SpriteBatch spriteBatch;
+    private SpriteBatch fontSpriteBatch;
+    private BitmapFont font;
 
     public Graphics2D() {
+        font = new BitmapFont();
+        fontSpriteBatch = new SpriteBatch();
         texture = new Texture("circle.png");
         sprite = new Sprite(texture);
         color = new Color();
@@ -82,6 +86,14 @@ class Graphics2D {
         this.getSpriteBatch().begin();
         this.getSprite().draw(this.getSpriteBatch());
         this.getSpriteBatch().end();
+    }
+
+    public void drawFontSprite() {
+        fontSpriteBatch.begin();
+
+        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
+
+        fontSpriteBatch.end();
     }
 
 
@@ -245,7 +257,6 @@ class Physics2D {
     public void moveTowards(InGameObject target, float dt) {
         float radians = getAngleBetweenTwoVectors(target);
         this.setDirectionVector(MathUtils.cos(radians), MathUtils.sin(radians));
-        move(dt);
     }
 
     //get angle between target position and calling game object's position
@@ -370,33 +381,35 @@ class Physics2D {
 }
 
 
-/*
-
- PERFORMS CRUD OPERATIONS ON GAME OBJECTS
-
--loading Projectiles
--inventory systems
--removing objects
-
+/**
+ * Handles CRUD operations on game objects
  */
 
 class GameObjectManager {
-    int spawnRandomizer;
+
+    //a chosen number range from 1->4(inclusively) will determine the spawn position of an enemy object
     Array<Enemy> enemies;
     Array<Projectile> projectiles;
 
-    //handle remove of all game objects
-    Array<Projectile> garbageCollection;
+    //handle removal of all game objects
+    Array<InGameObject> garbageCollection;
 
     public GameObjectManager() {
-        spawnRandomizer = MathUtils.random(1, 4);
         projectiles = new Array<>();
         enemies = new Array<>();
         garbageCollection = new Array<>();
     }
 
+    public void setEnemyCollectionSize(int size) {
+        this.enemies.setSize(size);
+    }
+
     public Array<Enemy> getEnemies() {
         return enemies;
+    }
+
+    public void addEnemies(Enemy e) {
+        this.enemies.add(e);
     }
 
     public Array<Projectile> getProjectiles() {
@@ -407,7 +420,7 @@ class GameObjectManager {
         projectiles.add(b);
     }
 
-    public Array<Projectile> getGarbageCollection() {
+    public Array<InGameObject> getGarbageCollection() {
         return garbageCollection;
     }
 
@@ -415,10 +428,79 @@ class GameObjectManager {
         return projectiles.toString();
     }
 
-    public void addInGameObjectsToRemove(Projectile b) {
+    public void addInGameObjectsToRemove(InGameObject b) {
         garbageCollection.add(b);
     }
 
+//    public int getSpawnRandomizer() {
+//        return this.enemySpawnRandomizer;
+//    }
+
+
+    public void spawnEnemies(float dt, InGameObject target) {
+        int randomSpawner = MathUtils.random(1, 4);
+        /**
+         * @TODO need to regulate how fast spawning will be with a timer
+         */
+
+        //fix these spawn positions
+        if (randomSpawner == 4) {
+            addEnemies(new Enemy(AppManager.getScreenWidth() / 2, -AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
+        } else if (randomSpawner == 3) {
+            addEnemies(new Enemy(-AppManager.getScreenWidth() / 2, -AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
+        } else if (randomSpawner == 2) {
+            addEnemies(new Enemy(-AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
+        } else {
+            addEnemies(new Enemy(AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2, 10f, 10f, 100f));
+        }
+
+//        System.out.println(this.getEnemies().toString());
+
+        for (Enemy e : getEnemies()) {
+
+            //
+            if (
+                //if position > (800,600)
+                    (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight())
+                            ||
+                            //if position > (0,800)
+                            //if position.x < 0
+                            e.getPhysics().getPosition().y > AppManager.getScreenHeight() || e.getPhysics().getPosition().y < 0
+                            ||
+                            //if position > (0,600)
+                            //if position.x < 0
+                            e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0
+                            ||
+                            //if positon < (0,0)
+                            e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0
+            ) {
+                e.update(dt);
+                e.getPhysics().moveTowards(target, dt);
+            } else {
+                e.update(dt);
+                e.getGraphics().drawSprite();
+                e.getPhysics().moveTowards(target, dt);
+            }
+//            if (e != null) {
+            /**
+             * if enemy not in camera view or game screen, dont render
+             */
+        }
+//        }
+//        }
+
+    }
+
+    public void spawnBullets(float dt) {
+        for (Projectile p : projectiles) {
+
+            p.update(dt);
+
+        }
+        //if projectile not in camera view, do not draw it and destroy the object
+
+        //else, render the object
+    }
 
 }
 
@@ -489,227 +571,30 @@ class Projectile extends InGameObject {
 }
 
 
-class Player extends InGameObject {
-    GameObjectManager InGameObjectManager;
-    Array<Skill> skills;
-
-    Player() {
-        skills = new Array<>();
-        /**
-         * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.
-         * @TODO improper projectile counts will cause data leakage into other skills.
-         *
-         */
-
-        /**
-         * Leveling up Basic Shoot Skill:
-         *
-         */
-        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
-
-        /**
-         * Leveling up Parallel Shoot Skill
-         */
-        //this only takes care of even numbers of projectiles
-        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
-
-        /**
-         * Leveling up the fan shoot skill
-         */
-        //this only accounts for odd number of projectiles right now
-        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
-
-
-        InGameObjectManager = new GameObjectManager();
-        this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        graphics.setTexture("square.png");
-        this.getPhysics().setSize(10f, 10f);
-        this.getPhysics().setMoveSpeed(100f);
-        graphics.setColor(Color.BLUE);
-    }
-
-    public Array<Skill> getSkills() {
-        return skills;
-    }
-
-
-    //we will use this when players collect skill
-    public void addSkill(Skill skill) {
-        skills.add(skill);
-    }
-
-    public Skill getSkill(int i) {
-        return skills.get(i);
-    }
-
-    //---------------------------------------------------------------------------------
-
-    public GameObjectManager getGameObjectManager() {
-        return InGameObjectManager;
-    }
-
-    public String toString() {
-        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition();
-    }
-
-
-    public void shoot(InGameObject target, float dt) {
-
-        //angle(in radians) used to find the direction for shooting at target
-        float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
-
-        //new shoot direction
-        Vector2 newHeadVector = new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
-
-
-        //will be used to scale offset perpendicular distances
-        //can be used to expand or shrink the distance between the projectiles and the center
-        float deltaMultiplier = 0.0f;
-
-        // (this needs to be initialized inside the skill class)
-        float perpendicularOffsetDistance = 10.0f;
-        Vector2 perpendicularVector = new Vector2(-newHeadVector.y * perpendicularOffsetDistance, newHeadVector.x * perpendicularOffsetDistance);
-
-
-        for (int i = 0; i < this.getSkills().size; i++) {
-            //if the cool down flag has been set and cool down timer has finished resetting
-            if (this.getSkill(i).hasFinishedCoolDown()) {
-
-                //reset the skill's cooldown timer , set the cooldown flag to false
-                this.getSkill(i).update(this.getSkill(i).getMaxCoolDownTimer(), false);
-
-
-                //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
-                if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getDeltaAngle() >= 1 && this.getSkill(i).getProjectileCount() % 2 == 1) {
-
-                    //delta angle converted to radians
-                    float offsetRadians = this.getSkill(i).getDeltaAngle() * MathUtils.PI / 180;
-
-                    //offset angle multiplier
-                    deltaMultiplier = 1;
-                    //general unchanged bullet used during production
-
-                    //create bullets based on number of projectiles
-                    for (int j = 0; j < this.getSkill(i).getProjectileCount(); j++) {
-                        Projectile bullet = new Projectile();
-                        //set bullet move direction
-                        bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
-                        bullet.getGraphics().setColor(Color.PINK);
-                        bullet.getPhysics().setMoveSpeed(250f);
-                        bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
-                        System.out.println("FAN SHOOT!");
-                        /**
-                         * If any object collides within the boundaries of the distance between the center and left or right bullet, kill the enemy.
-                         */
-//                        //general unchanged bullet used during production
-//                        Projectile bullet = new Projectile();
-//                        //set bullet move direction
-//                        bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
-//                        bullet.getGraphics().setColor(Color.PINK);
-//                        bullet.getPhysics().setMoveSpeed(100f);
-//                        bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
-                        //if bullet index = odd
-                        if (j >= 1 && j % 2 == 1) {
-                            bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians + (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians + (offsetRadians * deltaMultiplier))));
-                        } else if (j >= 1 && j % 2 == 0) {
-
-
-                            //if bullet index = even
-                            bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians - (offsetRadians * deltaMultiplier)), MathUtils.sin(shootRadians - (offsetRadians * deltaMultiplier))));
-                            //ever even bullet, once we set the current bullet direction vector, we increment the deltaMultiplier
-                            deltaMultiplier += 1;
-                        }
-
-                        this.getGameObjectManager().addProjectiles(bullet);
-                    }
-
-
-                }
-
-                //----------------------------------Odd Numbered Fan Shot Production Rule----------------------------------
-
-
-                //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
-//                else if (this.getSkill(i).getProjectileCount() > 1 && this.getSkill(i).getProjectileCount() % 2 == 0) {
-//                    //---------------Bug testing---------------
-//                    System.out.println(this.getSkill(i).getProjectileCount());
-//                    System.out.println("PARALLEL SHOOT!");
-//                    //----------------------------------------
-//                    //this will be used to shrink the gap distance between the bullets and their "center"
-//                    deltaMultiplier = 0.5f;
-//
-//
-//                    for (int j = 1; j <= this.getSkill(i).getProjectileCount(); j++) {
-////                        Projectile bullet = new Projectile();
-////                        bullet.getPhysics().setDirectionVector(newHeadVector);
-//                        bullet.getGraphics().setColor(Color.RED);
-//                        /*
-//                         * EQUATION:
-//                         *
-//                         * symbols:
-//                         * Pf = final position
-//                         * Pc = current position
-//                         *
-//                         *
-//                         *
-//                         * */
-//                        if (j % 2 == 1) {
-//                            bullet.getPhysics().getPosition().add(perpendicularVector.x * deltaMultiplier, perpendicularVector.y * deltaMultiplier);
-//                        } else {
-//                            bullet.getPhysics().getPosition().add(-perpendicularVector.x * deltaMultiplier, -perpendicularVector.y * deltaMultiplier);
-//                            deltaMultiplier += 1;
-//                        }
-//                        this.getGameObjectManager().addProjectiles(bullet);
-//
-//
-//                    }
-//
-//
-//                }
-                //----------------------------------Even Numbered Parallel Shoot Production Rule----------------------------------
-
-                else {
-                    Projectile bullet = new Projectile();
-                    bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians)));
-                    bullet.getPhysics().setPosition(new Vector2((bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x, (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
-                    this.getGameObjectManager().addProjectiles(bullet);
-                }
-
-            } else {
-                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
-            }
-
-        }
-
-    }
-
-
-    /*
-     *
-     *
-     * Note: key notes to keep in mind: production of projectiles is contingent upon skills being off cooldown, collision, maybe lifespan.
-     * -we do not want an overlap of sklls hapenning at the same time and inteference between the current and next skill
-     * -skills should be variant to collision, lifespan or whatever state the current skill and its set of objects.
-     * -production of projectiles should not be affected by the state of the cooldown
-     *
-     *
-     *
-     * -have a projectile cleanup
-     * -have a projectile producer
-     *
-     *
-     * */
-
-}
-
 class Enemy extends InGameObject {
     public Enemy() {
         this.getPhysics().setPosition(1, 0);
-        graphics.setTexture("square.png");
+        this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setSize(10f, 10f);
         graphics.setColor(Color.RED);
         this.getPhysics().setMoveSpeed(40f);
     }
+
+    //AppManager.getScreenWidth()/2,AppManager.getScreenHeight()/2
+    public Enemy(Vector2 position, float width, float height, float speed) {
+        this.getPhysics().setPosition(position);
+        this.getPhysics().setSize(width, height);
+        this.getPhysics().setMoveSpeed(speed);
+        graphics.setColor(Color.RED);
+    }
+
+    public Enemy(float x, float y, float width, float height, float speed) {
+        this.getPhysics().setPosition(x, y);
+        this.getPhysics().setSize(width, height);
+        this.getPhysics().setMoveSpeed(speed);
+        graphics.setColor(Color.RED);
+    }
+
 
     public String toString() {
         return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed();
@@ -866,19 +751,6 @@ class Skill {
 }
 
 
-class AppManager {
-    Preferences prefs;
-
-    public AppManager() {
-        prefs = Gdx.app.getPreferences("Settings");
-    }
-
-    public Preferences getPreferences() {
-        return prefs;
-    }
-
-}
-
 /**
  * This will be for desktop platform
  */
@@ -1004,17 +876,20 @@ class GameKeys {
 
 }
 
-//Should really be a gameplay manager
+/**
+ * CRUD operations on the state of the game
+ * <p>
+ * -initializations, closing the app, running the app
+ */
 public class GameStateManager extends ApplicationAdapter {
+
 
     float deltaTime;
     Player player;
-    Enemy enemy;
-    private SpriteBatch fontSpriteBatch;
-    private BitmapFont font;
-    Preferences prefs;
+    Graphics2D settings;
+    GameObjectManager objectSpawner;
 
-
+    //    Enemy enemy;
     //    enum InputKeys { FORWARD,BACKWARD,LEFT,RIGHT,FORWARD_RIGHT,FORWARD_LEFT,BACKWARD_RIGHT,BACKWARD_LEFT}
     public void create() {
 
@@ -1033,19 +908,15 @@ public class GameStateManager extends ApplicationAdapter {
 //        prefs.flush();
 
         //-------------------------------------------------
-/**
- * @TODO Implement Save and Load feature
- */
-        prefs = Gdx.app.getPreferences("SaveData");
         //---------------------------------------------------
+        settings = new Graphics2D();
         player = new Player();
-        enemy = new Enemy();
-        enemy.getPhysics().setDirectionVector(0, 1);
-        font = new BitmapFont();
-        fontSpriteBatch = new SpriteBatch();
+//        enemy = new Enemy();
+//        enemy.getPhysics().setDirectionVector(0, 1);
+
         //Input Manager
         Gdx.input.setInputProcessor(new GameInputProcessor());
-
+        objectSpawner = new GameObjectManager();
 
 //        String fileName = "helloworld.txt";
 ////        boolean testFileExists = Gdx.files.local(fileName).exists();
@@ -1108,30 +979,28 @@ public class GameStateManager extends ApplicationAdapter {
         //test game keys
         handleKeyBoardInput();
         //TESTING SKILL MANAGER
-        player.shoot(enemy, deltaTime);
+//        player.shoot(enemy, deltaTime);
 
-
-        fontSpriteBatch.begin();
-
-        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
-
-        fontSpriteBatch.end();
-
-
+        settings.drawFontSprite();
         player.getGraphics().drawSprite();
-        enemy.getGraphics().drawSprite();
+//        enemy.getGraphics().drawSprite();
         player.update(deltaTime);
-        enemy.update(deltaTime);
+        objectSpawner.spawnEnemies(deltaTime, player);
+//        if (!objectSpawner.getEnemies().isEmpty()) {
+//            for (Enemy e : objectSpawner.getEnemies()) {
+//                e.update(deltaTime);
+//            }
+//        }
+
+//        enemy.update(deltaTime);
 
         // integrate by propagating time
-        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
-            p.update(deltaTime);
-
-
-            //if projectile in camera view: draw
-            //if not in camera view, do not draw
-            p.getGraphics().drawSprite();
-        }
+//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
+//            p.update(deltaTime);
+//            //if projectile in camera view: draw
+//            //if not in camera view, do not draw
+//            p.getGraphics().drawSprite();
+//        }
 
 
         //----------------------------------------------------------------------------------------
@@ -1144,18 +1013,20 @@ public class GameStateManager extends ApplicationAdapter {
          *
          * BOUNDARY CHECKING
          * */
-        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
-            if (p.getPhysics().hasCollided(enemy) || p.getPhysics().getPosition().x < 0 || p.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
-                player.getGameObjectManager().addInGameObjectsToRemove(p);
-            }
 
-        }
 
-        if (enemy.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
-            enemy.getPhysics().setPosition(0, 0);
-        }
+//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
+//            if (p.getPhysics().hasCollided(enemy) || p.getPhysics().getPosition().x < 0 || p.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
+//                player.getGameObjectManager().addInGameObjectsToRemove(p);
+//            }
+//
+//        }
+//
+//        if (enemy.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
+//            enemy.getPhysics().setPosition(0, 0);
+//        }
 
-        player.getGameObjectManager().getProjectiles().removeAll(player.getGameObjectManager().getGarbageCollection(), false);
+//        player.getGameObjectManager().addInGameObjectsToRemove();
 
     }
 
