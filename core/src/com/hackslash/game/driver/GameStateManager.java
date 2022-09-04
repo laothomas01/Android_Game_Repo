@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.utils.TimeUtils;
+import sun.jvm.hotspot.utilities.BitMap;
 /**
  * REFERENCE LINKS:
  * <p>
@@ -80,10 +82,19 @@ class Graphics2D {
         this.getSpriteBatch().end();
     }
 
-    public void drawFontSprite() {
+    public BitmapFont getBitMapFont() {
+        return this.font;
+    }
+
+    public SpriteBatch getFontSpriteBatch() {
+        return this.fontSpriteBatch;
+    }
+
+
+    public void drawFontSprite(String message, float posX, float posY) {
         fontSpriteBatch.begin();
 
-        font.draw(fontSpriteBatch, "Upper left, FPS=" + Gdx.graphics.getFramesPerSecond(), 0, Gdx.graphics.getHeight());
+        this.getBitMapFont().draw(this.getFontSpriteBatch(), message, posX, posY);
 
         fontSpriteBatch.end();
     }
@@ -277,10 +288,7 @@ class Physics2D {
         this.increaseRotationAngle();
         getAngularVelocity().set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
         this.getDirectionVector().set(orbitDistance * getAngularVelocity().x, orbitDistance * getAngularVelocity().y);
-        getPosition().set(
-                target.getPhysics().getPosition().x + getDirectionVector().x,
-                target.getPhysics().getPosition().y + getDirectionVector().y
-        );
+        getPosition().set(target.getPhysics().getPosition().x + getDirectionVector().x, target.getPhysics().getPosition().y + getDirectionVector().y);
 
     }
 
@@ -387,36 +395,15 @@ class Physics2D {
 
 class GameObjectManager {
 
-    //a chosen number range from 1->4(inclusively) will determine the spawn position of an enemy object
+
     Array<Enemy> enemies;
-    int MAX_ENEMIES = 10;
     Array<Projectile> projectiles;
     //handle removal of all game objects
     Array<Entity> garbageCollection;
-//    Vector2 centerOfRotation = new Vector2(AppManager.getScreenWidth() / 2, AppManager.getScreenHeight() / 2);
-//    float orbitDistance = 100;
-//    float rotationSpeed = .03f;
-//
-//    public void increaseSpawnRotation()
-//    {
-//
-//    }
-//    int SOUTH_SPAWN_MAX = -1;
-//    int SOUTH_SPAWN_MIN = -800;
-//
-//    int NORTH_SPAWN_MIN = 801;
-//    int NORTH_SPAWN_MAX = 1000;
-//
-//    int WEST_SPAWN_MIN = -600;
-//    int WEST_SPAWN_MAX = -1;
-//
-//    int EAST_SPAWN_MIN = 601;
-//    int EAST_SPAWN_MAX
 
     public GameObjectManager() {
         projectiles = new Array<>();
         enemies = new Array<>();
-
         garbageCollection = new Array<>();
     }
 
@@ -452,12 +439,8 @@ class GameObjectManager {
         garbageCollection.add(b);
     }
 
-    public int getMAX_ENEMIES() {
-        return MAX_ENEMIES;
-    }
 
-
-    public void spawnEnemies(float dt, Entity target) {
+    public void spawnEnemies(float dt, Entity spawner) {
 
         /**
          * @TODO need to regulate how fast spawning will be with a timer
@@ -467,74 +450,37 @@ class GameObjectManager {
         /**
          * These will be fixed spawn positions.
          */
-        for (int i = 0; i < MAX_ENEMIES; i++) {
-            Enemy e = new Enemy();
+
+        //i want an enemy with a given position
 
 
-//            switch () {
-//                case 8:
-//                    e.getPhysics().setPosition(, );
-//                    break;
-//                case 7:
-//                    e.getPhysics().setPosition(, );
-//                    break;
-//                case 6:
-//                    e.getPhysics().setPosition(, );
-//                    break;
-//                case 5:
-//
-//                    break;
-//                case 4:
-//                    break;
-//                case 3:
-//                    break;
-//                case 2:
-//                    break;
-//                case 1:
-//                    break;
-//                default:
-//                    break;
-//
-//            }
-        }
-//            if (randomSpawner == 8) {
-//                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-//            } else if (randomSpawner == 7) {
-//                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, -AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-//            } else if (randomSpawner == 6) {
-//                addEnemies(new Enemy(-AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
+//        addEnemies(new Enemy(new Vector2(spawner.getPhysics().getPosition()), 10, 10, 0));
+
+
+//        for (Enemy e : getEnemies()) {
+//            //if an enemy entity is outside the viewport, do not render the object
+//            e.update(dt);
+//            if (
+//                //if position > (800,600)
+//                    (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight()) ||
+//                            //if position > (0,800)
+//                            //if position.x < 0
+//                            e.getPhysics().getPosition().y > AppManager.getScreenHeight() || e.getPhysics().getPosition().y < 0 ||
+//                            //if position > (0,600)
+//                            //if position.x < 0
+//                            e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0 ||
+//                            //if position < (0,0)
+//                            e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0) {
+//                /**
+//                 * if enemy not in viewport, dont render
+//                 */
+//                e.getPhysics().moveTowards(target, dt);
+//            } else {
+//                e.getGraphics().drawSprite();
+//                e.getPhysics().moveTowards(target, dt);
 //            }
 //
-//            else {
-//                addEnemies(new Enemy(AppManager.getScreenWidth() * 2, AppManager.getScreenHeight() * 2, 10f, 10f, 100f));
-//            }
 //        }
-
-
-        for (Enemy e : getEnemies()) {
-            //if an enemy entity is outside the viewport, do not render the object
-            e.update(dt);
-            if (
-                //if position > (800,600)
-                    (e.getPhysics().getPosition().x > AppManager.getScreenWidth() && e.getPhysics().getPosition().y > AppManager.getScreenHeight()) ||
-                            //if position > (0,800)
-                            //if position.x < 0
-                            e.getPhysics().getPosition().y > AppManager.getScreenHeight() || e.getPhysics().getPosition().y < 0 ||
-                            //if position > (0,600)
-                            //if position.x < 0
-                            e.getPhysics().getPosition().x > AppManager.getScreenWidth() || e.getPhysics().getPosition().x < 0 ||
-                            //if position < (0,0)
-                            e.getPhysics().getPosition().x < 0 && e.getPhysics().getPosition().y < 0) {
-                /**
-                 * if enemy not in viewport, dont render
-                 */
-                e.getPhysics().moveTowards(target, dt);
-            } else {
-                e.getGraphics().drawSprite();
-                e.getPhysics().moveTowards(target, dt);
-            }
-
-        }
 
     }
 
@@ -554,11 +500,13 @@ class Entity {
     Physics2D physics;
     //graphics2D manager
     Graphics2D graphics;
+    boolean canMove;
 
     public Entity() {
         //give your game objects a physics2D component
         physics = new Physics2D();
         graphics = new Graphics2D();
+        canMove = true;
     }
 
     public Graphics2D getGraphics() {
@@ -575,12 +523,23 @@ class Entity {
         graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         graphics.getSprite().setTexture(graphics.getTexture());
         graphics.getSprite().setColor(graphics.getColor());
-        this.getPhysics().move(dt);
+        if (canMove) {
+            this.getPhysics().move(dt);
+        }
     }
 
     public void shoot(Entity target, float dt) {
 
     }
+
+    public boolean ableToMove() {
+        return canMove;
+    }
+
+    public void setAbleToMove(boolean can) {
+        this.canMove = can;
+    }
+
 
 }
 
@@ -908,14 +867,19 @@ public class GameStateManager extends ApplicationAdapter {
 
 
     float deltaTime;
+
+    float testTimer;
     Player player;
     Projectile test;
     Graphics2D systemInfo;
+    GameObjectManager objectSpawner;
+    long startTime;
+    long elapsedTime;
 
     //    Enemy enemy;
     //    enum InputKeys { FORWARD,BACKWARD,LEFT,RIGHT,FORWARD_RIGHT,FORWARD_LEFT,BACKWARD_RIGHT,BACKWARD_LEFT}
     public void create() {
-
+        startTime = TimeUtils.millis();
         //This will get your preferences from storage
 
 ////If the preference key is empty, create it by putting a value into it
@@ -939,12 +903,12 @@ public class GameStateManager extends ApplicationAdapter {
 
         //Input Manager
         test = new Projectile();
-        test.getPhysics().setOrbitDistance(100);
-        test.getPhysics().setPosition(player.getPhysics().getPosition().x + test.getPhysics().orbitDistance, player.getPhysics().getPosition().y + test.getPhysics().orbitDistance);
-        test.getGraphics().setColor(Color.RED);
-        test.update(deltaTime);
+//        test.getPhysics().setOrbitDistance(100);
+        test.getPhysics().setMoveSpeed(0);
+        test.getPhysics().setPosition(player.getPhysics().getPosition().x + 100, player.getPhysics().getPosition().y + 100);
+        test.getGraphics().setColor(Color.PINK);
         Gdx.input.setInputProcessor(new GameInputProcessor());
-//        objectSpawner = new GameObjectManager();
+        objectSpawner = new GameObjectManager();
 
 //        String fileName = "helloworld.txt";
 ////        boolean testFileExists = Gdx.files.local(fileName).exists();
@@ -999,66 +963,36 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void render() {
-
+        //        systemInfo.drawFontSprite("TIME:" + elapsedTime, 0, 0);
+//        elapsedTime = TimeUtils.timeSinceMillis(startTime) / 1000;
+        //time between current and next frame
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //test game keys
         handleKeyBoardInput();
-        //TESTING SKILL MANAGER
-//        player.shoot(enemy, deltaTime);
 
-        systemInfo.drawFontSprite();
+
+        //
+        if (player.getPhysics().getPosition().x >= 600 && GameKeys.isDown(GameKeys.RIGHT)
+                || player.getPhysics().getPosition().x < 0 && GameKeys.isDown(GameKeys.LEFT)) {
+            player.getPhysics().setDirectionVector(0, 0);
+//            AppManager.setLocalViewPortWidth(AppManager.getLocalViewPortWidth() + 1);
+//            player.getPhysics().getDirectionVector().add(-player.getPhysics().getDirectionVector().x, -player.getPhysics().getDirectionVector().y);
+//            if (player.getPhysics().getMoveSpeed() > 0) {
+//                player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() * -1);
+//
+//            }
+        }
+
+
         player.getGraphics().drawSprite();
-//        enemy.getGraphics().drawSprite();
         player.update(deltaTime);
-
-
+//        test.getPhysics().rotateAround(player);
         test.getGraphics().drawSprite();
+        test.update(deltaTime);
 
-//        objectSpawner.spawnEnemies(deltaTime, player);
-//        if (!objectSpawner.getEnemies().isEmpty()) {
-//            for (Enemy e : objectSpawner.getEnemies()) {
-//                e.update(deltaTime);
-//            }
-//        }
-
-//        enemy.update(deltaTime);
-
-        // integrate by propagating time
-//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
-//            p.update(deltaTime);
-//            //if projectile in camera view: draw
-//            //if not in camera view, do not draw
-//            p.getGraphics().drawSprite();
-//        }
-
-
-        //----------------------------------------------------------------------------------------
-        /*
-         *
-         * WRITING AUTOMATED TESTS!
-         *
-         * [X] GOOD?
-         * COLLISION CHECKING
-         *
-         * BOUNDARY CHECKING
-         * */
-
-
-//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
-//            if (p.getPhysics().hasCollided(enemy) || p.getPhysics().getPosition().x < 0 || p.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
-//                player.getGameObjectManager().addInGameObjectsToRemove(p);
-//            }
-//
-//        }
-//
-//        if (enemy.getPhysics().getPosition().y > Gdx.graphics.getHeight()) {
-//            enemy.getPhysics().setPosition(0, 0);
-//        }
-
-//        player.getGameObjectManager().addInGameObjectsToRemove();
 
     }
 
@@ -1079,7 +1013,6 @@ public class GameStateManager extends ApplicationAdapter {
 
 
     //called when the Application is resumed from a paused state.
-    //transition from pause() -> resume()
     @Override
     public void resume() {
 
@@ -1091,30 +1024,6 @@ public class GameStateManager extends ApplicationAdapter {
         /**
          * WIll BE WRITING DATA TO FILE HERE
          */
-
-//        prefs.putString("PlayerPosition:", player.getPhysics().getPosition().toString());
-//        prefs.flush();
-//        for (Projectile p : player.getGameObjectManager().getProjectiles()) {
-
-        //update preferences
-//        prefs.flush();
-
-        //note: pause() will be called when dispose exits. take advantage of this.
-        //file created during exit time of game
-//        File test = new File("helloworld.txt");
-//        try {
-//            if (test.createNewFile()) {
-//                System.out.println("File Created: " + test.getName());
-//            } else {
-//                System.out.println("File already exists.");
-//            }
-//        } catch (IOException e) {
-//            System.out.println("An error occured!");
-//            throw new RuntimeException(e);
-//        }
-//        FileHandle testhandle = new FileHandle(test);
-//        System.out.println(enemy.getPhysics().getPosition().toString());
-//        testhandle.writeString(enemy.getPhysics().getPosition().toString(), false);
 
 
     }

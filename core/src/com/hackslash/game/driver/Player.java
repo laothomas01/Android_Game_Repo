@@ -10,6 +10,8 @@ public class Player extends Entity {
     GameObjectManager InGameObjectManager;
     Array<Skill> skills;
 
+
+
     Player() {
         skills = new Array<>();
         /**
@@ -35,6 +37,7 @@ public class Player extends Entity {
          */
         //this only accounts for odd number of projectiles right now
         skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
+
 
 
         InGameObjectManager = new GameObjectManager();
@@ -66,7 +69,8 @@ public class Player extends Entity {
     }
 
     public String toString() {
-        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition();
+        return "PLAYER:\n" + "POSITION:" + this.getPhysics().getPosition() + "DIRECTION:" + this.getPhysics().getDirectionVector().toString() +
+                "CAN MOVE:" + this.ableToMove();
     }
 
 
@@ -199,6 +203,7 @@ public class Player extends Entity {
         }
 
     }
+
 
 
     /*
