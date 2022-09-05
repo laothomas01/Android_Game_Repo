@@ -1,10 +1,10 @@
-package com.hackslash.game;
+package com.hackslash.GAME_VERSION1;
 
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.hackslash.game.driver.GameStateManager;
+import com.hackslash.GAME_VERSION1.driver.GameStateManager;
 
 
 public class AndroidLauncher extends AndroidApplication {
