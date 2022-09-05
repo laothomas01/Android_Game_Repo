@@ -3,7 +3,7 @@ package com.GameVersion2.game.driver;
 /**
  * An Entity is an object that can be transformed, scaled, or rotated
  */
-class Entity {
+public class Entity {
     //physics2D manager
     Physics2D physics;
     //graphics2D manager

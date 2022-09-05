@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
-class Projectile extends Entity {
+public class Projectile extends Entity {
 
     Projectile() {
         this.getPhysics().setSpriteSize(10f, 10f);

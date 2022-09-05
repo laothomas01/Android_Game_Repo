@@ -7,7 +7,7 @@ import com.badlogic.gdx.InputAdapter;
  * This will be for desktop platform
  */
 //Handles when gameplay begins, pauses and ends
-class GameInputProcessor extends InputAdapter {
+public class GameInputProcessor extends InputAdapter {
     public boolean keyDown(int k) {
         if (k == Input.Keys.UP) {
             GameKeys.setKey(GameKeys.UP, true);

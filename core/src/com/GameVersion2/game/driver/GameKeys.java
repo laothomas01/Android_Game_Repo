@@ -3,7 +3,7 @@ package com.GameVersion2.game.driver;
 /**
  * This will be for desktop platform
  */
-class GameKeys {
+public class GameKeys {
     //if false, key is released. if true, key is pressed
     private static boolean[] keys;
     //previous state of keys

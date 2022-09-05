@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-class Enemy extends Entity {
+public class Enemy extends Entity {
 
     private int type;
     public static final int SMALL = 0;

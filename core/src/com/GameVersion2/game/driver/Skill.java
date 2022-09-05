@@ -1,6 +1,6 @@
 package com.GameVersion2.game.driver;
 
-class Skill {
+public class Skill {
 
     float projectileCount;
     float coolDownTimer;

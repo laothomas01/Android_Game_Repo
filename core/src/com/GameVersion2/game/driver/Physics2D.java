@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 
 
-class Physics2D {
+public class Physics2D {
 
     //adds a slight bounce to a colliding object with impulse
     float COLLISION_COEF = 1.0f;

@@ -45,7 +45,7 @@ public class GameStateManager extends ApplicationAdapter {
         //test game keys
         handleKeyBoardInput();
 //        player.getPhysics().move(deltaTime);
-        player.update(deltaTime);
+        player.Update(deltaTime);
 
 
     }

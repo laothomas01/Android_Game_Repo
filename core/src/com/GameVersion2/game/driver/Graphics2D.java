@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-class Graphics2D {
+public class Graphics2D {
     Sprite sprite;
     Texture texture;
     Color color;

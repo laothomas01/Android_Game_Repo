@@ -6,13 +6,12 @@ import com.badlogic.gdx.utils.Array;
  * Handles CRUD operations on game objects
  */
 
-class GameObjectManager {
+public class GameObjectManager {
 
     Array<Enemy> enemies;
     Array<Projectile> projectiles;
     //handle removal of all game objects
     Array<Entity> garbageCollection;
-
 
 
     public GameObjectManager() {
