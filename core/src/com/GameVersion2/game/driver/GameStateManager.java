@@ -6,6 +6,9 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.JsonWriter;
 
 import java.util.ArrayList;
 
@@ -47,9 +50,25 @@ class PhoneNumber {
     private String name;
     private String number;
 
-    public PhoneNumber(String home, String s) {
+    public PhoneNumber() {
 
     }
+
+    public PhoneNumber(String n, String num) {
+        name = n;
+        number = num;
+    }
+
+//    //implement these methods for AppManager instead
+//    @Override
+//    public void write(Json json) {
+//
+//    }
+//
+//    @Override
+//    public void read(Json json, JsonValue jsonData) {
+//        name =
+//    }
 }
 
 public class GameStateManager extends ApplicationAdapter {
@@ -73,17 +92,23 @@ public class GameStateManager extends ApplicationAdapter {
 /**
  * TESTING PURPOSES
  */
+
         Person person = new Person();
         person.setName("Nate");
         person.setAge(31);
+        //field numbers of Person class containing Phone Number objects
         ArrayList numbers = new ArrayList();
         numbers.add(new PhoneNumber("Home", "206-555-1234"));
         numbers.add(new PhoneNumber("Work", "425-555-4321"));
         person.setNumbers(numbers);
 
-        Json json = new Json();
-        System.out.println(json.prettyPrint(person));
-
+        /*
+            deserializing objects from JSON
+         */
+        JsonReader json = new JsonReader();
+        JsonValue base = json.parse(Gdx.files.internal("test.json"));
+        JsonValue components = base.get("name");
+        System.out.println(components.get(0).getString("class"));
     }
 
 
