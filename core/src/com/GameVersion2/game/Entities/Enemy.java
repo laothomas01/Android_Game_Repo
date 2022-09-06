@@ -1,4 +1,4 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Entities;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -16,13 +16,16 @@ public class Enemy extends Entity {
         getPhysics().setPosition(x, y);
         this.type = type;
         if (type == SMALL) {
-            getPhysics().spriteWidth = this.getPhysics().spriteHeight = 10f;
+            getPhysics().setSpriteWidth(10f);
+            getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
             getPhysics().setMoveSpeed(MathUtils.random(140, 200));
         } else if (type == MEDIUM) {
-            getPhysics().spriteWidth = this.getPhysics().spriteHeight = 12f;
+            getPhysics().setSpriteWidth(12f);
+            getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
             getPhysics().setMoveSpeed(MathUtils.random(100, 120));
         } else if (type == LARGE) {
-            getPhysics().spriteWidth = this.getPhysics().spriteHeight = 20f;
+            getPhysics().setSpriteWidth(20f);
+            getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
             getPhysics().setMoveSpeed(MathUtils.random(70, 80));
         }
         getPhysics().setDirectionVector(1, 1);

@@ -1,4 +1,7 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Entities;
+
+import com.GameVersion2.game.Util.Graphics2D;
+import com.GameVersion2.game.Util.Physics2D;
 
 /**
  * An Entity is an object that can be transformed, scaled, or rotated
@@ -12,6 +15,7 @@ public class Entity {
     public Entity() {
         //give your game objects a physics2D component
         physics = new Physics2D();
+
         graphics = new Graphics2D();
     }
 

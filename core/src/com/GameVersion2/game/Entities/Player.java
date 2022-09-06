@@ -1,5 +1,6 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Entities;
 
+import com.GameVersion2.game.Managers.GameObjectManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,7 +12,7 @@ public class Player extends Entity {
     Array<Skill> skills;
 
 
-    Player() {
+    public Player() {
         skills = new Array<>();
         /**
          * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.

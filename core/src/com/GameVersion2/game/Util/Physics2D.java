@@ -1,5 +1,6 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Util;
 
+import com.GameVersion2.game.Entities.Entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -41,8 +42,8 @@ public class Physics2D {
     float radians = 0f;
     float moveSpeed = 0f;
     float angularSpeed = 0f;
-    float spriteWidth = 0;
-    float spriteHeight = 0;
+     float spriteWidth = 0;
+    private float spriteHeight = 0;
     float mass = 1.0f;
     float distanceFrom = 0f;
     float impactDistance = 0f;

@@ -1,4 +1,4 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -49,6 +49,7 @@ public class AppManager {
     public static void setLocalViewPortHeight(int height) {
         localViewPortHeight = localViewPortHeight;
     }
+
 
 
 }

@@ -1,5 +1,8 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Managers;
 
+import com.GameVersion2.game.Entities.Enemy;
+import com.GameVersion2.game.Entities.Entity;
+import com.GameVersion2.game.Entities.Projectile;
 import com.badlogic.gdx.utils.Array;
 
 /**

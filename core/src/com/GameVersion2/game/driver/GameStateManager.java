@@ -1,8 +1,13 @@
 package com.GameVersion2.game.driver;
 
+import com.GameVersion2.game.Managers.GameInputProcessor;
+import com.GameVersion2.game.Entities.Player;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Json;
+
+import java.util.ArrayList;
 
 //maintain all current physics calculation
 
@@ -12,6 +17,41 @@ import com.badlogic.gdx.utils.TimeUtils;
  * <p>
  * -initializations, closing the app, running the app
  */
+
+
+//for experiment purposes
+
+class Person {
+    private String name;
+    private int age;
+    private ArrayList numbers;
+
+    public Person() {
+
+    }
+
+    public void setName(String s) {
+        name = s;
+    }
+
+    public void setAge(int i) {
+        age = i;
+    }
+
+    public void setNumbers(ArrayList n) {
+        numbers = n;
+    }
+}
+
+class PhoneNumber {
+    private String name;
+    private String number;
+
+    public PhoneNumber(String home, String s) {
+
+    }
+}
+
 public class GameStateManager extends ApplicationAdapter {
 
 
@@ -20,11 +60,29 @@ public class GameStateManager extends ApplicationAdapter {
 
     Player player;
 
+    FileHandle file;
+
+
     public void create() {
         //---------------------------------------------------
+        file = Gdx.files.local("test.json");
         player = new Player();
+
         //Input Manager
         Gdx.input.setInputProcessor(new GameInputProcessor());
+/**
+ * TESTING PURPOSES
+ */
+        Person person = new Person();
+        person.setName("Nate");
+        person.setAge(31);
+        ArrayList numbers = new ArrayList();
+        numbers.add(new PhoneNumber("Home", "206-555-1234"));
+        numbers.add(new PhoneNumber("Work", "425-555-4321"));
+        person.setNumbers(numbers);
+
+        Json json = new Json();
+        System.out.println(json.prettyPrint(person));
 
     }
 
@@ -33,7 +91,6 @@ public class GameStateManager extends ApplicationAdapter {
 
         /**
          * GAME STATES:
-         *
          * -MENU/TITLE SCREEN
          * -GAMEPLAY STATE
          * -GAME OVER SCREEN STATE
@@ -52,32 +109,32 @@ public class GameStateManager extends ApplicationAdapter {
 
     private void handleKeyBoardInput() {
 
-        if ((GameKeys.isDown(GameKeys.UP) || (GameKeys.isDown(GameKeys.W)))) {
-            if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.D))) {
+        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
                 player.getPhysics().setDirectionVector(1, 1);
 
-            } else if ((GameKeys.isDown(GameKeys.UP) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.W) && GameKeys.isDown(GameKeys.A))) {
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
                 player.getPhysics().setDirectionVector(-1, 1);
             } else {
                 player.getPhysics().setDirectionVector(0, 1);
             }
-        } else if ((GameKeys.isDown(GameKeys.DOWN) || (GameKeys.isDown(GameKeys.S)))) {
-            if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.RIGHT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.D))) {
+        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
                 player.getPhysics().setDirectionVector(1, -1);
-            } else if ((GameKeys.isDown(GameKeys.DOWN) && GameKeys.isDown(GameKeys.LEFT)) || (GameKeys.isDown(GameKeys.S) && GameKeys.isDown(GameKeys.A))) {
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
                 player.getPhysics().setDirectionVector(-1, -1);
             } else {
                 player.getPhysics().setDirectionVector(0, -1);
             }
-        } else if (GameKeys.isDown(GameKeys.LEFT) || GameKeys.isDown(GameKeys.A)) {
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A)) {
             player.getPhysics().setDirectionVector(-1, 0);
-        } else if (GameKeys.isDown(GameKeys.RIGHT) || GameKeys.isDown(GameKeys.D)) {
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D)) {
             player.getPhysics().setDirectionVector(1, 0);
         } else {
             player.getPhysics().setDirectionVector(0, 0);
         }
 
-        GameKeys.update();
+        GameInputProcessor.GameKeys.update();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

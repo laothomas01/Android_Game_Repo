@@ -3,7 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.GameVersion2.game.driver.GameStateManager;
-import com.GameVersion2.game.driver.AppManager;
+import com.GameVersion2.game.Managers.AppManager;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {

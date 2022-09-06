@@ -1,4 +1,4 @@
-package com.GameVersion2.game.driver;
+package com.GameVersion2.game.Entities;
 
 public class Skill {
 
