@@ -12,7 +12,7 @@ public class Enemy extends Entity {
     public static final int LARGE = 2;
 
     //better constructor
-    public Enemy(float x, float y, int type) {
+    public Enemy(float x , float y, int type) {
         getPhysics().setPosition(x, y);
         this.type = type;
         if (type == SMALL) {

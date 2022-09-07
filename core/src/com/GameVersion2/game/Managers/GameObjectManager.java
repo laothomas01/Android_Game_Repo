@@ -10,62 +10,50 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class GameObjectManager {
-
-    Array<Enemy> enemies;
-    Array<Projectile> projectiles;
+    float deltaPosition = 0;
+    private float maxSpawnCoolDown = 1.2f;
+    private float spawnCoolDownTimer = 0f;
+    //has to be 0 index based
+    private float enemyWave = 1f;
+    Array<Enemy> enemies = new Array<>();
+    Array<Projectile> projectiles = new Array<>();
     //handle removal of all game objects
-    Array<Entity> garbageCollection;
-
+    Array<Entity> garbageCollection = new Array<>();
 
     public GameObjectManager() {
-        projectiles = new Array<>();
-        enemies = new Array<>();
-        garbageCollection = new Array<>();
+
     }
 
-    public void setEnemyCollectionSize(int size) {
-        this.enemies.setSize(size);
+    public void setSpawnCoolDownTimer(float cd) {
+        spawnCoolDownTimer = cd;
     }
 
-    public Array<Enemy> getEnemies() {
-        return enemies;
+    public float getSpawnCoolDownTimer() {
+        return spawnCoolDownTimer;
     }
 
-    public void addEnemies(Enemy e) {
-        this.enemies.add(e);
-    }
-
-    public Array<Projectile> getProjectiles() {
-        return projectiles;
-    }
-
-    public void addProjectiles(Projectile b) {
-        projectiles.add(b);
-    }
-
-    public Array<Entity> getGarbageCollection() {
-        return garbageCollection;
-    }
-
-    public String getProjectilesToString() {
-        return projectiles.toString();
-    }
-
-    public void addInGameObjectsToRemove(Entity b) {
-        garbageCollection.add(b);
+    public float getMaxSpawnCoolDown() {
+        return maxSpawnCoolDown;
     }
 
 
-    public void spawnEnemies(float dt) {
+    public void spawnEnemies(float dt, int enemyType, int enemyCount, int offsetMultiplier) {
 
         /**
          * @TODO need to regulate how fast spawning will be with a timer
          * @TODO fix spawn positions
          */
 
-        /**
-         * These will be fixed spawn positions.
-         */
+
+        if (getSpawnCoolDownTimer() <= 0) {
+            setSpawnCoolDownTimer(getMaxSpawnCoolDown());
+            for (int i = 0; i < enemyCount; i++) {
+
+            }
+        } else {
+            setSpawnCoolDownTimer(getMaxSpawnCoolDown() - dt);
+        }
+
 
         //i want an enemy with a given position
 
@@ -105,5 +93,38 @@ public class GameObjectManager {
             p.update(dt);
         }
     }
+
+    public void setEnemyCollectionSize(int size) {
+        this.enemies.setSize(size);
+    }
+
+    public Array<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void addEnemies(Enemy e) {
+        this.enemies.add(e);
+    }
+
+    public Array<Projectile> getProjectiles() {
+        return projectiles;
+    }
+
+    public void addProjectiles(Projectile b) {
+        projectiles.add(b);
+    }
+
+    public Array<Entity> getGarbageCollection() {
+        return garbageCollection;
+    }
+
+    public String getProjectilesToString() {
+        return projectiles.toString();
+    }
+
+    public void addInGameObjectsToRemove(Entity b) {
+        garbageCollection.add(b);
+    }
+
 
 }

@@ -1,10 +1,12 @@
 package com.GameVersion2.game.driver;
 
+import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Entities.Player;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -84,31 +86,50 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
         //---------------------------------------------------
-        file = Gdx.files.local("test.json");
+//        file = Gdx.files.local("test.json");
         player = new Player();
+        //
+        System.out.println(
+                //filename
+                AppManager.loadJsonFile("test.json").
+                        //get the object
+                                get("waves")
+                        //enemy wave count
+                        .get(0)
+                        //number of components for an enemy wave
+                        .size
+                //get component
 
+
+        );
+
+        Vector2 test = new Vector2(1, 1);
+        //position + (test + direction vector * speed * time)???
+        System.out.println(test.mulAdd(new Vector2(2, 2), 2));
+        //wave component;
         //Input Manager
         Gdx.input.setInputProcessor(new GameInputProcessor());
 /**
  * TESTING PURPOSES
  */
 
-        Person person = new Person();
-        person.setName("Nate");
-        person.setAge(31);
-        //field numbers of Person class containing Phone Number objects
-        ArrayList numbers = new ArrayList();
-        numbers.add(new PhoneNumber("Home", "206-555-1234"));
-        numbers.add(new PhoneNumber("Work", "425-555-4321"));
-        person.setNumbers(numbers);
-
-        /*
-            deserializing objects from JSON
-         */
-        JsonReader json = new JsonReader();
-        JsonValue base = json.parse(Gdx.files.internal("test.json"));
-        JsonValue components = base.get("name");
-        System.out.println(components.get(0).getString("class"));
+//        Person person = new Person();
+//        person.setName("Nate");
+//        person.setAge(31);
+//        //field numbers of Person class containing Phone Number objects
+//        ArrayList numbers = new ArrayList();
+//        numbers.add(new PhoneNumber("Home", "206-555-1234"));
+//        numbers.add(new PhoneNumber("Work", "425-555-4321"));
+//        person.setNumbers(numbers);
+//
+//        /*
+//            deserializing objects from JSON
+//         */
+//        JsonReader json = new JsonReader();
+//        JsonValue base = json.parse(Gdx.files.internal("test.json"));
+//        JsonValue components = base.get("name");
+////        System.out.println(components.get(0).getString("class"));
+//        System.out.println(base);
     }
 
 
@@ -124,10 +145,10 @@ public class GameStateManager extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //test game keys
-        handleKeyBoardInput();
-//        player.getPhysics().move(deltaTime);
-        player.Update(deltaTime);
+//        //test game keys
+//        handleKeyBoardInput();
+////        player.getPhysics().move(deltaTime);
+//        player.Update(deltaTime);
 
 
     }

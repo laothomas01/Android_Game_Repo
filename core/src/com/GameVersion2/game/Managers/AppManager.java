@@ -2,6 +2,8 @@ package com.GameVersion2.game.Managers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 /**
  * Class will be created for the following features:
@@ -17,6 +19,8 @@ public class AppManager {
     static int localViewPortHeight = 700;
     static int globalViewPortHeight = 1400;
     static int globalViewPortWidth = 2000;
+
+    JsonReader json = new JsonReader();
 
     public static int getGetGlobalViewPortHeight() {
         return globalViewPortHeight;
@@ -48,6 +52,23 @@ public class AppManager {
 
     public static void setLocalViewPortHeight(int height) {
         localViewPortHeight = localViewPortHeight;
+    }
+
+    /**
+     * Deserializing objects from JSON
+     */
+    public static JsonValue loadJsonFile(String jsonFile) {
+        JsonReader json = new JsonReader();
+        JsonValue objectGraph = json.parse(Gdx.files.internal(jsonFile));
+        return objectGraph;
+    }
+
+    public static JsonValue getJsonObject(int index, JsonValue objectGraph) {
+        return objectGraph.get(index);
+    }
+
+    public static JsonValue getJsonObject(String objectName, JsonValue objectGraph) {
+        return objectGraph.get(objectName);
     }
 
 
