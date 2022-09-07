@@ -28,59 +28,55 @@ import java.util.ArrayList;
 
 //for experiment purposes
 
-class Person {
-    private String name;
-    private int age;
-    private ArrayList numbers;
-
-    public Person() {
-
-    }
-
-    public void setName(String s) {
-        name = s;
-    }
-
-    public void setAge(int i) {
-        age = i;
-    }
-
-    public void setNumbers(ArrayList n) {
-        numbers = n;
-    }
-}
-
-class PhoneNumber {
-    private String name;
-    private String number;
-
-    public PhoneNumber() {
-
-    }
-
-    public PhoneNumber(String n, String num) {
-        name = n;
-        number = num;
-    }
-
-//    //implement these methods for AppManager instead
-//    @Override
-//    public void write(Json json) {
+//class Person {
+//    private String name;
+//    private int age;
+//    private ArrayList numbers;
+//
+//    public Person() {
 //
 //    }
 //
-//    @Override
-//    public void read(Json json, JsonValue jsonData) {
-//        name =
+//    public void setName(String s) {
+//        name = s;
 //    }
-}
+//
+//    public void setAge(int i) {
+//        age = i;
+//    }
+//
+//    public void setNumbers(ArrayList n) {
+//        numbers = n;
+//    }
+//}
+//
+//class PhoneNumber {
+//    private String name;
+//    private String number;
+//
+//    public PhoneNumber() {
+//
+//    }
+//
+//    public PhoneNumber(String n, String num) {
+//        name = n;
+//        number = num;
+//    }
+//
+//}
 
 public class GameStateManager extends ApplicationAdapter {
 
+    enum GAMESTATE {START, GAMEPLAY, END}
+
+    GAMESTATE state = null;
+
+    public String getState() {
+        return state.name();
+    }
 
     //time calculated between current and next frame
     float deltaTime;
-
     Player player;
 
     FileHandle file;

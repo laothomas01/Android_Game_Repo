@@ -3,6 +3,7 @@ package com.GameVersion2.game.Managers;
 import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Entities.Entity;
 import com.GameVersion2.game.Entities.Projectile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -10,14 +11,15 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class GameObjectManager {
-    private float maxSpawnCoolDown = 1.2f;
-    private float spawnCoolDownTimer = 0f;
+    private float maxSpawnCoolDown = 1f;
+    private float spawnTimer = 0f;
     //has to be 0 index based
-    private int enemyWave = 0;
     Array<Enemy> enemies = new Array<>();
     Array<Projectile> projectiles = new Array<>();
     //handle removal of all game objects
     Array<Entity> garbageCollection = new Array<>();
+
+    int waves = 1;
 
     public GameObjectManager() {
 
@@ -25,11 +27,11 @@ public class GameObjectManager {
 
 
     public void setSpawnCoolDownTimer(float cd) {
-        spawnCoolDownTimer = cd;
+        spawnTimer = cd;
     }
 
     public float getSpawnCoolDownTimer() {
-        return spawnCoolDownTimer;
+        return spawnTimer;
     }
 
     public float getMaxSpawnCoolDown() {
@@ -43,18 +45,55 @@ public class GameObjectManager {
          * @TODO need to regulate how fast spawning will be with a timer
          * @TODO fix spawn positions
          */
+        System.out.println(getEnemies().size);
 
+//        if (getEnemies().size < enemyCount) {
+        if (spawnTimer < 0) {
+            spawnTimer = maxSpawnCoolDown;
+            Enemy e = new Enemy(
+                    MathUtils.random(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortWidth() / 2),
+                    MathUtils.random(AppManager.getLocalViewPortHeight() / 4, AppManager.getLocalViewPortHeight() / 2),
+                    -1);
+            e.setType(0);
+            System.out.println("TYPE:" + e.getType());
+            System.out.println("WIDTH:" + e.getPhysics().getSpriteWidth());
+//            Enemy e2 = new Enemy(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortHeight() / 4, 0);
+//                switch (MathUtils.random(0, 3)) {
+//                    case 0:
+//            e.getPhysics().setPosition(
+//                    MathUtils.random(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortWidth())
+//                    , MathUtils.random(AppManager.getLocalViewPortHeight() / 2, AppManager.getLocalViewPortHeight())
+//            );
 
-        if (getSpawnCoolDownTimer() <= 0) {
-            setSpawnCoolDownTimer(getMaxSpawnCoolDown());
-            for (int i = 0; i < enemyCount; i++) {
-                Enemy e = new Enemy((AppManager.getLocalViewPortWidth() / 2) + offsetDistance * i, (AppManager.getLocalViewPortHeight() / 2), enemyType);
-                e.getPhysics().setMoveSpeed(100);
-                getEnemies().add(e);
-            }
+//            e.getPhysics().setPosition(
+//                    MathUtils.random(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortWidth())
+//                    , MathUtils.random(AppManager.getLocalViewPortHeight() / 2, AppManager.getLocalViewPortHeight())
+//            );
+////                        (MathUtils.random((AppManager.getLocalViewPortHeight() / 2),
+////                                AppManager.getLocalViewPortHeight() - 100) + offsetDistance), enemyType)
+////                        Enemy e = new Enemy((
+//
+//                              ;
+//            break;
+//            case 1:
+//                break;
+//            case 2:
+//                break;
+//            case 3:
+//                break;
+//
+//        }
+            getEnemies().add(e);
+
+            //should be handled by a game timer. not here.
+//        waves += 1;
+
         } else {
-            setSpawnCoolDownTimer(getMaxSpawnCoolDown() - dt);
+            spawnTimer -= dt;
         }
+        System.out.println("WAVE:" + waves);
+
+//        }
 
 
         //i want an enemy with a given position
