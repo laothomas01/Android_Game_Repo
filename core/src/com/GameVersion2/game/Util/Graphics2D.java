@@ -20,7 +20,7 @@ public class Graphics2D {
         fontSpriteBatch = new SpriteBatch();
         texture = new Texture("circle.png");
         sprite = new Sprite(texture);
-        color = new Color();
+        color = new Color(Color.RED);
         spriteBatch = new SpriteBatch();
     }
 

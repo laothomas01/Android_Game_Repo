@@ -11,14 +11,16 @@ public class Enemy extends Entity {
     public static final int MEDIUM = 1;
     public static final int LARGE = 2;
 
+    boolean remove = false;
+
     //better constructor
-    public Enemy(float x , float y, int type) {
+    public Enemy(float x, float y, int type) {
         getPhysics().setPosition(x, y);
         this.type = type;
         if (type == SMALL) {
             getPhysics().setSpriteWidth(10f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(MathUtils.random(140, 200));
+            getPhysics().setMoveSpeed(MathUtils.random(0, 0));
         } else if (type == MEDIUM) {
             getPhysics().setSpriteWidth(12f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
@@ -29,6 +31,7 @@ public class Enemy extends Entity {
             getPhysics().setMoveSpeed(MathUtils.random(70, 80));
         }
         getPhysics().setDirectionVector(1, 1);
+
 
     }
 
@@ -57,12 +60,18 @@ public class Enemy extends Entity {
 
     public void Update(float dt) {
         update(dt);
+        if (this.lifeSpanTimer < 0) {
+            remove = true;
+        } else {
+            this.lifeSpanTimer -= dt;
+        }
         this.getPhysics().move(dt);
     }
 
 
     public String toString() {
-        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed();
+        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed()
+                + "\n" + "SIZE:" + this.getPhysics().getSpriteWidth() + "," + this.getPhysics().getSpriteHeight();
     }
 
 }

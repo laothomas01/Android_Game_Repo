@@ -10,11 +10,10 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class GameObjectManager {
-    float deltaPosition = 0;
     private float maxSpawnCoolDown = 1.2f;
     private float spawnCoolDownTimer = 0f;
     //has to be 0 index based
-    private float enemyWave = 1f;
+    private int enemyWave = 0;
     Array<Enemy> enemies = new Array<>();
     Array<Projectile> projectiles = new Array<>();
     //handle removal of all game objects
@@ -23,6 +22,7 @@ public class GameObjectManager {
     public GameObjectManager() {
 
     }
+
 
     public void setSpawnCoolDownTimer(float cd) {
         spawnCoolDownTimer = cd;
@@ -37,7 +37,7 @@ public class GameObjectManager {
     }
 
 
-    public void spawnEnemies(float dt, int enemyType, int enemyCount, int offsetMultiplier) {
+    public void spawnEnemies(float dt, int enemyType, int enemyCount, int offsetDistance) {
 
         /**
          * @TODO need to regulate how fast spawning will be with a timer
@@ -48,7 +48,9 @@ public class GameObjectManager {
         if (getSpawnCoolDownTimer() <= 0) {
             setSpawnCoolDownTimer(getMaxSpawnCoolDown());
             for (int i = 0; i < enemyCount; i++) {
-
+                Enemy e = new Enemy((AppManager.getLocalViewPortWidth() / 2) + offsetDistance * i, (AppManager.getLocalViewPortHeight() / 2), enemyType);
+                e.getPhysics().setMoveSpeed(100);
+                getEnemies().add(e);
             }
         } else {
             setSpawnCoolDownTimer(getMaxSpawnCoolDown() - dt);

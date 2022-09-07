@@ -11,6 +11,8 @@ public class Entity {
     Physics2D physics;
     //graphics2D manager
     Graphics2D graphics;
+    float lifeSpan = 1.2f;
+    float lifeSpanTimer = 0;
 
     public Entity() {
         //give your game objects a physics2D component

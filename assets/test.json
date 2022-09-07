@@ -2,10 +2,7 @@
   "waves": [
     {
       "enemyType": 0,
-      "enemyCount": 5,
-      "distanceOffSetMultiplier": 1
-    },
-    {
+      "enemyCount": 5
     }
   ]
 }

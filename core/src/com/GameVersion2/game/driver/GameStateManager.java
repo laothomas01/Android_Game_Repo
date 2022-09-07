@@ -1,8 +1,10 @@
 package com.GameVersion2.game.driver;
 
+import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Entities.Player;
+import com.GameVersion2.game.Managers.GameObjectManager;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -82,30 +84,31 @@ public class GameStateManager extends ApplicationAdapter {
     Player player;
 
     FileHandle file;
-
+    GameObjectManager objectManager;
 
     public void create() {
-        //---------------------------------------------------
-//        file = Gdx.files.local("test.json");
+        objectManager = new GameObjectManager();
+//        //---------------------------------------------------
+////        file = Gdx.files.local("test.json");
         player = new Player();
-        //
-        System.out.println(
-                //filename
-                AppManager.loadJsonFile("test.json").
-                        //get the object
-                                get("waves")
-                        //enemy wave count
-                        .get(0)
-                        //number of components for an enemy wave
-                        .size
-                //get component
-
-
-        );
-
-        Vector2 test = new Vector2(1, 1);
-        //position + (test + direction vector * speed * time)???
-        System.out.println(test.mulAdd(new Vector2(2, 2), 2));
+//        //
+//        System.out.println(
+//                //filename
+//                AppManager.loadJsonFile("test.json").
+//                        //get the object
+//                                get("waves")
+//                        //enemy wave count
+//                        .get(0)
+//                        //number of components for an enemy wave
+//                        .size
+//                //get component
+//
+//
+//        );
+//
+//        Vector2 test = new Vector2(1, 1);
+//        //position + (test + direction vector * speed * time)???
+//        System.out.println(test.mulAdd(new Vector2(2, 2), 2));
         //wave component;
         //Input Manager
         Gdx.input.setInputProcessor(new GameInputProcessor());
@@ -144,11 +147,25 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        testingSpawning.getEnemies().get(0).getGraphics().drawSprite();
+//        testingSpawning.getEnemies().get(0).getPhysics().getPosition().toString();
+        objectManager.spawnEnemies(deltaTime, 0, 5, 100);
 
+        for (Enemy e : objectManager.getEnemies()) {
+            e.Update(deltaTime);
+
+        }
+
+//        for (Enemy e : testingSpawning.getEnemies()) {
+//            e.Update(deltaTime);
+//        }
+//        System.out.println(testingSpawning.getEnemies().get(0).hashCode());
 //        //test game keys
 //        handleKeyBoardInput();
 ////        player.getPhysics().move(deltaTime);
-//        player.Update(deltaTime);
+//        testingSpawning.getEnemies().get(0).update(deltaTime);
+
+        player.Update(deltaTime);
 
 
     }
