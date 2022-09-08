@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Entity {
 
-    int type = 0;
+    int type;
     public static final int SMALL = 0;
     public static final int MEDIUM = 1;
     public static final int LARGE = 2;
@@ -14,11 +14,10 @@ public class Enemy extends Entity {
     boolean remove = false;
 
 
-
     //better constructor
     public Enemy(float x, float y, int t) {
+        type = t;
         getPhysics().setPosition(x, y);
-        setType(t);
         if (getType() == SMALL) {
             getPhysics().setSpriteWidth(10f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
@@ -44,28 +43,6 @@ public class Enemy extends Entity {
     public int getType() {
         return type;
     }
-//    public Enemy() {
-
-//        this.getPhysics().setPosition(1, 0);
-//        this.getPhysics().setDirectionVector(1, 1);
-//        this.getPhysics().setSpriteSize(10f, 10f);
-//        graphics.setColor(Color.RED);
-//        this.getPhysics().setMoveSpeed(40f);
-//    }
-
-//    public Enemy(Vector2 position, float width, float height, float speed) {
-//        this.getPhysics().setPosition(position);
-//        this.getPhysics().setSpriteSize(width, height);
-//        this.getPhysics().setMoveSpeed(speed);
-//        graphics.setColor(Color.RED);
-//    }
-//
-//    public Enemy(float x, float y, float width, float height, float speed) {
-//        this.getPhysics().setPosition(x, y);
-//        this.getPhysics().setSpriteSize(width, height);
-//        this.getPhysics().setMoveSpeed(speed);
-//        graphics.setColor(Color.RED);
-//}
 
     public void Update(float dt) {
         update(dt);
@@ -79,8 +56,7 @@ public class Enemy extends Entity {
 
 
     public String toString() {
-        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed()
-                + "\n" + "SIZE:" + this.getPhysics().getSpriteWidth() + "," + this.getPhysics().getSpriteHeight();
+        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed() + "\n" + "SIZE:" + this.getPhysics().getSpriteWidth() + "," + this.getPhysics().getSpriteHeight();
     }
 
 }
