@@ -13,13 +13,12 @@ import com.badlogic.gdx.utils.Array;
 public class GameObjectManager {
     private float maxSpawnCoolDown = 1f;
     private float spawnTimer = 0f;
-    //has to be 0 index based
     Array<Enemy> enemies = new Array<>();
+
     Array<Projectile> projectiles = new Array<>();
     //handle removal of all game objects
     Array<Entity> garbageCollection = new Array<>();
 
-    int waves = 1;
 
     public GameObjectManager() {
 
@@ -39,24 +38,20 @@ public class GameObjectManager {
     }
 
 
-    public void spawnEnemies(float dt, int enemyType, int enemyCount, int offsetDistance) {
+    public void spawnEnemies(float dt, int enemyType, int enemyCount) {
 
         /**
          * @TODO need to regulate how fast spawning will be with a timer
          * @TODO fix spawn positions
          */
-        System.out.println(getEnemies().size);
 
-//        if (getEnemies().size < enemyCount) {
         if (spawnTimer < 0) {
             spawnTimer = maxSpawnCoolDown;
             Enemy e = new Enemy(
                     MathUtils.random(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortWidth() / 2),
                     MathUtils.random(AppManager.getLocalViewPortHeight() / 4, AppManager.getLocalViewPortHeight() / 2),
                     -1);
-            e.setType(0);
-            System.out.println("TYPE:" + e.getType());
-            System.out.println("WIDTH:" + e.getPhysics().getSpriteWidth());
+            e.setType(enemyType);
 //            Enemy e2 = new Enemy(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortHeight() / 4, 0);
 //                switch (MathUtils.random(0, 3)) {
 //                    case 0:
@@ -88,10 +83,10 @@ public class GameObjectManager {
             //should be handled by a game timer. not here.
 //        waves += 1;
 
+
         } else {
             spawnTimer -= dt;
         }
-        System.out.println("WAVE:" + waves);
 
 //        }
 

@@ -1,5 +1,6 @@
 package com.GameVersion2.game.Entities;
 
+import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Managers.GameObjectManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -67,6 +68,36 @@ public class Player extends Entity {
         return InGameObjectManager;
     }
 
+
+    private void handleKeyBoardInput() {
+
+        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                this.getPhysics().setDirectionVector(1, 1);
+
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                this.getPhysics().setDirectionVector(-1, 1);
+            } else {
+                this.getPhysics().setDirectionVector(0, 1);
+            }
+        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                this.getPhysics().setDirectionVector(1, -1);
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                this.getPhysics().setDirectionVector(-1, -1);
+            } else {
+                this.getPhysics().setDirectionVector(0, -1);
+            }
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A)) {
+            this.getPhysics().setDirectionVector(-1, 0);
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D)) {
+            this.getPhysics().setDirectionVector(1, 0);
+        } else {
+            this.getPhysics().setDirectionVector(0, 0);
+        }
+
+        GameInputProcessor.GameKeys.update();
+    }
 
     public void shoot(Entity target, float dt) {
 
@@ -200,6 +231,7 @@ public class Player extends Entity {
     public void Update(float dt) {
         update(dt);
         this.getPhysics().move(dt);
+        handleKeyBoardInput();
     }
 
 

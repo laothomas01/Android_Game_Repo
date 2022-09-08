@@ -26,47 +26,9 @@ import java.util.ArrayList;
  */
 
 
-//for experiment purposes
-
-//class Person {
-//    private String name;
-//    private int age;
-//    private ArrayList numbers;
-//
-//    public Person() {
-//
-//    }
-//
-//    public void setName(String s) {
-//        name = s;
-//    }
-//
-//    public void setAge(int i) {
-//        age = i;
-//    }
-//
-//    public void setNumbers(ArrayList n) {
-//        numbers = n;
-//    }
-//}
-//
-//class PhoneNumber {
-//    private String name;
-//    private String number;
-//
-//    public PhoneNumber() {
-//
-//    }
-//
-//    public PhoneNumber(String n, String num) {
-//        name = n;
-//        number = num;
-//    }
-//
-//}
-
 public class GameStateManager extends ApplicationAdapter {
 
+    //-----------FOR LATER IMPLEMENTATION------------------
     enum GAMESTATE {START, GAMEPLAY, END}
 
     GAMESTATE state = null;
@@ -74,6 +36,9 @@ public class GameStateManager extends ApplicationAdapter {
     public String getState() {
         return state.name();
     }
+
+    //------------------------------------------------------
+
 
     //time calculated between current and next frame
     float deltaTime;
@@ -140,61 +105,69 @@ public class GameStateManager extends ApplicationAdapter {
          * -GAMEPLAY STATE
          * -GAME OVER SCREEN STATE
          */
+
+
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        testingSpawning.getEnemies().get(0).getGraphics().drawSprite();
-//        testingSpawning.getEnemies().get(0).getPhysics().getPosition().toString();
-        objectManager.spawnEnemies(deltaTime, 0, 5, 100);
 
+        //----------------------------------------------
+
+        /**
+         * TITLE SCREEN STATE
+         * @TODO: implement title screen UI
+         */
+
+
+        //----------------------------------------------
+
+        /**
+         * GAME PLAY STATE
+         * @TODO: move to gameplay screen
+         */
+
+
+        /** PERFORM CREATE:
+         *
+         * C/CRUD - create enemy entities. add to arraylist
+         */
+        objectManager.spawnEnemies(deltaTime, 0, 5);
+
+
+        /**
+         *
+         *
+         * Update game entities:
+         *
+         * common entity updates:
+         * -collision
+         * -entity removal
+         * -status updates
+         *
+         * PLAYER - keyboard input
+         *
+         * ENEMIES
+         *
+         * PROJECTILES
+         *
+         * GARBAGE COLLECTION
+         */
         for (Enemy e : objectManager.getEnemies()) {
             e.Update(deltaTime);
-
         }
-
-//        for (Enemy e : testingSpawning.getEnemies()) {
-//            e.Update(deltaTime);
-//        }
-//        System.out.println(testingSpawning.getEnemies().get(0).hashCode());
-//        //test game keys
-//        handleKeyBoardInput();
-////        player.getPhysics().move(deltaTime);
-//        testingSpawning.getEnemies().get(0).update(deltaTime);
 
         player.Update(deltaTime);
 
+        //----------------------------------------------
+        /**
+         * GAME OVER STATE
+         * @TODO: implement game over screen UI
+         */
+
+        //----------------------------------------------
 
     }
 
-    private void handleKeyBoardInput() {
-
-        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-                player.getPhysics().setDirectionVector(1, 1);
-
-            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-                player.getPhysics().setDirectionVector(-1, 1);
-            } else {
-                player.getPhysics().setDirectionVector(0, 1);
-            }
-        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-                player.getPhysics().setDirectionVector(1, -1);
-            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-                player.getPhysics().setDirectionVector(-1, -1);
-            } else {
-                player.getPhysics().setDirectionVector(0, -1);
-            }
-        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A)) {
-            player.getPhysics().setDirectionVector(-1, 0);
-        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D)) {
-            player.getPhysics().setDirectionVector(1, 0);
-        } else {
-            player.getPhysics().setDirectionVector(0, 0);
-        }
-
-        GameInputProcessor.GameKeys.update();
-    }
 
     @Override
     public void resize(int width, int height) {
@@ -220,6 +193,7 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void dispose() {
+
 
         /**
          * WIll BE WRITING DATA TO FILE HERE
