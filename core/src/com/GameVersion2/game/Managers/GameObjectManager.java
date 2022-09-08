@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class GameObjectManager {
-    private float maxSpawnCoolDown = 3f;
+    //    private float maxSpawnCoolDown = 3f;
     private float spawnTimer = 0f;
     Array<Enemy> enemies = new Array<>();
 
@@ -34,12 +34,12 @@ public class GameObjectManager {
         return spawnTimer;
     }
 
-    public float getMaxSpawnCoolDown() {
-        return maxSpawnCoolDown;
-    }
+//    public float getMaxSpawnCoolDown() {
+//        return maxSpawnCoolDown;
+//    }
 
 
-    public void spawnEnemies(float dt, int enemyType, int enemyCount) {
+    public void spawnEnemies(float dt, int enemyType, int enemyCount, float maxSpawnCoolDown) {
 
         /**
          * @TODO need to regulate how fast spawning will be with a timer
@@ -51,35 +51,34 @@ public class GameObjectManager {
             Enemy e = new Enemy(0, 0, enemyType);
             /**
              * coordinates for center of viewport
-             */
-            int X = AppManager.getLocalViewPortWidth() / 2;
-            int Y = AppManager.getLocalViewPortHeight() / 2;
-            int LeftX = X - 300;
-            int UpY = Y + 200;
-            int RightX = X + 300;
-            int DownY = Y - 200;
-            e.getPhysics().setPosition(X, Y);
+             //             */
+//            int X = AppManager.getLocalViewPortWidth() / 2;
+//            int Y = AppManager.getLocalViewPortHeight() / 2;
+//            int LeftX = X - 300;
+//            int UpY = Y + 200;
+//            int RightX = X + 300;
+//            int DownY = Y - 200;`
+            e.getPhysics().setPosition(0, 0);
             switch (randomLocation) {
                 case 1:
                     e.getPhysics().setPosition(MathUtils.random(
                             //300(X coord of origin)
-                            X,
+                            AppManager.getLocalViewPortWidth() / 2,
                             //450(X coord of origin offset by 150)
-                            RightX), MathUtils.random(
+                            AppManager.getLocalViewPortWidth() / 2 + 300), MathUtils.random(
                             //400(Y coord of origin)
-                            Y,
+                            AppManager.getLocalViewPortHeight() / 2,
                             //500(Y coord of origin offset by 100)
-                            UpY));
-                    System.out.println(e.toString());
+                            AppManager.getLocalViewPortHeight() / 2 + 200));
                     break;
                 case 2:
-                    e.getPhysics().setPosition(MathUtils.random(LeftX, X), MathUtils.random(Y, UpY));
+                    e.getPhysics().setPosition(MathUtils.random(AppManager.getLocalViewPortWidth() / 2 - 300, AppManager.getLocalViewPortWidth() / 2), MathUtils.random(AppManager.getLocalViewPortHeight() / 2, AppManager.getLocalViewPortHeight() / 2 + 200));
                     break;
                 case 3:
-                    e.getPhysics().setPosition(MathUtils.random(LeftX, X), MathUtils.random(DownY, Y));
+                    e.getPhysics().setPosition(MathUtils.random(AppManager.getLocalViewPortWidth() / 2 - 300, AppManager.getLocalViewPortWidth() / 2), MathUtils.random(AppManager.getLocalViewPortHeight() / 2 - 200, AppManager.getLocalViewPortHeight() / 2));
                     break;
                 case 4:
-                    e.getPhysics().setPosition(MathUtils.random(X, RightX), MathUtils.random(DownY, Y));
+                    e.getPhysics().setPosition(MathUtils.random(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortWidth() / 2 + 300), MathUtils.random(AppManager.getLocalViewPortHeight() / 2 - 200, AppManager.getLocalViewPortHeight() / 2));
                     break;
                 default:
                     break;

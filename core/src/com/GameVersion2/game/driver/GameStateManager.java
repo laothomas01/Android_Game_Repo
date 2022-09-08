@@ -43,35 +43,36 @@ public class GameStateManager extends ApplicationAdapter {
 
     //Enemy related data
     int enemyWaveNumber;
-    int enemyType;
     int maxEnemyWaves;
-    int enemyCount;
     int[] enemyTypes;
+    float spawnCoolDown;
     //
     //rendering time calculated between current and next frame
     float deltaTime;
     Player player;
     //handler for all game entities
     GameObjectManager entityManager;
+    JsonValue jsonWaves;
+    JsonValue jsonWave;
+
+    //game timer
+    private float timeSeconds = 0f;
+    private float period = 10f;
 
     public void create() {
-        enemyWaveNumber = 2;
-        JsonValue json = AppManager.loadJsonFile("entityData.json").get("waves").get(enemyWaveNumber);
-        enemyTypes = json.get("enemyTypes").asIntArray();
+        /**
+         * PLACE THESE VALUES INTO THE RENDER:
+         * -increment enemy wave number after N amount of time passed.
+         * -check when enemyWaveNumber passes maxNumber of waves. if passes, keep wave number at max
+         * -make sure to check how much time has passed during runtime.
+         */
 
+        //------------------------------update in render-----------------------
 
-        //        System.out.println(json);
-//        System.out.println(json.get("Ans"));
-
-        //0 based indexing
-//        enemyWave = AppManager.loadJsonFile("entityData.json").get("enemyWaves").get(enemyWaveNumber);
-
-
-//        System.out.println("ENEMY WAVE:" + enemyWave);
-//        enemyType = enemyWave.get(0).asInt();
-//        System.out.println("TYPE:" + enemyType);
-//        enemyCount = enemyWave.get(1).asInt();
-//        System.out.println("ENEMY COUNT:" + enemyCount);
+        enemyWaveNumber = 0;
+        jsonWaves = AppManager.loadJsonFile("entityData.json").get("waves");
+        maxEnemyWaves = jsonWaves.size;
+        //----------------------------------------------------------------------
         entityManager = new GameObjectManager();
         player = new Player();
     }
@@ -90,6 +91,30 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        timeSeconds += deltaTime;
+        System.out.println(timeSeconds);
+        if (timeSeconds > period) {
+            timeSeconds -= period;
+
+            //check if wave number passed max enemy waves
+            //if not, change wave number
+            //if, keep at max number of waves
+            if (enemyWaveNumber < maxEnemyWaves - 1) {
+                enemyWaveNumber++;
+            } else {
+                enemyWaveNumber = maxEnemyWaves - 1;
+            }
+
+            System.out.println("HANDLE EVENT!");
+        }
+        System.out.println(enemyWaveNumber);
+        jsonWave = jsonWaves.get(enemyWaveNumber);
+        enemyTypes = jsonWave.get("enemyTypes").asIntArray();
+        spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
+
+
+        //increments time seconds and resets time seconds after reached period of time
 
         //----------------------------------------------
 
@@ -113,8 +138,8 @@ public class GameStateManager extends ApplicationAdapter {
          *
          * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
          */
-        for (int i = 0; i < enemyTypes.length; i++) {
-            entityManager.spawnEnemies(deltaTime, i, 5);
+        for (int i = 0; i < enemyTypes.length; ++i) {
+            entityManager.spawnEnemies(deltaTime, i, 5, spawnCoolDown);
         }
 
 
