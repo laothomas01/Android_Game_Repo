@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class GameObjectManager {
-    private float maxSpawnCoolDown = 5f;
+    private float maxSpawnCoolDown = 3f;
     private float spawnTimer = 0f;
     Array<Enemy> enemies = new Array<>();
 
@@ -61,52 +61,25 @@ public class GameObjectManager {
             e.getPhysics().setPosition(X, Y);
             switch (randomLocation) {
                 case 1:
-                    e.getPhysics().setPosition(
-                            MathUtils.random(
-                                    //300(X coord of origin)
-                                    X,
-                                    //450(X coord of origin offset by 150)
-                                    RightX
-                            ),
-                            MathUtils.random(
-                                    //400(Y coord of origin)
-                                    Y
-                                    ,
-                                    //500(Y coord of origin offset by 100)
-                                    UpY)
-                    );
+                    e.getPhysics().setPosition(MathUtils.random(
+                            //300(X coord of origin)
+                            X,
+                            //450(X coord of origin offset by 150)
+                            RightX), MathUtils.random(
+                            //400(Y coord of origin)
+                            Y,
+                            //500(Y coord of origin offset by 100)
+                            UpY));
                     System.out.println(e.toString());
                     break;
                 case 2:
-                    e.getPhysics().setPosition(
-                            MathUtils.random(
-                                    LeftX
-                                    ,
-                                    X
-                            ),
-                            MathUtils.random(
-                                    Y
-                                    ,
-                                    UpY
-                            )
-                    );
+                    e.getPhysics().setPosition(MathUtils.random(LeftX, X), MathUtils.random(Y, UpY));
                     break;
                 case 3:
-                    e.getPhysics().setPosition(
-                            MathUtils.random(LeftX, X)
-                            , MathUtils.random(DownY
-                                    , Y)
-                    );
+                    e.getPhysics().setPosition(MathUtils.random(LeftX, X), MathUtils.random(DownY, Y));
                     break;
                 case 4:
-                    e.getPhysics().setPosition(
-                            MathUtils.random(X, RightX)
-                            , MathUtils.random(
-                                    DownY
-                                    ,
-                                    Y
-                            )
-                    );
+                    e.getPhysics().setPosition(MathUtils.random(X, RightX), MathUtils.random(DownY, Y));
                     break;
                 default:
                     break;

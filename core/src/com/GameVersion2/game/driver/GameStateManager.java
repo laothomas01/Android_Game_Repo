@@ -8,6 +8,7 @@ import com.GameVersion2.game.Managers.GameObjectManager;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
 
 import java.util.ArrayList;
+import java.util.SplittableRandom;
 
 //maintain all current physics calculation
 
@@ -108,8 +110,10 @@ public class GameStateManager extends ApplicationAdapter {
         /** PERFORM CREATE:
          *
          * C/CRUD - create enemy entities. add to arraylist
+         *
+         * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
          */
-        for (int i : enemyTypes) {
+        for (int i = 0; i < enemyTypes.length; i++) {
             entityManager.spawnEnemies(deltaTime, i, 5);
         }
 
