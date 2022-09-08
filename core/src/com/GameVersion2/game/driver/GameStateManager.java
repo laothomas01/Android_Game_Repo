@@ -39,61 +39,39 @@ public class GameStateManager extends ApplicationAdapter {
 
     //------------------------------------------------------
 
-
-    //time calculated between current and next frame
+    //Enemy related data
+    int enemyWaveNumber;
+    int enemyType;
+    int maxEnemyWaves;
+    int enemyCount;
+    int[] enemyTypes;
+    //
+    //rendering time calculated between current and next frame
     float deltaTime;
     Player player;
-
-    FileHandle file;
-    GameObjectManager objectManager;
+    //handler for all game entities
+    GameObjectManager entityManager;
 
     public void create() {
-        objectManager = new GameObjectManager();
-//        //---------------------------------------------------
-////        file = Gdx.files.local("test.json");
-        player = new Player();
-//        //
-//        System.out.println(
-//                //filename
-//                AppManager.loadJsonFile("test.json").
-//                        //get the object
-//                                get("waves")
-//                        //enemy wave count
-//                        .get(0)
-//                        //number of components for an enemy wave
-//                        .size
-//                //get component
-//
-//
-//        );
-//
-//        Vector2 test = new Vector2(1, 1);
-//        //position + (test + direction vector * speed * time)???
-//        System.out.println(test.mulAdd(new Vector2(2, 2), 2));
-        //wave component;
-        //Input Manager
-        Gdx.input.setInputProcessor(new GameInputProcessor());
-/**
- * TESTING PURPOSES
- */
+        enemyWaveNumber = 2;
+        JsonValue json = AppManager.loadJsonFile("entityData.json").get("waves").get(enemyWaveNumber);
+        enemyTypes = json.get("enemyTypes").asIntArray();
 
-//        Person person = new Person();
-//        person.setName("Nate");
-//        person.setAge(31);
-//        //field numbers of Person class containing Phone Number objects
-//        ArrayList numbers = new ArrayList();
-//        numbers.add(new PhoneNumber("Home", "206-555-1234"));
-//        numbers.add(new PhoneNumber("Work", "425-555-4321"));
-//        person.setNumbers(numbers);
-//
-//        /*
-//            deserializing objects from JSON
-//         */
-//        JsonReader json = new JsonReader();
-//        JsonValue base = json.parse(Gdx.files.internal("test.json"));
-//        JsonValue components = base.get("name");
-////        System.out.println(components.get(0).getString("class"));
-//        System.out.println(base);
+
+        //        System.out.println(json);
+//        System.out.println(json.get("Ans"));
+
+        //0 based indexing
+//        enemyWave = AppManager.loadJsonFile("entityData.json").get("enemyWaves").get(enemyWaveNumber);
+
+
+//        System.out.println("ENEMY WAVE:" + enemyWave);
+//        enemyType = enemyWave.get(0).asInt();
+//        System.out.println("TYPE:" + enemyType);
+//        enemyCount = enemyWave.get(1).asInt();
+//        System.out.println("ENEMY COUNT:" + enemyCount);
+        entityManager = new GameObjectManager();
+        player = new Player();
     }
 
 
@@ -131,7 +109,9 @@ public class GameStateManager extends ApplicationAdapter {
          *
          * C/CRUD - create enemy entities. add to arraylist
          */
-        objectManager.spawnEnemies(deltaTime, 0, 5);
+        for (int i : enemyTypes) {
+            entityManager.spawnEnemies(deltaTime, i, 5);
+        }
 
 
         /**
@@ -152,7 +132,7 @@ public class GameStateManager extends ApplicationAdapter {
          *
          * GARBAGE COLLECTION
          */
-        for (Enemy e : objectManager.getEnemies()) {
+        for (Enemy e : entityManager.getEnemies()) {
             e.Update(deltaTime);
         }
 

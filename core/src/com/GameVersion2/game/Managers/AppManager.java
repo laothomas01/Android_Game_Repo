@@ -58,9 +58,8 @@ public class AppManager {
      * Deserializing objects from JSON
      */
     public static JsonValue loadJsonFile(String jsonFile) {
-        JsonReader json = new JsonReader();
-        JsonValue objectGraph = json.parse(Gdx.files.internal(jsonFile));
-        return objectGraph;
+        JsonValue json = new JsonReader().parse(Gdx.files.internal(jsonFile));
+        return json;
     }
 
     public static JsonValue getJsonObject(int index, JsonValue objectGraph) {
@@ -70,7 +69,6 @@ public class AppManager {
     public static JsonValue getJsonObject(String objectName, JsonValue objectGraph) {
         return objectGraph.get(objectName);
     }
-
 
 
 }

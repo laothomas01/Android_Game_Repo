@@ -1,0 +1,14 @@
+{
+  "waves": [
+    {
+      "enemyTypes": [0]
+    },
+    {
+      "enemyTypes": [0,1]
+    }
+    ,
+    {
+      "enemyTypes": [0,1,2]
+    }
+  ]
+}

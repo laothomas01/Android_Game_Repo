@@ -8,12 +8,21 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Player has the following:
+ * 2D physics: speed, velocity, mass, movement, collision, shooting projectiles, handle upgrades
+ * 2D Graphics: sprite, texture, sprite batch
+ * Misc Attributes: health, level
+ * User input
+ */
 public class Player extends Entity {
     GameObjectManager InGameObjectManager;
     Array<Skill> skills;
 
 
     public Player() {
+        Gdx.input.setInputProcessor(new GameInputProcessor());
+
         skills = new Array<>();
         /**
          * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.

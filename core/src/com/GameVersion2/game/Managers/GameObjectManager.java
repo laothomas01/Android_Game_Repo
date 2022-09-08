@@ -50,8 +50,9 @@ public class GameObjectManager {
             Enemy e = new Enemy(
                     MathUtils.random(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortWidth() / 2),
                     MathUtils.random(AppManager.getLocalViewPortHeight() / 4, AppManager.getLocalViewPortHeight() / 2),
-                    -1);
-            e.setType(enemyType);
+                    enemyType);
+
+//            e.setType(enemyType);
 //            Enemy e2 = new Enemy(AppManager.getLocalViewPortWidth() / 4, AppManager.getLocalViewPortHeight() / 4, 0);
 //                switch (MathUtils.random(0, 3)) {
 //                    case 0:

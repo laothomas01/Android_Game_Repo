@@ -20,18 +20,21 @@ public class Enemy extends Entity {
     //better constructor
     public Enemy(float x, float y, int t) {
         getPhysics().setPosition(x, y);
+        setType(t);
         if (getType() == SMALL) {
             getPhysics().setSpriteWidth(10f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(MathUtils.random(0, 0));
+//            getPhysics().setMoveSpeed(MathUtils.random(0, 0));
         } else if (getType() == MEDIUM) {
             getPhysics().setSpriteWidth(12f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(MathUtils.random(100, 120));
+//            getPhysics().setMoveSpeed(MathUtils.random(100, 120));
+            getGraphics().setColor(Color.YELLOW);
         } else if (getType() == LARGE) {
             getPhysics().setSpriteWidth(20f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(MathUtils.random(70, 80));
+//            getPhysics().setMoveSpeed(MathUtils.random(70, 80));
+            getGraphics().setColor(Color.BROWN);
         }
         getPhysics().setDirectionVector(1, 1);
     }
