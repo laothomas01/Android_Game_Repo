@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.JsonValue;
 public class AppManager {
 
 
-    static int localViewPortWidth = 1000;
-    static int localViewPortHeight = 700;
+    static int localViewPortWidth = 800;
+    static int localViewPortHeight = 600;
     static int globalViewPortHeight = 1400;
     static int globalViewPortWidth = 2000;
 

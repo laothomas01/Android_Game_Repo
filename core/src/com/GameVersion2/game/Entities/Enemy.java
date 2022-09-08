@@ -13,9 +13,7 @@ public class Enemy extends Entity {
 
     boolean remove = false;
 
-    public Enemy() {
 
-    }
 
     //better constructor
     public Enemy(float x, float y, int t) {
