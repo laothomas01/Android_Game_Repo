@@ -42,7 +42,7 @@ public class Physics2D {
     float radians = 0f;
     float moveSpeed = 0f;
     float angularSpeed = 0f;
-     float spriteWidth = 0;
+    float spriteWidth = 0;
     private float spriteHeight = 0;
     float mass = 1.0f;
     float distanceFrom = 0f;
@@ -240,6 +240,9 @@ public class Physics2D {
 
     }
 
+    /*
+    look at this later
+     */
     public void performImpulseCollision(Entity object) {
 
         if (hasCollided(object)) {
@@ -252,19 +255,18 @@ public class Physics2D {
             getTempNormalVector().set(getNormalVector().scl(getImpactDistance() - getDistanceBetween() / 2));
 
 
-            object.getPhysics().getPosition().sub(getTempNormalVector());
+//            object.getPhysics().getPosition().sub(getTempNormalVector());
 
             //setting direction of colliding objects based on impulse force
             getTempNewDirectionVector().set(getDirectionVector().sub(object.getPhysics().getDirectionVector()));
 
             //Newton's Law of Impact
-            float impulse = (-(1 + COLLISION_COEF) * (getNormalVector().dot(getTempNewDirectionVector()))) / (getNormalVector().dot(getNormalVector()) * (1 / getMass() + 1 / object.getPhysics().getMass()));
+            float impulse = (-(1 + COLLISION_COEF) * (getNormalVector().dot(getTempNewDirectionVector()))) / (getNormalVector().dot(getNormalVector()) * (1 / getMass() + 1 / 1));
 
             //Change velocity of colliding objects using impulse
-            getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
+            getTempNormalVector().set(getNormalVector()).scl(impulse / 1);
             getDirectionVector().add(tempNormalVector);
-            getTempNormalVector().set(getNormalVector()).scl(impulse / getMass());
-            object.getPhysics().getDirectionVector().sub(getTempNormalVector());
+            getTempNormalVector().set(getNormalVector()).scl(impulse / 1);
 
         }
     }

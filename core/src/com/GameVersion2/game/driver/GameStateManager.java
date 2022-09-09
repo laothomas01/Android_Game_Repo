@@ -46,7 +46,6 @@ public class GameStateManager extends ApplicationAdapter {
     int maxEnemyWaves;
     int[] enemyTypes;
     float spawnCoolDown;
-    //
     //rendering time calculated between current and next frame
     float deltaTime;
     Player player;
@@ -56,8 +55,8 @@ public class GameStateManager extends ApplicationAdapter {
     JsonValue jsonWave;
 
     //game timer
-    private float timeSeconds = 0f;
-    private float period = 10f;
+    private float eventTimeInSeconds = 0f;
+    private float periodOfTimeSeconds = 10f;
 
     public void create() {
         /**
@@ -142,8 +141,11 @@ public class GameStateManager extends ApplicationAdapter {
          * GARBAGE COLLECTION
          */
         for (Enemy e : entityManager.getEnemies()) {
+            //temporary
+            e.getPhysics().setMoveSpeed(0);
+            e.getPhysics().performImpulseCollision(player);
             e.Update(deltaTime);
-            e.getPhysics().moveTowards(player, deltaTime);
+            player.shoot(e, deltaTime);
         }
 
         player.Update(deltaTime);
@@ -159,9 +161,9 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void updateEnemyWave() {
-        timeSeconds += deltaTime;
-        if (timeSeconds > period) {
-            timeSeconds -= period;
+        eventTimeInSeconds += deltaTime;
+        if (eventTimeInSeconds > periodOfTimeSeconds) {
+            eventTimeInSeconds -= periodOfTimeSeconds;
             //check if wave number passed max enemy waves
             //if not, change wave number
             //if, keep at max number of waves
@@ -172,7 +174,6 @@ public class GameStateManager extends ApplicationAdapter {
             }
         }
 
-        System.out.println(enemyWaveNumber);
         jsonWave = jsonWaves.get(enemyWaveNumber);
         enemyTypes = jsonWave.get("enemyTypes").asIntArray();
         spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
