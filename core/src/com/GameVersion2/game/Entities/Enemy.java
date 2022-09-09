@@ -21,21 +21,24 @@ public class Enemy extends Entity {
         if (getType() == SMALL) {
             getPhysics().setSpriteWidth(10f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-//            getPhysics().setMoveSpeed(MathUtils.random(0, 0));
+            getPhysics().setMoveSpeed(70f);
         } else if (getType() == MEDIUM) {
             getPhysics().setSpriteWidth(12f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-//            getPhysics().setMoveSpeed(MathUtils.random(100, 120));
+            getPhysics().setMoveSpeed(50f);
+
             getGraphics().setColor(Color.YELLOW);
         } else if (getType() == LARGE) {
             getPhysics().setSpriteWidth(20f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-//            getPhysics().setMoveSpeed(MathUtils.random(70, 80));
+            getPhysics().setMoveSpeed(100f);
+
             getGraphics().setColor(Color.BROWN);
         }
         getPhysics().setDirectionVector(1, 1);
     }
 
+    //this function doesnt work properly
     public void setType(int i) {
         this.type = i;
     }

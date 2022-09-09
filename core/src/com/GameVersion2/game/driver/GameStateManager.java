@@ -91,32 +91,12 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        timeSeconds += deltaTime;
-        System.out.println(timeSeconds);
-        if (timeSeconds > period) {
-            timeSeconds -= period;
-
-            //check if wave number passed max enemy waves
-            //if not, change wave number
-            //if, keep at max number of waves
-            if (enemyWaveNumber < maxEnemyWaves - 1) {
-                enemyWaveNumber++;
-            } else {
-                enemyWaveNumber = maxEnemyWaves - 1;
-            }
-
-            System.out.println("HANDLE EVENT!");
-        }
-        System.out.println(enemyWaveNumber);
-        jsonWave = jsonWaves.get(enemyWaveNumber);
-        enemyTypes = jsonWave.get("enemyTypes").asIntArray();
-        spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
-
-
+        //Update enemy waves
         //increments time seconds and resets time seconds after reached period of time
 
-        //----------------------------------------------
+        updateEnemyWave();
+
+        //------------------------------------------------------------------------------
 
         /**
          * TITLE SCREEN STATE
@@ -139,7 +119,7 @@ public class GameStateManager extends ApplicationAdapter {
          * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
          */
         for (int i = 0; i < enemyTypes.length; ++i) {
-            entityManager.spawnEnemies(deltaTime, i, 5, spawnCoolDown);
+            entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, spawnCoolDown);
         }
 
 
@@ -163,6 +143,7 @@ public class GameStateManager extends ApplicationAdapter {
          */
         for (Enemy e : entityManager.getEnemies()) {
             e.Update(deltaTime);
+            e.getPhysics().moveTowards(player, deltaTime);
         }
 
         player.Update(deltaTime);
@@ -177,6 +158,25 @@ public class GameStateManager extends ApplicationAdapter {
 
     }
 
+    public void updateEnemyWave() {
+        timeSeconds += deltaTime;
+        if (timeSeconds > period) {
+            timeSeconds -= period;
+            //check if wave number passed max enemy waves
+            //if not, change wave number
+            //if, keep at max number of waves
+            if (enemyWaveNumber < maxEnemyWaves - 1) {
+                enemyWaveNumber++;
+            } else {
+                enemyWaveNumber = maxEnemyWaves - 1;
+            }
+        }
+
+        System.out.println(enemyWaveNumber);
+        jsonWave = jsonWaves.get(enemyWaveNumber);
+        enemyTypes = jsonWave.get("enemyTypes").asIntArray();
+        spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
+    }
 
     @Override
     public void resize(int width, int height) {
