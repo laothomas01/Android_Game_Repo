@@ -1,9 +1,20 @@
-/*
+{
+  "statUpgrade": {
+    "moveSpeed": [0.1,0.2,0.3],
+    "health": [0.1,0.2,0.3]
+  },
+  "attackUpgrade": {
+    "ranged": {
+      "attackSpeed": [0.1, 0.2, 0.3],
+      "coolDown": [0.1, 0.2, 0.3],
+      "damage": [0.1, 0.2, 0.3]
+    },
+    "melee": {
+      "attackSpeed": [0.1, 0.2, 0.3],
+      "coolDown": [0.1, 0.2, 0.3],
+      "damage": [0.1, 0.2, 0.3]
+    }
 
-What does basic shoot consist of?
- -its a skill
- -has the following:
-   -cooldown
-   -on cooldown flag
-   -
+  }
+}
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 import java.util.SplittableRandom;
@@ -31,11 +32,11 @@ import java.util.SplittableRandom;
 public class GameStateManager extends ApplicationAdapter {
 
     //-----------FOR LATER IMPLEMENTATION------------------
-    enum GAMESTATE {START, GAMEPLAY, END}
+    enum State {PAUSE, RUN, STOPPED}
 
-    GAMESTATE state = null;
+    State state = State.RUN;
 
-    public String getState() {
+    public String getGameState() {
         return state.name();
     }
 
@@ -58,6 +59,13 @@ public class GameStateManager extends ApplicationAdapter {
     private float eventTimeInSeconds = 0f;
     private float periodOfTimeSeconds = 10f;
 
+
+    //upgrade template file
+    JsonValue upgrades;
+
+    //load base stats
+    JsonValue loadPlayerStats;
+
     public void create() {
         /**
          * PLACE THESE VALUES INTO THE RENDER:
@@ -73,90 +81,119 @@ public class GameStateManager extends ApplicationAdapter {
         maxEnemyWaves = jsonWaves.size;
         //----------------------------------------------------------------------
         entityManager = new GameObjectManager();
+        /**
+         * Have player add in a basic skill when starting up the game
+         */
+        //on create, load up player's base stats
+
+        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
+
         player = new Player();
+        player.setLevel(loadPlayerStats.get("level").asInt());
+        player.getPhysics().setSpriteSize(loadPlayerStats.get("size").get("width").asFloat(), loadPlayerStats.get("size").get("height").asFloat());
+        player.getPhysics().setMoveSpeed(loadPlayerStats.get("speed").asFloat());
+        //adding of skill
+        upgrades = AppManager.loadJsonFile("upgradeComponentTemplate.json").get("attackUpgrade");
+
+        Gdx.input.setInputProcessor(new GameInputProcessor());
+
     }
 
 
     public void render() {
 
-        /**
-         * GAME STATES:
-         * -MENU/TITLE SCREEN
-         * -GAMEPLAY STATE
-         * -GAME OVER SCREEN STATE
-         */
+
+        switch (state) {
+            case RUN:
+                /**
+                 * GAME StateS:
+                 * -MENU/TITLE SCREEN
+                 * -GAMEPLAY State
+                 * -GAME OVER SCREEN State
+                 */
 
 
-        deltaTime = Gdx.graphics.getDeltaTime();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //Update enemy waves
-        //increments time seconds and resets time seconds after reached period of time
+                deltaTime = Gdx.graphics.getDeltaTime();
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                //Update enemy waves
+                //increments time seconds and resets time seconds after reached period of time
 
-        updateEnemyWave();
+                updateEnemyWave();
 
-        //------------------------------------------------------------------------------
+                //------------------------------------------------------------------------------
 
-        /**
-         * TITLE SCREEN STATE
-         * @TODO: implement title screen UI
-         */
-
-
-        //----------------------------------------------
-
-        /**
-         * GAME PLAY STATE
-         * @TODO: move to gameplay screen
-         */
+                /**
+                 * TITLE SCREEN State
+                 * @TODO: implement title screen UI
+                 */
 
 
-        /** PERFORM CREATE:
-         *
-         * C/CRUD - create enemy entities. add to arraylist
-         *
-         * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
-         */
-        for (int i = 0; i < enemyTypes.length; ++i) {
-            entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, spawnCoolDown);
+                //----------------------------------------------
+
+                /**
+                 * GAME PLAY State
+                 * @TODO: move to gameplay screen
+                 */
+
+
+                /** PERFORM CREATE:
+                 *
+                 * C/CRUD - create enemy entities. add to arraylist
+                 *
+                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
+                 */
+                for (int i = 0; i < enemyTypes.length; ++i) {
+                    entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, spawnCoolDown);
+                }
+
+                /**
+                 *
+                 *
+                 * Update game entities:
+                 *
+                 * common entity updates:
+                 * -collision
+                 * -entity removal
+                 * -status updates
+                 *
+                 * PLAYER - keyboard input
+                 *
+                 * ENEMIES
+                 *
+                 * PROJECTILES
+                 *
+                 * GARBAGE COLLECTION
+                 */
+                for (Enemy e : entityManager.getEnemies()) {
+                    //temporary
+                    e.getPhysics().setMoveSpeed(0);
+                    e.getPhysics().performImpulseCollision(player);
+                    e.Update(deltaTime);
+                    player.shoot(e, deltaTime);
+                }
+
+                player.Update(deltaTime);
+                handleKeyBoardInput();
+                //----------------------------------------------
+                /**
+                 * GAME OVER State
+                 * @TODO: implement game over screen UI
+                 */
+
+                //----------------------------------------------
+
+
+            case PAUSE:
+                break;
+            default:
+                break;
         }
 
+    }
 
-        /**
-         *
-         *
-         * Update game entities:
-         *
-         * common entity updates:
-         * -collision
-         * -entity removal
-         * -status updates
-         *
-         * PLAYER - keyboard input
-         *
-         * ENEMIES
-         *
-         * PROJECTILES
-         *
-         * GARBAGE COLLECTION
-         */
-        for (Enemy e : entityManager.getEnemies()) {
-            //temporary
-            e.getPhysics().setMoveSpeed(0);
-            e.getPhysics().performImpulseCollision(player);
-            e.Update(deltaTime);
-            player.shoot(e, deltaTime);
-        }
-
-        player.Update(deltaTime);
-
-        //----------------------------------------------
-        /**
-         * GAME OVER STATE
-         * @TODO: implement game over screen UI
-         */
-
-        //----------------------------------------------
+    @Override
+    public void resize(int width, int height) {
 
     }
 
@@ -179,11 +216,6 @@ public class GameStateManager extends ApplicationAdapter {
         spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
     }
 
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
 
     public void pause() {
 
@@ -192,6 +224,7 @@ public class GameStateManager extends ApplicationAdapter {
         //pause when player swaps the application window but has not closed the project
 
         //called first when dispose() is called
+        this.state = State.PAUSE;
     }
 
 
@@ -199,7 +232,7 @@ public class GameStateManager extends ApplicationAdapter {
     @Override
     public void resume() {
 
-
+        this.state = State.RUN;
     }
 
     public void dispose() {
@@ -212,6 +245,45 @@ public class GameStateManager extends ApplicationAdapter {
 
     }
 
+    public void setGameState(State s) {
+        this.state = s;
+    }
+
+
+    private void handleKeyBoardInput() {
+
+        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                player.getPhysics().setDirectionVector(1, 1);
+
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                player.getPhysics().setDirectionVector(-1, 1);
+            } else {
+                player.getPhysics().setDirectionVector(0, 1);
+            }
+        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S)))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                player.getPhysics().setDirectionVector(1, -1);
+            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                player.getPhysics().setDirectionVector(-1, -1);
+            } else {
+                player.getPhysics().setDirectionVector(0, -1);
+            }
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A)) {
+            player.getPhysics().setDirectionVector(-1, 0);
+        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D)) {
+            player.getPhysics().setDirectionVector(1, 0);
+        } else {
+            player.getPhysics().setDirectionVector(0, 0);
+        }
+        if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.ESC)) {
+            setGameState(State.PAUSE);
+        }
+
+
+
+        GameInputProcessor.GameKeys.update();
+    }
 
 }
 

@@ -17,21 +17,20 @@ import com.badlogic.gdx.utils.Array;
  * User input
  */
 public class Player extends Entity {
-    GameObjectManager InGameObjectManager = new GameObjectManager();
     Array<Skill> skills;
-    float shootAngle;
+    int level;
 
+    float shootAngle;
     Vector2 shootDirection;
 
     /**
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
-
+        level = 1;
         shootDirection = new Vector2(0, 0);
         shootAngle = 0;
         //input handling
-        Gdx.input.setInputProcessor(new GameInputProcessor());
         //player has a collection of skills;
         skills = new Array<>();
         /**
@@ -57,19 +56,24 @@ public class Player extends Entity {
 //         */
 //        //this only accounts for odd number of projectiles right now
 //        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
-
-
         this.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         graphics.setTexture("square.png");
-        this.getPhysics().setSpriteSize(10f, 10f);
-        this.getPhysics().setMoveSpeed(100f);
+//        this.getPhysics().setSpriteSize(10f, 10f);
+//        this.getPhysics().setMoveSpeed(100f);
         graphics.setColor(Color.BLUE);
+    }
+
+    public void setLevel(int l) {
+        this.level = l;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public Array<Skill> getSkills() {
         return skills;
     }
-
 
     //when a player selects an upgrade, add to player's skill collection
     public void addSkill(Skill skill) {
@@ -90,40 +94,8 @@ public class Player extends Entity {
 
     //---------------------------------------------------------------------------------
 
-    public GameObjectManager getGameObjectManager() {
-        return InGameObjectManager;
-    }
 
 
-    private void handleKeyBoardInput() {
-
-        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-                this.getPhysics().setDirectionVector(1, 1);
-
-            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-                this.getPhysics().setDirectionVector(-1, 1);
-            } else {
-                this.getPhysics().setDirectionVector(0, 1);
-            }
-        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-                this.getPhysics().setDirectionVector(1, -1);
-            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.DOWN) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-                this.getPhysics().setDirectionVector(-1, -1);
-            } else {
-                this.getPhysics().setDirectionVector(0, -1);
-            }
-        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A)) {
-            this.getPhysics().setDirectionVector(-1, 0);
-        } else if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT) || GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D)) {
-            this.getPhysics().setDirectionVector(1, 0);
-        } else {
-            this.getPhysics().setDirectionVector(0, 0);
-        }
-
-        GameInputProcessor.GameKeys.update();
-    }
 
     /**
      * -Specifically made currently for ranged attacks
@@ -279,7 +251,6 @@ public class Player extends Entity {
     public void Update(float dt) {
         update(dt);
         this.getPhysics().move(dt);
-        handleKeyBoardInput();
     }
 
 

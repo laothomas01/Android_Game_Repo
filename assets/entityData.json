@@ -10,14 +10,11 @@
     {
       "enemyTypes": [0,1],
       "spawnCoolDown": 2
-
-
     }
     ,
     {
       "enemyTypes": [0,1,2],
       "spawnCoolDown": 3
-
     }
   ]
 }
