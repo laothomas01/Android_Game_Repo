@@ -36,8 +36,8 @@ public class GameStateManager extends ApplicationAdapter {
 
     State state = State.RUN;
 
-    public String getGameState() {
-        return state.name();
+    public State getGameState() {
+        return state;
     }
 
     //------------------------------------------------------
@@ -46,16 +46,21 @@ public class GameStateManager extends ApplicationAdapter {
     int enemyWaveNumber;
     int maxEnemyWaves;
     int[] enemyTypes;
-    float spawnCoolDown;
+    float enemySpawnCoolDown;
+
     //rendering time calculated between current and next frame
     float deltaTime;
+
     Player player;
-    //handler for all game entities
+
+    //handle garbage collection and updating of entities
     GameObjectManager entityManager;
+    //json values used for retrieving json data
     JsonValue jsonWaves;
     JsonValue jsonWave;
+    //
 
-    //game timer
+    //game event timer
     private float eventTimeInSeconds = 0f;
     private float periodOfTimeSeconds = 10f;
 
@@ -64,7 +69,7 @@ public class GameStateManager extends ApplicationAdapter {
     JsonValue upgrades;
 
     //load base stats
-    JsonValue loadPlayerStats;
+//    JsonValue loadPlayerStats;
 
     public void create() {
         /**
@@ -86,12 +91,12 @@ public class GameStateManager extends ApplicationAdapter {
          */
         //on create, load up player's base stats
 
-        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
+//        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
 
         player = new Player();
-        player.setLevel(loadPlayerStats.get("level").asInt());
-        player.getPhysics().setSpriteSize(loadPlayerStats.get("size").get("width").asFloat(), loadPlayerStats.get("size").get("height").asFloat());
-        player.getPhysics().setMoveSpeed(loadPlayerStats.get("speed").asFloat());
+//        player.setLevel(loadPlayerStats.get("level").asInt());
+//        player.getPhysics().setSpriteSize(loadPlayerStats.get("size").get("width").asFloat(), loadPlayerStats.get("size").get("height").asFloat());
+//        player.getPhysics().setMoveSpeed(loadPlayerStats.get("speed").asFloat());
         //adding of skill
         upgrades = AppManager.loadJsonFile("upgradeComponentTemplate.json").get("attackUpgrade");
 
@@ -112,10 +117,12 @@ public class GameStateManager extends ApplicationAdapter {
                  * -GAME OVER SCREEN State
                  */
 
-
+                // calculaton of time difference between previous and current frame
+                //60 FPS  => 1 second / 60 frames = 0.0166 sec / 1 frame
                 deltaTime = Gdx.graphics.getDeltaTime();
                 Gdx.gl.glClearColor(0, 0, 0, 1);
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
                 //Update enemy waves
                 //increments time seconds and resets time seconds after reached period of time
 
@@ -144,7 +151,7 @@ public class GameStateManager extends ApplicationAdapter {
                  * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
                  */
                 for (int i = 0; i < enemyTypes.length; ++i) {
-                    entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, spawnCoolDown);
+                    entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
                 }
 
                 /**
@@ -174,7 +181,6 @@ public class GameStateManager extends ApplicationAdapter {
                 }
 
                 player.Update(deltaTime);
-                handleKeyBoardInput();
                 //----------------------------------------------
                 /**
                  * GAME OVER State
@@ -189,6 +195,10 @@ public class GameStateManager extends ApplicationAdapter {
             default:
                 break;
         }
+
+
+        handleKeyBoardInput();
+
 
     }
 
@@ -213,7 +223,7 @@ public class GameStateManager extends ApplicationAdapter {
 
         jsonWave = jsonWaves.get(enemyWaveNumber);
         enemyTypes = jsonWave.get("enemyTypes").asIntArray();
-        spawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
+        enemySpawnCoolDown = jsonWave.get("spawnCoolDown").asFloat();
     }
 
 
@@ -253,7 +263,10 @@ public class GameStateManager extends ApplicationAdapter {
     private void handleKeyBoardInput() {
 
         if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) &&
+                    GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) ||
+                    (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) &&
+                            GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
                 player.getPhysics().setDirectionVector(1, 1);
 
             } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
@@ -276,10 +289,6 @@ public class GameStateManager extends ApplicationAdapter {
         } else {
             player.getPhysics().setDirectionVector(0, 0);
         }
-        if (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.ESC)) {
-            setGameState(State.PAUSE);
-        }
-
 
 
         GameInputProcessor.GameKeys.update();

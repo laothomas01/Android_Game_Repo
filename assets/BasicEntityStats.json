@@ -1,13 +1,3 @@
 {
-  "playerBaseStats":
-  {
-    "level": 1,
-    "size":
-    {
-      "width": 10,
-      "height": 10
-    },
-    "speed": 100
-  }
 
 }

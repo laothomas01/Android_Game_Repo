@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.Array;
 public class Player extends Entity {
     Array<Skill> skills;
     int level;
-
+    boolean hasLeveledUp;
     float shootAngle;
     Vector2 shootDirection;
 
@@ -27,10 +27,10 @@ public class Player extends Entity {
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
+        hasLeveledUp = false;
         level = 1;
         shootDirection = new Vector2(0, 0);
         shootAngle = 0;
-        //input handling
         //player has a collection of skills;
         skills = new Array<>();
         /**
@@ -58,8 +58,10 @@ public class Player extends Entity {
 //        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
         this.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         graphics.setTexture("square.png");
-//        this.getPhysics().setSpriteSize(10f, 10f);
-//        this.getPhysics().setMoveSpeed(100f);
+        this.getPhysics().setSpriteSize(10f, 10f);
+
+        //100 pixel units per second
+        this.getPhysics().setMoveSpeed(100f);
         graphics.setColor(Color.BLUE);
     }
 
@@ -93,8 +95,6 @@ public class Player extends Entity {
     }
 
     //---------------------------------------------------------------------------------
-
-
 
 
     /**
