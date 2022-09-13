@@ -108,9 +108,6 @@ public class Player extends Entity {
     /**
      * -Specifically made currently for ranged attacks
      * -pick 1 target, shoot at it, and let the projectile's other functionalities handle other interactions
-     *
-     * @param target
-     * @param dt
      */
     public String toString() {
         return "SPEED:" + this.getPhysics().getMoveSpeed() + "SIZE = " +

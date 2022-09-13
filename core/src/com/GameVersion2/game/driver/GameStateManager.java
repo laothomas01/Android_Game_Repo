@@ -1,6 +1,7 @@
 package com.GameVersion2.game.driver;
 
 import com.GameVersion2.game.Entities.Enemy;
+import com.GameVersion2.game.Entities.ExpDrop;
 import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Entities.Player;
@@ -12,18 +13,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.JsonValue;
 
 
-//maintain all current physics calculation
-
-
 /**
  * CRUD operations on the state of the game
  * <p>
- * -initializations, closing the app, running the app
+ * -initializations, closing the app, running the app, pausing the app,
  */
 
 
 public class GameStateManager extends ApplicationAdapter {
-    //-----------FOR LATER IMPLEMENTATION------------------
+    // ----------------- GAME STATES --------------------------
     enum State {PAUSE, RUN, STOPPED}
 
     State state;
@@ -34,39 +32,50 @@ public class GameStateManager extends ApplicationAdapter {
 
     //------------------------------------------------------
 
-    //Enemy related data
+    //--------------------handle enemy data----------------
     int enemyWaveNumber;
     int maxEnemyWaves;
     int[] enemyTypes;
     float enemySpawnCoolDown;
+
+    //------------------------------------------------------
+
 
     //rendering time calculated between current and next frame
     float deltaTime;
 
     Player player;
 
-    //handle garbage collection and updating of entities
-    GameObjectManager entityManager;
+    //handle garbage collection and updating of entities. i think this can be done better with a linked list?????
+    GameObjectManager entityManager = new GameObjectManager();
+
+
     //json values used for retrieving json data
     JsonValue jsonWaves;
     JsonValue jsonWave;
-    //
+
+    //-------------------------------------------------
 
     //game event timer
+
+
+    //seconds to wait before an event occurs
     private float eventTimeInSeconds = 0f;
+
+    //max time to wait for an event to happen
     private float periodOfTimeSeconds = 10f;
 
 
-    //upgrade template file
-    JsonValue upgrades;
-
-
-    float testTimeBeforeUpgrade;
+    //max wait time testing variable for leveling up player
+    float testTimeBeforeUpgrade = 0;
     float period = 5;
-    //load base stats
-//    JsonValue loadPlayerStats;
+
+    ExpDrop exp;
 
     public void create() {
+        //initialize starting state
+        exp = new ExpDrop();
+        exp.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         state = State.RUN;
         /**
          * PLACE THESE VALUES INTO THE RENDER:
@@ -77,11 +86,12 @@ public class GameStateManager extends ApplicationAdapter {
 
         //------------------------------update in render-----------------------
 
+
         enemyWaveNumber = 0;
         jsonWaves = AppManager.loadJsonFile("entityData.json").get("waves");
+        //size of the collection of enemy waves
         maxEnemyWaves = jsonWaves.size;
         //----------------------------------------------------------------------
-        entityManager = new GameObjectManager();
         /**
          * Have player add in a basic skill when starting up the game
          */
@@ -90,10 +100,9 @@ public class GameStateManager extends ApplicationAdapter {
 //        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
 
         player = new Player();
-        System.out.println("STARTING STATS:" + player.toString());
+//        System.out.println("STARTING STATS:" + player.toString());
         player.setHasLeveledUp(true);
         //adding of skill
-        upgrades = AppManager.loadJsonFile("upgradeComponentTemplate.json").get("attackUpgrade");
         Gdx.input.setInputProcessor(new GameInputProcessor());
 
         //see base stats first
@@ -102,55 +111,58 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void render() {
 
+        deltaTime = Gdx.graphics.getDeltaTime();
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        exp.getGraphics().drawSprite();
+        exp.update(deltaTime);
 
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
-        if (player.HasLeveled()) {
-            setGameState(State.PAUSE);
-        } else {
-            setGameState(State.RUN);
-        }
+//        if (player.HasLeveled()) {
+//            setGameState(State.PAUSE);
+//        } else {
+//            setGameState(State.RUN);
+//        }
         switch (state) {
             case RUN:
-                /**
-                 * GAME States:
-                 * -MENU/TITLE SCREEN
-                 * -GAMEPLAY State
-                 * -GAME OVER SCREEN State
-                 */
-
-                // calculaton of time difference between previous and current frame
-                //60 FPS  => 1 second / 60 frames = 0.0166 sec / 1 frame
-                deltaTime = Gdx.graphics.getDeltaTime();
-                Gdx.gl.glClearColor(0, 0, 0, 1);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-                //Update enemy waves
-                //increments time seconds and resets time seconds after reached period of time
-
-
-                //------------------------------------------------------------------------------
-
-                /**
-                 * TITLE SCREEN State
-                 * @TODO: implement title screen UI
-                 */
-
-
-                //----------------------------------------------
-
-                /**
-                 * GAME PLAY State
-                 * @TODO: move to gameplay screen
-                 */
-
-
-                /** PERFORM CREATE:
-                 *
-                 * C/CRUD - create enemy entities. add to arraylist
-                 *
-                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
-                 */
+//                /**
+//                 * GAME States:
+//                 * -MENU/TITLE SCREEN
+//                 * -GAMEPLAY State
+//                 * -GAME OVER SCREEN State
+//                 */
+//
+//                // calculaton of time difference between previous and current frame
+//                //60 FPS  => 1 second / 60 frames = 0.0166 sec / 1 frame
+//
+//                //Update enemy waves
+//                //increments time seconds and resets time seconds after reached period of time
+//
+//
+//                //------------------------------------------------------------------------------
+//
+//                /**
+//                 * TITLE SCREEN State
+//                 * @TODO: implement title screen UI
+//                 */
+//
+//
+//                //----------------------------------------------
+//
+//                /**
+//                 * GAME PLAY State
+//                 * @TODO: move to gameplay screen
+//                 */
+//
+//
+//                /** PERFORM CREATE:
+//                 *
+//                 * C/CRUD - create enemy entities. add to arraylist
+//                 *
+//                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
+//                 */
                 updateEnemyWave();
 
 
@@ -190,29 +202,34 @@ public class GameStateManager extends ApplicationAdapter {
                  * GAME OVER State
                  * @TODO: implement game over screen UI
                  */
-                System.out.println("AFTER UPGRADE:" + player.toString());
+//                System.out.println("AFTER UPGRADE:" + player.toString());
                 //----------------------------------------------
                 player.Update(deltaTime);
                 handleMovementInputs();
-                testGradualUpgrades();
+//                testGradualUpgrades();
 
             case PAUSE:
                 if (player.HasLeveled()) {
-                    Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
-                    Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
-                    if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-                        System.out.println("SIZE!");
-                        player.setHasLeveledUp(false);
-                        player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
-                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
-                        System.out.println("SPEED!");
-                        player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 10);
-                        player.setHasLeveledUp(false);
-                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-                        System.out.println("COLOR!");
-                        player.getGraphics().setColor(Color.PINK);
-                        player.setHasLeveledUp(false);
-                    }
+
+                    /**
+                     * If has leveled up, display interactable gui or in-game user-input to select an ability
+                     */
+
+//                    Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
+//                    Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+//                    if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+//                        System.out.println("SIZE!");
+//                        player.setHasLeveledUp(false);
+//                        player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
+//                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+//                        System.out.println("SPEED!");
+//                        player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 10);
+//                        player.setHasLeveledUp(false);
+//                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+//                        System.out.println("COLOR!");
+//                        player.getGraphics().setColor(Color.PINK);
+//                        player.setHasLeveledUp(false);
+//                    }
                 }
                 break;
             default:
@@ -228,7 +245,7 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void testGradualUpgrades() {
-        testTimeBeforeUpgrade += deltaTime;
+        testTimeBeforeUpgrade = deltaTime;
         if (testTimeBeforeUpgrade > period) {
             testTimeBeforeUpgrade -= period;
             player.setHasLeveledUp(true);

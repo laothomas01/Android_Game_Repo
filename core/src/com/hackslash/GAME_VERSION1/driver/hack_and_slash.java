@@ -17,9 +17,9 @@ import com.badlogic.gdx.utils.Array;
  * THIS IS A BRANCH I WILL USE TO TEST NEW FEATURES AND WILL INTEGRATE MY WORK BACK INTO THE MAIN BRANCH
  * <p>
  * CONSIDER THIS A PLAYGROUND OF SORTS
- * [x] following camera
- * [x] orbiting sprite around another sprite
- * [x] testing out linear interpolation
+ * [] following camera
+ * [] orbiting sprite around another sprite
+ * [] testing out linear interpolation
  * [] bouncy sprite collision
  */
 
@@ -82,15 +82,6 @@ public class hack_and_slash extends ApplicationAdapter {
                 if (b.hasCollided(enemy)) {
                     manager.getCollectionOfRemovedBullets().add(b);
                 }
-//                System.out.println("LIFE SPAN:" + );
-//                System.out.println("MAX LIFE SPAN:" + b.getMaxLifeSpan());
-
-//                if (b.lifeSpan <= 0) {
-//                    b.setLifeSpan(b.getMaxLifeSpan());
-//                    manager.getCollectionOfRemovedBullets().add(b);
-//                } else {
-//                    b.lifeSpan -= deltaTime;
-//                }
 
                 b.move(deltaTime);
                 b.update();

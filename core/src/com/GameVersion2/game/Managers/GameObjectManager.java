@@ -3,19 +3,22 @@ package com.GameVersion2.game.Managers;
 import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Entities.Entity;
 import com.GameVersion2.game.Entities.Projectile;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.Hashtable;
 
 /**
  * Handles CRUD operations on game objects
  */
 
 public class GameObjectManager {
-    //    private float maxSpawnCoolDown = 3f;
+
     private float spawnTimer = 0f;
     Array<Enemy> enemies = new Array<>();
-
     Array<Projectile> projectiles = new Array<>();
+    
     //handle removal of all game objects
     Array<Entity> garbageCollection = new Array<>();
 
