@@ -5,19 +5,12 @@ import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Entities.Player;
 import com.GameVersion2.game.Managers.GameObjectManager;
+import com.GameVersion2.game.Util.Graphics2D;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
-import org.w3c.dom.ls.LSOutput;
 
-import java.util.ArrayList;
-import java.util.SplittableRandom;
 
 //maintain all current physics calculation
 
@@ -30,11 +23,10 @@ import java.util.SplittableRandom;
 
 
 public class GameStateManager extends ApplicationAdapter {
-
     //-----------FOR LATER IMPLEMENTATION------------------
     enum State {PAUSE, RUN, STOPPED}
 
-    State state = State.RUN;
+    State state;
 
     public State getGameState() {
         return state;
@@ -68,10 +60,14 @@ public class GameStateManager extends ApplicationAdapter {
     //upgrade template file
     JsonValue upgrades;
 
+
+    float testTimeBeforeUpgrade;
+    float period = 5;
     //load base stats
 //    JsonValue loadPlayerStats;
 
     public void create() {
+        state = State.RUN;
         /**
          * PLACE THESE VALUES INTO THE RENDER:
          * -increment enemy wave number after N amount of time passed.
@@ -94,24 +90,30 @@ public class GameStateManager extends ApplicationAdapter {
 //        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
 
         player = new Player();
-//        player.setLevel(loadPlayerStats.get("level").asInt());
-//        player.getPhysics().setSpriteSize(loadPlayerStats.get("size").get("width").asFloat(), loadPlayerStats.get("size").get("height").asFloat());
-//        player.getPhysics().setMoveSpeed(loadPlayerStats.get("speed").asFloat());
+        System.out.println("STARTING STATS:" + player.toString());
+        player.setHasLeveledUp(true);
         //adding of skill
         upgrades = AppManager.loadJsonFile("upgradeComponentTemplate.json").get("attackUpgrade");
-
         Gdx.input.setInputProcessor(new GameInputProcessor());
 
+        //see base stats first
     }
 
 
     public void render() {
 
 
+        //testing level up logic
+        //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
+        if (player.HasLeveled()) {
+            setGameState(State.PAUSE);
+        } else {
+            setGameState(State.RUN);
+        }
         switch (state) {
             case RUN:
                 /**
-                 * GAME StateS:
+                 * GAME States:
                  * -MENU/TITLE SCREEN
                  * -GAMEPLAY State
                  * -GAME OVER SCREEN State
@@ -126,7 +128,6 @@ public class GameStateManager extends ApplicationAdapter {
                 //Update enemy waves
                 //increments time seconds and resets time seconds after reached period of time
 
-                updateEnemyWave();
 
                 //------------------------------------------------------------------------------
 
@@ -150,9 +151,13 @@ public class GameStateManager extends ApplicationAdapter {
                  *
                  * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
                  */
+                updateEnemyWave();
+
+
                 for (int i = 0; i < enemyTypes.length; ++i) {
                     entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
                 }
+
 
                 /**
                  *
@@ -180,30 +185,54 @@ public class GameStateManager extends ApplicationAdapter {
                     player.shoot(e, deltaTime);
                 }
 
-                player.Update(deltaTime);
                 //----------------------------------------------
                 /**
                  * GAME OVER State
                  * @TODO: implement game over screen UI
                  */
-
+                System.out.println("AFTER UPGRADE:" + player.toString());
                 //----------------------------------------------
-
+                player.Update(deltaTime);
+                handleMovementInputs();
+                testGradualUpgrades();
 
             case PAUSE:
+                if (player.HasLeveled()) {
+                    Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
+                    Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+                    if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                        System.out.println("SIZE!");
+                        player.setHasLeveledUp(false);
+                        player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
+                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+                        System.out.println("SPEED!");
+                        player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 10);
+                        player.setHasLeveledUp(false);
+                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                        System.out.println("COLOR!");
+                        player.getGraphics().setColor(Color.PINK);
+                        player.setHasLeveledUp(false);
+                    }
+                }
                 break;
             default:
                 break;
         }
 
 
-        handleKeyBoardInput();
-
-
     }
 
     @Override
     public void resize(int width, int height) {
+
+    }
+
+    public void testGradualUpgrades() {
+        testTimeBeforeUpgrade += deltaTime;
+        if (testTimeBeforeUpgrade > period) {
+            testTimeBeforeUpgrade -= period;
+            player.setHasLeveledUp(true);
+        }
 
     }
 
@@ -227,14 +256,10 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
+    //called when application is not running
     public void pause() {
-
-        //pause when player levels up and has to choose an upgrade
-
-        //pause when player swaps the application window but has not closed the project
-
-        //called first when dispose() is called
         this.state = State.PAUSE;
+
     }
 
 
@@ -260,13 +285,10 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
-    private void handleKeyBoardInput() {
+    private void handleMovementInputs() {
 
         if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
-            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) &&
-                    GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) ||
-                    (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) &&
-                            GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
                 player.getPhysics().setDirectionVector(1, 1);
 
             } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.LEFT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {

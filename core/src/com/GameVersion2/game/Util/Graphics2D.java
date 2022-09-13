@@ -12,8 +12,8 @@ public class Graphics2D {
     Texture texture;
     Color color;
     SpriteBatch spriteBatch;
-    private SpriteBatch fontSpriteBatch;
-    private BitmapFont font;
+    private static SpriteBatch fontSpriteBatch;
+    private static BitmapFont font;
 
     public Graphics2D() {
         font = new BitmapFont();
@@ -54,21 +54,25 @@ public class Graphics2D {
         this.getSpriteBatch().end();
     }
 
-    public BitmapFont getBitMapFont() {
-        return this.font;
+    public static BitmapFont getBitMapFont() {
+        return font;
     }
 
-    public SpriteBatch getFontSpriteBatch() {
-        return this.fontSpriteBatch;
+    public static SpriteBatch getFontSpriteBatch() {
+        return fontSpriteBatch;
     }
 
 
-    public void drawFontSprite(String message, float posX, float posY) {
+    public static void drawFontSprite(String message, float posX, float posY) {
         fontSpriteBatch.begin();
 
-        this.getBitMapFont().draw(this.getFontSpriteBatch(), message, posX, posY);
+        getBitMapFont().draw(getFontSpriteBatch(), message, posX, posY);
 
         fontSpriteBatch.end();
+    }
+
+    public static void dispose() {
+        getBitMapFont().dispose();
     }
 
 

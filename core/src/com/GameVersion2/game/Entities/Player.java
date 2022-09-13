@@ -65,6 +65,14 @@ public class Player extends Entity {
         graphics.setColor(Color.BLUE);
     }
 
+    public void setHasLeveledUp(boolean lvled) {
+        this.hasLeveledUp = lvled;
+    }
+
+    public boolean HasLeveled() {
+        return this.hasLeveledUp;
+    }
+
     public void setLevel(int l) {
         this.level = l;
     }
@@ -104,6 +112,12 @@ public class Player extends Entity {
      * @param target
      * @param dt
      */
+    public String toString() {
+        return "SPEED:" + this.getPhysics().getMoveSpeed() + "SIZE = " +
+                "WIDTH:" + this.getPhysics().getSpriteWidth() + "HEIGHT:" + this.getPhysics().getSpriteHeight()
+                + "GRAPHICS:" + this.getGraphics().getColor().toString();
+    }
+
     public void shoot(Entity target, float dt) {
 
         //find the angle(in radians) between target and shooter

@@ -54,6 +54,10 @@ public class AppManager {
         localViewPortHeight = localViewPortHeight;
     }
 
+    public static int getFPS()
+    {
+        return Gdx.graphics.getFramesPerSecond();
+    }
     /**
      * Deserializing objects from JSON
      */
