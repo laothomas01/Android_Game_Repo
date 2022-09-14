@@ -1,11 +1,8 @@
 package com.GameVersion2.game.driver;
 
-import com.GameVersion2.game.Entities.Enemy;
-import com.GameVersion2.game.Entities.ExpDrop;
-import com.GameVersion2.game.Entities.Projectile;
+import com.GameVersion2.game.Entities.*;
 import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
-import com.GameVersion2.game.Entities.Player;
 import com.GameVersion2.game.Managers.GameObjectManager;
 import com.GameVersion2.game.Util.Graphics2D;
 import com.badlogic.gdx.*;
@@ -72,6 +69,13 @@ public class GameStateManager extends ApplicationAdapter {
     float period = 5;
 
 //    ExpDrop exp;
+
+    //------------------------ TESTING ENEMY DETECTION ------------------------
+
+    float enemyDetectionDuration = 3;
+    float enemtDetectionPeriod = 0f;
+
+    //-------------------------------------------------------------------------
 
     public void create() {
 
@@ -163,9 +167,17 @@ public class GameStateManager extends ApplicationAdapter {
     //------------------------------------------------------
 
     //TESTING QUEUEING SEEN ENEMIES
-    public void testSeenEnemy(Enemy e) {
-        if (player.detectEntity(e)) {
-            player.storeSeenEntity(e);
+    public void testEnemyDetection() {
+        for (Enemy e : entityManager.getEnemies()) {
+            player.addSeenEnemy(e);
+        }
+
+        //get the first seen enemy
+        Entity currentlySeenEnemy = player.getSeenEnemies().peek();
+        if (currentlySeenEnemy != null) {
+//            if (player.detectEntity(currentlySeenEnemy)) {
+//                currentlySeenEnemy.getGraphics().setColor(Color.RED);
+//            }
         }
     }
     //--------------------------------
@@ -253,10 +265,10 @@ public class GameStateManager extends ApplicationAdapter {
 //                    e.getPhysics().performImpulseCollision(player);
                     //update all enemy objects
                     e.Update(deltaTime);
-                    testSeenEnemy(e);
-
                 }
-                System.out.println("ENEMIES SEEN:" + player.getSeenEnemies());
+
+
+                System.out.println("ENEMIES SEEN:" + player.getSeenEnemies().peek());
 
 //                System.out.println(entityManager.getProjectiles().toString());
 //                entityManager.spawnBullets(deltaTime);

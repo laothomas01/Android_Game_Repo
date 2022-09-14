@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Queue;
 
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Player has the following:
@@ -26,6 +26,7 @@ public class Player extends Entity {
     boolean hasLeveledUp;
     float shootAngle;
     Vector2 shootDirection;
+
     Queue<Entity> seenEnemies;
     /**
      * Storing enemies seen by player
@@ -37,7 +38,7 @@ public class Player extends Entity {
      */
     public Player() {
 
-        seenEnemies = new Queue<>();
+        seenEnemies = new LinkedList<>();
         hasLeveledUp = false;
         level = 1;
         shootDirection = new Vector2(0, 0);
@@ -121,13 +122,15 @@ public class Player extends Entity {
         return false;
     }
 
-
-    public void storeSeenEntity(Entity target) {
-        if(getSeenEnemies().)
-    }
-
     public Queue<Entity> getSeenEnemies() {
         return this.seenEnemies;
+    }
+
+    public void addSeenEnemy(Entity target) {
+        //if the target has been detected and has not yet been recorded
+        if (detectEntity(target) && !seenEnemies.contains(target)) {
+            seenEnemies.add(target);
+        }
     }
 
     //---------------------------------------------------------------------------------
