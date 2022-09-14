@@ -2,6 +2,7 @@ package com.GameVersion2.game.driver;
 
 import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Entities.ExpDrop;
+import com.GameVersion2.game.Entities.Projectile;
 import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Entities.Player;
@@ -70,12 +71,13 @@ public class GameStateManager extends ApplicationAdapter {
     float testTimeBeforeUpgrade = 0;
     float period = 5;
 
-    ExpDrop exp;
+//    ExpDrop exp;
 
     public void create() {
+
         //initialize starting state
-        exp = new ExpDrop();
-        exp.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+//        exp = new ExpDrop();
+//        exp.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         state = State.RUN;
         /**
          * PLACE THESE VALUES INTO THE RENDER:
@@ -110,21 +112,21 @@ public class GameStateManager extends ApplicationAdapter {
 
 
     public void render() {
-
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        exp.getGraphics().drawSprite();
-        exp.update(deltaTime);
+
+//        exp.getGraphics().drawSprite();
+//        exp.update(deltaTime);
 
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
-//        if (player.HasLeveled()) {
-//            setGameState(State.PAUSE);
-//        } else {
-//            setGameState(State.RUN);
-//        }
+        if (player.HasLeveled()) {
+            setGameState(State.PAUSE);
+        } else {
+            setGameState(State.RUN);
+        }
         switch (state) {
             case RUN:
 //                /**
@@ -193,9 +195,13 @@ public class GameStateManager extends ApplicationAdapter {
                     //temporary
                     e.getPhysics().setMoveSpeed(0);
                     e.getPhysics().performImpulseCollision(player);
+                    //update all enemy objects
                     e.Update(deltaTime);
-                    player.shoot(e, deltaTime);
+//                    player.shoot(e, deltaTime, this.entityManager);
                 }
+//                System.out.println(entityManager.getProjectiles().toString());
+//                entityManager.spawnBullets(deltaTime);
+
 
                 //----------------------------------------------
                 /**
@@ -204,32 +210,33 @@ public class GameStateManager extends ApplicationAdapter {
                  */
 //                System.out.println("AFTER UPGRADE:" + player.toString());
                 //----------------------------------------------
-                player.Update(deltaTime);
+                player.update(deltaTime);
                 handleMovementInputs();
-//                testGradualUpgrades();
+                testGradualUpgrades();
 
             case PAUSE:
+                /**
+                 * If has leveled up, display interactable gui or in-game user-input to select an ability
+                 */
+
                 if (player.HasLeveled()) {
 
-                    /**
-                     * If has leveled up, display interactable gui or in-game user-input to select an ability
-                     */
 
-//                    Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
-//                    Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
-//                    if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-//                        System.out.println("SIZE!");
-//                        player.setHasLeveledUp(false);
-//                        player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
-//                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
-//                        System.out.println("SPEED!");
-//                        player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 10);
-//                        player.setHasLeveledUp(false);
-//                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-//                        System.out.println("COLOR!");
-//                        player.getGraphics().setColor(Color.PINK);
-//                        player.setHasLeveledUp(false);
-//                    }
+                    Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
+                    Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+                    if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+                        System.out.println("SIZE!");
+                        player.setHasLeveledUp(false);
+                        player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
+                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+                        System.out.println("SPEED!");
+                        player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
+                        player.setHasLeveledUp(false);
+                    } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+                        System.out.println("COLOR!");
+                        player.getGraphics().setColor(Color.PINK);
+                        player.setHasLeveledUp(false);
+                    }
                 }
                 break;
             default:
@@ -245,7 +252,11 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void testGradualUpgrades() {
-        testTimeBeforeUpgrade = deltaTime;
+        System.out.println("TIME BEFORE UPGRADE:" + testTimeBeforeUpgrade);
+        System.out.println("LEVELED UP:" + player.HasLeveled());
+
+        //level up every 5 seconds
+        testTimeBeforeUpgrade += deltaTime;
         if (testTimeBeforeUpgrade > period) {
             testTimeBeforeUpgrade -= period;
             player.setHasLeveledUp(true);

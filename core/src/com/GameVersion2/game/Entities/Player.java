@@ -27,6 +27,7 @@ public class Player extends Entity {
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
+
         hasLeveledUp = false;
         level = 1;
         shootDirection = new Vector2(0, 0);
@@ -43,7 +44,7 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
-//        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
 //
 //        /**
 //         * Leveling up Parallel Shoot Skill
@@ -115,7 +116,11 @@ public class Player extends Entity {
                 + "GRAPHICS:" + this.getGraphics().getColor().toString();
     }
 
-    public void shoot(Entity target, float dt) {
+
+    public void shoot(Entity target, float dt, GameObjectManager projectiles) {
+        /**
+         * Let's just implement a basic shoot right now
+         */
 
         //find the angle(in radians) between target and shooter
         this.getPhysics().setRadians(MathUtils.atan2(
@@ -127,10 +132,26 @@ public class Player extends Entity {
         this.setShootDirection(MathUtils.cos(this.getPhysics().getRadians()),
                 MathUtils.sin(this.getPhysics().getRadians()));
 
-        /**
-         * Lets focus on de
-         */
 
+        for (int i = 0; i < this.getSkills().size; i++) {
+            if (this.getSkill(i).hasFinishedCoolDown()) {
+                this.getSkill(i).update(this.getSkill(i).getmaxCoolDownTimer(), false);
+                //basic shoot
+                Projectile bullet = new Projectile();
+                bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
+                //XY-offset the position when spawning
+                bullet.getPhysics().setPosition(new Vector2((
+                        bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x,
+                        (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
+
+                //@TODO: investigate potential problem with this function
+                projectiles.addProjectiles(bullet);
+//                System.out.println("ADDING BULLET!");
+            } else {
+                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
+//            }
+
+            }
 
 //        //angle(in radians) used to find the direction for shooting at target
 //        float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
@@ -255,7 +276,7 @@ public class Player extends Entity {
 //                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
 //            }
 //
-//        }
+        }
 
     }
 

@@ -6,32 +6,38 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Entity {
 
+
     int type;
     public static final int SMALL = 0;
     public static final int MEDIUM = 1;
     public static final int LARGE = 2;
+
 
     boolean remove = false;
 
 
     //better constructor
     public Enemy(float x, float y, int t) {
+        this.setState(State.ALIVE);
         type = t;
         getPhysics().setPosition(x, y);
         if (getType() == SMALL) {
             getPhysics().setSpriteWidth(10f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(70f);
+//            getPhysics().setMoveSpeed(70f);
+            getPhysics().setMoveSpeed(0f);
         } else if (getType() == MEDIUM) {
             getPhysics().setSpriteWidth(12f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(50f);
+//            getPhysics().setMoveSpeed(50f);
+            getPhysics().setMoveSpeed(0f);
 
             getGraphics().setColor(Color.YELLOW);
         } else if (getType() == LARGE) {
             getPhysics().setSpriteWidth(20f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
-            getPhysics().setMoveSpeed(100f);
+//            getPhysics().setMoveSpeed(10);
+            getPhysics().setMoveSpeed(0);
 
             getGraphics().setColor(Color.BROWN);
         }
@@ -54,7 +60,6 @@ public class Enemy extends Entity {
         } else {
             this.lifeSpanTimer -= dt;
         }
-        this.getPhysics().move(dt);
     }
 
 

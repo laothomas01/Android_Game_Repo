@@ -2,24 +2,39 @@ package com.GameVersion2.game.Managers;
 
 import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Entities.Entity;
+import com.GameVersion2.game.Entities.ExpDrop;
 import com.GameVersion2.game.Entities.Projectile;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Hashtable;
 
 /**
- * Handles CRUD operations on game objects
+ * Global game manager for game entities
+ * Would be better to have 1 instantiate function for ALLLLLL GAME ENTITIES/GAME OBJECTS >:(
+ * <p>
+ * AS you notice in this code, i have to come back and add more and more and morrrrrrre features to handle CRUF
+ * of a collection of game objects.
+ * <p>
+ * How can i generalize this to make my life easier as well as future devs and future refactoring?????
+ * Problem with design currently:
+ * - no reusability
+ * - having to go back and add more and more features
+ * - the object manager is now a manager of other managers(WE DONT WANT THIS)
  */
 
 public class GameObjectManager {
 
     private float spawnTimer = 0f;
     Array<Enemy> enemies = new Array<>();
-    Array<Projectile> projectiles = new Array<>();
-    
+    static Array<Projectile> projectiles = new Array<>();
+
+    Array<ExpDrop> expDrops = new Array<>();
+
     //handle removal of all game objects
+
     Array<Entity> garbageCollection = new Array<>();
 
     private int randomLocation = 0;
@@ -43,7 +58,6 @@ public class GameObjectManager {
 
 
     public void spawnEnemies(float dt, int enemyType, int enemyCount, float maxSpawnCoolDown) {
-
         /**
          * @TODO need to regulate how fast spawning will be with a timer
          * @TODO fix spawn positions
@@ -129,6 +143,21 @@ public class GameObjectManager {
 
     }
 
+
+    //when enemy dies, add exp object to array
+    //update objects in array to provide rendering
+    public void spawnEXP() {
+        for (Enemy e : getEnemies()) {
+            if (e.getState().equals("DEAD")) {
+                getExpDrops().add(new ExpDrop(e.getPhysics().getPosition()));
+            }
+        }
+    }
+
+    public Array<ExpDrop> getExpDrops() {
+        return this.expDrops;
+    }
+
     public void spawnBullets(float dt) {
         for (Projectile p : projectiles) {
             p.update(dt);
@@ -147,7 +176,7 @@ public class GameObjectManager {
         this.enemies.add(e);
     }
 
-    public Array<Projectile> getProjectiles() {
+    public static Array<Projectile> getProjectiles() {
         return projectiles;
     }
 
