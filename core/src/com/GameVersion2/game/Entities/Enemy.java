@@ -64,7 +64,17 @@ public class Enemy extends Entity {
 
 
     public String toString() {
-        return "ENEMY:\n" + "POSITION:" + this.getPhysics().getPosition() + "\nDIRECTION VECTOR: " + this.getPhysics().getDirectionVector() + "\nMOVE SPEED: " + this.getPhysics().getMoveSpeed() + "\n" + "SIZE:" + this.getPhysics().getSpriteWidth() + "," + this.getPhysics().getSpriteHeight();
+        return "\n--------------------------------\n" +
+                "ENEMY:" + this.hashCode() +
+                "\n" +
+                "POSITION:" + this.getPhysics().getPosition()
+                + "\n"
+                + "DIRECTION VECTOR:" + this.getPhysics().getDirectionVector() +
+                "\n" +
+                "MOVE SPEED:"
+                + this.getPhysics().getMoveSpeed() +
+                "\n" + "SIZE:" + this.getPhysics().getSpriteWidth() + "," + this.getPhysics().getSpriteHeight() + "\n" +
+                "-------------------------------------" + "\n";
     }
 
 }

@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
+
+import java.util.LinkedList;
 
 /**
  * Player has the following:
@@ -19,15 +22,22 @@ import com.badlogic.gdx.utils.Array;
 public class Player extends Entity {
     Array<Skill> skills;
     int level;
+    int enemyDetectionRadius = 500;
     boolean hasLeveledUp;
     float shootAngle;
     Vector2 shootDirection;
+    Queue<Entity> seenEnemies;
+    /**
+     * Storing enemies seen by player
+     */
+
 
     /**
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
 
+        seenEnemies = new Queue<>();
         hasLeveledUp = false;
         level = 1;
         shootDirection = new Vector2(0, 0);
@@ -44,7 +54,7 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
-        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Basic Shoot", 1f, false, 1, 1, 0, 0));
 //
 //        /**
 //         * Leveling up Parallel Shoot Skill
@@ -101,6 +111,23 @@ public class Player extends Entity {
 
     public Vector2 getShootDirection() {
         return this.shootDirection;
+    }
+
+    public boolean detectEntity(Entity target) {
+        if (Vector2.dst(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y,
+                target.getPhysics().getPosition().x, target.getPhysics().getPosition().y) < enemyDetectionRadius) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public void storeSeenEntity(Entity target) {
+        if(getSeenEnemies().)
+    }
+
+    public Queue<Entity> getSeenEnemies() {
+        return this.seenEnemies;
     }
 
     //---------------------------------------------------------------------------------
