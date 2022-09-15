@@ -22,7 +22,7 @@ import java.util.Queue;
 public class Player extends Entity {
     Array<Skill> skills;
     int level;
-    int enemyDetectionRadius = 500;
+    int enemyDetectionRadius = 100;
     boolean hasLeveledUp;
     float shootAngle;
     Vector2 shootDirection;
@@ -116,7 +116,7 @@ public class Player extends Entity {
 
     public boolean detectEntity(Entity target) {
         if (Vector2.dst(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y,
-                target.getPhysics().getPosition().x, target.getPhysics().getPosition().y) < enemyDetectionRadius) {
+                target.getPhysics().getPosition().x, target.getPhysics().getPosition().y) <= enemyDetectionRadius) {
             return true;
         }
         return false;
@@ -128,8 +128,10 @@ public class Player extends Entity {
 
     public void addSeenEnemy(Entity target) {
         //if the target has been detected and has not yet been recorded
-        if (detectEntity(target) && !seenEnemies.contains(target)) {
-            seenEnemies.add(target);
+        if (detectEntity(target)) {
+            if (!seenEnemies.contains(target)) {
+                seenEnemies.add(target);
+            }
         }
     }
 

@@ -9,15 +9,12 @@ import com.GameVersion2.game.Util.Physics2D;
 
 
 public class Entity {
-
-
     //physics2D manager
     Physics2D physics;
     //graphics2D manager
     Graphics2D graphics;
     float lifeSpan = 1.2f;
     float lifeSpanTimer = 0;
-
 
     public enum State {DEAD, ALIVE}
 

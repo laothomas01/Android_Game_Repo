@@ -30,7 +30,7 @@ public class GameStateManager extends ApplicationAdapter {
 
     //------------------------------------------------------
 
-    //--------------------handle enemy data----------------
+    //--------------------handle enemy and enemy spawner data----------------
     int enemyWaveNumber;
     int maxEnemyWaves;
     int[] enemyTypes;
@@ -47,7 +47,6 @@ public class GameStateManager extends ApplicationAdapter {
     //handle garbage collection and updating of entities. i think this can be done better with a linked list?????
     GameObjectManager entityManager = new GameObjectManager();
 
-
     //json values used for retrieving json data
     JsonValue jsonWaves;
     JsonValue jsonWave;
@@ -57,12 +56,11 @@ public class GameStateManager extends ApplicationAdapter {
     //game event timer
 
 
-    //seconds to wait before an event occurs
+    //seconds to wait before an event such as leveling up occurs
     private float eventTimeInSeconds = 0f;
 
     //max time to wait for an event to happen
-    private float periodOfTimeSeconds = 10f;
-
+    private float periodOfTimeSeconds = 15f;
 
     //max wait time testing variable for leveling up player
     float testTimeBeforeUpgrade = 0;
@@ -72,8 +70,8 @@ public class GameStateManager extends ApplicationAdapter {
 
     //------------------------ TESTING ENEMY DETECTION ------------------------
 
-    float enemyDetectionDuration = 3;
-    float enemtDetectionPeriod = 0f;
+    float detectionWaitTime = 0f;
+    float enemyDetectionPeriod = 3f;
 
     //-------------------------------------------------------------------------
 
@@ -82,7 +80,10 @@ public class GameStateManager extends ApplicationAdapter {
         //initialize starting state
 //        exp = new ExpDrop();
 //        exp.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+
+
         state = State.RUN;
+
         /**
          * PLACE THESE VALUES INTO THE RENDER:
          * -increment enemy wave number after N amount of time passed.
@@ -103,14 +104,12 @@ public class GameStateManager extends ApplicationAdapter {
          */
         //on create, load up player's base stats
 
-//        loadPlayerStats = AppManager.loadJsonFile("BasicEntityStats.json").get("playerBaseStats");
 
         player = new Player();
 //        System.out.println("STARTING STATS:" + player.toString());
 
         //adding of skill
         Gdx.input.setInputProcessor(new GameInputProcessor());
-
         //see base stats first
     }
 
@@ -164,20 +163,34 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
+
     //------------------------------------------------------
 
     //TESTING QUEUEING SEEN ENEMIES
     public void testEnemyDetection() {
+        //detect an enemy and put into a queue of detected enemies
         for (Enemy e : entityManager.getEnemies()) {
             player.addSeenEnemy(e);
         }
 
-        //get the first seen enemy
+        //get the first seen enemy from the queue storing seen enemies using a FIFO structure
         Entity currentlySeenEnemy = player.getSeenEnemies().peek();
         if (currentlySeenEnemy != null) {
-//            if (player.detectEntity(currentlySeenEnemy)) {
-//                currentlySeenEnemy.getGraphics().setColor(Color.RED);
-//            }
+            if (player.detectEntity(currentlySeenEnemy)) {
+                //if current enemy seen, color it yellow
+                currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
+                //player shoot
+            } else {
+                currentlySeenEnemy.getGraphics().setColor(Color.RED);
+                //if current enemy is not seen, just color it back to normal
+                //begin timer if enemy not detected
+                detectionWaitTime += deltaTime;
+                if (detectionWaitTime > enemyDetectionPeriod) {
+                    //signify enemy is not current target anymore
+                    player.getSeenEnemies().remove(currentlySeenEnemy);
+                }
+            }
+
         }
     }
     //--------------------------------
@@ -241,6 +254,8 @@ public class GameStateManager extends ApplicationAdapter {
                 }
 
 
+
+
                 /**
                  *
                  *
@@ -260,26 +275,18 @@ public class GameStateManager extends ApplicationAdapter {
                  * GARBAGE COLLECTION
                  */
                 for (Enemy e : entityManager.getEnemies()) {
-                    //temporary
-//                    e.getPhysics().setMoveSpeed(0);
-//                    e.getPhysics().performImpulseCollision(player);
                     //update all enemy objects
                     e.Update(deltaTime);
                 }
 
 
-                System.out.println("ENEMIES SEEN:" + player.getSeenEnemies().peek());
-
-//                System.out.println(entityManager.getProjectiles().toString());
-//                entityManager.spawnBullets(deltaTime);
-
+                testEnemyDetection();
 
                 //----------------------------------------------
                 /**
                  * GAME OVER State
                  * @TODO: implement game over screen UI
                  */
-//                System.out.println("AFTER UPGRADE:" + player.toString());
                 //----------------------------------------------
                 player.update(deltaTime);
                 handleMovementInputs();

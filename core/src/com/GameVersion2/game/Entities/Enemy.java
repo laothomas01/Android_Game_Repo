@@ -26,20 +26,19 @@ public class Enemy extends Entity {
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
 //            getPhysics().setMoveSpeed(70f);
             getPhysics().setMoveSpeed(0f);
+            getGraphics().getColor().set(Color.RED);
         } else if (getType() == MEDIUM) {
             getPhysics().setSpriteWidth(12f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
 //            getPhysics().setMoveSpeed(50f);
             getPhysics().setMoveSpeed(0f);
-
-            getGraphics().setColor(Color.YELLOW);
+            getGraphics().getColor().set(Color.RED);
         } else if (getType() == LARGE) {
             getPhysics().setSpriteWidth(20f);
             getPhysics().setSpriteHeight(getPhysics().getSpriteWidth());
 //            getPhysics().setMoveSpeed(10);
             getPhysics().setMoveSpeed(0);
-
-            getGraphics().setColor(Color.BROWN);
+            getGraphics().getColor().set(Color.RED);
         }
         getPhysics().setDirectionVector(1, 1);
     }
