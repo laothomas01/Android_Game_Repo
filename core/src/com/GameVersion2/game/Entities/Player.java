@@ -20,7 +20,7 @@ import java.util.Queue;
 public class Player extends Entity {
     Array<Skill> skills;
     int level;
-    int enemyDetectionRadius = 100;
+    int enemyDetectionRadius = 75;
     boolean hasLeveledUp;
     float shootAngle;
     Vector2 shootDirection;
@@ -53,7 +53,7 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
-        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Basic Shoot", 2.0f, false, 1, 1, 0, 0));
 //
 //        /**
 //         * Leveling up Parallel Shoot Skill

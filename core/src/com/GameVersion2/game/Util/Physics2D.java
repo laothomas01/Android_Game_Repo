@@ -17,26 +17,26 @@ public class Physics2D {
 
     //adds a slight bounce to a colliding object with impulse
     float COLLISION_COEF = 1.0f;
-    Vector2 position = new Vector2();
+    Vector2 position;
 
 
     //direction of entity movement
     //velocity = direction Vector * speed * time
-    Vector2 directionVector = new Vector2();
+    Vector2 directionVector;
 
 
     //change over time in entity's direction vector
-    Vector2 acceleration = new Vector2();
+    Vector2 acceleration;
 
-    Vector2 angularVelocity = new Vector2();
+    Vector2 angularVelocity;
 
-    Vector2 normalVector = new Vector2();
+    Vector2 normalVector;
 
     //temp normal vector used to store new data for updating normal vector
-    Vector2 tempNormalVector = new Vector2();
+    Vector2 tempNormalVector;
 
     //temp direction vector used to store new data for updating direction vector
-    Vector2 tempNewDirectionVector = new Vector2();
+    Vector2 tempNewDirectionVector;
 
     //value used for rotations
     float radians = 0f;
@@ -56,6 +56,16 @@ public class Physics2D {
 
 
     public Physics2D() {
+
+        position = new Vector2();
+        directionVector = new Vector2();
+        angularVelocity = new Vector2();
+        acceleration = new Vector2();
+        normalVector = new Vector2();
+
+        tempNormalVector = new Vector2();
+
+        tempNewDirectionVector = new Vector2();
     }
 
     public Vector2 getTempNewDirectionVector() {
@@ -165,7 +175,6 @@ public class Physics2D {
     //get angle between target position and calling game object's position
     public float getAngleBetweenTwoVectors(Entity target) {
         //destination                       source
-
         return MathUtils.atan2(target.getPhysics().getPosition().y - this.getPosition().y, target.getPhysics().getPosition().x - this.getPosition().x);
     }
 
@@ -228,14 +237,24 @@ public class Physics2D {
 
 
     public boolean hasCollided(Entity target) {
-        this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
-        this.setDistanceBetween(getNormalVector().len());
-        this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 1.8f);
-        //if you have less than or no distance between an object's collision distance, you crashed
+        this.setDistanceBetween(Vector2.dst2(this.getPosition().x, this.getPosition().y, target.getPhysics().getPosition().x, target.getPhysics().getPosition().y));
+//        System.out.println("DISTANCE BETWEEN:" + this.getDistanceBetween());
+        this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+
         if (this.getDistanceBetween() < this.getImpactDistance()) {
-            this.setIsCollided(true);
             return true;
         }
+//        this.getNormalVector().dst2(this.getPosition().sub(target.getPhysics().getPosition()));
+//        this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
+//
+//        this.setDistanceBetween(getNormalVector().len());
+//        //                            ( sprite width + target width )/
+//        this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+//        //if you have less than or no distance between an object's collision distance, you crashed
+//        if (this.getDistanceBetween() < this.getImpactDistance()) {
+//            this.setIsCollided(true);
+//            return true;
+//        }
         return false;
 
     }
@@ -243,9 +262,9 @@ public class Physics2D {
     /*
     look at this later
      */
-    public void performImpulseCollision(Entity object) {
+    public void performImpulseCollision(Entity target) {
 
-        if (hasCollided(object)) {
+        if (hasCollided(target)) {
 
             //temporary normal vector to hold values used for changing normal vector
             getTempNormalVector().set(getNormalVector().scl(getImpactDistance() - getDistanceBetween() / 2));
@@ -258,7 +277,7 @@ public class Physics2D {
 //            object.getPhysics().getPosition().sub(getTempNormalVector());
 
             //setting direction of colliding objects based on impulse force
-            getTempNewDirectionVector().set(getDirectionVector().sub(object.getPhysics().getDirectionVector()));
+            getTempNewDirectionVector().set(getDirectionVector().sub(target.getPhysics().getDirectionVector()));
 
             //Newton's Law of Impact
             float impulse = (-(1 + COLLISION_COEF) * (getNormalVector().dot(getTempNewDirectionVector()))) / (getNormalVector().dot(getNormalVector()) * (1 / getMass() + 1 / 1));

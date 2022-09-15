@@ -159,10 +159,16 @@ public class GameStateManager extends ApplicationAdapter {
 
     //------------------------------------------------------
 
-    //TESTING QUEUEING SEEN ENEMIES
+
+    /**
+     * Shoot at enemies
+     * Detect enemies
+     * Queue seen enemies
+     * Handle bullet collision
+     */
     public void testEnemyDetection() {
         //detect an enemy and put into a queue of detected enemies
-        for (Enemy e : entityManager.getEnemies()) {
+        for (Entity e : entityManager.getEnemies()) {
             player.addSeenEnemy(e);
         }
         //get the first seen enemy from the queue storing seen enemies using a FIFO structure
@@ -173,24 +179,30 @@ public class GameStateManager extends ApplicationAdapter {
                 //if current enemy seen, color it yellow
                 currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
                 //player shoot
-            } else {
-                currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
-                //if current enemy is not seen, just color it back to normal
-                //begin timer if enemy not detected
-                detectionWaitTime += deltaTime;
-                if (detectionWaitTime > enemyDetectionPeriod) {
-                    detectionWaitTime -= enemyDetectionPeriod;
-                    //signify enemy is not current target anymore
-                    player.getSeenEnemies().remove(currentlySeenEnemy);
-                }
             }
-            player.shoot(currentlySeenEnemy, deltaTime, entityManager);
 
+//            else {
+//                currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
+//                //if current enemy is not seen, just color it back to normal
+//                //begin timer if enemy not detected
+//                detectionWaitTime += deltaTime;
+//                if (detectionWaitTime > enemyDetectionPeriod) {
+//                    detectionWaitTime -= enemyDetectionPeriod;
+//                    //signify enemy is not current target anymore
+//                    player.getSeenEnemies().remove(currentlySeenEnemy);
+//                }
+//            }
+            player.shoot(currentlySeenEnemy, deltaTime, entityManager);
         }
 
         for (Entity p : GameObjectManager.getProjectiles()) {
             p.update(deltaTime);
+            if (p.getPhysics().hasCollided(currentlySeenEnemy) || p.lifeSpanExpired(deltaTime)) {
+                entityManager.getGarbageCollection().add(p);
+            }
         }
+        System.out.println(GameObjectManager.getProjectiles().toString());
+        GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
     }
     //--------------------------------
 
@@ -271,9 +283,9 @@ public class GameStateManager extends ApplicationAdapter {
                  *
                  * GARBAGE COLLECTION
                  */
-                for (Enemy e : entityManager.getEnemies()) {
+                for (Entity e : entityManager.getEnemies()) {
                     //update all enemy objects
-                    e.Update(deltaTime);
+                    e.update(deltaTime);
                 }
 
 

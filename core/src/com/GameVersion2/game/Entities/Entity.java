@@ -13,7 +13,7 @@ public class Entity {
     Physics2D physics;
     //graphics2D manager
     Graphics2D graphics;
-    float lifeSpan = 1.2f;
+    float maxLifeSpan = 1f;
     float lifeSpanTimer = 0;
 
     public enum State {DEAD, ALIVE}
@@ -33,6 +33,18 @@ public class Entity {
         physics = new Physics2D();
 
         graphics = new Graphics2D();
+    }
+
+    public float getMaxLifeSpan() {
+        return this.maxLifeSpan;
+    }
+
+    public void setLifeSpanTimer(float t) {
+        this.lifeSpanTimer = t;
+    }
+
+    public float getLifeSpanTimer() {
+        return this.lifeSpanTimer;
     }
 
     public Graphics2D getGraphics() {
@@ -59,6 +71,16 @@ public class Entity {
     //override it
     public void shoot(Entity target, float dt) {
 
+    }
+
+    public boolean lifeSpanExpired(float dt) {
+        this.setLifeSpanTimer(this.getLifeSpanTimer() + dt);
+        if (this.getLifeSpanTimer() > this.getMaxLifeSpan()) {
+            this.setLifeSpanTimer(this.getLifeSpanTimer() - this.getMaxLifeSpan());
+            System.out.println("    BULLET    " + this.hashCode() + " HAS EXPIRED ");
+            return true;
+        }
+        return false;
     }
 
 

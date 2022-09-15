@@ -28,10 +28,10 @@ import java.util.Hashtable;
 public class GameObjectManager {
 
     private float spawnTimer = 0f;
-    Array<Enemy> enemies = new Array<>();
+    Array<Entity> enemies = new Array<>();
     static Array<Entity> projectiles = new Array<>();
 
-    Array<ExpDrop> expDrops = new Array<>();
+    Array<Entity> expDrops = new Array<>();
 
     //handle removal of all game objects
 
@@ -146,15 +146,15 @@ public class GameObjectManager {
 
     //when enemy dies, add exp object to array
     //update objects in array to provide rendering
-    public void spawnEXP() {
-        for (Enemy e : getEnemies()) {
-            if (e.getState().equals("DEAD")) {
-                getExpDrops().add(new ExpDrop(e.getPhysics().getPosition()));
-            }
-        }
-    }
+//    public void spawnEXP() {
+//        for ( e : getEnemies()) {
+//            if (e.getState().equals("DEAD")) {
+//                getExpDrops().add(new ExpDrop(e.getPhysics().getPosition()));
+//            }
+//        }
+//    }
 
-    public Array<ExpDrop> getExpDrops() {
+    public Array<Entity> getExpDrops() {
         return this.expDrops;
     }
 
@@ -168,7 +168,7 @@ public class GameObjectManager {
         this.enemies.setSize(size);
     }
 
-    public Array<Enemy> getEnemies() {
+    public Array<Entity> getEnemies() {
         return enemies;
     }
 
