@@ -178,20 +178,14 @@ public class GameStateManager extends ApplicationAdapter {
             if (player.detectEntity(currentlySeenEnemy)) {
                 //if current enemy seen, color it yellow
                 currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
-                //player shoot
             }
+            /**
+             * Check if currently seen enemy is detected
+             *
+             * if you havent detected the currently seen enemy in a while, remove top seen enemy from queue
+             */
 
-//            else {
-//                currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
-//                //if current enemy is not seen, just color it back to normal
-//                //begin timer if enemy not detected
-//                detectionWaitTime += deltaTime;
-//                if (detectionWaitTime > enemyDetectionPeriod) {
-//                    detectionWaitTime -= enemyDetectionPeriod;
-//                    //signify enemy is not current target anymore
-//                    player.getSeenEnemies().remove(currentlySeenEnemy);
-//                }
-//            }
+
             player.shoot(currentlySeenEnemy, deltaTime, entityManager);
         }
 
@@ -199,10 +193,13 @@ public class GameStateManager extends ApplicationAdapter {
             p.update(deltaTime);
             if (p.getPhysics().hasCollided(currentlySeenEnemy) || p.lifeSpanExpired(deltaTime)) {
                 entityManager.getGarbageCollection().add(p);
+                entityManager.getGarbageCollection().add(currentlySeenEnemy);
+                player.getSeenEnemies().remove(currentlySeenEnemy);
             }
         }
         System.out.println(GameObjectManager.getProjectiles().toString());
         GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
+        entityManager.getEnemies().removeAll(entityManager.getGarbageCollection(), false);
     }
     //--------------------------------
 
