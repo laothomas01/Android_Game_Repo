@@ -11,13 +11,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.JsonValue;
 
 
-/**
- * CRUD operations on the state of the game
- * <p>
- * -initializations, closing the app, running the app, pausing the app,
- */
-
-
 public class GameStateManager extends ApplicationAdapter {
     // ----------------- GAME STATES --------------------------
     enum State {PAUSE, RUN, STOPPED}
@@ -27,10 +20,10 @@ public class GameStateManager extends ApplicationAdapter {
     public State getGameState() {
         return state;
     }
-
     //------------------------------------------------------
 
-    //--------------------handle enemy and enemy spawner data----------------
+
+    //--------------------Handle Enemy and Enemy Spawner Data----------------
     int enemyWaveNumber;
     int maxEnemyWaves;
     int[] enemyTypes;
@@ -39,12 +32,13 @@ public class GameStateManager extends ApplicationAdapter {
     //------------------------------------------------------
 
 
-    //rendering time calculated between current and next frame
+    //---------------------------rendering time calculated between current and next frame----------------------------
     float deltaTime;
+    //-------------------------------------------------------------------------------------------------------------------
 
     Player player;
 
-    //handle garbage collection and updating of entities. i think this can be done better with a linked list?????
+
     GameObjectManager entityManager = new GameObjectManager();
 
     //json values used for retrieving json data
@@ -163,7 +157,6 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
-
     //------------------------------------------------------
 
     //TESTING QUEUEING SEEN ENEMIES
@@ -172,25 +165,31 @@ public class GameStateManager extends ApplicationAdapter {
         for (Enemy e : entityManager.getEnemies()) {
             player.addSeenEnemy(e);
         }
-
         //get the first seen enemy from the queue storing seen enemies using a FIFO structure
         Entity currentlySeenEnemy = player.getSeenEnemies().peek();
         if (currentlySeenEnemy != null) {
+            currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
             if (player.detectEntity(currentlySeenEnemy)) {
                 //if current enemy seen, color it yellow
                 currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
                 //player shoot
             } else {
-                currentlySeenEnemy.getGraphics().setColor(Color.RED);
+                currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
                 //if current enemy is not seen, just color it back to normal
                 //begin timer if enemy not detected
                 detectionWaitTime += deltaTime;
                 if (detectionWaitTime > enemyDetectionPeriod) {
+                    detectionWaitTime -= enemyDetectionPeriod;
                     //signify enemy is not current target anymore
                     player.getSeenEnemies().remove(currentlySeenEnemy);
                 }
             }
+            player.shoot(currentlySeenEnemy, deltaTime, entityManager);
 
+        }
+
+        for (Entity p : GameObjectManager.getProjectiles()) {
+            p.update(deltaTime);
         }
     }
     //--------------------------------
@@ -252,8 +251,6 @@ public class GameStateManager extends ApplicationAdapter {
                 for (int i = 0; i < enemyTypes.length; ++i) {
                     entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
                 }
-
-
 
 
                 /**

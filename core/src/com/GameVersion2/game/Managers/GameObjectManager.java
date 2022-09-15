@@ -29,7 +29,7 @@ public class GameObjectManager {
 
     private float spawnTimer = 0f;
     Array<Enemy> enemies = new Array<>();
-    static Array<Projectile> projectiles = new Array<>();
+    static Array<Entity> projectiles = new Array<>();
 
     Array<ExpDrop> expDrops = new Array<>();
 
@@ -159,7 +159,7 @@ public class GameObjectManager {
     }
 
     public void spawnBullets(float dt) {
-        for (Projectile p : projectiles) {
+        for (Entity p : projectiles) {
             p.update(dt);
         }
     }
@@ -176,7 +176,7 @@ public class GameObjectManager {
         this.enemies.add(e);
     }
 
-    public static Array<Projectile> getProjectiles() {
+    public static Array<Entity> getProjectiles() {
         return projectiles;
     }
 

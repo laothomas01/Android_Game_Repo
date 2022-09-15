@@ -11,7 +11,7 @@ public class Projectile extends Entity {
         this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         this.getPhysics().setMoveSpeed(250f);
-        graphics.setColor(Color.GREEN);
+        graphics.setColor(Color.WHITE);
     }
 
     Projectile(Vector2 newPosition, Vector2 newDirection, float newSpeed, float newWidth, float newHeight) {

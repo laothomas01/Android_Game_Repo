@@ -45,17 +45,18 @@ public class Entity {
 
 
     public void update(float dt) {
+
         graphics.getSprite().setSize(this.getPhysics().getSpriteWidth(), this.getPhysics().getSpriteHeight());
         graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         graphics.getSprite().setTexture(graphics.getTexture());
         graphics.getSprite().setColor(graphics.getColor());
-
         //if not in viewport, do not draw. handle later
         this.getGraphics().drawSprite();
+        //can disable the speed of an object by not giving them speed
         this.getPhysics().move(dt);
-
     }
 
+    //override it
     public void shoot(Entity target, float dt) {
 
     }

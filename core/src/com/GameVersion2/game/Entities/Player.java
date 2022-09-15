@@ -1,9 +1,7 @@
 package com.GameVersion2.game.Entities;
 
 import com.GameVersion2.game.Managers.AppManager;
-import com.GameVersion2.game.Managers.GameInputProcessor;
 import com.GameVersion2.game.Managers.GameObjectManager;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -55,7 +53,7 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
-        skills.add(new Skill("Basic Shoot", 1f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Basic Shoot", 0.5f, false, 1, 1, 0, 0));
 //
 //        /**
 //         * Leveling up Parallel Shoot Skill
@@ -150,9 +148,7 @@ public class Player extends Entity {
 
 
     public void shoot(Entity target, float dt, GameObjectManager projectiles) {
-        /**
-         * Let's just implement a basic shoot right now
-         */
+
 
         //find the angle(in radians) between target and shooter
         this.getPhysics().setRadians(MathUtils.atan2(
@@ -166,8 +162,15 @@ public class Player extends Entity {
 
 
         for (int i = 0; i < this.getSkills().size; i++) {
+            //skill cool down timer + dt, isOnCoolDown = true
+            this.getSkill(i).update(this.getSkill(i).getCoolDownTimer() + dt, true);
+
+            // isOnCoolDown = true, coolDownTimer > maxCoolDown
+            // we must set the flag of isOnCoolDown = false, cooldown timer - max cooldown time = 0, so time resets
             if (this.getSkill(i).hasFinishedCoolDown()) {
-                this.getSkill(i).update(this.getSkill(i).getmaxCoolDownTimer(), false);
+                this.getSkill(i).update(
+                        this.getSkill(i).getCoolDownTimer() - this.getSkill(i).getmaxCoolDownTime(),
+                        false);
                 //basic shoot
                 Projectile bullet = new Projectile();
                 bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
@@ -176,14 +179,10 @@ public class Player extends Entity {
                         bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x,
                         (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
 
-                //@TODO: investigate potential problem with this function
                 projectiles.addProjectiles(bullet);
-//                System.out.println("ADDING BULLET!");
-            } else {
-                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
-//            }
-
             }
+
+        }
 
 //        //angle(in radians) used to find the direction for shooting at target
 //        float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
@@ -308,13 +307,11 @@ public class Player extends Entity {
 //                this.getSkill(i).update(this.getSkill(i).getCoolDown() - dt, true);
 //            }
 //
-        }
-
     }
+
 
     public void Update(float dt) {
         update(dt);
-        this.getPhysics().move(dt);
     }
 
 
