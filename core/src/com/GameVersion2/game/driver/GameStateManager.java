@@ -65,7 +65,7 @@ public class GameStateManager extends ApplicationAdapter {
     //------------------------ TESTING ENEMY DETECTION ------------------------
 
     float detectionWaitTime = 0f;
-    float enemyDetectionPeriod = 3f;
+    float enemyDetectionPeriod = 2f;
 
     //-------------------------------------------------------------------------
 
@@ -175,22 +175,20 @@ public class GameStateManager extends ApplicationAdapter {
         Entity currentlySeenEnemy = player.getSeenEnemies().peek();
         //data of currently seen enemy has to be present
         if (currentlySeenEnemy != null) {
-
             //if current enemy is seen,create a bullet with a direction towards that enemy
             if (player.detectEntity(currentlySeenEnemy)) {
                 currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
                 player.shoot(currentlySeenEnemy, deltaTime, entityManager);
-
             } else {
                 currentlySeenEnemy.getGraphics().setColor(Color.RED);
                 // ------ checking if currently targeted enemy is out of player range  --------------
                 detectionWaitTime += deltaTime;
-                //wait time exceed max wait time.
+                // ------ wait time exceed max wait time.
                 if (detectionWaitTime > enemyDetectionPeriod) {
                     detectionWaitTime -= enemyDetectionPeriod;
                     currentlySeenEnemy.getGraphics().setColor(Color.RED);
-                    //if out of range, remove from top of queue
-                    player.getSeenEnemies().remove(currentlySeenEnemy);
+                    //if you are out of range of the current enemy, just clear the queue and start over
+                    player.getSeenEnemies().clear();
                     //bullets will contain direction vector data about currently seen enemy
                     //remove all traces of such bullets if enemy is not in range
                     //we do not want stray bullets
@@ -198,15 +196,9 @@ public class GameStateManager extends ApplicationAdapter {
                 }
                 //-------------------------------------------------------------------
             }
-            /**
-             * Check if currently seen enemy is detected
-             *
-             * if you havent detected the currently seen enemy in a while, remove top seen enemy from queue
-             */
-
 
         }
-
+        //update all projectile sprites with new data
         for (Entity p : GameObjectManager.getProjectiles()) {
             p.update(deltaTime);
             /**
@@ -225,7 +217,6 @@ public class GameStateManager extends ApplicationAdapter {
                 entityManager.getGarbageCollection().add(p);
             }
         }
-//        System.out.println(GameObjectManager.getProjectiles().toString());
         entityManager.getEnemies().removeAll(entityManager.getGarbageCollection(), false);
         GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
         //after removing all objects, clear out the garbage

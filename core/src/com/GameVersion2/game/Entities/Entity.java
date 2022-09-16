@@ -13,7 +13,7 @@ public class Entity {
     Physics2D physics;
     //graphics2D manager
     Graphics2D graphics;
-    float maxLifeSpan = 1f;
+    float maxLifeSpan = 2f;
     float lifeSpanTimer = 0;
 
     public enum State {DEAD, ALIVE}
