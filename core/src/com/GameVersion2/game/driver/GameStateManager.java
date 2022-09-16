@@ -196,7 +196,6 @@ public class GameStateManager extends ApplicationAdapter {
                 }
                 //-------------------------------------------------------------------
             }
-
         }
         //update all projectile sprites with new data
         for (Entity p : GameObjectManager.getProjectiles()) {
@@ -208,6 +207,10 @@ public class GameStateManager extends ApplicationAdapter {
                 p.getPhysics().setMoveSpeed(0);
                 entityManager.getGarbageCollection().add(p);
                 entityManager.getGarbageCollection().add(currentlySeenEnemy);
+                //-----------------------drop exp object when an enemy object dies--------
+                //an exp drop should have the same position as the currently eliminated enemy
+                GameObjectManager.getExpDrops().add(new expDrop(currentlySeenEnemy.getPhysics().getPosition()));
+                //------------------------------------------------------------------------
                 player.getSeenEnemies().remove(currentlySeenEnemy);
             }
             /**
@@ -217,6 +220,12 @@ public class GameStateManager extends ApplicationAdapter {
                 entityManager.getGarbageCollection().add(p);
             }
         }
+
+        for (Entity exp : GameObjectManager.getExpDrops()) {
+            exp.update(deltaTime);
+        }
+
+        //clear out all objects needing to be removed
         entityManager.getEnemies().removeAll(entityManager.getGarbageCollection(), false);
         GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
         //after removing all objects, clear out the garbage
@@ -230,9 +239,6 @@ public class GameStateManager extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-//        exp.getGraphics().drawSprite();
-//        exp.update(deltaTime);
 
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up

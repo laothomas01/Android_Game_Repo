@@ -2,14 +2,9 @@ package com.GameVersion2.game.Managers;
 
 import com.GameVersion2.game.Entities.Enemy;
 import com.GameVersion2.game.Entities.Entity;
-import com.GameVersion2.game.Entities.ExpDrop;
 import com.GameVersion2.game.Entities.Projectile;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.Hashtable;
 
 /**
  * Global game manager for game entities
@@ -30,8 +25,7 @@ public class GameObjectManager {
     private float spawnTimer = 0f;
     Array<Entity> enemies = new Array<>();
     static Array<Entity> projectiles = new Array<>();
-
-    Array<Entity> expDrops = new Array<>();
+    static Array<Entity> expDrops = new Array<>();
 
     //handle removal of all game objects
 
@@ -154,15 +148,15 @@ public class GameObjectManager {
 //        }
 //    }
 
-    public Array<Entity> getExpDrops() {
-        return this.expDrops;
+    public static Array<Entity> getExpDrops() {
+        return expDrops;
     }
 
-    public void spawnBullets(float dt) {
-        for (Entity p : projectiles) {
-            p.update(dt);
-        }
-    }
+    //    public void spawnBullets(float dt) {
+//        for (Entity p : projectiles) {
+//            p.update(dt);
+//        }
+//    }
 
     public void setEnemyCollectionSize(int size) {
         this.enemies.setSize(size);
@@ -190,10 +184,6 @@ public class GameObjectManager {
 
     public String getProjectilesToString() {
         return projectiles.toString();
-    }
-
-    public void addInGameObjectsToRemove(Entity b) {
-        garbageCollection.add(b);
     }
 
 
