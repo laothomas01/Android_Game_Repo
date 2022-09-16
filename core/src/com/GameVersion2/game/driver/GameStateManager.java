@@ -173,11 +173,30 @@ public class GameStateManager extends ApplicationAdapter {
         }
         //get the first seen enemy from the queue storing seen enemies using a FIFO structure
         Entity currentlySeenEnemy = player.getSeenEnemies().peek();
+        //data of currently seen enemy has to be present
         if (currentlySeenEnemy != null) {
-            currentlySeenEnemy.getGraphics().setColor(Color.YELLOW);
+
+            //if current enemy is seen,create a bullet with a direction towards that enemy
             if (player.detectEntity(currentlySeenEnemy)) {
-                //if current enemy seen, color it yellow
                 currentlySeenEnemy.getGraphics().setColor(Color.GREEN);
+                player.shoot(currentlySeenEnemy, deltaTime, entityManager);
+
+            } else {
+                currentlySeenEnemy.getGraphics().setColor(Color.RED);
+                // ------ checking if currently targeted enemy is out of player range  --------------
+                detectionWaitTime += deltaTime;
+                //wait time exceed max wait time.
+                if (detectionWaitTime > enemyDetectionPeriod) {
+                    detectionWaitTime -= enemyDetectionPeriod;
+                    currentlySeenEnemy.getGraphics().setColor(Color.RED);
+                    //if out of range, remove from top of queue
+                    player.getSeenEnemies().remove(currentlySeenEnemy);
+                    //bullets will contain direction vector data about currently seen enemy
+                    //remove all traces of such bullets if enemy is not in range
+                    //we do not want stray bullets
+                    GameObjectManager.getProjectiles().clear();
+                }
+                //-------------------------------------------------------------------
             }
             /**
              * Check if currently seen enemy is detected
@@ -186,20 +205,31 @@ public class GameStateManager extends ApplicationAdapter {
              */
 
 
-            player.shoot(currentlySeenEnemy, deltaTime, entityManager);
         }
 
         for (Entity p : GameObjectManager.getProjectiles()) {
             p.update(deltaTime);
-            if (p.getPhysics().hasCollided(currentlySeenEnemy) || p.lifeSpanExpired(deltaTime)) {
+            /**
+             * If bullet collides with enemy, remove bullet and remove enemy
+             */
+            if (p.getPhysics().hasCollided(currentlySeenEnemy)) {
+                p.getPhysics().setMoveSpeed(0);
                 entityManager.getGarbageCollection().add(p);
                 entityManager.getGarbageCollection().add(currentlySeenEnemy);
                 player.getSeenEnemies().remove(currentlySeenEnemy);
             }
+            /**
+             * If bullet does not hit enemy but keeps going, delete object after a certain period of time
+             */
+            else if (p.lifeSpanExpired(deltaTime)) {
+                entityManager.getGarbageCollection().add(p);
+            }
         }
-        System.out.println(GameObjectManager.getProjectiles().toString());
-        GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
+//        System.out.println(GameObjectManager.getProjectiles().toString());
         entityManager.getEnemies().removeAll(entityManager.getGarbageCollection(), false);
+        GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
+        //after removing all objects, clear out the garbage
+        entityManager.getGarbageCollection().clear();
     }
     //--------------------------------
 

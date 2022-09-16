@@ -53,7 +53,7 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
-        skills.add(new Skill("Basic Shoot", 2.0f, false, 1, 1, 0, 0));
+        skills.add(new Skill("Basic Shoot",  2f, false, 1, 1, 0, 0));
 //
 //        /**
 //         * Leveling up Parallel Shoot Skill
@@ -176,8 +176,8 @@ public class Player extends Entity {
                 bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
                 //XY-offset the position when spawning
                 bullet.getPhysics().setPosition(new Vector2((
-                        bullet.getPhysics().getDirectionVector().x * 50) + this.getPhysics().getPosition().x,
-                        (bullet.getPhysics().getDirectionVector().y * 50) + this.getPhysics().getPosition().y));
+                        bullet.getPhysics().getDirectionVector().x * 10) + this.getPhysics().getPosition().x,
+                        (bullet.getPhysics().getDirectionVector().y * 10) + this.getPhysics().getPosition().y));
 
                 projectiles.addProjectiles(bullet);
             }

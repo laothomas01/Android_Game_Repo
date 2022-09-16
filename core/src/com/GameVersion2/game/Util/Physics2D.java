@@ -237,13 +237,29 @@ public class Physics2D {
 
 
     public boolean hasCollided(Entity target) {
-        this.setDistanceBetween(Vector2.dst2(this.getPosition().x, this.getPosition().y, target.getPhysics().getPosition().x, target.getPhysics().getPosition().y));
-//        System.out.println("DISTANCE BETWEEN:" + this.getDistanceBetween());
-        this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+        try {
+//            this.setDistanceBetween(Vector2.dst2(this.getPosition().x, this.getPosition().y, target.getPhysics().getPosition().x, target.getPhysics().getPosition().y));
+////        System.out.println("DISTANCE BETWEEN:" + this.getDistanceBetween());
+//            this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+//
+//            if (this.getDistanceBetween() < this.getImpactDistance()) {
+//                return true;
+//            }
 
-        if (this.getDistanceBetween() < this.getImpactDistance()) {
-            return true;
+            this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
+
+            this.setDistanceBetween(getNormalVector().len());
+            //                            ( sprite width + target width )/
+            this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+            //if you have less than or no distance between an object's collision distance, you crashed
+            if (this.getDistanceBetween() < this.getImpactDistance()) {
+                this.setIsCollided(true);
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
+
 //        this.getNormalVector().dst2(this.getPosition().sub(target.getPhysics().getPosition()));
 //        this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
 //
