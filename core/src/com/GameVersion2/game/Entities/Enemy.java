@@ -7,18 +7,16 @@ import com.badlogic.gdx.math.Vector2;
 public class Enemy extends Entity {
 
 
+    //enemy type
     int type;
+    //----------enemy type values-----------
     public static final int SMALL = 0;
     public static final int MEDIUM = 1;
     public static final int LARGE = 2;
+    // -------------------------------
 
 
-    boolean remove = false;
-
-
-    //better constructor
     public Enemy(float x, float y, int t) {
-        this.setState(State.ALIVE);
         type = t;
         getPhysics().setPosition(x, y);
         if (getType() == SMALL) {
@@ -43,22 +41,9 @@ public class Enemy extends Entity {
         getPhysics().setDirectionVector(1, 1);
     }
 
-    //this function doesnt work properly
-    public void setType(int i) {
-        this.type = i;
-    }
 
     public int getType() {
         return type;
-    }
-
-    public void Update(float dt) {
-        update(dt);
-        if (this.lifeSpanTimer < 0) {
-            remove = true;
-        } else {
-            this.lifeSpanTimer -= dt;
-        }
     }
 
 

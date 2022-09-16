@@ -9,29 +9,20 @@ import com.GameVersion2.game.Util.Physics2D;
 
 
 public class Entity {
-    //physics2D manager
+
+    //physics manager
     Physics2D physics;
-    //graphics2D manager
+    //graphics manage
     Graphics2D graphics;
+
+    //max time an entity can stay around
     float maxLifeSpan = 2f;
+    //timer to see how long it takes before expiration sets in
     float lifeSpanTimer = 0;
 
-    public enum State {DEAD, ALIVE}
-
-    public State state = null;
-
-    public String getState() {
-        return this.state.toString();
-    }
-
-    public void setState(State s) {
-        this.state = s;
-    }
 
     public Entity() {
-        //give your game objects a physics2D component
         physics = new Physics2D();
-
         graphics = new Graphics2D();
     }
 
@@ -62,9 +53,12 @@ public class Entity {
         graphics.getSprite().setPosition(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y);
         graphics.getSprite().setTexture(graphics.getTexture());
         graphics.getSprite().setColor(graphics.getColor());
-        //if not in viewport, do not draw. handle later
+
+        //-------------------if not in viewport, do not draw. handle later--
+
+        //@TODO implement handling of graphics rendering when entities are not in viewport
+        //-----------------------------------------------------------------
         this.getGraphics().drawSprite();
-        //can disable the speed of an object by not giving them speed
         this.getPhysics().move(dt);
     }
 
@@ -73,6 +67,7 @@ public class Entity {
 
     }
 
+    //life span timer has went over max life span
     public boolean lifeSpanExpired(float dt) {
         this.setLifeSpanTimer(this.getLifeSpanTimer() + dt);
         if (this.getLifeSpanTimer() > this.getMaxLifeSpan()) {

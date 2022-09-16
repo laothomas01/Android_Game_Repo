@@ -18,12 +18,12 @@ import java.util.Queue;
  * User input
  */
 public class Player extends Entity {
+    //list of skills used for killing enemies or supporting the player
     Array<Skill> skills;
     int level;
+    //
     int enemyDetectionRadius = 100;
     boolean hasLeveledUp;
-    float shootAngle;
-    Vector2 shootDirection;
 
     Queue<Entity> seenEnemies;
 
@@ -41,8 +41,6 @@ public class Player extends Entity {
         seenEnemies = new LinkedList<>();
         hasLeveledUp = false;
         level = 1;
-        shootDirection = new Vector2(0, 0);
-        shootAngle = 0;
         //player has a collection of skills;
         skills = new Array<>();
         /**
@@ -106,13 +104,6 @@ public class Player extends Entity {
         return skills.get(i);
     }
 
-    public void setShootDirection(float x, float y) {
-        this.shootDirection = new Vector2(x, y);
-    }
-
-    public Vector2 getShootDirection() {
-        return this.shootDirection;
-    }
 
     public boolean detectEntity(Entity target) {
         if (Vector2.dst(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y,
@@ -152,19 +143,22 @@ public class Player extends Entity {
     public void shoot(Entity target, float dt, GameObjectManager projectiles) {
 
 
-        //find the angle(in radians) between target and shooter
+        //find the angle(in radians) between target(destination) and shooter(source)
         this.getPhysics().setRadians(MathUtils.atan2(
                 target.getPhysics().getPosition().y - this.getPhysics().getPosition().y,
                 target.getPhysics().getPosition().x - this.getPhysics().getPosition().x
         ));
 
         //use to move bullet in direction of target
-        this.setShootDirection(MathUtils.cos(this.getPhysics().getRadians()),
+        this.getPhysics().setShootDirection(MathUtils.cos(this.getPhysics().getRadians()),
                 MathUtils.sin(this.getPhysics().getRadians()));
 
 
+        /**
+         * Iterate through each skill and update their values
+         */
         for (int i = 0; i < this.getSkills().size; i++) {
-            //skill cool down timer + dt, isOnCoolDown = true
+            //update increase skill's cooldown timer
             this.getSkill(i).update(this.getSkill(i).getCoolDownTimer() + dt, true);
 
             // isOnCoolDown = true, coolDownTimer > maxCoolDown
@@ -173,13 +167,18 @@ public class Player extends Entity {
                 this.getSkill(i).update(
                         this.getSkill(i).getCoolDownTimer() - this.getSkill(i).getmaxCoolDownTime(),
                         false);
-                //basic shoot
+
+                /**
+                 * Use the other constructor for projectile objects
+                 */
                 Projectile bullet = new Projectile();
+
+                //set bullet's constant direction of movement
                 bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
                 //XY-offset the position when spawning
                 bullet.getPhysics().setPosition(new Vector2((
-                        bullet.getPhysics().getDirectionVector().x * 10) + this.getPhysics().getPosition().x,
-                        (bullet.getPhysics().getDirectionVector().y * 10) + this.getPhysics().getPosition().y));
+                        bullet.getPhysics().getDirectionVector().x * 2) + this.getPhysics().getPosition().x,
+                        (bullet.getPhysics().getDirectionVector().y * 2) + this.getPhysics().getPosition().y));
 
                 projectiles.addProjectiles(bullet);
             }

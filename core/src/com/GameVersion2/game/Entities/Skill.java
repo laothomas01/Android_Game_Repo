@@ -1,5 +1,9 @@
 package com.GameVersion2.game.Entities;
 
+/**
+ * Correction: not an Entity
+ * an entity HAS a skill
+ */
 public class Skill {
 
     float projectileCount;

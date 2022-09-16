@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
  * PHYSICS 2D SYSTEM
  * <p>
  * REFERENCE LINKS:
- * getting a perpendicular vector to set the position of the offset perpendicular objects
+ * - getting a perpendicular vector to set the position of the offset perpendicular objects
  * https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
  */
 
@@ -38,6 +38,7 @@ public class Physics2D {
     //temp direction vector used to store new data for updating direction vector
     Vector2 tempNewDirectionVector;
 
+    Vector2 shootDirection;
     //value used for rotations
     float radians = 0f;
     float moveSpeed = 0f;
@@ -56,7 +57,7 @@ public class Physics2D {
 
 
     public Physics2D() {
-
+        shootDirection = new Vector2();
         position = new Vector2();
         directionVector = new Vector2();
         angularVelocity = new Vector2();
@@ -66,6 +67,14 @@ public class Physics2D {
         tempNormalVector = new Vector2();
 
         tempNewDirectionVector = new Vector2();
+    }
+
+    public Vector2 getShootDirection() {
+        return this.shootDirection;
+    }
+
+    public void setShootDirection(float x, float y) {
+        this.shootDirection = new Vector2(x, y);
     }
 
     public Vector2 getTempNewDirectionVector() {

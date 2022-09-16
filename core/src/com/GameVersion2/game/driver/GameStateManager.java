@@ -14,16 +14,13 @@ import com.badlogic.gdx.utils.JsonValue;
 
 public class GameStateManager extends ApplicationAdapter {
 
-    private Stage stage;
 
     // ----------------- GAME STATES --------------------------
     enum State {PAUSE, RUN, STOPPED}
 
+
     State state;
 
-    public State getGameState() {
-        return state;
-    }
     //------------------------------------------------------
 
 
@@ -39,7 +36,6 @@ public class GameStateManager extends ApplicationAdapter {
     //---------------------------rendering time calculated between current and next frame----------------------------
     float deltaTime;
     //-------------------------------------------------------------------------------------------------------------------
-
     Player player;
     GameObjectManager entityManager = new GameObjectManager();
 
@@ -54,10 +50,8 @@ public class GameStateManager extends ApplicationAdapter {
 
     //seconds to wait before an event such as leveling up occurs
     private float eventTimeInSeconds = 0f;
-
     //max time to wait for an event to happen
     private float periodOfTimeSeconds = 15f;
-
     //max wait time testing variable for leveling up player
     float testTimeBeforeUpgrade = 0;
     float period = 5;
@@ -72,8 +66,6 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
 
-        stage = new Stage();
-
 
         //initialize starting state
 
@@ -87,7 +79,6 @@ public class GameStateManager extends ApplicationAdapter {
          */
 
         //------------------------------update in render-----------------------
-
 
         enemyWaveNumber = 0;
         jsonWaves = AppManager.loadJsonFile("entityData.json").get("waves");
@@ -114,7 +105,7 @@ public class GameStateManager extends ApplicationAdapter {
 
     //----------TESTING PLAYER LEVEL UP--------------------
     public void testPlayerLevelUp() {
-        player.setHasLeveledUp(true);
+//        player.setHasLeveledUp(true);
         if (player.HasLeveled()) {
             setGameState(State.PAUSE);
         } else {
@@ -228,6 +219,7 @@ public class GameStateManager extends ApplicationAdapter {
             exp.update(deltaTime);
             if (player.getPhysics().hasCollided(exp)) {
                 entityManager.getGarbageCollection().add(exp);
+                //if player collects an exp drop, gain exp.
             }
         }
 
@@ -327,6 +319,8 @@ public class GameStateManager extends ApplicationAdapter {
                 }
 
                 testEntityAndPlayerInteraction();
+                testPlayerLevelUp();
+                testUpgradeScreen();
 
                 //----------------------------------------------
                 /**

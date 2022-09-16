@@ -20,7 +20,7 @@ public class Projectile extends Entity {
         this.getPhysics().setDirectionVector(newDirection);
         this.getPhysics().setMoveSpeed(newSpeed);
         this.getPhysics().setSpriteSize(newWidth, newHeight);
-        graphics.setColor(Color.GREEN);
+        graphics.setColor(Color.WHITE);
     }
 
 
