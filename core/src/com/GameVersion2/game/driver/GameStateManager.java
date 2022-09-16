@@ -8,10 +8,14 @@ import com.GameVersion2.game.Util.Graphics2D;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.JsonValue;
 
 
 public class GameStateManager extends ApplicationAdapter {
+
+    private Stage stage;
+
     // ----------------- GAME STATES --------------------------
     enum State {PAUSE, RUN, STOPPED}
 
@@ -37,8 +41,6 @@ public class GameStateManager extends ApplicationAdapter {
     //-------------------------------------------------------------------------------------------------------------------
 
     Player player;
-
-
     GameObjectManager entityManager = new GameObjectManager();
 
     //json values used for retrieving json data
@@ -60,7 +62,6 @@ public class GameStateManager extends ApplicationAdapter {
     float testTimeBeforeUpgrade = 0;
     float period = 5;
 
-//    ExpDrop exp;
 
     //------------------------ TESTING ENEMY DETECTION ------------------------
 
@@ -71,10 +72,10 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
 
-        //initialize starting state
-//        exp = new ExpDrop();
-//        exp.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+        stage = new Stage();
 
+
+        //initialize starting state
 
         state = State.RUN;
 
@@ -146,7 +147,6 @@ public class GameStateManager extends ApplicationAdapter {
     public void testGradualUpgrades() {
         System.out.println("TIME BEFORE UPGRADE:" + testTimeBeforeUpgrade);
         System.out.println("LEVELED UP:" + player.HasLeveled());
-
         //level up every 5 seconds
         testTimeBeforeUpgrade += deltaTime;
         if (testTimeBeforeUpgrade > period) {
@@ -166,9 +166,11 @@ public class GameStateManager extends ApplicationAdapter {
      * Queue seen enemies
      * Handle bullet collision
      */
-    public void testEnemyDetection() {
+    public void testEntityAndPlayerInteraction() {
+
         //detect an enemy and put into a queue of detected enemies
         for (Entity e : entityManager.getEnemies()) {
+            //handle player and enemy collision
             player.addSeenEnemy(e);
         }
         //get the first seen enemy from the queue storing seen enemies using a FIFO structure
@@ -221,18 +223,29 @@ public class GameStateManager extends ApplicationAdapter {
             }
         }
 
+        //if player collides with exp drop object, increase player exp bar
         for (Entity exp : GameObjectManager.getExpDrops()) {
             exp.update(deltaTime);
+            if (player.getPhysics().hasCollided(exp)) {
+                entityManager.getGarbageCollection().add(exp);
+            }
         }
 
+        /**
+         * GARBAGE COLLECTION RIGHT NOW IS UNSCALABLE!
+         * FIND A WAY TO WRITE A METHOD TO HANDLE ALL OBJECT REMOVAL
+         *
+         * LOTS OF REPEATED CODE!
+         */
+        GameObjectManager.getExpDrops().removeAll(entityManager.getGarbageCollection(), false);
         //clear out all objects needing to be removed
         entityManager.getEnemies().removeAll(entityManager.getGarbageCollection(), false);
         GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
         //after removing all objects, clear out the garbage
         entityManager.getGarbageCollection().clear();
+
     }
     //--------------------------------
-
 
     public void render() {
         deltaTime = Gdx.graphics.getDeltaTime();
@@ -281,6 +294,7 @@ public class GameStateManager extends ApplicationAdapter {
 //                 *
 //                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
 //                 */
+
                 updateEnemyWave();
 
 
@@ -312,8 +326,7 @@ public class GameStateManager extends ApplicationAdapter {
                     e.update(deltaTime);
                 }
 
-
-                testEnemyDetection();
+                testEntityAndPlayerInteraction();
 
                 //----------------------------------------------
                 /**
