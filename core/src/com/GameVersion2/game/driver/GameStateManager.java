@@ -268,7 +268,7 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //                /**
 //                 * TITLE SCREEN State
-//                 * @TODO: implement title screen UI
+//                 * @ODO: implement title screen UI
 //                 */
 //
 //
@@ -276,7 +276,7 @@ public class GameStateManager extends ApplicationAdapter {
 //
 //                /**
 //                 * GAME PLAY State
-//                 * @TODO: move to gameplay screen
+//                 * @ODO: move to gameplay screen
 //                 */
 //
 //
@@ -325,7 +325,7 @@ public class GameStateManager extends ApplicationAdapter {
                 //----------------------------------------------
                 /**
                  * GAME OVER State
-                 * @TODO: implement game over screen UI
+                 * @ODO: implement game over screen UI
                  */
                 //----------------------------------------------
                 player.update(deltaTime);

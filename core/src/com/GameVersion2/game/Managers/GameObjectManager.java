@@ -52,10 +52,7 @@ public class GameObjectManager {
 
 
     public void spawnEnemies(float dt, int enemyType, int enemyCount, float maxSpawnCoolDown) {
-        /**
-         * @TODO need to regulate how fast spawning will be with a timer
-         * @TODO fix spawn positions
-         */
+
         randomLocation = MathUtils.random(1, 4);
         if (spawnTimer < 0) {
             spawnTimer = maxSpawnCoolDown;

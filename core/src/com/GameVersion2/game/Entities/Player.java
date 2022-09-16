@@ -45,7 +45,7 @@ public class Player extends Entity {
         skills = new Array<>();
         /**
          * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.
-         * @TODO improper projectile counts will cause data leakage into other skills.
+         * @TODO improper projectile counts and IF ELSE affects other shoot conditions
          *
          */
 
@@ -144,15 +144,11 @@ public class Player extends Entity {
 
 
         //find the angle(in radians) between target(destination) and shooter(source)
-        this.getPhysics().setRadians(MathUtils.atan2(
-                target.getPhysics().getPosition().y - this.getPhysics().getPosition().y,
-                target.getPhysics().getPosition().x - this.getPhysics().getPosition().x
-        ));
+        this.getPhysics().setRadians(this.getPhysics().getAngleBetweenTwoVectors(target));
 
         //use to move bullet in direction of target
         this.getPhysics().setShootDirection(MathUtils.cos(this.getPhysics().getRadians()),
                 MathUtils.sin(this.getPhysics().getRadians()));
-
 
         /**
          * Iterate through each skill and update their values

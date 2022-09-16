@@ -18,18 +18,16 @@ public class Physics2D {
     //adds a slight bounce to a colliding object with impulse
     float COLLISION_COEF = 1.0f;
     Vector2 position;
-
-
     //direction of entity movement
+
     //velocity = direction Vector * speed * time
     Vector2 directionVector;
-
-
     //change over time in entity's direction vector
     Vector2 acceleration;
 
     Vector2 angularVelocity;
 
+    //@TODO: what is this vector representing?
     Vector2 normalVector;
 
     //temp normal vector used to store new data for updating normal vector
@@ -37,9 +35,9 @@ public class Physics2D {
 
     //temp direction vector used to store new data for updating direction vector
     Vector2 tempNewDirectionVector;
-
     Vector2 shootDirection;
-    //value used for rotations
+
+    //@TODO this naming convention for "radians" is too general. make more specific
     float radians = 0f;
     float moveSpeed = 0f;
     float angularSpeed = 0f;
@@ -171,13 +169,19 @@ public class Physics2D {
 
 
     public void move(float dt) {
+        //we do not include acceleration
+        //p_final = p_current + direction_vector * t + 1/2at^2
         this.getPosition().add(this.getDirectionVector().x * this.getMoveSpeed() * dt, this.getDirectionVector().y * this.getMoveSpeed() * dt);
     }
 
 
-    //change object direction based on target position
+    //input a target for entity to move towards
+    //calculate new angle between moving object and its target
     public void moveTowards(Entity target, float dt) {
+
+        //@TODO set the object's radians with a method instead
         float radians = getAngleBetweenTwoVectors(target);
+        //@TODO: this should be an acceleration vector instead of changing the direction vector
         this.setDirectionVector(MathUtils.cos(radians), MathUtils.sin(radians));
     }
 
@@ -205,6 +209,7 @@ public class Physics2D {
         }
     }
 
+
     public Vector2 getAngularVelocity() {
         return this.angularVelocity;
     }
@@ -218,18 +223,8 @@ public class Physics2D {
         getAngularVelocity().set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
         this.getDirectionVector().set(orbitDistance * getAngularVelocity().x, orbitDistance * getAngularVelocity().y);
         getPosition().set(target.getPhysics().getPosition().x + getDirectionVector().x, target.getPhysics().getPosition().y + getDirectionVector().y);
-
     }
 
-    // ---------------------------------------------------------------
-
-    //perform basic circular motion around the parameterized object
-//    public void rotateAround(hack_and_slash.InGameObject parent) {
-//        this.increaseRotationAngle();
-//        this.angularVelocity.set(MathUtils.cos(this.getRadians()), MathUtils.sin(this.getRadians()));
-//        this.d(this.orbitDistance * this.angularVelocity.x, this.orbitDistance * this.angularVelocity.y);
-//        this.position.set(parent.position.x + this.velocity.x, parent.position.y + this.velocity.y);
-//    }
 
     /**
      * COLLISION PHYSICS!
@@ -240,6 +235,7 @@ public class Physics2D {
         return isCollided;
     }
 
+    //set the isCollided flag when object has collided
     public void setIsCollided(boolean collided) {
         this.isCollided = collided;
     }
@@ -258,8 +254,8 @@ public class Physics2D {
             this.getNormalVector().set(this.getPosition()).sub(target.getPhysics().getPosition());
 
             this.setDistanceBetween(getNormalVector().len());
-            //                            ( sprite width + target width )/
-            this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 2f);
+            //                            ( sprite width + target width )/(constant collision detection range? some scalar? )
+            this.setImpactDistance((this.getSpriteWidth() + target.getPhysics().getSpriteWidth()) / 1.5f);
             //if you have less than or no distance between an object's collision distance, you crashed
             if (this.getDistanceBetween() < this.getImpactDistance()) {
                 this.setIsCollided(true);
@@ -284,9 +280,6 @@ public class Physics2D {
 
     }
 
-    /*
-    look at this later
-     */
     public void performImpulseCollision(Entity target) {
 
         if (hasCollided(target)) {

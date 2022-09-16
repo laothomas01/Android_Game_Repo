@@ -5,12 +5,4 @@
  * <p>
  * -Load and Save player data( dont care about spawned enemies for this game. keep it simple)
  * <p>
- * []@TODO: implement spawn points
- * []@TODO: implement following camera
- * []@TODO: implement auto-target enemy function
- * []@TODO: implement health bars
- * []@TODO: fix skill bugs
- * []@TODO: migrate skill components to a CSV file
- * []@TODO: create settings file
-   []@TODO: working on upgrade system
  */
