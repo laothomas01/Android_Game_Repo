@@ -10,6 +10,11 @@ import com.badlogic.gdx.math.Vector2;
  * REFERENCE LINKS:
  * - getting a perpendicular vector to set the position of the offset perpendicular objects
  * https://gamedev.stackexchange.com/questions/149654/how-to-rotate-a-local-position-offset-based-on-a-direction-vector
+ * <p>
+ * <p>
+ * <p>
+ * -find a way to write atomic variables and functions
+ * -maybe dictionaries????
  */
 
 
@@ -103,6 +108,7 @@ public class Physics2D {
         return directionVector;
     }
 
+    //  setDirectionVector(String nameOfEntityAction)
     public void setDirectionVector(Vector2 headingVector) {
         this.directionVector = headingVector;
     }

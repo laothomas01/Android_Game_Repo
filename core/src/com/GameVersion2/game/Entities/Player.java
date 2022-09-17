@@ -144,11 +144,23 @@ public class Player extends Entity {
 
 
         //find the angle(in radians) between target(destination) and shooter(source)
-        this.getPhysics().setRadians(this.getPhysics().getAngleBetweenTwoVectors(target));
+//        this.getPhysics().setRadians(MathUtils.atan2(
+//
+//                        target.getPhysics().getPosition().y - this.getPhysics().getPosition().y,
+//                        target.getPhysics().getPosition().x - this.getPhysics().getPosition().x
+//
+//                )
+//        );
 
-        //use to move bullet in direction of target
-        this.getPhysics().setShootDirection(MathUtils.cos(this.getPhysics().getRadians()),
-                MathUtils.sin(this.getPhysics().getRadians()));
+
+//        //use to move bullet in direction of target
+        this.getPhysics().setShootDirection(
+                MathUtils.cos(MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x)
+                ), MathUtils.sin(MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x)
+                )
+        );
+
+
 
         /**
          * Iterate through each skill and update their values
@@ -170,7 +182,8 @@ public class Player extends Entity {
                 Projectile bullet = new Projectile();
 
                 //set bullet's constant direction of movement
-                bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
+//                bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
+                bullet.getPhysics().setDirectionVector(this.getPhysics().getShootDirection());
                 //XY-offset the position when spawning
                 bullet.getPhysics().setPosition(new Vector2((
                         bullet.getPhysics().getDirectionVector().x * 2) + this.getPhysics().getPosition().x,

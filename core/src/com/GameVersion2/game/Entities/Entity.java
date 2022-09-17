@@ -15,12 +15,17 @@ public class Entity {
     //graphics manage
     Graphics2D graphics;
 
+    /**
+     * Non-Graphic or Physics Fields
+     */
+    //------------------------------------------------------------------
     //max time an entity can stay around
     float maxLifeSpan = 2f;
     //timer to see how long it takes before expiration sets in
     float lifeSpanTimer = 0;
 
 
+    //----------------------------------------------------
     public Entity() {
         physics = new Physics2D();
         graphics = new Graphics2D();

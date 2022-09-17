@@ -1,8 +1,12 @@
-/**
- * App Manager:
- * -Handles game states
- * -Handles loading/saving game states
- * <p>
- * -Load and Save player data( dont care about spawned enemies for this game. keep it simple)
- * <p>
- */
+
+EASY GET OUT OF THE WAY TASKS
+[] exp bar
+[] health bar
+[] follow camera
+[] leveling up player
+SLIGHTLY MORE COMPLICATED
+[] fine tuning impulse collision
+[] create a table for skills player can collect
+[] multi thread this game for backend handling
+COMPLICATED BUT IMPORTANT
+[] refine the atomics/generalized components that help build larger components in this game
