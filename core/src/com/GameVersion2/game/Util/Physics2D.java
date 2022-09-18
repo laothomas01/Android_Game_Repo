@@ -13,6 +13,9 @@ import com.badlogic.gdx.math.Vector2;
  * <p>
  * <p>
  * <p>
+ *
+ * @TODO: make the functions and variables atomic for more advanced uses and reusability
+ * <p>
  * -find a way to write atomic variables and functions
  * -maybe dictionaries????
  */
@@ -23,54 +26,65 @@ public class Physics2D {
     //adds a slight bounce to a colliding object with impulse
     float COLLISION_COEF = 1.0f;
     Vector2 position;
+    //---------------LINEAR VELOCITY--------
     //direction of entity movement
-
     //velocity = direction Vector * speed * time
-    Vector2 directionVector;
-    //change over time in entity's direction vector
-    Vector2 acceleration;
+    Vector2 movementDirection;
+    Vector2 shootDirection;
+    //---------------------------------------
 
-    Vector2 angularVelocity;
+    //change over time in entity's direction vector
+
+    //    Vector2 acceleration;
+    //    Vector2 angularVelocity;
+
 
     //@TODO: what is this vector representing?
+    //------------------------------COLLISION VECTORS AND FIELDS---------------------
+
     Vector2 normalVector;
 
     //temp normal vector used to store new data for updating normal vector
     Vector2 tempNormalVector;
-
     //temp direction vector used to store new data for updating direction vector
     Vector2 tempNewDirectionVector;
-    Vector2 shootDirection;
 
-    //@TODO this naming convention for "radians" is too general. make more specific
-    float radians = 0f;
-    float moveSpeed = 0f;
-    float angularSpeed = 0f;
-    float spriteWidth = 0;
-    private float spriteHeight = 0;
+
     float mass = 1.0f;
     float distanceFrom = 0f;
     float impactDistance = 0f;
 
+    boolean isCollided = false;
+
+    //-------------------------------------------------------------------
+    //@TODO this naming convention for "radians" is too general. make more specific
+    float radians = 0f;
+    float moveSpeed = 0f;
+    //----------------------SIZES------------------------------------------
+    float spriteWidth = 0;
+    private float spriteHeight = 0;
+    //-----------------------ANGULAR VELOCITY------------------------------
+
 
     //distance from object being rotated around
     float orbitDistance = 0f;
+    float angularSpeed = 0f;
+    Vector2 angularVelocity;
+    //------------------------------------------------------
 
-    boolean isCollided = false;
 
+    //    Vector2 acceleration;
 
     public Physics2D() {
         shootDirection = new Vector2();
         position = new Vector2();
-        directionVector = new Vector2();
+        movementDirection = new Vector2();
         angularVelocity = new Vector2();
-        acceleration = new Vector2();
         normalVector = new Vector2();
-
         tempNormalVector = new Vector2();
-
         tempNewDirectionVector = new Vector2();
     }
+
 
     public Vector2 getShootDirection() {
         return this.shootDirection;
@@ -104,17 +118,17 @@ public class Physics2D {
         this.position = pos;
     }
 
-    public Vector2 getDirectionVector() {
-        return directionVector;
+    public Vector2 getMovementDirection() {
+        return movementDirection;
     }
 
     //  setDirectionVector(String nameOfEntityAction)
-    public void setDirectionVector(Vector2 headingVector) {
-        this.directionVector = headingVector;
+    public void setMovementDirection(Vector2 headingVector) {
+        this.movementDirection = headingVector;
     }
 
     public void setDirectionVector(float x, float y) {
-        setDirectionVector(new Vector2(x, y));
+        setMovementDirection(new Vector2(x, y));
     }
 
 
@@ -176,8 +190,12 @@ public class Physics2D {
 
     public void move(float dt) {
         //we do not include acceleration
-        //p_final = p_current + direction_vector * t + 1/2at^2
-        this.getPosition().add(this.getDirectionVector().x * this.getMoveSpeed() * dt, this.getDirectionVector().y * this.getMoveSpeed() * dt);
+        //p_final = p_current + direction_vector * t + 1/2 (Vector2 acceleration) t^2
+        this.getPosition().add(
+                /**
+                 * MOVEMENT DIRECTION VECTOR
+                 */
+                this.getMovementDirection().x * this.getMoveSpeed() * dt, this.getMovementDirection().y * this.getMoveSpeed() * dt);
     }
 
 
@@ -216,9 +234,9 @@ public class Physics2D {
     }
 
 
-    public Vector2 getAngularVelocity() {
-        return this.angularVelocity;
-    }
+//    public Vector2 getAngularVelocity() {
+//        return this.angularVelocity;
+//    }
 
     public void setOrbitDistance(float dist) {
         this.orbitDistance = dist;
@@ -226,9 +244,9 @@ public class Physics2D {
 
     public void rotateAround(Entity target) {
         this.increaseRotationAngle();
-        getAngularVelocity().set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
-        this.getDirectionVector().set(orbitDistance * getAngularVelocity().x, orbitDistance * getAngularVelocity().y);
-        getPosition().set(target.getPhysics().getPosition().x + getDirectionVector().x, target.getPhysics().getPosition().y + getDirectionVector().y);
+//        getAngularVelocity().set(MathUtils.cos(this.radians), MathUtils.sin(this.radians));
+//        this.getDirectionVector().set(orbitDistance * getAngularVelocity().x, orbitDistance * getAngularVelocity().y);
+        getPosition().set(target.getPhysics().getPosition().x + getMovementDirection().x, target.getPhysics().getPosition().y + getMovementDirection().y);
     }
 
 
@@ -301,14 +319,14 @@ public class Physics2D {
 //            object.getPhysics().getPosition().sub(getTempNormalVector());
 
             //setting direction of colliding objects based on impulse force
-            getTempNewDirectionVector().set(getDirectionVector().sub(target.getPhysics().getDirectionVector()));
+            getTempNewDirectionVector().set(getMovementDirection().sub(target.getPhysics().getMovementDirection()));
 
             //Newton's Law of Impact
             float impulse = (-(1 + COLLISION_COEF) * (getNormalVector().dot(getTempNewDirectionVector()))) / (getNormalVector().dot(getNormalVector()) * (1 / getMass() + 1 / 1));
 
             //Change velocity of colliding objects using impulse
             getTempNormalVector().set(getNormalVector()).scl(impulse / 1);
-            getDirectionVector().add(tempNormalVector);
+            getMovementDirection().add(tempNormalVector);
             getTempNormalVector().set(getNormalVector()).scl(impulse / 1);
 
         }

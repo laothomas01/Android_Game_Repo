@@ -1,8 +1,6 @@
 package com.GameVersion2.game.Entities;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Entity {
 
@@ -53,7 +51,7 @@ public class Enemy extends Entity {
                 "\n" +
                 "POSITION:" + this.getPhysics().getPosition()
                 + "\n"
-                + "DIRECTION VECTOR:" + this.getPhysics().getDirectionVector() +
+                + "DIRECTION VECTOR:" + this.getPhysics().getMovementDirection() +
                 "\n" +
                 "MOVE SPEED:"
                 + this.getPhysics().getMoveSpeed() +

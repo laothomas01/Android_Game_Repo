@@ -11,6 +11,7 @@ public class Skill {
     float maxCoolDownTime;
     boolean isOnCoolDown;
     String skillName;
+    String description;
     int level;
 
     float deltaRadian;
@@ -25,10 +26,11 @@ public class Skill {
         coolDownTimer = maxCoolDownTime;
         isOnCoolDown = false;
         skillName = "";
+        description = "";
         level = 1;
     }
 
-    public Skill(String name, float maxCoolDownTimer, boolean isOnCoolDown, float prjctileCount, int lvl, float angle, float pos) {
+    public Skill(String name, String descript, float maxCoolDownTimer, boolean isOnCoolDown, float prjctileCount, int lvl, float angle, float pos) {
         this.setSkillName(name);
         this.setmaxCoolDownTimer(maxCoolDownTimer);
         this.setCoolDown(maxCoolDownTimer);
@@ -37,6 +39,7 @@ public class Skill {
         this.setProjectileCount(prjctileCount);
         this.setDeltaAngle(angle);
         this.setDeltaPosition(pos);
+        this.description = descript;
     }
 
     public String toString() {

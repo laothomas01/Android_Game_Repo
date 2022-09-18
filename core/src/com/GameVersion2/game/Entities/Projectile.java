@@ -17,7 +17,7 @@ public class Projectile extends Entity {
 
     Projectile(Vector2 newPosition, Vector2 newDirection, float newSpeed, float newWidth, float newHeight) {
         this.getPhysics().setPosition(newPosition);
-        this.getPhysics().setDirectionVector(newDirection);
+        this.getPhysics().setMovementDirection(newDirection);
         this.getPhysics().setMoveSpeed(newSpeed);
         this.getPhysics().setSpriteSize(newWidth, newHeight);
         graphics.setColor(Color.WHITE);
@@ -25,7 +25,7 @@ public class Projectile extends Entity {
 
 
     public String toString() {
-        return " BULLET " + this.hashCode() + "    POSITION   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getDirectionVector();
+        return " BULLET " + this.hashCode() + "    POSITION   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getMovementDirection();
     }
 
 
