@@ -25,6 +25,7 @@ public class Player extends Entity {
     boolean hasLeveledUp;
 
     private int expReq;
+    private int currentExp;
     Queue<Entity> seenEnemies;
 
 
@@ -37,6 +38,9 @@ public class Player extends Entity {
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
+        expReq = 100;
+        currentExp = 0;
+
         seenEnemies = new LinkedList<>();
         hasLeveledUp = false;
         level = 1;
@@ -74,12 +78,31 @@ public class Player extends Entity {
         graphics.setColor(Color.BLUE);
     }
 
-    public void setHasLeveledUp(boolean lvled) {
-        this.hasLeveledUp = lvled;
+
+    public boolean hasLeveledUp() {
+        if (getCurrentExp() >= getExpReq()) {
+            //set current exp back to 0
+            setCurrentExp(0);
+            return true;
+        }
+        return false;
     }
 
-    public boolean HasLeveled() {
+    public void setHasLeveledUp(boolean lvledUp) {
+        this.hasLeveledUp = lvledUp;
+    }
+
+    public boolean hasLeveled() {
         return this.hasLeveledUp;
+    }
+//
+//    public boolean hasLeveled() {
+//
+////        return this.hasLeveledUp;
+//    }
+
+    public int getExpReq() {
+        return expReq;
     }
 
     public void setLevel(int l) {
@@ -103,6 +126,13 @@ public class Player extends Entity {
         return skills.get(i);
     }
 
+    public int getCurrentExp() {
+        return currentExp;
+    }
+
+    public void setCurrentExp(int exp) {
+        this.currentExp = exp;
+    }
 
     public boolean detectEntity(Entity target) {
         if (Vector2.dst(this.getPhysics().getPosition().x, this.getPhysics().getPosition().y,
