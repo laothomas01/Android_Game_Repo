@@ -1,5 +1,6 @@
 package com.GameVersion2.game.Entities;
 
+import com.GameVersion2.game.Managers.AppManager;
 import com.GameVersion2.game.Util.Graphics2D;
 import com.GameVersion2.game.Util.Physics2D;
 
@@ -81,6 +82,12 @@ public class Entity {
             return true;
         }
         return false;
+    }
+
+    public void wrap() {
+        if (getPhysics().getPosition().x < 0) getPhysics().getPosition().x = AppManager.getLocalViewPortWidth();
+        if (getPhysics().getPosition().x > AppManager.getLocalViewPortWidth()) getPhysics().getPosition().x = 0;
+//        if(getPhysics().getPosition().y < 0) getPhysics().getPosition().y =
     }
 
 

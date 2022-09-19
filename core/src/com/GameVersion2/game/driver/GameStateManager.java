@@ -190,7 +190,9 @@ public class GameStateManager extends ApplicationAdapter {
                 //-------------------------------------------------------------------
             }
         }
-        //update all projectile sprites with new data
+
+
+        //UPDATING PROJECTILE SPRITES
         for (Entity p : GameObjectManager.getProjectiles()) {
             p.update(deltaTime);
             /**
@@ -201,8 +203,10 @@ public class GameStateManager extends ApplicationAdapter {
                 entityManager.getGarbageCollection().add(p);
                 entityManager.getGarbageCollection().add(currentlySeenEnemy);
                 //-----------------------drop exp object when an enemy object dies--------
-                //an exp drop should have the same position as the currently eliminated enemy
-                GameObjectManager.getExpDrops().add(new expDrop(currentlySeenEnemy.getPhysics().getPosition()));
+
+                //SPAWN EXP DROP WHEN ENEMY IS KILLED
+                GameObjectManager.getExpDrops().add(new ExpDrop(currentlySeenEnemy.getPhysics().getPosition()));
+
                 //------------------------------------------------------------------------
                 player.getSeenEnemies().remove(currentlySeenEnemy);
             }
@@ -220,6 +224,8 @@ public class GameStateManager extends ApplicationAdapter {
             if (player.getPhysics().hasCollided(exp)) {
                 entityManager.getGarbageCollection().add(exp);
                 //if player collects an exp drop, gain exp.
+                ExpDrop e = (ExpDrop) exp;
+                System.out.println("EXP AMOUNT:" + e.getExpPoint());
             }
         }
 

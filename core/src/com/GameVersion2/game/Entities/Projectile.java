@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Projectile extends Entity {
 
-    Projectile() {
+    public Projectile() {
         this.getPhysics().setSpriteSize(5f, 5f);
         this.getPhysics().setDirectionVector(1, 1);
         this.getPhysics().setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
@@ -15,7 +15,7 @@ public class Projectile extends Entity {
         graphics.setColor(Color.WHITE);
     }
 
-    Projectile(Vector2 newPosition, Vector2 newDirection, float newSpeed, float newWidth, float newHeight) {
+    public Projectile(Vector2 newPosition, Vector2 newDirection, float newSpeed, float newWidth, float newHeight) {
         this.getPhysics().setPosition(newPosition);
         this.getPhysics().setMovementDirection(newDirection);
         this.getPhysics().setMoveSpeed(newSpeed);
