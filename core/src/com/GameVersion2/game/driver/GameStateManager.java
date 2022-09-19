@@ -103,22 +103,26 @@ public class GameStateManager extends ApplicationAdapter {
      */
 
     //----------TESTING PLAYER LEVEL UP--------------------
-    public void testPlayerLevelUp() {
+   /* public void testPlayerLevelUp() {
 //        player.setHasLeveledUp(true);
 //        if (player.hasLeveled()) {
 //            setGameState(State.PAUSE);
 //        } else {
 //            setGameState(State.RUN);
 //        }
-    }
+    }*/
+    public void testUpgradeScreen() {
 
-//    public void testUpgradeScreen() {
-//        if (player.hasLeveled()) {
 //
 //
-//            Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
-//            Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
-//            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+        Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
+        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+
+        /**
+         * INPUT HANDLING FOR PLAYER UPGRADES
+         */
+
+        //            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
 //                System.out.println("SIZE!");
 //                player.setHasLeveledUp(false);
 //                player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
@@ -132,9 +136,8 @@ public class GameStateManager extends ApplicationAdapter {
 //                player.setHasLeveledUp(false);
 //            }
 //        }
-//    }
-
-    public void testGradualUpgrades() {
+    }
+    //    public void testGradualUpgrades() {
 //        System.out.println("TIME BEFORE UPGRADE:" + testTimeBeforeUpgrade);
 //        System.out.println("LEVELED UP:" + player.hasLeveled());
 //        //level up every 5 seconds
@@ -144,7 +147,7 @@ public class GameStateManager extends ApplicationAdapter {
 //            player.setHasLeveledUp(true);
 //        }
 
-    }
+//    }
 
 
     //------------------------------------------------------
@@ -156,7 +159,25 @@ public class GameStateManager extends ApplicationAdapter {
      * Queue seen enemies
      * Handle bullet collision
      */
+    public void testPlayerLevelUp() {
+
+        if (player.hasLeveledUp()) {
+
+            System.out.println("LEVELED UP!");
+            setGameState(State.PAUSE);
+        }
+    }
+
     public void testEntityAndPlayerInteraction() {
+        updateEnemyWave();
+        for (int i = 0; i < enemyTypes.length; ++i) {
+            entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
+        }
+
+        for (Entity e : entityManager.getEnemies()) {
+            //update all enemy objects
+            e.update(deltaTime);
+        }
 
         //DETECT ENEMY AND PUT INTO QUEUE
         for (Entity e : entityManager.getEnemies()) {
@@ -225,7 +246,6 @@ public class GameStateManager extends ApplicationAdapter {
             exp.update(deltaTime);
             //CHECK PLAYER COLLISION WITH EXP DROPS
             if (player.getPhysics().hasCollided(exp)) {
-
                 entityManager.getGarbageCollection().add(exp);
                 ExpDrop e = (ExpDrop) exp;
                 //UPDATE THE PLAYER'S CURRENT NEEDED EXP
@@ -251,7 +271,6 @@ public class GameStateManager extends ApplicationAdapter {
         GameObjectManager.getProjectiles().removeAll(entityManager.getGarbageCollection(), false);
         //after removing all objects, clear out the garbage
         entityManager.getGarbageCollection().clear();
-
     }
     //--------------------------------
 
@@ -259,110 +278,105 @@ public class GameStateManager extends ApplicationAdapter {
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
+        if (state == State.RUN) {
+            testEntityAndPlayerInteraction();
+            player.update(deltaTime);
+            handleMovementInputs();
+        }
+        if (state == State.PAUSE) {
+            testUpgradeScreen();
+        }
+        testPlayerLevelUp();
 
-        switch (state) {
-            case RUN:
-                System.out.println("RUN");
-//                /**
-////                 * GAME States:
-////                 * -MENU/TITLE SCREEN
-////                 * -GAMEPLAY State
-////                 * -GAME OVER SCREEN State
-////                 */
+
+//        switch (state) {
+//            case RUN:
+//                System.out.println("RUN");
+////                /**
+//////                 * GAME States:
+//////                 * -MENU/TITLE SCREEN
+//////                 * -GAMEPLAY State
+//////                 * -GAME OVER SCREEN State
+//////                 */
+//////
+//////                // calculaton of time difference between previous and current frame
+//////                //60 FPS  => 1 second / 60 frames = 0.0166 sec / 1 frame
+//////
+//////                //Update enemy waves
+//////                //increments time seconds and resets time seconds after reached period of time
+//////
+//////
+//////                //------------------------------------------------------------------------------
+//////
+//////                /**
+//////                 * TITLE SCREEN State
+//////                 * @ODO: implement title screen UI
+//////                 */
+//////
+//////
+//////                //----------------------------------------------
+//////
+//////                /**
+//////                 * GAME PLAY State
+//////                 * @ODO: move to gameplay screen
+//////                 */
+//////
+//////
+//////                /** PERFORM CREATE:
+//////                 *
+//////                 * C/CRUD - create enemy entities. add to arraylist
+//////                 *
+//////                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
+//////                 */
 ////
-////                // calculaton of time difference between previous and current frame
-////                //60 FPS  => 1 second / 60 frames = 0.0166 sec / 1 frame
+//
 ////
-////                //Update enemy waves
-////                //increments time seconds and resets time seconds after reached period of time
-////
-////
-////                //------------------------------------------------------------------------------
 ////
 ////                /**
-////                 * TITLE SCREEN State
-////                 * @ODO: implement title screen UI
+////                 *
+////                 *
+////                 * Update game entities:
+////                 *
+////                 * common entity updates:
+////                 * -collision
+////                 * -entity removal
+////                 * -status updates
+////                 *
+////                 * PLAYER - keyboard input
+////                 *
+////                 * ENEMIES
+////                 *
+////                 * PROJECTILES
+////                 *
+////                 * GARBAGE COLLECTION
 ////                 */
+//
 ////
+//                testEntityAndPlayerInteraction();
+//////                testPlayerLevelUp();
+//////                testUpgradeScreen();
 ////
 ////                //----------------------------------------------
-////
 ////                /**
-////                 * GAME PLAY State
-////                 * @ODO: move to gameplay screen
+////                 * GAME OVER State
+////                 * @ODO: implement game over screen UI
 ////                 */
-////
-////
-////                /** PERFORM CREATE:
-////                 *
-////                 * C/CRUD - create enemy entities. add to arraylist
-////                 *
-////                 * spawning from a list of enemies should be randomized. currently, random function is TOO SLOW!
-////                 */
-//
-//                updateEnemyWave();
-//
-//
-//                for (int i = 0; i < enemyTypes.length; ++i) {
-//                    entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
-//                }
-//
-//
+////                //----------------------------------------------
+////                player.setCurrentExp(player.getCurrentExp() + 10);
+//                player.update(deltaTime);
+//                handleMovementInputs();
+//            case PAUSE:
 //                /**
-//                 *
-//                 *
-//                 * Update game entities:
-//                 *
-//                 * common entity updates:
-//                 * -collision
-//                 * -entity removal
-//                 * -status updates
-//                 *
-//                 * PLAYER - keyboard input
-//                 *
-//                 * ENEMIES
-//                 *
-//                 * PROJECTILES
-//                 *
-//                 * GARBAGE COLLECTION
+//                 * If has leveled up, display interactable gui or in-game user-input to select an ability
 //                 */
-//                for (Entity e : entityManager.getEnemies()) {
-//                    //update all enemy objects
-//                    e.update(deltaTime);
-//                }
+//                System.out.println("IS PAUSED!");
 //
-//                testEntityAndPlayerInteraction();
-////                testPlayerLevelUp();
-////                testUpgradeScreen();
-//
-//                //----------------------------------------------
-//                /**
-//                 * GAME OVER State
-//                 * @ODO: implement game over screen UI
-//                 */
-//                //----------------------------------------------
-                player.setCurrentExp(player.getCurrentExp() + 10);
-                player.update(deltaTime);
-                handleMovementInputs();
-            case PAUSE:
-                /**
-                 * If has leveled up, display interactable gui or in-game user-input to select an ability
-                 */
-                System.out.println("IS PAUSED!");
-
-                break;
-            default:
-                break;
-        }
-        if (player.hasLeveledUp()) {
-            System.out.println("LEVELED UP!");
-            System.out.println("GAME PAUSE");
-            setGameState(State.PAUSE);
-        }
+//                break;
+//            default:
+//                break;
+//        }
 
 
     }
@@ -396,14 +410,12 @@ public class GameStateManager extends ApplicationAdapter {
     //called when application is not running
     public void pause() {
         this.state = State.PAUSE;
-
     }
 
 
     //called when the Application is resumed from a paused state.
     @Override
     public void resume() {
-
         this.state = State.RUN;
     }
 
