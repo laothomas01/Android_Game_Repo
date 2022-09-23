@@ -358,8 +358,6 @@ public class GameStateManager extends ApplicationAdapter {
         if (state == State.RUN) {
 
             testEntityAndPlayerInteraction();
-
-
 //            System.out.println(player.getSkill(0).toString());
 
 
