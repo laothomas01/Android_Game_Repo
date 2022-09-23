@@ -15,7 +15,8 @@ public class Entity {
     Physics2D physics;
     //graphics manage
     Graphics2D graphics;
-
+    float currentHealth;
+    float maxHealth;
     /**
      * Non-Graphic or Physics Fields
      */
@@ -28,6 +29,8 @@ public class Entity {
 
     //----------------------------------------------------
     public Entity() {
+        maxHealth = 0;
+        currentHealth = maxHealth;
         physics = new Physics2D();
         graphics = new Graphics2D();
     }

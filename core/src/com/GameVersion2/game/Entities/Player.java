@@ -20,6 +20,7 @@ import java.util.Queue;
 public class Player extends Entity {
     //list of skills used for killing enemies or supporting the player
     Array<Skill> skills;
+
     int level;
     int enemyDetectionRadius = 100;
     boolean hasLeveledUp;
@@ -38,9 +39,8 @@ public class Player extends Entity {
      * Constructor should contain attributes relating to what a player object should consist of.
      */
     public Player() {
-        expReq = 100;
+        expReq = 10;
         currentExp = 0;
-
         seenEnemies = new LinkedList<>();
         hasLeveledUp = false;
         level = 1;
@@ -80,17 +80,20 @@ public class Player extends Entity {
 
 
     public boolean hasLeveledUp() {
+
         if (getCurrentExp() >= getExpReq()) {
             //set current exp back to 0
-            setCurrentExp(0);
+            //be careful of this. used to reset current exp so we can level up again.
+
+//            setCurrentExp(0);
             return true;
         }
         return false;
     }
 
-    public void setHasLeveledUp(boolean lvledUp) {
-        this.hasLeveledUp = lvledUp;
-    }
+//    public void setHasLeveledUp(boolean lvledUp) {
+//        this.hasLeveledUp = lvledUp;
+//    }
 
     public boolean hasLeveled() {
         return this.hasLeveledUp;
@@ -200,23 +203,43 @@ public class Player extends Entity {
             // isOnCoolDown = true, coolDownTimer > maxCoolDown
             // we must set the flag of isOnCoolDown = false, cooldown timer - max cooldown time = 0, so time resets
             if (this.getSkill(i).hasFinishedCoolDown()) {
-                this.getSkill(i).update(
-                        this.getSkill(i).getCoolDownTimer() - this.getSkill(i).getmaxCoolDownTime(),
-                        false);
+                this.getSkill(i).update(this.getSkill(i).getCoolDownTimer() - this.getSkill(i).getmaxCoolDownTime(), false);
+
                 /**
                  * Use the other constructor for projectile objects
                  */
-                Projectile bullet = new Projectile();
 
-                //set bullet's constant direction of movement
+
+//                Projectile bullet = new Projectile();
+//
+//                //set bullet's constant direction of movement
+////                bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
+//                bullet.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+//                //XY-offset the position when spawning
+//                bullet.getPhysics().setPosition(new Vector2((
+//                        bullet.getPhysics().getMovementDirection().x * 2) + this.getPhysics().getPosition().x,
+//                        (bullet.getPhysics().getMovementDirection().y * 2) + this.getPhysics().getPosition().y));
+//
+                /**
+                 * N number of bullets for the given skill being created and shot
+                 */
+                for (int j = 0; j < this.getSkill(i).getProjectileCount(); j++) {
+                    Projectile bullet = new Projectile();
+                    bullet.getPhysics().setMoveSpeed(150);
+                    //set bullet's constant direction of movement
 //                bullet.getPhysics().setDirectionVector(new Vector2(MathUtils.cos(getPhysics().getRadians()), MathUtils.sin(getPhysics().getRadians())));
-                bullet.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-                //XY-offset the position when spawning
-                bullet.getPhysics().setPosition(new Vector2((
-                        bullet.getPhysics().getMovementDirection().x * 2) + this.getPhysics().getPosition().x,
-                        (bullet.getPhysics().getMovementDirection().y * 2) + this.getPhysics().getPosition().y));
+                    bullet.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+                    //XY-offset the position when spawning
+                    bullet.getPhysics().setPosition(new Vector2(
+                            (bullet.getPhysics().getShootDirection().x * 2) + this.getPhysics().getPosition().x,
 
-                projectiles.addProjectiles(bullet);
+                            (bullet.getPhysics().getShootDirection().y * 2) + this.getPhysics().getPosition().y)
+
+                    );
+                    projectiles.addProjectiles(bullet);
+
+                }
+
             }
 
         }

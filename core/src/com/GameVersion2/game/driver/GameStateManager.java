@@ -8,15 +8,57 @@ import com.GameVersion2.game.Util.Graphics2D;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
+import org.graalvm.compiler.graph.Graph;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class GameStateManager extends ApplicationAdapter {
+
+    //-------------TESTING SKILL GENERATION-----------------
+
+
+    //------------------------------------------------------
 
 
     // ----------------- GAME STATES --------------------------
     enum State {PAUSE, RUN, STOPPED}
 
+
+//    public void loadCollectionOfAbilities() {
+////        int counter = 0;
+////        String[] angle_pos = {"radial", "non-radial"};
+////        String[] angle_delta = {"uniform", "non-uniform"};
+////        String[] nProj = {"single", "multiple"};
+////
+////        Map<Integer, Map<Object, Object>> skillConfigs = new HashMap<>();
+//////        Array<Map<Object, Object>> skillConfigs = new Array<>();
+////
+////        for (String i : angle_pos) {
+////            for (String j : angle_delta) {
+////                for (String k : nProj) {
+////                    Map<Object, Object> dict = new HashMap<>();
+////                    dict.put("angle_pos", i);
+////                    dict.put("angle_delta", j);
+////                    dict.put("nProj", k);
+////                    skillConfigs.put(counter, dict);
+////                    counter++;
+//////
+////                }
+////            }
+////        }
+////
+////        counter = 0;
+//
+//
+//    }
+//    public void check
 
     State state = null;
 
@@ -65,7 +107,7 @@ public class GameStateManager extends ApplicationAdapter {
 
     public void create() {
 
-
+//        loadCollectionOfAbilities();
         //initialize starting state
 
         state = State.RUN;
@@ -94,7 +136,6 @@ public class GameStateManager extends ApplicationAdapter {
 
         //adding of skill
         Gdx.input.setInputProcessor(new GameInputProcessor());
-        player.setHasLeveledUp(true);
 
     }
 
@@ -111,31 +152,30 @@ public class GameStateManager extends ApplicationAdapter {
 //            setGameState(State.RUN);
 //        }
     }*/
-    public void testUpgradeScreen() {
+    public void testUpgradeScreen(float dt) {
 
-//
-//
-        Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 + 50);
-        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+        Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
+        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
 
         /**
          * INPUT HANDLING FOR PLAYER UPGRADES
          */
 
-        //            if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-//                System.out.println("SIZE!");
-//                player.setHasLeveledUp(false);
-//                player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
-//            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
-//                System.out.println("SPEED!");
-//                player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
-//                player.setHasLeveledUp(false);
-//            } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-//                System.out.println("COLOR!");
-//                player.getGraphics().setColor(Color.PINK);
-//                player.setHasLeveledUp(false);
-//            }
-//        }
+        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+            System.out.println("SIZE!");
+            player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
+            player.setCurrentExp(0);
+        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+            System.out.println("SPEED!");
+            player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
+            player.setCurrentExp(0);
+
+        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+            System.out.println("COLOR!");
+            player.getGraphics().setColor(Color.PINK);
+            player.setCurrentExp(0);
+        }
+
     }
     //    public void testGradualUpgrades() {
 //        System.out.println("TIME BEFORE UPGRADE:" + testTimeBeforeUpgrade);
@@ -159,12 +199,16 @@ public class GameStateManager extends ApplicationAdapter {
      * Queue seen enemies
      * Handle bullet collision
      */
-    public void testPlayerLevelUp() {
+    public void testPlayerLevelUp(float dt) {
 
         if (player.hasLeveledUp()) {
-
-            System.out.println("LEVELED UP!");
+            System.out.println("HAS LEVELED!");
+            //will be used to scale out exp gaining later
+            player.setLevel(player.getLevel() + 1);
+            //wait time before game resumes
             setGameState(State.PAUSE);
+        } else {
+            setGameState(State.RUN);
         }
     }
 
@@ -257,7 +301,7 @@ public class GameStateManager extends ApplicationAdapter {
 //            setGameState(State.PAUSE);
 //        }
 
-        System.out.println("PLAYER EXP:" + player.getCurrentExp());
+//        System.out.println("PLAYER EXP:" + player.getCurrentExp());
 
         /**
          * GARBAGE COLLECTION RIGHT NOW IS UNSCALABLE!
@@ -275,20 +319,30 @@ public class GameStateManager extends ApplicationAdapter {
     //--------------------------------
 
     public void render() {
+
         deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        handleInputs();
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
+
         if (state == State.RUN) {
             testEntityAndPlayerInteraction();
+            //checks player exp
             player.update(deltaTime);
-            handleMovementInputs();
         }
         if (state == State.PAUSE) {
-            testUpgradeScreen();
+            /**
+             * There is no rendering of objects when this state occurs.
+             * @TODO implement rendering when pause state occurs. change the state of the game entities.
+             */
+            testUpgradeScreen(deltaTime);
         }
-        testPlayerLevelUp();
+
+
+// checks if player hasLeveledUp. if true, level up.
+        testPlayerLevelUp(deltaTime);
 
 
 //        switch (state) {
@@ -434,7 +488,7 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
 
-    private void handleMovementInputs() {
+    private void handleInputs() {
 
         if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W)))) {
             if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.UP) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.RIGHT)) || (GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.W) && GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
@@ -464,6 +518,7 @@ public class GameStateManager extends ApplicationAdapter {
 
         GameInputProcessor.GameKeys.update();
     }
+
 
 }
 

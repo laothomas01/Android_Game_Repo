@@ -1,12 +1,5 @@
-
-EASY GET OUT OF THE WAY TASKS
+TASKS TO FINISH BY END OF THIS MONTH
 [] exp bar
 [] health bar
-[] follow camera
-[] leveling up player
-SLIGHTLY MORE COMPLICATED
-[] fine tuning impulse collision
-[] create a table for skills player can collect
-[] multi thread this game for backend handling
-COMPLICATED BUT IMPORTANT
-[] refine the atomics/generalized components that help build larger components in this game
+[] following camera
+[] player can pick 1/3 randomized skills to store to use and upgrade

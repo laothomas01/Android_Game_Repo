@@ -5,20 +5,27 @@ package com.GameVersion2.game.Entities;
  * an entity HAS a skill
  */
 public class Skill {
+    int level;
 
-    float projectileCount;
-    float coolDownTimer;
-    float maxCoolDownTime;
-    boolean isOnCoolDown;
     String skillName;
     String description;
-    int level;
+
+    float projectileCount;
+
+
+    float coolDownTimer;
+    //refresh of the skill, can also be attack speed?????
+    float maxCoolDownTime;
+    boolean isOnCoolDown;
 
     float deltaRadian;
     float deltaPosition;
 
+    float damage;
+
 
     public Skill() {
+        damage = 0;
         deltaPosition = 0;
         deltaRadian = 0;
         projectileCount = 0f;
@@ -30,7 +37,15 @@ public class Skill {
         level = 1;
     }
 
-    public Skill(String name, String descript, float maxCoolDownTimer, boolean isOnCoolDown, float prjctileCount, int lvl, float angle, float pos) {
+    public Skill(
+            String name,
+            String describe,
+            float maxCoolDownTimer,
+            boolean isOnCoolDown,
+            float prjctileCount,
+            int lvl,
+            float angle,
+            float pos) {
         this.setSkillName(name);
         this.setmaxCoolDownTimer(maxCoolDownTimer);
         this.setCoolDown(maxCoolDownTimer);
@@ -39,7 +54,7 @@ public class Skill {
         this.setProjectileCount(prjctileCount);
         this.setDeltaAngle(angle);
         this.setDeltaPosition(pos);
-        this.description = descript;
+        this.description = describe;
     }
 
     public String toString() {

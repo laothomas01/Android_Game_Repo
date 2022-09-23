@@ -58,7 +58,7 @@ public class Physics2D {
 
     //-------------------------------------------------------------------
     //@TODO this naming convention for "radians" is too general. make more specific
-    float radians = 0f;
+//    float radians = 0f;
     float moveSpeed = 0f;
     //----------------------SIZES------------------------------------------
     float spriteWidth = 0;
@@ -191,6 +191,7 @@ public class Physics2D {
     public void move(float dt) {
         //we do not include acceleration
         //p_final = p_current + direction_vector * t + 1/2 (Vector2 acceleration) t^2
+
         this.getPosition().add(
                 /**
                  * MOVEMENT DIRECTION VECTOR
@@ -216,20 +217,26 @@ public class Physics2D {
     }
 
     // ------------------------ ROTATIONS ----------------------
-    public float getRadians() {
-        return radians;
-    }
-
-    public void setRadians(float rad) {
-        this.radians = rad;
-    }
+//    public float getRadians() {
+//        return radians;
+//    }
+//
+//    public void setRadians(float rad) {
+//        this.radians = rad;
+//    }
 
     // calculate number of orbits per second(note: this calculation for rotation speed is not accurate)
     public void increaseRotationAngle() {
-        if (this.getRadians() < (MathUtils.PI * 2)) {
-            this.setRadians(this.getRadians() + .05f);
+//        if (this.getRadians() < (MathUtils.PI * 2)) {
+//            this.setRadians(this.getRadians() + .05f);
+//        } else {
+//            this.setRadians(0f);
+//        }
+        float radians = 0;
+        if (radians < (MathUtils.PI * 2)) {
+            radians = radians * 0.5f;
         } else {
-            this.setRadians(0f);
+            radians = 0;
         }
     }
 
