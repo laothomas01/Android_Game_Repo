@@ -176,7 +176,6 @@ public class GameStateManager extends ApplicationAdapter {
         //---------------------------------- ITERATION 2 SKILL UPGRADING ----------------------
 
 
-
         // -----------------------------------------------------------------------------------------------
 
 
@@ -357,8 +356,13 @@ public class GameStateManager extends ApplicationAdapter {
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
 
         if (state == State.RUN) {
+
             testEntityAndPlayerInteraction();
-            System.out.println(player.getSkill(0).toString());
+
+
+//            System.out.println(player.getSkill(0).toString());
+
+
             //checks player exp
             player.update(deltaTime);
         }
