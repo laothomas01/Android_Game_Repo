@@ -47,7 +47,7 @@ public class Skill {
             float angle,
             float pos) {
         this.setSkillName(name);
-        this.setmaxCoolDownTimer(maxCoolDownTimer);
+        this.setmaxCoolDownTime(maxCoolDownTimer);
         this.setCoolDown(maxCoolDownTimer);
         this.setIsOnCoolDown(isOnCoolDown);
         this.setLevel(lvl);
@@ -58,12 +58,17 @@ public class Skill {
     }
 
     public String toString() {
-        return "        SKILL NAME:     " + this.getSkillName() + "     COOLDOWN:       " + this.getCoolDownTimer() + "      IS_ON_COOLDOWN      " + this.getIsOnCoolDown() + "      LEVEL       " + this.getLevel();
+        return
+                "        SKILL NAME:     " + this.getSkillName() +
+                        "   MAX COOL DOWN   " + this.getmaxCoolDownTime() +
+                        "     COOLDOWN:       " + this.getCoolDownTimer() +
+                        "      IS_ON_COOLDOWN      " + this.getIsOnCoolDown() +
+                        "      LEVEL       " + this.getLevel();
     }
 
     public void update(String name, float maxCoolDownTimer, boolean isOnCoolDown, float projectileCount, int level) {
         this.setSkillName(name);
-        this.setmaxCoolDownTimer(maxCoolDownTimer);
+        this.setmaxCoolDownTime(maxCoolDownTimer);
         this.setCoolDown(maxCoolDownTimer);
         this.setIsOnCoolDown(isOnCoolDown);
         this.setLevel(level);
@@ -116,13 +121,14 @@ public class Skill {
         this.skillName = name;
     }
 
-    public void setmaxCoolDownTimer(float max) {
+    public void setmaxCoolDownTime(float max) {
         this.maxCoolDownTime = max;
     }
 
     public float getmaxCoolDownTime() {
         return this.maxCoolDownTime;
     }
+
 
     public float getCoolDownTimer() {
         return coolDownTimer;

@@ -154,27 +154,56 @@ public class GameStateManager extends ApplicationAdapter {
     }*/
     public void testUpgradeScreen(float dt) {
 
-        Graphics2D.drawFontSprite("LEVELED UP!", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
-        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
+        Graphics2D.drawFontSprite("LEVELED UP", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
 
-        /**
-         * INPUT HANDLING FOR PLAYER UPGRADES
-         */
+        //   --------------------------     TESTING UPGRADING PLAYER SKILL -----------------------
 
-        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
-            System.out.println("SIZE!");
-            player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
-            player.setCurrentExp(0);
-        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
-            System.out.println("SPEED!");
-            player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
-            player.setCurrentExp(0);
 
-        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
-            System.out.println("COLOR!");
-            player.getGraphics().setColor(Color.PINK);
-            player.setCurrentExp(0);
-        }
+        //----------------------------------ITERATION 1 SKILL UPGRADING -------------------------
+
+
+//        player.getSkill(0).setmaxCoolDownTime(
+//                player.getSkill(0).getmaxCoolDownTime() -
+//                        //percentage decrease of skill max cooldown
+//                        player.getSkill(0).getmaxCoolDownTime() * 0.5f);
+//
+//        player.getSkill(0).setLevel(player.getSkill(0).getLevel() + 1);
+//
+//        //a flag to end leveling up and the pause state
+//        player.setCurrentExp(0);
+
+
+        //---------------------------------- ITERATION 2 SKILL UPGRADING ----------------------
+
+
+
+        // -----------------------------------------------------------------------------------------------
+
+
+        //-----------------------------------------------------------------------------------------------
+
+
+        //------------------------------    TESTING UPGRADE GUI ------------------------------
+
+//        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
+//        /**
+//         * INPUT HANDLING FOR PLAYER UPGRADES
+//         */
+//        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+//            System.out.println("SIZE!");
+//            player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
+//            player.setCurrentExp(0);
+//        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+//            System.out.println("SPEED!");
+//            player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
+//            player.setCurrentExp(0);
+//
+//        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.D))) {
+//            System.out.println("COLOR!");
+//            player.getGraphics().setColor(Color.PINK);
+//            player.setCurrentExp(0);
+//        }
+        //--------------------------------------------------------------------------------
 
     }
     //    public void testGradualUpgrades() {
@@ -329,6 +358,7 @@ public class GameStateManager extends ApplicationAdapter {
 
         if (state == State.RUN) {
             testEntityAndPlayerInteraction();
+            System.out.println(player.getSkill(0).toString());
             //checks player exp
             player.update(deltaTime);
         }
