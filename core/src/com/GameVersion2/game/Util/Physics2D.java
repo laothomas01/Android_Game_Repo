@@ -94,6 +94,10 @@ public class Physics2D {
         this.shootDirection = new Vector2(x, y);
     }
 
+    public void setShootDirection(Vector2 dir) {
+        setShootDirection(dir.x, dir.y);
+    }
+
     public Vector2 getTempNewDirectionVector() {
         return tempNewDirectionVector;
     }

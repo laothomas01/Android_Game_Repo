@@ -37,23 +37,15 @@ public class Skill {
         level = 1;
     }
 
-    public Skill(
-            String name,
-            String describe,
-            float maxCoolDownTimer,
-            boolean isOnCoolDown,
-            float prjctileCount,
-            int lvl,
-            float angle,
-            float pos) {
+    public Skill(String name, String describe, float maxCoolDownTimer, boolean isOnCoolDown, float prjctileCount, int lvl, float deltaAngle, float deltaPos) {
         this.setSkillName(name);
         this.setmaxCoolDownTime(maxCoolDownTimer);
         this.setCoolDown(maxCoolDownTimer);
         this.setIsOnCoolDown(isOnCoolDown);
         this.setLevel(lvl);
         this.setProjectileCount(prjctileCount);
-        this.setDeltaAngle(angle);
-        this.setDeltaPosition(pos);
+        this.setDeltaAngle(deltaAngle);
+        this.setDeltaPosition(deltaPos);
         this.description = describe;
     }
 

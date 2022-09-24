@@ -25,7 +25,8 @@ public class Projectile extends Entity {
 
 
     public String toString() {
-        return " BULLET " + this.hashCode() + "    POSITION   " + this.getPhysics().getPosition().toString() + "   HEADING VECTOR    " + this.getPhysics().getMovementDirection();
+        return " BULLET " + this.hashCode() + "    POSITION   " + this.getPhysics().getPosition().toString() + "MOVE SPEED:" + this.getPhysics().getMoveSpeed() +
+                "   HEADING VECTOR    " + this.getPhysics().getMovementDirection();
     }
 
 
