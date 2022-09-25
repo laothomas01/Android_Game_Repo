@@ -89,7 +89,6 @@ public class Player extends Entity {
         this.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSpriteSize(10f, 10f);
-
         //100 pixel units per second
         this.getPhysics().setMoveSpeed(100f);
         graphics.setColor(Color.BLUE);
@@ -212,8 +211,7 @@ public class Player extends Entity {
                         Projectile p = new Projectile();
                         p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
                         p.getGraphics().setColor(Color.PINK);
-                        p.getPhysics().setMoveSpeed(100);
-                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
+                        p.getPhysics().setMoveSpeed(200);
                         //AND GATE LOGIC
                         //INPUT: i >= 1 && i % 2 == 0, OUTPUT: deltaAngleMultiplier += 1
                         if (i >= 1) {
@@ -228,6 +226,8 @@ public class Player extends Entity {
                                 deltaAngleMultipler += 1;
                             }
                         }
+                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
+
                         projectiles.addProjectiles(p);
 
 //                        if (i >= 1 && i % 2 == 1) {
