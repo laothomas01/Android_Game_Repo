@@ -35,7 +35,7 @@ public class Player extends Entity {
     Map<String, Skill> skillsMap;
     //-------------------------------------------------------------------------------------------------
     int level;
-    int enemyDetectionRadius = 100;
+    int enemyDetectionRadius = 1000;
     boolean hasLeveledUp;
 
     private int expReq;
@@ -78,7 +78,7 @@ public class Player extends Entity {
          *
          */
 //        Skill skill1 = new Skill("Basic Shoot", "", 1f, false, 1, 1, 0, 0);
-        Skill skill2 = new Skill("Fan Shoot", "", 1.5f, false, 3, 1, 45, 0);
+        Skill skill2 = new Skill("Fan Shoot", "", 0.5f, false, 5, 1, 15, 0);
 //        skillsMap.put(skill1.getSkillName(), skill1);
         skillsMap.put(skill2.getSkillName(), skill2);
 
@@ -181,17 +181,19 @@ public class Player extends Entity {
 
     public void shoot(Entity target, float dt, GameObjectManager projectiles) {
 
-        //movement direction angle(in radians)
-        float radians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
-//        this.getPhysics().setShootDirection();
-        this.getPhysics().setShootDirection(MathUtils.cos(radians), MathUtils.sin(radians));
-
-
+        float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
+        this.getPhysics().setShootDirection(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
+        float deltaAngleMultipler = 1;
         // ----------------------------------- ITERATION 2 -----------------------------------
         //loop through set of player skills
         for (Map.Entry<String, Skill> set : skillsMap.entrySet()) {
             //get the current skill
             Skill skill = set.getValue();
+            //convert the delta angle to radians because we calculate in radians
+            //use these radians to offset the projectile's angle from the currently found radians.
+            //note: the formality of our shooting will be uniformed!
+            float deltaRadians = skill.getDeltaAngle() * MathUtils.PI / 180;
+
             //update cooldown
             skill.update(skill.getCoolDownTimer() + dt, true);
 
@@ -203,22 +205,27 @@ public class Player extends Entity {
                 //Fanned Shot (Odd count of projectiles)
                 if (skill.getProjectileCount() > 1 && skill.getDeltaAngle() >= 1 && skill.getProjectileCount() % 2 == 1) {
 
-//                    float deltaMultiplier = 1;
-
                     //each index will be a new configuration for the current bullet
                     //we add a bullet for each index
+//                    for (int i = 0; i < skill.getProjectileCount(); i++) {
                     for (int i = 0; i < skill.getProjectileCount(); i++) {
                         Projectile p = new Projectile();
                         p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
                         p.getGraphics().setColor(Color.PINK);
                         p.getPhysics().setMoveSpeed(100);
                         p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
-
+                        //AND GATE LOGIC
+                        //INPUT: i >= 1 && i % 2 == 0, OUTPUT: deltaAngleMultiplier += 1
                         if (i >= 1) {
+
                             if (i % 2 == 1) {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(skill.getDeltaAngle()), MathUtils.sin(skill.getDeltaAngle())));
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultipler)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultipler))));
                             } else {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(radians), MathUtils.sin(radians)));
+                                //INPUTS:
+                                // i >= 1 && i % 2 == 0
+                                //increment DeltaAngle Multiplier
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultipler)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultipler))));
+                                deltaAngleMultipler += 1;
                             }
                         }
                         projectiles.addProjectiles(p);
@@ -338,7 +345,6 @@ public class Player extends Entity {
 //////                        b.getPhysics().setMoveSpeed(150f);
 //////                        b.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
                     }
-//                    p.getPhysics().setPosition(new Vector2((p.getPhysics().getShootDirection().x) + this.getPhysics().getPosition().x, (p.getPhysics().getShootDirection().y) + this.getPhysics().getPosition().y));
 
                 }
 //
