@@ -24,13 +24,14 @@ public class Player extends Entity {
 
     // ------------------------------------------ ITERATION 1 -----------------------------------------
     //list of skills used for killing enemies or supporting the player
-    Array<Skill> skills;
+//    Array<Skill> skills;
 
 
     //-------------------------------------------------------------------------------------------------
 
 
     //-------------------------------------------ITERATION 2 ------------------------------------------
+
 
     Map<String, Skill> skillsMap;
     //-------------------------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ public class Player extends Entity {
 
 
         //ITERATION 1
-        skills = new Array<>();
+//        skills = new Array<>();
         //
 
         //ITERATION 2
@@ -88,9 +89,9 @@ public class Player extends Entity {
          *  - PARALLEL SHOOT: has a delta position
          */
         //will be a branching upgrade from basic shoot
-        Skill skill2 = new Skill("Fan Shoot", "", 1f, false, 20, 1, 15, 0);
+        Skill skill1 = new Skill("Basic Shoot", "", 1f, false, 1, 1, 0, 0);
 //        skillsMap.put(skill1.getSkillName(), skill1);
-        skillsMap.put(skill2.getSkillName(), skill2);
+        skillsMap.put(skill1.getSkillName(), skill1);
 
 //        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
 //        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
@@ -104,6 +105,9 @@ public class Player extends Entity {
         graphics.setColor(Color.BLUE);
     }
 
+    public Map<String, Skill> getSkillsMap() {
+        return skillsMap;
+    }
 
     public boolean hasLeveledUp() {
 
@@ -134,18 +138,18 @@ public class Player extends Entity {
         return level;
     }
 
-    public Array<Skill> getSkills() {
-        return skills;
-    }
-
-    //when a player selects an upgrade, add to player's skill collection
-    public void addSkill(Skill skill) {
-        skills.add(skill);
-    }
-
-    public Skill getSkill(int i) {
-        return skills.get(i);
-    }
+//    public Array<Skill> getSkills() {
+//        return skills;
+//    }
+//
+//    //when a player selects an upgrade, add to player's skill collection
+//    public void addSkill(Skill skill) {
+//        skills.add(skill);
+//    }
+//
+//    public Skill getSkill(int i) {
+//        return skills.get(i);
+//    }
 
     public int getCurrentExp() {
         return currentExp;
@@ -265,7 +269,7 @@ public class Player extends Entity {
 
                         }
                     } else {
-                        deltaAngleMultiplier = 0.2f;
+                        deltaAngleMultiplier = 1f;
                         for (int i = 0; i < skill.getProjectileCount(); i++) {
                             Projectile p = new Projectile();
                             p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
@@ -273,14 +277,15 @@ public class Player extends Entity {
                             p.getPhysics().setMoveSpeed(200);
                             //we ignore the center bullet
                             if (i % 2 == 1) {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier / 2)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier / 2))));
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier))));
                             } else {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier / 2)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier / 2))));
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier))));
                                 deltaAngleMultiplier += 1f;
                             }
                             p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
                             projectiles.addProjectiles(p);
                         }
+
                     }
 
                 }

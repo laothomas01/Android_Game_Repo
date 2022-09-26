@@ -56,6 +56,7 @@ public class Skill {
                         "     COOLDOWN:       " + this.getCoolDownTimer() +
                         "      IS_ON_COOLDOWN      " + this.getIsOnCoolDown() +
                         "      LEVEL       " + this.getLevel();
+
     }
 
     public void update(String name, float maxCoolDownTimer, boolean isOnCoolDown, float projectileCount, int level) {

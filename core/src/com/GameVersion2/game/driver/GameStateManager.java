@@ -156,6 +156,7 @@ public class GameStateManager extends ApplicationAdapter {
 
         Graphics2D.drawFontSprite("LEVELED UP", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
 
+
         //   --------------------------     TESTING UPGRADING PLAYER SKILL -----------------------
 
 
@@ -184,15 +185,32 @@ public class GameStateManager extends ApplicationAdapter {
 
         //------------------------------    TESTING UPGRADE GUI ------------------------------
 
-//        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] +10 Size\n[S] +10 Speed\n[D] Change Color", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
+        Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] BASIC SHOT: projectile +1", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
 //        /**
 //         * INPUT HANDLING FOR PLAYER UPGRADES
 //         */
-//        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+        System.out.println(player.getSkillsMap().get("Basic Shoot").toString());
+
+        if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
+            /**
+             * Use skill name to access the player's skill
+             */
+
+            if (player.getSkillsMap().containsKey("Basic Shoot")) {
+                player.getSkillsMap().get("Basic Shoot").setProjectileCount(player.getSkillsMap().get("Basic Shoot").getProjectileCount() + 1);
+                player.getSkillsMap().get("Basic Shoot").setDeltaAngle(player.getSkillsMap().get("Basic Shoot").getDeltaAngle() + 15);
+                player.getSkillsMap().get("Basic Shoot").setLevel(player.getSkillsMap().get("Basic Shoot").getLevel() + 1);
+            }
+
+            /**
+             * else add new skill to the map.
+             */
+
 //            System.out.println("SIZE!");
 //            player.getPhysics().setSpriteSize(player.getPhysics().getSpriteWidth() + 10, player.getPhysics().getSpriteHeight() + 10);
-//            player.setCurrentExp(0);
-//        } else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
+            player.setCurrentExp(0);
+        }
+//        else if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.S))) {
 //            System.out.println("SPEED!");
 //            player.getPhysics().setMoveSpeed(player.getPhysics().getMoveSpeed() + 100);
 //            player.setCurrentExp(0);
@@ -241,6 +259,8 @@ public class GameStateManager extends ApplicationAdapter {
     }
 
     public void testEntityAndPlayerInteraction() {
+
+
         updateEnemyWave();
         for (int i = 0; i < enemyTypes.length; ++i) {
             entityManager.spawnEnemies(deltaTime, enemyTypes[i], 5, enemySpawnCoolDown);
@@ -293,6 +313,7 @@ public class GameStateManager extends ApplicationAdapter {
              * If bullet collides with enemy, remove bullet and remove enemy
              */
             for (Entity e : entityManager.getEnemies()) {
+
                 if (p.getPhysics().hasCollided(e)) {
                     p.getPhysics().setMoveSpeed(0);
                     entityManager.getGarbageCollection().add(p);
