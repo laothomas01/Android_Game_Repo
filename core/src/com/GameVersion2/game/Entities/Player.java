@@ -77,8 +77,12 @@ public class Player extends Entity {
          * Leveling up Basic Shoot Skill:
          *
          */
+        /**
+         * We can use these parameters *
+         */
 //        Skill skill1 = new Skill("Basic Shoot", "", 1f, false, 1, 1, 0, 0);
-        Skill skill2 = new Skill("Fan Shoot", "", 0.5f, false, 5, 1, 15, 0);
+        //will be a branching upgrade from basic shoot
+        Skill skill2 = new Skill("Fan Shoot", "", 5f, false, 6, 1, 15, 0);
 //        skillsMap.put(skill1.getSkillName(), skill1);
         skillsMap.put(skill2.getSkillName(), skill2);
 
@@ -177,15 +181,26 @@ public class Player extends Entity {
         return "SPEED:" + this.getPhysics().getMoveSpeed() + "SIZE = " + "WIDTH:" + this.getPhysics().getSpriteWidth() + "HEIGHT:" + this.getPhysics().getSpriteHeight() + "GRAPHICS:" + this.getGraphics().getColor().toString();
     }
 
+    //what does shoot do?
+
+    /**
+     * -initialize shoot angles
+     * -set shoot direction based on shoot angles
+     * -initialize offset shoot angle multiplier
+     * -iterate through a list of skills
+     * -check if a skill has finished its cooldown
+     * -updates skill cooldown
+     * -check the skill's parameters and create a shoot style from its values: basic shoot, forked shoot, parallel shoot
+     */
 
     public void shoot(Entity target, float dt, GameObjectManager projectiles) {
-
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
         this.getPhysics().setShootDirection(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
-        float deltaAngleMultipler = 1;
+
         // ----------------------------------- ITERATION 2 -----------------------------------
         //loop through set of player skills
         for (Map.Entry<String, Skill> set : skillsMap.entrySet()) {
+
             //get the current skill
             Skill skill = set.getValue();
             //convert the delta angle to radians because we calculate in radians
@@ -199,153 +214,85 @@ public class Player extends Entity {
             //@TODO check for conditions regarding fan shot
             //if finished cooling down
             if (skill.hasFinishedCoolDown()) {
+
+                //applied to every projectile after the 1st projectile
+                //used to offset delta angles of every i+2'th and i+3'rd projectile
+                //increment multiplier after every i+3'rd projectile
+                //reset the angle multiplier after cool down finishes
+                //this also handles conditions of when the projectile count is increased or decreased
+                //used to widen or condense the spread of bullets
+                float deltaAngleMultiplier = 1;
                 //update current skill with a zeroed cool down timer
                 skill.update(skill.getCoolDownTimer() - skill.getmaxCoolDownTime(), false);
                 //Fanned Shot (Odd count of projectiles)
-                if (skill.getProjectileCount() > 1 && skill.getDeltaAngle() >= 1 && skill.getProjectileCount() % 2 == 1) {
-
-                    //each index will be a new configuration for the current bullet
-                    //we add a bullet for each index
-//                    for (int i = 0; i < skill.getProjectileCount(); i++) {
-                    for (int i = 0; i < skill.getProjectileCount(); i++) {
-                        Projectile p = new Projectile();
-                        p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-                        p.getGraphics().setColor(Color.PINK);
-                        p.getPhysics().setMoveSpeed(200);
-                        //AND GATE LOGIC
-                        //INPUT: i >= 1 && i % 2 == 0, OUTPUT: deltaAngleMultiplier += 1
-                        if (i >= 1) {
-
-                            if (i % 2 == 1) {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultipler)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultipler))));
-                            } else {
-                                //INPUTS:
-                                // i >= 1 && i % 2 == 0
-                                //increment DeltaAngle Multiplier
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultipler)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultipler))));
-                                deltaAngleMultipler += 1;
+                if (skill.getProjectileCount() > 1 && skill.getDeltaAngle() >= 1) {
+                    //we will set these
+                    if (skill.getProjectileCount() % 2 == 1) {
+                        //each index will be a new configuration for the current bullet
+                        //we add a bullet for each index
+                        //0th index for odd
+                        for (int i = 0; i < skill.getProjectileCount(); i++) {
+                            Projectile p = new Projectile();
+                            p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+                            p.getGraphics().setColor(Color.PINK);
+                            p.getPhysics().setMoveSpeed(200);
+                            if (i >= 1) {
+                                if (i % 2 == 1) {
+                                    p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier))));
+                                } else {
+                                    p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier))));
+                                    /**     Projectile creation cycle: (by indices) 0 1 2
+                                     *       0 = center projectile. no modifications to the movement direction angle
+                                     *      --------------------we will check if these indices are odd or even---------------
+                                     *      n(index) |   m(multiplier)      |   deltaAngle  |   n % 2   |        f(n)              |
+                                     *        1    |       1              |      15       |     1      |        m_f = m_o       |
+                                     *        2    |       1             |      15       |      0     |        m_f = m_o + 1   |
+                                     *      ----------------------------------------------------------------------------------
+                                     *
+                                     */
+                                    deltaAngleMultiplier += 1;
+                                }
                             }
+                            p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
+
+                            projectiles.addProjectiles(p);
+
                         }
-                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
-
-                        projectiles.addProjectiles(p);
-
-//                        if (i >= 1 && i % 2 == 1) {
-//
-//                        } else if (i >= 1 && i % 2 == 0) {
-//
-//                        }
-
-
-//                        p.getPhysics().setPosition(this.getPhysics().getMovementDirection().add(this.getPhysics().getPosition()));
-//                        p.getPhysics().setMoveSpeed(150f);
-//                        //create a new projectile for each iteration index
-//                        //--------------------
-//                        //0 based indexing.
-//                        //--------------------
-//                        //Odd indexed bullet
-//                        // Even count bullet
-//                        //index >= 1
-//                        p.getGraphics().setColor(Color.PINK);
-//                        p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-//                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().add(this.getPhysics().getPosition()));
-
-//                        if (i >= 1 && i % 2 == 1) {
-//
-//                            p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(radians + (skill.getDeltaAngle() * i)), MathUtils.sin(radians + (skill.getDeltaAngle() * i))));
-////                            System.out.println(i);
-////                            System.out.println("SECOND BULLET!");
-////                            p.getPhysics().setPosition(new Vector2((p.getPhysics().getShootDirection().x) + this.getPhysics().getPosition().x, (p.getPhysics().getShootDirection().y) + this.getPhysics().getPosition().y));
-////                            projectiles.addProjectiles(p);
-//
-//                            //Even indexed bullet.
-//                            //Odd count bullet
-//                            //index >= 1
-//                        } else if (i >= 1 && i % 2 == 0) {
-////                            p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(radians - skill.getDeltaAngle() * i), MathUtils.sin(radians - skill.getDeltaAngle() * i)));
-////                            System.out.println(i);
-////                            System.out.println("THIRD BULLET");
-////                            p.getPhysics().setPosition(new Vector2((p.getPhysics().getShootDirection().x) + this.getPhysics().getPosition().x, (p.getPhysics().getShootDirection().y) + this.getPhysics().getPosition().y));
-////                            projectiles.addProjectiles(p);
-//                            p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(radians - (skill.getDeltaAngle() * i)), MathUtils.sin(radians - (skill.getDeltaAngle() * i))));
-//                        }
-                        System.out.println("FAN BULLET:" + "i:" + i + p.toString());
-                        // index 0
-//                        else {
-//                            p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-//                            System.out.println(i);
-//                            System.out.println("FIRST BULLET");
-////                            System.out.println(p.toString());
-////                            p.getPhysics().setPosition(new Vector2((p.getPhysics().getShootDirection().x) + this.getPhysics().getPosition().x, (p.getPhysics().getShootDirection().y) + this.getPhysics().getPosition().y));
-//
-//
-////                            p.getPhysics().setMoveSpeed(150f);
-//                        }
-//                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().y);
-////                        p.getPhysics().setPosition(p.getPhysics().getMovementDirection().add(p.getPhysics().getPosition()));
-//                        projectiles.addProjectiles(p);
-//
-//
-////                        projectiles.addProjectiles(p);
-//////                        //odd index of bullet
-//////                        //this is every even bullet count
-//////                        //2nd,4th,6th,8th
-//////                        //1 3 5 7 9
-//////                        if (i >= 1 && i % 2 == 1) {
-//////                            this.getPhysics().setShootDirection(MathUtils.cos(radians + skill.getDeltaAngle() * i), MathUtils.sin(radians + skill.getDeltaAngle() * i));
-//////
-//////
-//////                            Projectile b = new Projectile();
-//////                            b.getPhysics().setPosition(this.getPhysics().getPosition());
-//////
-//////                            b.getPhysics().setMoveSpeed(150f);
-//////                            b.getGraphics().setColor(Color.PINK);
-//////                            b.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-////////                            b.getPhysics().setPosition(b.getPhysics().getMovementDirection().x * 2 + this.getPhysics().getPosition().x, b.getPhysics().getPosition().y * 2 + this.getPhysics().getPosition().y);
-//////                            projectiles.addProjectiles(b);
-//////                        }
-//////
-//////
-//////                        //even indexed bullet
-//////                        //this is every odd bullet count
-//////                        //3rd,5th,7th,9th
-//////                        //2 4 6 8 10
-//////                        else if (i >= 1 && i % 2 == 0) {
-//////                            this.getPhysics().setShootDirection(MathUtils.cos(radians - skill.getDeltaAngle() * i), MathUtils.sin(radians - skill.getDeltaAngle() * i));
-//////
-//////                            Projectile b = new Projectile();
-//////                            b.getPhysics().setPosition(this.getPhysics().getPosition());
-//////
-//////                            b.getPhysics().setMoveSpeed(150f);
-//////                            b.getGraphics().setColor(Color.PINK);
-//////                            b.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-//////                            b.getPhysics().setPosition(this.getPhysics().getPosition());
-//////
-////////                            b.getPhysics().setPosition(b.getPhysics().getMovementDirection().x * 2 + this.getPhysics().getPosition().x, b.getPhysics().getPosition().y * 2 + this.getPhysics().getPosition().y);
-//////                            projectiles.addProjectiles(b);
-//////                        }
-//////
-//////                        //the center bullet between the Odd and Even bullet count
-//////                        else {
-//////                            this.getPhysics().setShootDirection(MathUtils.cos(radians), MathUtils.sin(radians));
-//////
-//////                            Projectile b = new Projectile();
-//////                            b.getPhysics().setPosition(this.getPhysics().getPosition());
-//////
-//////                            b.getPhysics().setMoveSpeed(150f);
-//////                            b.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
-//////                            b.getGraphics().setColor(Color.PINK);
-//////                            projectiles.addProjectiles(b);
-//////                        }
-////                    }
-////                    //fan shot (Even count of projectiles)
-//////                else if (skill.getProjectileCount() > 1 && skill.getDeltaAngle() >= 1 && skill.getProjectileCount() % 2 == 0) {
-//////                    for (int i = 0; i < skill.getProjectileCount(); i++) {
-//////                        Projectile b = new Projectile();
-//////                        b.getPhysics().setMoveSpeed(150f);
-//////                        b.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+                    } else {
+                        deltaAngleMultiplier = 0.2f;
+                        for (int i = 0; i < skill.getProjectileCount(); i++) {
+                            Projectile p = new Projectile();
+                            p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+                            p.getGraphics().setColor(Color.YELLOW);
+                            p.getPhysics().setMoveSpeed(200);
+                            //we ignore the center bullet
+                            if (i % 2 == 1) {
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier))));
+                            } else {
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier))));
+                                deltaAngleMultiplier += 1f;
+                            }
+                            p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
+                            projectiles.addProjectiles(p);
+                        }
                     }
 
+                    //handle even shoot cases later.
+                    //
+//                    else {
+//                        for (int i = 0; i < skill.getProjectileCount(); i++) {
+//
+//                        }
+//                    }
+
+
+                } else {
+                    Projectile p = new Projectile();
+                    p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
+                    p.getGraphics().setColor(Color.CYAN);
+                    p.getPhysics().setMoveSpeed(200);
+                    p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
+                    projectiles.addProjectiles(p);
                 }
 //
 //                else {

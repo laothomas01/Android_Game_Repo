@@ -63,6 +63,7 @@ public class AppManager {
      */
     public static JsonValue loadJsonFile(String jsonFile) {
         JsonValue json = new JsonReader().parse(Gdx.files.internal(jsonFile));
+
         return json;
     }
 
