@@ -4,17 +4,17 @@
 
     {
       "enemyTypes": [0],
-      "spawnCoolDown": 1
+      "spawnCoolDown": 0.5
 
     },
     {
       "enemyTypes": [0,1],
-      "spawnCoolDown": 2
+      "spawnCoolDown": 0.5
     }
     ,
     {
       "enemyTypes": [0,1,2],
-      "spawnCoolDown": 3
+      "spawnCoolDown": 0.5
     }
   ]
 }

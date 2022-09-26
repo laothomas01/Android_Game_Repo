@@ -81,8 +81,14 @@ public class Player extends Entity {
          * We can use these parameters *
          */
 //        Skill skill1 = new Skill("Basic Shoot", "", 1f, false, 1, 1, 0, 0);
+        /**
+         * BASIC SHOOT:
+         * //these upgrades will have a delta angle OR a delta position but never both.
+         *  - FAN SHOOT: has a delta angle
+         *  - PARALLEL SHOOT: has a delta position
+         */
         //will be a branching upgrade from basic shoot
-        Skill skill2 = new Skill("Fan Shoot", "", 5f, false, 6, 1, 15, 0);
+        Skill skill2 = new Skill("Fan Shoot", "", 1f, false, 20, 1, 15, 0);
 //        skillsMap.put(skill1.getSkillName(), skill1);
         skillsMap.put(skill2.getSkillName(), skill2);
 
@@ -200,7 +206,6 @@ public class Player extends Entity {
         // ----------------------------------- ITERATION 2 -----------------------------------
         //loop through set of player skills
         for (Map.Entry<String, Skill> set : skillsMap.entrySet()) {
-
             //get the current skill
             Skill skill = set.getValue();
             //convert the delta angle to radians because we calculate in radians
@@ -224,7 +229,8 @@ public class Player extends Entity {
                 float deltaAngleMultiplier = 1;
                 //update current skill with a zeroed cool down timer
                 skill.update(skill.getCoolDownTimer() - skill.getmaxCoolDownTime(), false);
-                //Fanned Shot (Odd count of projectiles)
+
+                // --------------------------------------------------FANNED SHOT----------------------------------------
                 if (skill.getProjectileCount() > 1 && skill.getDeltaAngle() >= 1) {
                     //we will set these
                     if (skill.getProjectileCount() % 2 == 1) {
@@ -244,7 +250,7 @@ public class Player extends Entity {
                                     /**     Projectile creation cycle: (by indices) 0 1 2
                                      *       0 = center projectile. no modifications to the movement direction angle
                                      *      --------------------we will check if these indices are odd or even---------------
-                                     *      n(index) |   m(multiplier)      |   deltaAngle  |   n % 2   |        f(n)              |
+                                     *      n(index) |   m(multiplier)      |   deltaAngle  |   n % 2   |        f(n)            |
                                      *        1    |       1              |      15       |     1      |        m_f = m_o       |
                                      *        2    |       1             |      15       |      0     |        m_f = m_o + 1   |
                                      *      ----------------------------------------------------------------------------------
@@ -267,9 +273,9 @@ public class Player extends Entity {
                             p.getPhysics().setMoveSpeed(200);
                             //we ignore the center bullet
                             if (i % 2 == 1) {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier))));
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians + (deltaRadians * deltaAngleMultiplier / 2)), MathUtils.sin(shootRadians + (deltaRadians * deltaAngleMultiplier / 2))));
                             } else {
-                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier))));
+                                p.getPhysics().setMovementDirection(new Vector2(MathUtils.cos(shootRadians - (deltaRadians * deltaAngleMultiplier / 2)), MathUtils.sin(shootRadians - (deltaRadians * deltaAngleMultiplier / 2))));
                                 deltaAngleMultiplier += 1f;
                             }
                             p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
@@ -277,16 +283,16 @@ public class Player extends Entity {
                         }
                     }
 
-                    //handle even shoot cases later.
-                    //
-//                    else {
-//                        for (int i = 0; i < skill.getProjectileCount(); i++) {
-//
-//                        }
-//                    }
+                }
+                //------------------------------------------------------------------------------------------------------
 
+                //--------------------------------------------------PARALLEL SHOT---------------------------------------
+                //Delta Angle = 0
+                //Delta Position >= 1
+                //------------------------------------------------------------------------------------------------------
 
-                } else {
+                //---------------------------------------------------BASIC SHOT-----------------------------------------
+                else {
                     Projectile p = new Projectile();
                     p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());
                     p.getGraphics().setColor(Color.CYAN);
@@ -294,6 +300,7 @@ public class Player extends Entity {
                     p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
                     projectiles.addProjectiles(p);
                 }
+                //------------------------------------------------------------------------------------------------------
 //
 //                else {
 //                    Projectile p = new Projectile();
@@ -301,8 +308,9 @@ public class Player extends Entity {
 //                    p.getPhysics().setMoveSpeed(150f);
 //                    p.getPhysics().setPosition(new Vector2((p.getPhysics().getMovementDirection().x) + this.getPhysics().getPosition().x, (p.getPhysics().getMovementDirection().y) + this.getPhysics().getPosition().y));
 //                    projectiles.addProjectiles(p);
-//
-//
+//                // --------------------------------------------------PARALLEL SHOT--------------------------------------
+
+                //
 //                }
 
                 // -----------------------------ITERATION 1------------------------------------

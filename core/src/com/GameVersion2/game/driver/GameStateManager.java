@@ -292,6 +292,14 @@ public class GameStateManager extends ApplicationAdapter {
             /**
              * If bullet collides with enemy, remove bullet and remove enemy
              */
+            for (Entity e : entityManager.getEnemies()) {
+                if (p.getPhysics().hasCollided(e)) {
+                    p.getPhysics().setMoveSpeed(0);
+                    entityManager.getGarbageCollection().add(p);
+                    entityManager.getGarbageCollection().add(e);
+                    GameObjectManager.getExpDrops().add(new ExpDrop(e.getPhysics().getPosition()));
+                }
+            }
             if (p.getPhysics().hasCollided(currentlySeenEnemy)) {
                 //SET BULLET SPEED = 0 WHEN COLLIDING
                 p.getPhysics().setMoveSpeed(0);
@@ -312,6 +320,8 @@ public class GameStateManager extends ApplicationAdapter {
                 entityManager.getGarbageCollection().add(p);
             }
         }
+        //handling on collision-effect handler
+
 
         //EXP DROP UPDATING AND COLLISION HANDLING
         for (Entity exp : GameObjectManager.getExpDrops()) {
