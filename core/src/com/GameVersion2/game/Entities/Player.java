@@ -95,8 +95,6 @@ public class Player extends Entity {
 
 //        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
 //        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
-
-
         this.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSpriteSize(10f, 10f);
@@ -114,7 +112,6 @@ public class Player extends Entity {
         if (getCurrentExp() >= getExpReq()) {
             //set current exp back to 0
             //be careful of this. used to reset current exp so we can level up again.
-
             return true;
         }
         return false;
@@ -204,7 +201,9 @@ public class Player extends Entity {
      */
 
     public void shoot(Entity target, float dt, GameObjectManager projectiles) {
+        //angle between position vectors
         float shootRadians = MathUtils.atan2(target.getPhysics().getPosition().y - this.getPhysics().getPosition().y, target.getPhysics().getPosition().x - this.getPhysics().getPosition().x);
+        //create the heading vector for player's shoot direction
         this.getPhysics().setShootDirection(MathUtils.cos(shootRadians), MathUtils.sin(shootRadians));
 
         // ----------------------------------- ITERATION 2 -----------------------------------
@@ -212,9 +211,10 @@ public class Player extends Entity {
         for (Map.Entry<String, Skill> set : skillsMap.entrySet()) {
             //get the current skill
             Skill skill = set.getValue();
+
             //convert the delta angle to radians because we calculate in radians
             //use these radians to offset the projectile's angle from the currently found radians.
-            //note: the formality of our shooting will be uniformed!
+            //note: the form of our shooting will be uniformed!
             float deltaRadians = skill.getDeltaAngle() * MathUtils.PI / 180;
 
             //update cooldown
@@ -231,6 +231,8 @@ public class Player extends Entity {
                 //this also handles conditions of when the projectile count is increased or decreased
                 //used to widen or condense the spread of bullets
                 float deltaAngleMultiplier = 1;
+                System.out.println("MULTIPLIER:" + deltaAngleMultiplier);
+                
                 //update current skill with a zeroed cool down timer
                 skill.update(skill.getCoolDownTimer() - skill.getmaxCoolDownTime(), false);
 
@@ -264,12 +266,9 @@ public class Player extends Entity {
                                 }
                             }
                             p.getPhysics().setPosition(p.getPhysics().getMovementDirection().x + this.getPhysics().getPosition().x, p.getPhysics().getMovementDirection().y + this.getPhysics().getPosition().y);
-
                             projectiles.addProjectiles(p);
-
                         }
                     } else {
-                        deltaAngleMultiplier = 1f;
                         for (int i = 0; i < skill.getProjectileCount(); i++) {
                             Projectile p = new Projectile();
                             p.getPhysics().setMovementDirection(this.getPhysics().getShootDirection());

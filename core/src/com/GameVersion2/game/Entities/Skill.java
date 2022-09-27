@@ -55,7 +55,8 @@ public class Skill {
                         "   MAX COOL DOWN   " + this.getmaxCoolDownTime() +
                         "     COOLDOWN:       " + this.getCoolDownTimer() +
                         "      IS_ON_COOLDOWN      " + this.getIsOnCoolDown() +
-                        "      LEVEL       " + this.getLevel();
+                        "      LEVEL       " + this.getLevel() +
+                        "      PROJECTILES  " + this.getProjectileCount();
 
     }
 
