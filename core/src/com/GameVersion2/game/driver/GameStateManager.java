@@ -8,109 +8,66 @@ import com.GameVersion2.game.Util.Graphics2D;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import org.graalvm.compiler.graph.Graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-
+/**
+ * Call a start game and begin playing in the game state manager
+ * - everything else is hidden away
+ */
 public class GameStateManager extends ApplicationAdapter {
-
-    //-------------TESTING SKILL GENERATION-----------------
-
-
-    //------------------------------------------------------
 
 
     // ----------------- GAME STATES --------------------------
-    enum State {PAUSE, RUN, STOPPED}
+    enum GameState {PAUSE, RUN, STOPPED}
 
+    GameState state = null;
 
-//    public void loadCollectionOfAbilities() {
-////        int counter = 0;
-////        String[] angle_pos = {"radial", "non-radial"};
-////        String[] angle_delta = {"uniform", "non-uniform"};
-////        String[] nProj = {"single", "multiple"};
-////
-////        Map<Integer, Map<Object, Object>> skillConfigs = new HashMap<>();
-//////        Array<Map<Object, Object>> skillConfigs = new Array<>();
-////
-////        for (String i : angle_pos) {
-////            for (String j : angle_delta) {
-////                for (String k : nProj) {
-////                    Map<Object, Object> dict = new HashMap<>();
-////                    dict.put("angle_pos", i);
-////                    dict.put("angle_delta", j);
-////                    dict.put("nProj", k);
-////                    skillConfigs.put(counter, dict);
-////                    counter++;
-//////
-////                }
-////            }
-////        }
-////
-////        counter = 0;
-//
-//
-//    }
-//    public void check
-
-    State state = null;
-
-    //------------------------------------------------------
-
-
-    //--------------------Handle Enemy and Enemy Spawner Data----------------
+    //these variables should be hidden away
     int enemyWaveNumber;
     int maxEnemyWaves;
     int[] enemyTypes;
     float enemySpawnCoolDown;
+    //
 
-    //------------------------------------------------------
 
-
-    //---------------------------rendering time calculated between current and next frame----------------------------
+    //time calulated between current and next frame
     float deltaTime;
-    //-------------------------------------------------------------------------------------------------------------------
+
     Player player;
+
+    //  CRUD Ops. for Entities
     GameObjectManager entityManager = new GameObjectManager();
 
-    //json values used for retrieving json data
+
+    //------------JSON DATA
     JsonValue jsonWaves;
     JsonValue jsonWave;
-
-    //-------------------------------------------------
-
-    //game event timer
+    //------------JSON DATA
 
 
-    //seconds to wait before an event such as leveling up occurs
+    //timer to wait for an event to happen
     private float eventTimeInSeconds = 0f;
     //max time to wait for an event to happen
     private float periodOfTimeSeconds = 15f;
-    //max wait time testing variable for leveling up player
-    float testTimeBeforeUpgrade = 0;
-    float period = 5;
 
 
-    //------------------------ TESTING ENEMY DETECTION ------------------------
-
+    //@TODO: move these two variables somewhere else like player class
     float detectionWaitTime = 0f;
     float enemyDetectionPeriod = 2f;
 
-    //-------------------------------------------------------------------------
 
+    /**
+     * Load in all needed data
+     */
     public void create() {
 
-//        loadCollectionOfAbilities();
-        //initialize starting state
 
-        state = State.RUN;
+        state = GameState.RUN;
+
+        //What is this ???
+        // -------------------------------------
+        // |
+        // V
         /**
          * PLACE THESE VALUES INTO THE RENDER:
          * -increment enemy wave number after N amount of time passed.
@@ -118,78 +75,25 @@ public class GameStateManager extends ApplicationAdapter {
          * -make sure to check how much time has passed during runtime.
          */
 
-        //------------------------------update in render-----------------------
 
+        //used for updating waves
         enemyWaveNumber = 0;
         jsonWaves = AppManager.loadJsonFile("entityData.json").get("waves");
-        //size of the collection of enemy waves
         maxEnemyWaves = jsonWaves.size;
-        //----------------------------------------------------------------------
-        /**
-         * Have player add in a basic skill when starting up the game
-         */
-        //on create, load up player's base stats
-
-
         player = new Player();
-//        System.out.println("STARTING STATS:" + player.toString());
-
-        //adding of skill
+        //handling user input for various purposes
         Gdx.input.setInputProcessor(new GameInputProcessor());
 
     }
 
-    /**
-     * WRITING TEST CASES
-     */
-
-    //----------TESTING PLAYER LEVEL UP--------------------
-   /* public void testPlayerLevelUp() {
-//        player.setHasLeveledUp(true);
-//        if (player.hasLeveled()) {
-//            setGameState(State.PAUSE);
-//        } else {
-//            setGameState(State.RUN);
-//        }
-    }*/
     public void testUpgradeScreen(float dt) {
 
         Graphics2D.drawFontSprite("LEVELED UP", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
 
 
-        //   --------------------------     TESTING UPGRADING PLAYER SKILL -----------------------
-
-
-        //----------------------------------ITERATION 1 SKILL UPGRADING -------------------------
-
-
-//        player.getSkill(0).setmaxCoolDownTime(
-//                player.getSkill(0).getmaxCoolDownTime() -
-//                        //percentage decrease of skill max cooldown
-//                        player.getSkill(0).getmaxCoolDownTime() * 0.5f);
-//
-//        player.getSkill(0).setLevel(player.getSkill(0).getLevel() + 1);
-//
-//        //a flag to end leveling up and the pause state
-//        player.setCurrentExp(0);
-
-
-        //---------------------------------- ITERATION 2 SKILL UPGRADING ----------------------
-
-
-        // -----------------------------------------------------------------------------------------------
-
-
-        //-----------------------------------------------------------------------------------------------
-
-
-        //------------------------------    TESTING UPGRADE GUI ------------------------------
 
         Graphics2D.drawFontSprite("SELECT AN UPGRADE\n[A] BASIC SHOT: projectile +1", AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2 - 100);
-//        /**
-//         * INPUT HANDLING FOR PLAYER UPGRADES
-//         */
-        System.out.println(player.getSkillsMap().get("Basic Shoot").toString());
+
 
         if ((GameInputProcessor.GameKeys.isDown(GameInputProcessor.GameKeys.A))) {
             /**
@@ -252,9 +156,9 @@ public class GameStateManager extends ApplicationAdapter {
             //will be used to scale out exp gaining later
             player.setLevel(player.getLevel() + 1);
             //wait time before game resumes
-            setGameState(State.PAUSE);
+            setGameState(GameState.PAUSE);
         } else {
-            setGameState(State.RUN);
+            setGameState(GameState.RUN);
         }
     }
 
@@ -386,7 +290,7 @@ public class GameStateManager extends ApplicationAdapter {
         //testing level up logic
         //level up => pause game => pick upgrade => persist stats in player object => print player data => dispose of font sprite =>  set game state to run => repeat if leveled up
 
-        if (state == State.RUN) {
+        if (state == GameState.RUN) {
 
             testEntityAndPlayerInteraction();
 //            System.out.println(player.getSkill(0).toString());
@@ -395,7 +299,7 @@ public class GameStateManager extends ApplicationAdapter {
             //checks player exp
             player.update(deltaTime);
         }
-        if (state == State.PAUSE) {
+        if (state == GameState.PAUSE) {
             /**
              * There is no rendering of objects when this state occurs.
              * @TODO implement rendering when pause state occurs. change the state of the game entities.
@@ -526,14 +430,14 @@ public class GameStateManager extends ApplicationAdapter {
 
     //called when application is not running
     public void pause() {
-        this.state = State.PAUSE;
+        this.state = GameState.PAUSE;
     }
 
 
     //called when the Application is resumed from a paused state.
     @Override
     public void resume() {
-        this.state = State.RUN;
+        this.state = GameState.RUN;
     }
 
     public void dispose() {
@@ -546,7 +450,7 @@ public class GameStateManager extends ApplicationAdapter {
 
     }
 
-    public void setGameState(State s) {
+    public void setGameState(GameState s) {
         this.state = s;
     }
 

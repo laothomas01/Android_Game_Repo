@@ -22,19 +22,8 @@ import java.util.Queue;
  */
 public class Player extends Entity {
 
-    // ------------------------------------------ ITERATION 1 -----------------------------------------
-    //list of skills used for killing enemies or supporting the player
-//    Array<Skill> skills;
-
-
-    //-------------------------------------------------------------------------------------------------
-
-
-    //-------------------------------------------ITERATION 2 ------------------------------------------
-
 
     Map<String, Skill> skillsMap;
-    //-------------------------------------------------------------------------------------------------
     int level;
     int enemyDetectionRadius = 1000;
     boolean hasLeveledUp;
@@ -58,16 +47,9 @@ public class Player extends Entity {
         seenEnemies = new LinkedList<>();
         hasLeveledUp = false;
         level = 1;
-        //player has a collection of skills;
 
 
-        //ITERATION 1
-//        skills = new Array<>();
-        //
-
-        //ITERATION 2
         skillsMap = new HashMap<>();
-        //
         /**
          * @TODO BUG: lacking exception handling. ex: parallel shoot will get data from.
          * @TODO improper projectile counts and IF ELSE affects other shoot conditions
@@ -81,7 +63,6 @@ public class Player extends Entity {
         /**
          * We can use these parameters *
          */
-//        Skill skill1 = new Skill("Basic Shoot", "", 1f, false, 1, 1, 0, 0);
         /**
          * BASIC SHOOT:
          * //these upgrades will have a delta angle OR a delta position but never both.
@@ -95,6 +76,8 @@ public class Player extends Entity {
 
 //        skills.add(new Skill("Parallel Shoot", 2.0f, false, 4, 1, 0, 0));
 //        skills.add(new Skill("Fan Shoot", 1.5f, false, 3, 1, 15, 0));
+
+
         this.getPhysics().setPosition(AppManager.getLocalViewPortWidth() / 2, AppManager.getLocalViewPortHeight() / 2);
         graphics.setTexture("square.png");
         this.getPhysics().setSpriteSize(10f, 10f);
@@ -167,6 +150,8 @@ public class Player extends Entity {
         return this.seenEnemies;
     }
 
+
+    //if an enemy is seen by the player, add enemy to a Queue
     public void addSeenEnemy(Entity target) {
         //if the target has been detected and has not yet been recorded
         if (detectEntity(target)) {
@@ -232,7 +217,7 @@ public class Player extends Entity {
                 //used to widen or condense the spread of bullets
                 float deltaAngleMultiplier = 1;
                 System.out.println("MULTIPLIER:" + deltaAngleMultiplier);
-                
+
                 //update current skill with a zeroed cool down timer
                 skill.update(skill.getCoolDownTimer() - skill.getmaxCoolDownTime(), false);
 
