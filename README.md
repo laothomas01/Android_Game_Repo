@@ -1,5 +1,5 @@
 
-# NIGHT SURVIVAL
+# NIGHT SURVIVAL (currently being updated for better performance and code organization)
 
 Night Survival is a 2D action Android game coded in Java using LibGDX framework.
 
